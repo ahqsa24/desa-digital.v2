@@ -1,0 +1,17 @@
+export const paths = {
+  LANDING_PAGE: '/',
+  INNOVATION_PAGE: '/innovation',
+  INNOVATION_CATEGORY_PAGE: '/innovation/:category',
+  VILLAGE_PAGE: '/village',
+  VILLAGE_PROFILE_PAGE: '/village/profile',
+  INOVATOR_PAGE: '/inovator',
+  INNOVATOR_PROFILE_PAGE: '/inovator/profile',
+  LOGIN_PAGE: '/login',
+  REGISTER_PAGE: '/register',
+  DETAIL_INNOVATION_PAGE: '/innovation/detail',
+  DETAIL_VILLAGE_PAGE: '/village/detail',
+  DETAIL_INNOVATOR_PAGE: '/innovator/detail',
+  ADD_INNOVATION: '/innovation/add',
+  ADD_INNOVATOR: '/innovator/add',
+  ADD_VILLAGE: '/village/add',
+}
