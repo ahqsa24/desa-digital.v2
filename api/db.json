@@ -5,6 +5,12 @@
       "email": "demo@gmail.com",
       "password": "demo",
       "id": 1
+    },
+    {
+      "role": "village",
+      "email": "desadigital@gmail.com",
+      "password": "desa123",
+      "id": 2
     }
   ],
   "innovations": [

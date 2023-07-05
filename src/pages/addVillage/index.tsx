@@ -5,123 +5,104 @@ import TextField from "Components/textField";
 import Button from "Components/button";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { Label, TagContainer } from "./_addVillage";
+import { Label } from "./_addVillage";
+import Dropdown from "Components/dropDown";
+import { useMutation } from "react-query";
+import { toast } from "react-toastify";
+import { addVillage } from "Services/villages";
+import { paths } from "Consts/path";
+
+const forms = [
+  {
+    label: "Provinsi",
+    type: "text",
+    name: "name",
+    options: ["Jawa Barat"],
+  },
+  {
+    label: "Kabupaten/Kota",
+    type: "text",
+    name: "city",
+    options: ["Bandung"],
+  },
+  {
+    label: "Kecamatan",
+    type: "text",
+    name: "subdistrict",
+    options: ["Buah Batu"],
+  },
+  {
+    label: "Desa/Kelurahan",
+    type: "text",
+    name: "village",
+    options: ["Bojong Soang"],
+  },
+  {
+    label: "Tentang Inovasi Desa",
+    type: "text",
+    name: "description",
+  },
+  {
+    label: "Potensi Desa",
+    type: "text",
+    name: "benefit",
+  },
+];
 
 function AddVillage() {
   const navigate = useNavigate();
   const form = useForm();
-  const { handleSubmit } = form;
+  const { handleSubmit, reset } = form;
 
-  const onRegisterInovator = async (data: any) => {
+  const { mutateAsync } = useMutation(addVillage);
+
+  const onAddVillage = async (data: any) => {
     try {
-      console.log(data);
+      await mutateAsync(data);
+      toast("Desa berhasil ditambahkan", { type: "success" });
+      reset();
     } catch (error) {
-      console.log(error);
+      toast("Terjadi kesalahan jaringan", { type: "error" });
     }
   };
 
-  const containerStyle = {
-    paddingTop: "50px",
-    paddingLeft: "10px",
-    paddingRight: "10px",
-    paddingBottom: "80px",
-  };
-
   return (
-    <Container>
+    <Container page px={16}>
       <TopBar title="Registrasi Desa" />
-      <div style={containerStyle}>
-        <form onSubmit={handleSubmit(onRegisterInovator)}>
-          <React.Fragment>
-            <Label mt={12}> Provinsi </Label>
-            <form>
-              <select>
-                <option key={1} value={32}>
-                  jawa barat
-                </option>
-                <option key={1} value={32}>
-                  jawa barat
-                </option>
-                <option key={1} value={32}>
-                  jawa barat
-                </option>
-              </select>
-              {/* <input type="text" /> */}
-            </form>
-          </React.Fragment>
-          <React.Fragment>
-            <Label mt={12}> Kabupaten/Kota </Label>
-            <form>
-              <select>
-                <option key={1} value={32}>
-                  jawa barat
-                </option>
-                <option key={1} value={32}>
-                  jawa barat
-                </option>
-                <option key={1} value={32}>
-                  jawa barat
-                </option>
-              </select>
-              {/* <input type="text" /> */}
-            </form>
-          </React.Fragment>
-          <React.Fragment>
-            <Label mt={12}> Kecamatan </Label>
-            <form>
-              <select>
-                <option key={1} value={32}>
-                  jawa barat
-                </option>
-                <option key={1} value={32}>
-                  jawa barat
-                </option>
-                <option key={1} value={32}>
-                  jawa barat
-                </option>
-              </select>
-              {/* <input type="text" /> */}
-            </form>
-          </React.Fragment>
-          <React.Fragment>
-            <Label mt={12}> Desa/Kelurahan </Label>
-            <form>
-              <select>
-                <option key={1} value={32}>
-                  jawa barat
-                </option>
-                <option key={1} value={32}>
-                  jawa barat
-                </option>
-                <option key={1} value={32}>
-                  jawa barat
-                </option>
-              </select>
-              {/* <input type="text" /> */}
-            </form>
-          </React.Fragment>
-          <Label mt={12}>Tentang Inovasi di Desa</Label>
-          <TextField
-            mt={4}
-            placeholder="Tentang Inovasi di Desa"
-            type="text"
-            name="tentang"
-            form={form}
-          />
-          <Label mt={12}>Potensi Desa</Label>
-          <TextField
-            mt={4}
-            placeholder="Potensi Desa"
-            type="text"
-            name="potensi"
-            form={form}
-          />
+      <form onSubmit={handleSubmit(onAddVillage)}>
+        {forms?.map(({ label, type, name, placeholder, options }, idx) => {
+          if (!!options)
+            return (
+              <React.Fragment key={idx}>
+                <Label mt={12}>{label} </Label>
+                <Dropdown options={options} form={form} name={name} />
+              </React.Fragment>
+            );
 
-          <Button size="m" fullWidth mt={12} type="submit">
-            Tambahkan Desa{" "}
-          </Button>
-        </form>
-      </div>
+          return (
+            <React.Fragment key={idx}>
+              <Label mt={12}>{label} </Label>
+              <TextField
+                mt={4}
+                placeholder={placeholder || label}
+                type={type}
+                name={name}
+                form={form}
+              />
+            </React.Fragment>
+          );
+        })}
+
+        <Button
+          size="m"
+          fullWidth
+          mt={12}
+          type="submit"
+          onClick={() => navigate(paths.VILLAGE_PAGE)}
+        >
+          Tambah Inovasi{" "}
+        </Button>
+      </form>
     </Container>
   );
 }
