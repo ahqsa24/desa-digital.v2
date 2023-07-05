@@ -8,9 +8,13 @@ import { useNavigate } from "react-router-dom";
 import { paths } from "Consts/path";
 import Add from "Assets/icons/add.svg";
 import useAuthLS from "Hooks/useAuthLS";
+import { getInnovator } from "Services/innovator";
+import { useQuery } from "react-query";
 
 function Inovator() {
   const navigate = useNavigate();
+  
+
   const { auth } = useAuthLS();
   const { role } = auth || {};
   return (

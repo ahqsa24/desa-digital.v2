@@ -101,7 +101,7 @@ function AddInnovation() {
           );
         })}
 
-        <Button size="m" fullWidth mt={12} type="submit" onClick={() => navigate(paths.INNOVATION_CATEGORY_PAGE)}
+        <Button size="m" fullWidth mt={12} type="submit"
         >
           Tambah Inovasi{" "}
         </Button>

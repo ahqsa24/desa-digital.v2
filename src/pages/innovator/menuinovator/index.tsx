@@ -12,6 +12,8 @@ import HabibiGardenHero from "Assets/images/hero-habibigarden.jpg";
 import InagriHero from "Assets/images/hero-inagri.jpg";
 import { useNavigate } from "react-router-dom";
 import { paths } from "Consts/path";
+import { useQuery } from "react-query";
+import { getInnovator } from "Services/innovator";
 
 const data = [
   {
@@ -54,12 +56,19 @@ const data = [
 
 function MenuInovator() {
   const navigate = useNavigate();
+  const { data, isFetched } = useQuery<any>("getInnovator", getInnovator);
+
+  if (isFetched) {
+    console.log(data);
+  } else {
+    console.log("ga ada sih?");
+  }
   return (
     <Container>
       <Title></Title>
       <CardContainer>
         <Horizontal>
-          {data.map((item, idx) => (
+          {data.map((item: any, idx: number) => (
             <CardInovator
               key={idx}
               {...item}

@@ -18,34 +18,46 @@ const forms = [
     type: "text",
     name: "name",
     options: ["Jawa Barat"],
+    placeholder:""
+
   },
   {
     label: "Kabupaten/Kota",
     type: "text",
     name: "city",
     options: ["Bandung"],
+    placeholder:""
+
   },
   {
     label: "Kecamatan",
     type: "text",
     name: "subdistrict",
     options: ["Buah Batu"],
+    placeholder:""
+
   },
   {
     label: "Desa/Kelurahan",
     type: "text",
     name: "village",
     options: ["Bojong Soang"],
+    placeholder:""
+
   },
   {
     label: "Tentang Inovasi Desa",
     type: "text",
     name: "description",
+    placeholder:""
+
   },
+  
   {
     label: "Potensi Desa",
     type: "text",
     name: "benefit",
+    placeholder:""
   },
 ];
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import TopBar from "Components/topBar";
 import Container from "Components/container";
 import TextField from "Components/textField";
@@ -6,6 +6,10 @@ import Button from "Components/button";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { Label } from "./_addInnovatorStyles";
+import { useMutation, useQuery } from "react-query";
+import { toast } from "react-toastify";
+import { paths } from "Consts/path";
+import { addInnovator, getInnovator } from "Services/innovator";
 
 const forms = [
   {
@@ -58,13 +62,20 @@ const forms = [
 function AddInnovator() {
   const navigate = useNavigate();
   const form = useForm();
-  const { handleSubmit } = form;
+  const { handleSubmit, reset } = form;
+  const { mutateAsync } = useMutation(addInnovator);
+  const { data, isFetched } = useQuery<any> (
+    'getInnovator', getInnovator
+  )
 
   const onRegisterInovator = async (data: any) => {
     try {
-      console.log(data);
+      await mutateAsync(data);
+      toast("Berhasil menambahkan inovator", { type: "success" });
+      reset();
     } catch (error) {
-      console.log(error);
+      console.log("err");
+      toast("Terjadi kesalahan jaringan", { type: "error" });
     }
   };
 
@@ -75,11 +86,17 @@ function AddInnovator() {
     paddingBottom: "80px",
   };
 
+  if(isFetched) {
+    console.log(data)
+  }
+  
   return (
     <Container>
       <TopBar title="Registrasi Inovator" />
       <div style={containerStyle}>
-        <form onSubmit={handleSubmit(onRegisterInovator)}>
+        <form
+          onSubmit={handleSubmit(onRegisterInovator)}
+        >
           {forms?.map(({ label, type, name }, idx) => (
             <React.Fragment key={idx}>
               <Label mt={12}>{label} </Label>
@@ -93,7 +110,12 @@ function AddInnovator() {
             </React.Fragment>
           ))}
 
-          <Button size="m" fullWidth mt={12} type="submit">
+          <Button
+            size="m"
+            fullWidth
+            mt={12}
+            type="submit"
+          >
             Tambah Innovator{" "}
           </Button>
         </form>

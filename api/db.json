@@ -25,6 +25,73 @@
       "instagram": "https://google.com",
       "website": "https://google.com",
       "id": 2
+    },
+    {
+      "name": "C3 Fitria Nuryantika",
+      "category": "Pemasaran Agri-Food dan E-Commerce",
+      "year": "2023-07-04",
+      "description": "pertanian cerdas",
+      "benefit": "yey",
+      "requirement": "listrik",
+      "id": 3
+    },
+    {
+      "name": "C3 Fitria Nuryantika",
+      "category": "Pertanian Cerdas",
+      "year": "2023-07-05",
+      "description": "pertanian cerdas",
+      "benefit": "yey",
+      "requirement": "listrik",
+      "id": 4
+    }
+  ],
+  "innovator": [
+    {
+      "namaInovator": "Efishery",
+      "kategoriInovator": "Pertanian Cerdas",
+      "targetPengguna": "Nelayan Budidaya",
+      "produk": "Efeeder",
+      "modelBisnis": "Nelayan",
+      "nomorWhatsApp": "08111111",
+      "linkInstagram": "https://instagram.com",
+      "linkWebsite": "https://efishery.com",
+      "id": 1
+    },
+    {
+      "namaInovator": "",
+      "kategoriInovator": "",
+      "targetPengguna": "",
+      "produk": "",
+      "modelBisnis": "",
+      "deskripsi": "",
+      "nomorWhatsApp": "",
+      "linkInstagram": "",
+      "linkWebsite": "",
+      "id": 2
+    },
+    {
+      "namaInovator": "efishery",
+      "kategoriInovator": "pppp",
+      "targetPengguna": "test",
+      "produk": "d",
+      "modelBisnis": "---",
+      "deskripsi": "ASasAS",
+      "nomorWhatsApp": "1234567890",
+      "linkInstagram": "https://.com",
+      "linkWebsite": "https://.com",
+      "id": 3
+    },
+    {
+      "namaInovator": "cxcxcd",
+      "kategoriInovator": "pertanian",
+      "targetPengguna": "test",
+      "produk": "asdasdasdx",
+      "modelBisnis": "sdasdadadsa",
+      "deskripsi": "ASasAS",
+      "nomorWhatsApp": "1212121212121",
+      "linkInstagram": "https://a.com",
+      "linkWebsite": "",
+      "id": 4
     }
   ],
   "villages": [],
