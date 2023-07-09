@@ -1,11 +1,11 @@
-import { BASE_URL } from "Consts/url";
+import { BASE_LOCATION_URL } from "Consts/url";
 import axios, { AxiosError, AxiosResponse } from "axios";
 
 /**
  * Axios instance config
  */
 const api = axios.create({
-  baseURL: BASE_URL,
+  baseURL: `https://farizdotid.com/`,
   timeout: 10 * 1000, // 10 seconds
   headers: {
     "Content-Type": "application/json",

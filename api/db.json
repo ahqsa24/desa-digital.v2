@@ -8,8 +8,8 @@
     },
     {
       "role": "village",
-      "email": "desadigital@gmail.com",
-      "password": "desa123",
+      "email": "desa@gmail.com",
+      "password": "desa",
       "id": 2
     }
   ],
@@ -43,6 +43,15 @@
       "benefit": "yey",
       "requirement": "listrik",
       "id": 4
+    },
+    {
+      "name": "",
+      "category": "",
+      "year": "",
+      "description": "",
+      "benefit": "",
+      "requirement": "",
+      "id": 5
     }
   ],
   "innovator": [
@@ -55,46 +64,26 @@
       "nomorWhatsApp": "08111111",
       "linkInstagram": "https://instagram.com",
       "linkWebsite": "https://efishery.com",
+      "background": "https://asset.kompas.com/crops/xKbxkCjPBXzFRTmqLYwG8ps65nI=/0x0:0x0/750x500/data/photo/2021/11/05/61842538b5611.jpg",
+      "icon": "https://asset.kompas.com/crops/xKbxkCjPBXzFRTmqLYwG8ps65nI=/0x0:0x0/750x500/data/photo/2021/11/05/61842538b5611.jpg",
       "id": 1
-    },
-    {
-      "namaInovator": "",
-      "kategoriInovator": "",
-      "targetPengguna": "",
-      "produk": "",
-      "modelBisnis": "",
-      "deskripsi": "",
-      "nomorWhatsApp": "",
-      "linkInstagram": "",
-      "linkWebsite": "",
-      "id": 2
-    },
-    {
-      "namaInovator": "efishery",
-      "kategoriInovator": "pppp",
-      "targetPengguna": "test",
-      "produk": "d",
-      "modelBisnis": "---",
-      "deskripsi": "ASasAS",
-      "nomorWhatsApp": "1234567890",
-      "linkInstagram": "https://.com",
-      "linkWebsite": "https://.com",
-      "id": 3
-    },
-    {
-      "namaInovator": "cxcxcd",
-      "kategoriInovator": "pertanian",
-      "targetPengguna": "test",
-      "produk": "asdasdasdx",
-      "modelBisnis": "sdasdadadsa",
-      "deskripsi": "ASasAS",
-      "nomorWhatsApp": "1212121212121",
-      "linkInstagram": "https://a.com",
-      "linkWebsite": "",
-      "id": 4
     }
   ],
-  "villages": [],
+  "villages": [
+    {
+      "name": "Jawa Barat",
+      "city": "Bandung",
+      "subdistrict": "Buah Batu",
+      "village": "Bojong Soang",
+      "description": "desa memiliki lalalalalla",
+      "nameVillage": "desa suka maju",
+      "logo": "",
+      "header": "",
+      "benefit": "lorem ipsum",
+      "nomorWhatsApp": "081298192192891",
+      "id": 1
+    }
+  ],
   "categories": [
     {
       "icon": "https://github.com/fitrianurynt/PSBO/assets/79956203/9a53a458-b8bd-488c-82a6-17b0b2a86c0a",

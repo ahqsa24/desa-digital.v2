@@ -11,6 +11,8 @@ import HeaderAlamendah from "Assets/images/alamendah-header.jpg";
 import HeaderCilimus from "Assets/images/cilimus header.jpg";
 import { useNavigate } from "react-router-dom";
 import { paths } from "Consts/path";
+import { useQuery } from "react-query";
+import { getVillages } from "Services/villages";
 
 const data = [
   {
@@ -45,12 +47,15 @@ const data = [
 
 function Village() {
   const navigate = useNavigate();
+  const { data, isFetched } = useQuery("villages", getVillages);
+  console.log(data);
+
   return (
     <Container>
       <Title></Title>
       <CardContainer>
         <Horizontal>
-          {data.map((item, idx) => (
+          {data?.map((item: any, idx: number) => (
             <CardVillage
               key={idx}
               {...item}

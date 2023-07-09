@@ -10,7 +10,7 @@ export const paths = {
   REGISTER_PAGE: '/register',
   DETAIL_INNOVATION_PAGE: '/innovation/detail',
   DETAIL_VILLAGE_PAGE: '/village/detail',
-  DETAIL_INNOVATOR_PAGE: '/innovator/detail',
+  DETAIL_INNOVATOR_PAGE: '/innovator/detail/:id',
   ADD_INNOVATION: '/innovation/add',
   ADD_INNOVATOR: '/innovator/add',
   ADD_VILLAGE: '/village/add',

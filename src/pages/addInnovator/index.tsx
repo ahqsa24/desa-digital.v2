@@ -10,7 +10,7 @@ import { useMutation, useQuery } from "react-query";
 import { toast } from "react-toastify";
 import { paths } from "Consts/path";
 import { addInnovator, getInnovator } from "Services/innovator";
-
+import Dropdown from "Components/dropDown";
 const forms = [
   {
     label: "Nama Inovator",
@@ -21,6 +21,19 @@ const forms = [
     label: "Kategori Inovator",
     type: "text",
     name: "kategoriInovator",
+    options: [
+      "Pertanian Cerdas",
+      "Pemasaran Agri-Food dan E-Commerce",
+      "E-Government",
+      "Sistem Informasi",
+      "Layanan Keuangan",
+      "Pengembangan Masyarakat dan Ekonomi",
+      "Infrastruktur Lokal",
+      "Pengelolaan Sumber Daya",
+      "Layanan Sosial",
+      "E-Tourism",
+    ],
+    placeholder: "Pilih kategori",
   },
   {
     label: "Target Pengguna",
@@ -31,16 +44,31 @@ const forms = [
     label: "Produk",
     type: "text",
     name: "produk",
+    placeholder: "Masukkan nama produk",
   },
   {
     label: "Model Bisnis Digital",
     type: "text",
     name: "modelBisnis",
+    placeholder: "Masukkan model bisnis secara singkat",
   },
   {
     label: "Deskripsi",
     type: "text",
     name: "deskripsi",
+    placeholder: "Masukkan deskripsi singkat tentang inovator",
+  },
+  {
+    label: "Logo Inovator",
+    type: "url",
+    name: "logo",
+    placeholder: "Tambah Foto",
+  },
+  {
+    label: "Header Inovator",
+    type: "url",
+    name: "header",
+    placeholder: "Tambah Foto",
   },
   {
     label: "Nomor WhatsApp",
@@ -64,9 +92,7 @@ function AddInnovator() {
   const form = useForm();
   const { handleSubmit, reset } = form;
   const { mutateAsync } = useMutation(addInnovator);
-  const { data, isFetched } = useQuery<any> (
-    'getInnovator', getInnovator
-  )
+  const { data, isFetched } = useQuery<any>("getInnovator", getInnovator);
 
   const onRegisterInovator = async (data: any) => {
     try {
@@ -77,6 +103,7 @@ function AddInnovator() {
       console.log("err");
       toast("Terjadi kesalahan jaringan", { type: "error" });
     }
+    navigate(paths.INOVATOR_PAGE);
   };
 
   const containerStyle = {
@@ -86,36 +113,47 @@ function AddInnovator() {
     paddingBottom: "80px",
   };
 
-  if(isFetched) {
-    console.log(data)
+  if (isFetched) {
+    console.log(data);
   }
-  
+
   return (
     <Container>
-      <TopBar title="Registrasi Inovator" />
+      <TopBar
+        title="Profil Inovator"
+        onBack={() => navigate(paths.INOVATOR_PAGE)}
+      />
       <div style={containerStyle}>
-        <form
-          onSubmit={handleSubmit(onRegisterInovator)}
-        >
-          {forms?.map(({ label, type, name }, idx) => (
-            <React.Fragment key={idx}>
-              <Label mt={12}>{label} </Label>
-              <TextField
-                mt={4}
-                placeholder={label}
-                type={type}
-                name={name}
-                form={form}
-              />
-            </React.Fragment>
-          ))}
+        <form onSubmit={handleSubmit(onRegisterInovator)}>
+          {forms?.map(({ label, type, name, placeholder, options }, idx) => {
+            if (!!options)
+              return (
+                <React.Fragment key={idx}>
+                  <Label mt={12}>{label} </Label>
+                  <Dropdown
+                    options={options}
+                    form={form}
+                    name={name}
+                    placeholder={placeholder}
+                  />
+                </React.Fragment>
+              );
 
-          <Button
-            size="m"
-            fullWidth
-            mt={12}
-            type="submit"
-          >
+            return (
+              <React.Fragment key={idx}>
+                <Label mt={12}>{label} </Label>
+                <TextField
+                  mt={4}
+                  placeholder={placeholder || label}
+                  type={type}
+                  name={name}
+                  form={form}
+                />
+              </React.Fragment>
+            );
+          })}
+
+          <Button size="m" fullWidth mt={12} type="submit">
             Tambah Innovator{" "}
           </Button>
         </form>

@@ -8,25 +8,45 @@ import {
 } from "./_cardVillageStyle";
 
 type CardVillageProps = {
-  background: string;
-  icon: string;
-  title: string;
-  location: string;
-  totalInnovation: number;
+  name?: string;
+  city?: string;
+  subdistrict?: string;
+  village?: string;
+  description?: string;
+  logo?: string;
+  header?: string;
+  benefit?: string;
+  nomorWhatsApp?: string;
+  id?: string;
+  nameVillage?: string;
   onClick: () => void;
 };
 
 function CardVillage(props: CardVillageProps) {
-  const { background, icon, title, location, totalInnovation, onClick } = props;
+  const {
+    name,
+    city,
+    subdistrict,
+    village,
+    description,
+    logo,
+    header,
+    benefit,
+    nomorWhatsApp,
+    nameVillage,
+    onClick,
+  } = props;
 
   return (
     <Container onClick={onClick}>
-      <Background src={background} alt={title} />
+      <Background src={header} alt={header} />
       <CardContent>
-        <Logo src={icon} alt={title} />
-        <Title>{title}</Title>
-        <Description>{totalInnovation} Inovasi</Description>
-        <Description>{location}</Description>
+        <Logo src={logo} alt={logo} />
+        <Title>{nameVillage}</Title>
+        <Description>Inovasi</Description>
+        <Description>
+          {city},{subdistrict}
+        </Description>
       </CardContent>
     </Container>
   );

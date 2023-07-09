@@ -9,8 +9,9 @@ import { useNavigate } from "react-router-dom";
 import { Label } from "./_addInnovation";
 import { useMutation } from "react-query";
 import { addInnovation } from "Services/innovation";
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 import { paths } from "Consts/path";
+
 const forms = [
   {
     label: "Nama Inovasi",
@@ -33,6 +34,7 @@ const forms = [
       "Layanan Sosial",
       "E-Tourism",
     ],
+    placeholder: "pilih kategori",
   },
   {
     label: "Tahun dibuat inovasi",
@@ -43,6 +45,7 @@ const forms = [
     label: "Deskripsi",
     type: "text",
     name: "description",
+    placeholder: "Deskripsi singkat produk",
   },
   {
     label: "Keuntungan",
@@ -83,7 +86,12 @@ function AddInnovation() {
             return (
               <React.Fragment key={idx}>
                 <Label mt={12}>{label} </Label>
-                <Dropdown options={options} form={form} name={name} />
+                <Dropdown
+                  options={options}
+                  form={form}
+                  name={name}
+                  placeholder={placeholder}
+                />
               </React.Fragment>
             );
 
@@ -101,8 +109,7 @@ function AddInnovation() {
           );
         })}
 
-        <Button size="m" fullWidth mt={12} type="submit"
-        >
+        <Button size="m" fullWidth mt={12} type="submit">
           Tambah Inovasi{" "}
         </Button>
       </form>

@@ -29,7 +29,6 @@ function DetailVillage() {
         <Title> Desa Soge </Title>
         <ActionContainer>
           {" "}
-          {/* <Logo src={EFishery} alt={Logo} /> */}
           <Description>
             {" "}
             <Icon src={Location} alt="loc" />
