@@ -26,7 +26,7 @@ const forms = [
   {
     label: "Icon Inovator",
     type: "url",
-    name: "icon",
+    name: "logo",
   },
   {
     label: "Kategori Inovasi",

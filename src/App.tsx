@@ -1,25 +1,24 @@
-import './App.css'
-import Navbar from './components/navbar'
-import Home from './pages/home'
-import Category from './pages/category'
-import Village from './pages/village'
-import { paths } from 'Consts/path'
-import Inovator from './pages/innovator'
-import Login from './pages/login'
-import Register from './pages/register'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import { QueryClient, QueryClientProvider } from 'react-query'
-import DetailInnovation from './pages/detailInnovation'
-import DetailVillage from './pages/detailVillage'
-import DetailInnovator from './pages/detailInnovator'
-import AddInnovator from './pages/addInnovator'
-import AddInnovation from './pages/addInnovation'
-import AddVillage from './pages/addVillage'
-import 'react-toastify/dist/ReactToastify.css'
-import { ToastContainer } from 'react-toastify';
+import "./App.css";
+import Navbar from "./components/navbar";
+import Home from "./pages/home";
+import Category from "./pages/category";
+import Village from "./pages/village";
+import { paths } from "Consts/path";
+import Inovator from "./pages/innovator";
+import Login from "./pages/login";
+import Register from "./pages/register";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "react-query";
+import DetailInnovation from "./pages/detailInnovation";
+import DetailVillage from "./pages/detailVillage";
+import DetailInnovator from "./pages/innovator/detail";
+import Profile from "./pages/innovator/profile";
+import AddInnovation from "./pages/addInnovation";
+import AddVillage from "./pages/addVillage";
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
 
-
-const queryClient = new QueryClient()
+const queryClient = new QueryClient();
 
 const routes = [
   {
@@ -73,8 +72,8 @@ const routes = [
     exact: true,
   },
   {
-    path: paths.ADD_INNOVATOR,
-    element: <AddInnovator />,
+    path: paths.INNOVATOR_PROFILE_PAGE,
+    element: <Profile />,
     exact: true,
   },
   {
@@ -87,7 +86,7 @@ const routes = [
     element: <AddVillage />,
     exact: true,
   },
-]
+];
 
 function App() {
   return (
@@ -104,7 +103,7 @@ function App() {
       </BrowserRouter>
       <ToastContainer />
     </QueryClientProvider>
-  )
+  );
 }
 
-export default App
+export default App;

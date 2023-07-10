@@ -4,7 +4,18 @@
       "role": "innovator",
       "email": "demo@gmail.com",
       "password": "demo",
-      "id": 1
+      "id": 1,
+      "inovatorName": "Potoe",
+      "category": "Pemasaran Agri-Food dan E-Commerce",
+      "targetUser": "Nelayan",
+      "product": "Efeeder",
+      "modelBusiness": "Skip",
+      "description": "Lorem ipsum dolor sit amet consertum ",
+      "logo": "https://asset.kompas.com/crops/xKbxkCjPBXzFRTmqLYwG8ps65nI=/0x0:0x0/750x500/data/photo/2021/11/05/61842538b5611.jpg",
+      "background": "https://asset.kompas.com/crops/xKbxkCjPBXzFRTmqLYwG8ps65nI=/0x0:0x0/750x500/data/photo/2021/11/05/61842538b5611.jpg",
+      "whatsApp": "1221",
+      "instagram": "https://github.com/fitrianurynt/innovillage/assets/79956203/972f88e5-98de-4da1-ad1a-ec84d324979a",
+      "website": "https://github.com/fitrianurynt/innovillage/assets/79956203/972f88e5-98de-4da1-ad1a-ec84d324979a"
     },
     {
       "role": "village",
@@ -75,6 +86,20 @@
       "linkInstagram": "",
       "linkWebsite": "",
       "id": 2
+    },
+    {
+      "namaInovator": "",
+      "kategoriInovator": "",
+      "targetPengguna": "",
+      "produk": "",
+      "modelBisnis": "",
+      "deskripsi": "",
+      "logo": "",
+      "header": "",
+      "nomorWhatsApp": "",
+      "linkInstagram": "",
+      "linkWebsite": "",
+      "id": 3
     }
   ],
   "villages": [

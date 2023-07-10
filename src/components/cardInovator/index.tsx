@@ -1,36 +1,55 @@
-import { Container, Background, CardContent, Title, Description, Logo } from './_cardInovatorStyle'
+import {
+  Container,
+  Background,
+  CardContent,
+  Title,
+  Description,
+  Logo,
+} from "./_cardInovatorStyle";
 
 type CardInovatorProps = {
   background?: string;
-  icon?: string;
-  namaInovator?: string;
-  kategoriInovator?: string;
-  targetPengguna?: string;
-  produk?: string;
-  modelBisnis?: string;
-  nomorWhatsApp?: string;
-  linkInstagram?: string;
-  linkWebsite?: string;
+  logo?: string;
+  inovatorName?: string;
+  category?: string;
+  targetUser?: string;
+  product?: string;
+  modelBusiness?: string;
+  whatsApp?: string;
+  instagram?: string;
+  website?: string;
   id?: number;
-  deskripsi?: string;
+  description?: string;
 
-  onClick: () => void
-}
+  onClick: () => void;
+};
 
 function CardInovator(props: CardInovatorProps) {
-  const { background, icon, namaInovator, kategoriInovator, targetPengguna, produk, modelBisnis, nomorWhatsApp, linkInstagram, linkWebsite, onClick } = props
-
+  const {
+    background,
+    logo,
+    inovatorName,
+    category,
+    targetUser,
+    product,
+    modelBusiness,
+    whatsApp,
+    instagram,
+    website,
+    onClick,
+  } = props;
+  console.log(background);
   return (
     <Container onClick={onClick}>
-      <Background src={background} alt={namaInovator} />
+      <Background src={background} alt={inovatorName} />
       <CardContent>
-        <Logo src={icon} alt={namaInovator} />
-        <Title>{namaInovator}</Title>
+        <Logo src={logo} alt={logo} />
+        <Title>{inovatorName}</Title>
         <Description>10 Desa Dampingan</Description>
         <Description>10 Inovasi</Description>
       </CardContent>
     </Container>
-  )
+  );
 }
 
-export default CardInovator
+export default CardInovator;

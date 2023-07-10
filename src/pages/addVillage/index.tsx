@@ -76,7 +76,7 @@ const forms = [
   {
     label: "Nomor WhatsApp",
     type: "tel",
-    name: "nomorWhatsApp",
+    name: "whatsApp",
   },
 ];
 

@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import { marginStyle } from "Consts/sizing";
-import EFishery from "Assets/images/efishery.jpg";
 
 export const ContentContainer = styled.div`
   padding: 0 16px;
@@ -9,19 +8,11 @@ export const ContentContainer = styled.div`
   gap: 24px;
   margin-top: 16px;
 `;
-export const ChipContainer = styled.div`
-  display: flex;
-  gap: 8px;
-  align-items: center;
-`;
 
-export const Img = styled.div`
-  background-image: url(${EFishery});
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  width: 360px;
-  height: 100px;
+export const Background = styled.img`
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
 `;
 
 export const Logo = styled.img`
@@ -32,13 +23,16 @@ export const Logo = styled.img`
   border-radius: 50%;
   object-fit: cover;
   position: absolute;
+  bottom: 0;
+  left: 0;
 `;
 
 export const Title = styled.p`
   font-size: 18px;
   font-weight: 700;
-  margin-top: 30px;
+  margin-top: 40px;
 `;
+
 export const TagContainer = styled.div`
   display: flex;
   flex-direction: row;
@@ -52,18 +46,6 @@ export const TagContainer = styled.div`
   margin-left: 16px;
 `;
 
-export const Label = styled.p`
-  font-style: normal;
-  font-weight: 400;
-  font-size: 12px;
-  line-height: 100%;
-  color: #000000;
-  gap: 4px;
-  margin: auto;
-  text-align: justify;
-  ${marginStyle}
-`;
-
 export const Description = styled.p`
   font-style: normal;
   font-weight: 400;
@@ -72,6 +54,7 @@ export const Description = styled.p`
   color: #4b5563;
   gap: 6px;
   text-align: justify;
+  ${marginStyle}
 `;
 export const ActionContainer = styled.div`
   box-sizing: border-box;
@@ -83,12 +66,6 @@ export const ActionContainer = styled.div`
   box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.06), 0px 1px 3px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   cursor: pointer;
-`;
-
-export const DetailContainer = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px, ${marginStyle};
 `;
 
 export const Icon = styled.img`
@@ -109,3 +86,10 @@ export const Text = styled.p`
   font-size: 16px;
   ${marginStyle}
 `;
+
+
+export const GridContainer = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+`
+

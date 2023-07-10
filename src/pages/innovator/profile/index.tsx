@@ -3,25 +3,26 @@ import TopBar from "Components/topBar";
 import Container from "Components/container";
 import TextField from "Components/textField";
 import Button from "Components/button";
+import Dropdown from "Components/dropDown";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { Label } from "./_addInnovatorStyles";
+import { Label, FormContainer } from "./_innovatorStyles";
 import { useMutation, useQuery } from "react-query";
 import { toast } from "react-toastify";
-import { paths } from "Consts/path";
-import { addInnovator, getInnovator } from "Services/innovator";
-import Dropdown from "Components/dropDown";
+import { updateProfile, getUserById } from "Services/userServices";
+import useAuthLS from "Hooks/useAuthLS";
 
 const forms = [
   {
     label: "Nama Inovator",
     type: "text",
-    name: "namaInovator",
+    name: "inovatorName",
   },
   {
     label: "Kategori Inovator",
     type: "text",
-    name: "kategoriInovator",
+    name: "category",
+    placeholder: "Pilih kategori",
     options: [
       "Pertanian Cerdas",
       "Pemasaran Agri-Food dan E-Commerce",
@@ -34,98 +35,101 @@ const forms = [
       "Layanan Sosial",
       "E-Tourism",
     ],
-    placeholder: "Pilih kategori",
   },
   {
     label: "Target Pengguna",
     type: "text",
-    name: "targetPengguna",
+    name: "targetUser",
+    placeholder: "contoh: nelayan",
   },
   {
     label: "Produk",
     type: "text",
-    name: "produk",
+    name: "product",
     placeholder: "Masukkan nama produk",
   },
   {
     label: "Model Bisnis Digital",
     type: "text",
-    name: "modelBisnis",
+    name: "modelBusiness",
     placeholder: "Masukkan model bisnis secara singkat",
   },
   {
     label: "Deskripsi",
     type: "text",
-    name: "deskripsi",
+    name: "description",
     placeholder: "Masukkan deskripsi singkat tentang inovator",
   },
   {
     label: "Logo Inovator",
     type: "url",
     name: "logo",
-    placeholder: "Tambah Foto",
+    placeholder: "https://",
   },
   {
     label: "Header Inovator",
     type: "url",
-    name: "header",
-    placeholder: "Tambah Foto",
+    name: "background",
+    placeholder: "https://",
   },
   {
     label: "Nomor WhatsApp",
     type: "tel",
-    name: "nomorWhatsApp",
+    name: "whatsApp",
+    placeholder: "0812345678",
   },
   {
     label: "Link Instagram",
     type: "url",
-    name: "linkInstagram",
+    name: "instagram",
+    placeholder: "https://instagram.com/username",
   },
   {
     label: "Link Website",
     type: "url",
-    name: "linkWebsite",
+    name: "website",
+    placeholder: "https://",
   },
 ];
 
-function AddInnovator() {
+function Profile() {
   const navigate = useNavigate();
   const form = useForm();
   const { handleSubmit, reset } = form;
-  const { mutateAsync } = useMutation(addInnovator);
-  const { data, isFetched } = useQuery<any>("getInnovator", getInnovator);
 
-  const onRegisterInovator = async (data: any) => {
+  const { mutateAsync } = useMutation(updateProfile);
+  const { auth } = useAuthLS();
+
+  const { data, isFetched } = useQuery("profile", () => getUserById(auth?.id), {
+    enabled: !!auth?.id,
+  });
+
+  const onProfileSave = async (data: any) => {
     try {
-      await mutateAsync(data);
-      toast("Berhasil menambahkan inovator", { type: "success" });
-      reset();
+      const payload = {
+        id: auth?.id,
+        data: data,
+      };
+      await mutateAsync(payload);
+      toast("Data profil berhasil disimpan", { type: "success" });
     } catch (error) {
-      console.log("err");
       toast("Terjadi kesalahan jaringan", { type: "error" });
     }
-    navigate(paths.INOVATOR_PAGE);
   };
 
-  const containerStyle = {
-    paddingTop: "50px",
-    paddingLeft: "10px",
-    paddingRight: "10px",
-    paddingBottom: "80px",
-  };
-
-  if (isFetched) {
-    console.log(data);
-  }
+  useEffect(() => {
+    if (isFetched) {
+      reset({
+        ...(data || {}),
+      });
+    }
+  }, [isFetched]);
 
   return (
-    <Container>
-      <TopBar
-        title="Profil Inovator"
-        onBack={() => navigate(paths.INOVATOR_PAGE)}
-      />
-      <div style={containerStyle}>
-        <form onSubmit={handleSubmit(onRegisterInovator)}>
+    <Container page>
+      <TopBar title="Profil Inovator" onBack={() => navigate(-1)} />
+      <FormContainer>
+        <form onSubmit={handleSubmit(onProfileSave)}>
           {forms?.map(({ label, type, name, placeholder, options }, idx) => {
             if (!!options)
               return (
@@ -158,9 +162,9 @@ function AddInnovator() {
             Simpan
           </Button>
         </form>
-      </div>
+      </FormContainer>
     </Container>
   );
 }
 
-export default AddInnovator;
+export default Profile;
