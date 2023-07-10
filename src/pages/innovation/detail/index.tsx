@@ -18,7 +18,7 @@ import {
   Description,
   ChipContainer,
   ContentContainer,
-} from "./_detailStyles.ts";
+} from "./_detailStyle.ts";
 
 function DetailInnovation() {
   const navigate = useNavigate();

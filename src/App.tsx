@@ -9,12 +9,12 @@ import Login from "./pages/login";
 import Register from "./pages/register";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "react-query";
-import DetailInnovation from "./pages/detailInnovation";
-import DetailVillage from "./pages/detailVillage";
+import DetailInnovation from "./pages/innovation/detail";
+import DetailVillage from "./pages/village/detail";
 import DetailInnovator from "./pages/innovator/detail";
-import Profile from "./pages/innovator/profile";
-import AddInnovation from "./pages/addInnovation";
-import AddVillage from "./pages/addVillage";
+import ProfileInnovator from "./pages/innovator/profile";
+import AddInnovation from "./pages/innovation/add";
+import ProfileVillage from "./pages/village/profile";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 
@@ -73,7 +73,7 @@ const routes = [
   },
   {
     path: paths.INNOVATOR_PROFILE_PAGE,
-    element: <Profile />,
+    element: <ProfileInnovator />,
     exact: true,
   },
   {
@@ -82,8 +82,8 @@ const routes = [
     exact: true,
   },
   {
-    path: paths.ADD_VILLAGE,
-    element: <AddVillage />,
+    path: paths.VILLAGE_PROFILE_PAGE,
+    element: <ProfileVillage />,
     exact: true,
   },
 ];

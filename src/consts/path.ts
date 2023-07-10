@@ -12,5 +12,4 @@ export const paths = {
   DETAIL_VILLAGE_PAGE: "/village/detail",
   DETAIL_INNOVATOR_PAGE: "/innovator/detail/:id",
   ADD_INNOVATION: "/innovation/add",
-  ADD_VILLAGE: "/village/add",
 };

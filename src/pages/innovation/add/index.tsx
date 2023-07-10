@@ -2,110 +2,96 @@ import React from "react";
 import TopBar from "Components/topBar";
 import Container from "Components/container";
 import TextField from "Components/textField";
+import Dropdown from "Components/dropDown";
 import Button from "Components/button";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { Label } from "./_addVillage";
-import Dropdown from "Components/dropDown";
+import { Label } from "./_addStyle";
 import { useMutation, useQuery } from "react-query";
+import { addInnovation, getInnovation } from "Services/innovation";
 import { toast } from "react-toastify";
-import { addVillage, getVillages } from "Services/villages";
 import { paths } from "Consts/path";
-import { getProvinsi } from "Services/locationServices";
 
 const forms = [
   {
-    label: "Provinsi",
+    label: "Nama Inovasi",
     type: "text",
     name: "name",
-    options: ["Jawa Barat"],
-    placeholder: "Semua Provinsi",
   },
   {
-    label: "Kabupaten/Kota",
-    type: "text",
-    name: "city",
-    options: ["Bandung"],
-    placeholder: "Semua Kabupaten/Kota",
+    label: "Header Inovasi",
+    type: "url",
+    name: "background",
   },
   {
-    label: "Kecamatan",
-    type: "text",
-    name: "subdistrict",
-    options: ["Buah Batu"],
-    placeholder: "Semua Kecamatan",
-  },
-  {
-    label: "Desa/Kelurahan",
-    type: "text",
-    name: "village",
-    options: ["Bojong Soang"],
-    placeholder: "Semua Kelurahan",
-  },
-  {
-    label: "Nama Desa",
-    type: "text",
-    name: "nameVillage",
-    placeholder: "Nama Desa",
-  },
-  {
-    label: "Tentang Inovasi Desa",
-    type: "text",
-    name: "description",
-    placeholder: "Masukan deskripsi inovasi yang ada di desa",
-  },
-  {
-    label: "Logo Desa",
+    label: "Icon Inovator",
     type: "url",
     name: "logo",
-    placeholder: "Tambah Foto",
   },
   {
-    label: "Header Desa",
-    type: "url",
-    name: "header",
-    placeholder: "Tambah Foto",
+    label: "Kategori Inovasi",
+    type: "text",
+    name: "category",
+    options: [
+      "Pertanian Cerdas",
+      "Pemasaran Agri-Food dan E-Commerce",
+      "E-Government",
+      "Sistem Informasi",
+      "Layanan Keuangan",
+      "Pengembangan Masyarakat dan Ekonomi",
+      "Infrastruktur Lokal",
+      "Pengelolaan Sumber Daya",
+      "Layanan Sosial",
+      "E-Tourism",
+    ],
+    placeholder: "pilih kategori",
   },
-
   {
-    label: "Potensi Desa",
+    label: "Tahun dibuat inovasi",
+    type: "date",
+    name: "year",
+  },
+  {
+    label: "Deskripsi",
+    type: "text",
+    name: "description",
+    placeholder: "Deskripsi singkat produk",
+  },
+  {
+    label: "Keuntungan",
     type: "text",
     name: "benefit",
-    placeholder: "Masukkan potensi desa",
   },
   {
-    label: "Nomor WhatsApp",
-    type: "tel",
-    name: "whatsApp",
+    label: "Perlu disiapkan",
+    placeholder: "Contoh: memerlukan listrik",
+    type: "text",
+    name: "requirement",
   },
 ];
 
-function AddVillage() {
+function AddInnovation() {
   const navigate = useNavigate();
   const form = useForm();
   const { handleSubmit, reset } = form;
-  const { mutateAsync } = useMutation(addVillage);
-  const { data, isFetched } = useQuery<any>("getInnovator", getVillages);
+  const { mutateAsync } = useMutation(addInnovation);
+  const { data, isFetched } = useQuery<any>("getInnovations", getInnovation);
 
-  const onAddVillage = async (data: any) => {
+  const onAddInnovation = async (data: any) => {
     try {
       await mutateAsync(data);
-      toast("Desa berhasil ditambahkan", { type: "success" });
+      toast("Inovasi berhasil ditambahkan", { type: "success" });
       reset();
     } catch (error) {
       toast("Terjadi kesalahan jaringan", { type: "error" });
     }
-    navigate(paths.VILLAGE_PAGE);
+    navigate(paths.INNOVATION_CATEGORY_PAGE);
   };
-
-  if (isFetched) {
-    console.log(data);
-  }
 
   return (
     <Container page px={16}>
-      <TopBar title="Profil Desa" />
-      <form onSubmit={handleSubmit(onAddVillage)}>
+      <TopBar title="Tambahkan Inovasi" onBack={() => navigate(-1)} />
+      <form onSubmit={handleSubmit(onAddInnovation)}>
         {forms?.map(({ label, type, name, placeholder, options }, idx) => {
           if (!!options)
             return (
@@ -135,11 +121,11 @@ function AddVillage() {
         })}
 
         <Button size="m" fullWidth mt={12} type="submit">
-          Tambah Desa{" "}
+          Tambah Inovasi{" "}
         </Button>
       </form>
     </Container>
   );
 }
 
-export default AddVillage;
+export default AddInnovation;

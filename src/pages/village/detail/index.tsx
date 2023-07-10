@@ -14,7 +14,7 @@ import {
   Description,
   ContentContainer,
   ChipContainer,
-} from "./_detailVillage";
+} from "./_detailStyle";
 import Button from "Components/button";
 
 function DetailVillage() {

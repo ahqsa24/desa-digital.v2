@@ -34,7 +34,7 @@ function TopBar(props: TopBarProps) {
 
     const { role } = auth || {}
     if (role === 'innovator') navigate(paths.INNOVATOR_PROFILE_PAGE)
-    if (role === 'village') navigate('/desa-digital')
+    if (role === 'village') navigate(paths.VILLAGE_PROFILE_PAGE)
   }
 
   const onLogout = () => {

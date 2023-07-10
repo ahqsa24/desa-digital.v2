@@ -12,7 +12,6 @@ import HeaderCilimus from "Assets/images/cilimus header.jpg";
 import { useNavigate } from "react-router-dom";
 import { paths } from "Consts/path";
 import { useQuery } from "react-query";
-import { getVillages } from "Services/villages";
 
 const data = [
   {
@@ -47,7 +46,7 @@ const data = [
 
 function Village() {
   const navigate = useNavigate();
-  const { data, isFetched } = useQuery("villages", getVillages);
+  // const { data, isFetched } = useQuery("villages", getVillages);
   console.log(data);
 
   return (
@@ -55,13 +54,13 @@ function Village() {
       <Title></Title>
       <CardContainer>
         <Horizontal>
-          {data?.map((item: any, idx: number) => (
+          {/* {data?.map((item: any, idx: number) => (
             <CardVillage
               key={idx}
               {...item}
               onClick={() => navigate(paths.DETAIL_VILLAGE_PAGE)}
             />
-          ))}
+          ))} */}
         </Horizontal>
       </CardContainer>
     </Container>

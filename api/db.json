@@ -21,7 +21,17 @@
       "role": "village",
       "email": "desa@gmail.com",
       "password": "desa",
-      "id": 2
+      "id": 2,
+      "province": "31",
+      "district": "3172",
+      "subDistrict": "3172020",
+      "village": "",
+      "nameVillage": "",
+      "description": "",
+      "logo": "",
+      "header": "",
+      "benefit": "",
+      "whatsApp": ""
     }
   ],
   "innovations": [
