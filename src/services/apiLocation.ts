@@ -5,7 +5,7 @@ import axios, { AxiosError, AxiosResponse } from "axios";
  * Axios instance config
  */
 const api = axios.create({
-  baseURL: `https://farizdotid.com/`,
+  baseURL: BASE_LOCATION_URL,
   timeout: 10 * 1000, // 10 seconds
   headers: {
     "Content-Type": "application/json",
