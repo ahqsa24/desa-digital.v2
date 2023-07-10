@@ -14,7 +14,7 @@ function Menu() {
   const [menu, setMenu] = useState<any>([])
 
   const onClick = (category: string) => {
-    if (category === 'all') {
+    if (category === 'Semua') {
       navigate(paths.INNOVATION_PAGE)
       return
     }
@@ -37,8 +37,8 @@ function Menu() {
         {isLoading && <Loading />}
         {isFetched && (
           <GridContainer>
-            {menu?.map(({ icon, title, category }: any, idx: number) => (
-              <GridItem key={idx} onClick={() => onClick(category)}>
+            {menu?.map(({ icon, title }: any, idx: number) => (
+              <GridItem key={idx} onClick={() => onClick(title)}>
                 <img src={icon} alt={title} width={40} height={40} />
                 <Text>{title}</Text>
               </GridItem>

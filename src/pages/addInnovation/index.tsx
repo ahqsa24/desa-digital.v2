@@ -7,8 +7,8 @@ import Button from "Components/button";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { Label } from "./_addInnovation";
-import { useMutation } from "react-query";
-import { addInnovation } from "Services/innovation";
+import { useMutation, useQuery } from "react-query";
+import { addInnovation, getInnovation } from "Services/innovation";
 import { toast } from "react-toastify";
 import { paths } from "Consts/path";
 
@@ -17,6 +17,16 @@ const forms = [
     label: "Nama Inovasi",
     type: "text",
     name: "name",
+  },
+  {
+    label: "Header Inovasi",
+    type: "url",
+    name: "background",
+  },
+  {
+    label: "Icon Inovator",
+    type: "url",
+    name: "icon",
   },
   {
     label: "Kategori Inovasi",
@@ -64,8 +74,8 @@ function AddInnovation() {
   const navigate = useNavigate();
   const form = useForm();
   const { handleSubmit, reset } = form;
-
   const { mutateAsync } = useMutation(addInnovation);
+  const { data, isFetched } = useQuery<any>("getInnovations", getInnovation);
 
   const onAddInnovation = async (data: any) => {
     try {
@@ -75,6 +85,7 @@ function AddInnovation() {
     } catch (error) {
       toast("Terjadi kesalahan jaringan", { type: "error" });
     }
+    navigate(paths.INNOVATION_CATEGORY_PAGE);
   };
 
   return (

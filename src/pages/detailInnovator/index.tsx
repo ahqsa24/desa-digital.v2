@@ -58,8 +58,11 @@ function DetailInnovator() {
         title="Detail Inovator"
         onBack={() => navigate(paths.INOVATOR_PAGE)}
       />
-      <Img />
-      <Logo mx={16} my={-40} src={isFetched && data?.icon} alt={Logo} />
+      <div style={{ position: "relative" }}>
+        <Img />
+        <Logo mx={16} my={-40} src={isFetched && data?.icon} alt={Logo} />
+      </div>
+
       <ContentContainer>
         <Title> {isFetched && data?.namaInovator} </Title>
         <Description>

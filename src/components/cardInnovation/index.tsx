@@ -9,37 +9,39 @@ import {
   Company,
   CompanyContainer,
   Applied,
-} from './_cardInnovationStyle'
+} from "./_cardInnovationStyle";
 
 type CardInnovationProps = {
-  background: string
-  icon: string
-  title: string
-  category: string
-  description: string
-  companyName: string
-  appliedInnovation: number
-  onClick?: () => void
-}
+  background?: string;
+  icon?: string;
+  name?: string;
+  category?: string;
+  description?: string;
+  year?: string;
+  // companyName?: string
+  // appliedInnovation?: number
+  onClick?: () => void;
+};
 
 function CardInnovation(props: CardInnovationProps) {
-  const { background, icon, title, category, description, companyName, appliedInnovation, onClick } = props
-
+  const { background, icon, name, category, description, year, onClick } =
+    props;
+  console.log(background);
   return (
     <Container onClick={onClick}>
-      <Background src={background} alt={title} />
+      <Background src={background} alt={name} />
       <Content>
-        <Title>{title}</Title>
+        <Title>{name}</Title>
         <Category>{category}</Category>
         <Description>{description}</Description>
         <CompanyContainer>
-          <Icon src={icon} alt={title} />
-          <Company>{companyName}</Company>
+          <Icon src={icon} alt={name} />
+          <Company></Company>
         </CompanyContainer>
-        <Applied>Diterapkan di {appliedInnovation} desa</Applied>
+        <Applied>{year}</Applied>
       </Content>
     </Container>
-  )
+  );
 }
 
-export default CardInnovation
+export default CardInnovation;

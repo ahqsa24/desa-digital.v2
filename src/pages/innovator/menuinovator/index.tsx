@@ -15,44 +15,6 @@ import { paths } from "Consts/path";
 import { useQuery } from "react-query";
 import { getInnovator } from "Services/innovator";
 
-const data = [
-  {
-    background: `https://asset.kompas.com/crops/xKbxkCjPBXzFRTmqLYwG8ps65nI=/0x0:0x0/750x500/data/photo/2021/11/05/61842538b5611.jpg`,
-    icon: EFishery,
-    title: "eFishery",
-    totalVillage: 3,
-    totalInnovation: 2,
-  },
-  {
-    background: AlIttifaqHero,
-    icon: AlIttifaq,
-    title: "Kopotren Al-Ittifaq",
-    totalVillage: 3,
-    totalInnovation: 2,
-  },
-  {
-    background: ArunaHero,
-    icon: Aruna,
-    title: "Aruna",
-    totalVillage: 1,
-    totalInnovation: 1,
-  },
-
-  {
-    background: HabibiGardenHero,
-    icon: Habibi,
-    title: "Habibi Garden",
-    totalVillage: 3,
-    totalInnovation: 2,
-  },
-  {
-    background: InagriHero,
-    icon: Inagri,
-    title: "Inagri",
-    totalVillage: 3,
-    totalInnovation: 2,
-  },
-];
 
 function MenuInovator() {
   const navigate = useNavigate();

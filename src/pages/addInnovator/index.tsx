@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 import { paths } from "Consts/path";
 import { addInnovator, getInnovator } from "Services/innovator";
 import Dropdown from "Components/dropDown";
+
 const forms = [
   {
     label: "Nama Inovator",
@@ -154,7 +155,7 @@ function AddInnovator() {
           })}
 
           <Button size="m" fullWidth mt={12} type="submit">
-            Tambah Innovator{" "}
+            Simpan
           </Button>
         </form>
       </div>

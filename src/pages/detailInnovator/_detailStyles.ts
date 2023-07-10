@@ -25,18 +25,20 @@ export const Img = styled.div`
 `;
 
 export const Logo = styled.img`
-  position: absolute;
   width: 80px;
   height: 80px;
   ${marginStyle}
-  gap: 8px;
+
+  border-radius: 50%;
+  object-fit: cover;
+  position: absolute;
 `;
 
 export const Title = styled.p`
   font-size: 18px;
   font-weight: 700;
   margin-top: 30px;
-`
+`;
 export const TagContainer = styled.div`
   display: flex;
   flex-direction: row;
@@ -81,14 +83,13 @@ export const ActionContainer = styled.div`
   box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.06), 0px 1px 3px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   cursor: pointer;
-`
+`;
 
 export const DetailContainer = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px,
-  ${marginStyle}
-  `;
+  gap: 16px, ${marginStyle};
+`;
 
 export const Icon = styled.img`
   cursor: pointer;
