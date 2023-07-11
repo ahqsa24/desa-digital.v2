@@ -3,7 +3,6 @@ import TopBar from "Components/topBar";
 import Container from "Components/container";
 import TextField from "Components/textField";
 import Button from "Components/button";
-import Dropdown from "Components/dropDown";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { Label, FormContainer } from "./_innovatorStyles";
@@ -17,24 +16,6 @@ const forms = [
     label: "Nama Inovator",
     type: "text",
     name: "innovatorName",
-  },
-  {
-    label: "Kategori Inovator",
-    type: "text",
-    name: "category",
-    placeholder: "Pilih kategori",
-    options: [
-      "Pertanian Cerdas",
-      "Pemasaran Agri-Food dan E-Commerce",
-      "E-Government",
-      "Sistem Informasi",
-      "Layanan Keuangan",
-      "Pengembangan Masyarakat dan Ekonomi",
-      "Infrastruktur Lokal",
-      "Pengelolaan Sumber Daya",
-      "Layanan Sosial",
-      "E-Tourism",
-    ],
   },
   {
     label: "Target Pengguna",
@@ -130,33 +111,18 @@ function Profile() {
       <TopBar title="Profil Inovator" onBack={() => navigate(-1)} />
       <FormContainer>
         <form onSubmit={handleSubmit(onProfileSave)}>
-          {forms?.map(({ label, type, name, placeholder, options }, idx) => {
-            if (!!options)
-              return (
-                <React.Fragment key={idx}>
-                  <Label mt={12}>{label} </Label>
-                  <Dropdown
-                    options={options}
-                    form={form}
-                    name={name}
-                    placeholder={placeholder}
-                  />
-                </React.Fragment>
-              );
-
-            return (
-              <React.Fragment key={idx}>
-                <Label mt={12}>{label} </Label>
-                <TextField
-                  mt={4}
-                  placeholder={placeholder || label}
-                  type={type}
-                  name={name}
-                  form={form}
-                />
-              </React.Fragment>
-            );
-          })}
+          {forms?.map(({ label, type, name, placeholder }, idx) => (
+            <React.Fragment key={idx}>
+              <Label mt={12}>{label} </Label>
+              <TextField
+                mt={4}
+                placeholder={placeholder || label}
+                type={type}
+                name={name}
+                form={form}
+              />
+            </React.Fragment>
+          ))}
 
           <Button size="m" fullWidth mt={12} type="submit">
             Simpan

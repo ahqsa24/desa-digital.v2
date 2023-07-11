@@ -32,6 +32,23 @@
       "header": "",
       "benefit": "",
       "whatsApp": ""
+    },
+    {
+      "role": "innovator",
+      "email": "innovator@gmail.com",
+      "password": "innovator",
+      "id": 3,
+      "innovatorName": "MCD",
+      "category": "Pengembangan Masyarakat dan Ekonomi",
+      "targetUser": "Mahasiswa",
+      "product": "Mcspicy",
+      "modelBusiness": "Food n beverage",
+      "description": "Serah lu deh ",
+      "logo": "https://asset.kompas.com/crops/xKbxkCjPBXzFRTmqLYwG8ps65nI=/0x0:0x0/750x500/data/photo/2021/11/05/61842538b5611.jpg",
+      "background": "https://asset.kompas.com/crops/xKbxkCjPBXzFRTmqLYwG8ps65nI=/0x0:0x0/750x500/data/photo/2021/11/05/61842538b5611.jpg",
+      "whatsApp": "08123123123",
+      "instagram": "https://asset.kompas.com/crops/xKbxkCjPBXzFRTmqLYwG8ps65nI=/0x0:0x0/750x500/data/photo/2021/11/05/61842538b5611.jpg",
+      "website": "https://asset.kompas.com/crops/xKbxkCjPBXzFRTmqLYwG8ps65nI=/0x0:0x0/750x500/data/photo/2021/11/05/61842538b5611.jpg"
     }
   ],
   "innovations": [
