@@ -5,12 +5,13 @@ import TextField from "Components/textField";
 import Dropdown from "Components/dropDown";
 import Button from "Components/button";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { generatePath, useNavigate } from "react-router-dom";
 import { Label } from "./_addStyle";
-import { useMutation, useQuery } from "react-query";
-import { addInnovation, getInnovation } from "Services/innovation";
+import { useMutation } from "react-query";
+import { addInnovation } from "Services/innovationServices";
 import { toast } from "react-toastify";
 import { paths } from "Consts/path";
+import useAuthLS from "Hooks/useAuthLS";
 
 const forms = [
   {
@@ -22,16 +23,19 @@ const forms = [
     label: "Header Inovasi",
     type: "url",
     name: "background",
+    placeholder: "https://",
   },
   {
-    label: "Icon Inovator",
+    label: "Icon Innovator",
     type: "url",
     name: "logo",
+    placeholder: "https://",
   },
   {
     label: "Kategori Inovasi",
     type: "text",
     name: "category",
+    placeholder: "Pilih kategori",
     options: [
       "Pertanian Cerdas",
       "Pemasaran Agri-Food dan E-Commerce",
@@ -44,12 +48,11 @@ const forms = [
       "Layanan Sosial",
       "E-Tourism",
     ],
-    placeholder: "pilih kategori",
   },
   {
-    label: "Tahun dibuat inovasi",
+    label: "Tanggal dibuat inovasi",
     type: "date",
-    name: "year",
+    name: "date",
   },
   {
     label: "Deskripsi",
@@ -74,18 +77,27 @@ function AddInnovation() {
   const navigate = useNavigate();
   const form = useForm();
   const { handleSubmit, reset } = form;
+
   const { mutateAsync } = useMutation(addInnovation);
-  const { data, isFetched } = useQuery<any>("getInnovations", getInnovation);
+  const { auth } = useAuthLS();
 
   const onAddInnovation = async (data: any) => {
     try {
-      await mutateAsync(data);
+      const payload = {
+        ...data,
+        innovatorId: auth?.id,
+      };
+      await mutateAsync(payload);
       toast("Inovasi berhasil ditambahkan", { type: "success" });
+      navigate(
+        generatePath(paths.INNOVATION_CATEGORY_PAGE, {
+          category: data?.category,
+        })
+      );
       reset();
     } catch (error) {
       toast("Terjadi kesalahan jaringan", { type: "error" });
     }
-    navigate(paths.INNOVATION_CATEGORY_PAGE);
   };
 
   return (

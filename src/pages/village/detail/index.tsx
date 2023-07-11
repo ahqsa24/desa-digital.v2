@@ -3,6 +3,7 @@ import Soge from "Assets/images/soge-logo.png";
 import Location from "Assets/icons/location.svg";
 import Container from "Components/container";
 import { useNavigate } from "react-router";
+import Button from "Components/button";
 import {
   Img,
   Title,
@@ -15,7 +16,6 @@ import {
   ContentContainer,
   ChipContainer,
 } from "./_detailStyle";
-import Button from "Components/button";
 
 function DetailVillage() {
   const navigate = useNavigate();
@@ -24,7 +24,7 @@ function DetailVillage() {
     <Container page>
       <TopBar title="Profil Desa" onBack={() => navigate(-1)} />
       <Img />
-      <Logo mb={16} my={-40} src={Soge} alt={Logo} />
+      <Logo mb={16} my={-40} src={Soge} alt="logo" />
       <ContentContainer>
         <Title> Desa Soge </Title>
         <ActionContainer>
@@ -63,8 +63,8 @@ function DetailVillage() {
         </ChipContainer>
       </ContentContainer>
       <Button size="m" fullWidth mt={12} type="submit">
-          Kontak Desa
-        </Button>{" "}
+        Kontak Desa
+      </Button>{" "}
     </Container>
   );
 }

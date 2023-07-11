@@ -5,7 +5,7 @@
       "email": "demo@gmail.com",
       "password": "demo",
       "id": 1,
-      "inovatorName": "Potoe",
+      "innovatorName": "Potoe",
       "category": "Pemasaran Agri-Food dan E-Commerce",
       "targetUser": "Nelayan",
       "product": "Efeeder",
@@ -38,7 +38,7 @@
     {
       "name": "Tes",
       "category": "Pemasaran Agri-Food dan E-Commerce",
-      "year": "2023-06-13",
+      "date": "2023-06-13",
       "description": "Tes",
       "benefit": "tes",
       "requirement": "Tes",
@@ -49,66 +49,15 @@
       "innovatorId": 1
     },
     {
-      "name": "",
+      "name": "Ini Inovasi Baru Gan",
       "background": "https://asset.kompas.com/crops/xKbxkCjPBXzFRTmqLYwG8ps65nI=/0x0:0x0/750x500/data/photo/2021/11/05/61842538b5611.jpg",
-      "category": "",
-      "year": "",
-      "description": "",
-      "benefit": "",
-      "requirement": "",
-      "id": 3
-    },
-    {
-      "name": "Efeeder",
-      "background": "https://asset.kompas.com/crops/xKbxkCjPBXzFRTmqLYwG8ps65nI=/0x0:0x0/750x500/data/photo/2021/11/05/61842538b5611.jpg",
+      "logo": "https://asset.kompas.com/crops/xKbxkCjPBXzFRTmqLYwG8ps65nI=/0x0:0x0/750x500/data/photo/2021/11/05/61842538b5611.jpg",
       "category": "Pertanian Cerdas",
-      "year": "",
-      "description": "",
-      "benefit": "",
-      "requirement": "",
-      "id": 4
-    }
-  ],
-  "innovator": [
-    {
-      "namaInovator": "Efishery",
-      "kategoriInovator": "Pertanian Cerdas",
-      "targetPengguna": "Nelayan Budidaya",
-      "produk": "Efeeder",
-      "modelBisnis": "Nelayan",
-      "nomorWhatsApp": "08111111",
-      "linkInstagram": "https://instagram.com",
-      "linkWebsite": "https://efishery.com",
-      "background": "https://asset.kompas.com/crops/xKbxkCjPBXzFRTmqLYwG8ps65nI=/0x0:0x0/750x500/data/photo/2021/11/05/61842538b5611.jpg",
-      "icon": "https://asset.kompas.com/crops/xKbxkCjPBXzFRTmqLYwG8ps65nI=/0x0:0x0/750x500/data/photo/2021/11/05/61842538b5611.jpg",
-      "id": 1
-    },
-    {
-      "namaInovator": "",
-      "kategoriInovator": "",
-      "targetPengguna": "",
-      "produk": "",
-      "modelBisnis": "",
-      "deskripsi": "",
-      "logo": "",
-      "background": "",
-      "nomorWhatsApp": "",
-      "linkInstagram": "",
-      "linkWebsite": "",
-      "id": 2
-    },
-    {
-      "namaInovator": "",
-      "kategoriInovator": "",
-      "targetPengguna": "",
-      "produk": "",
-      "modelBisnis": "",
-      "deskripsi": "",
-      "logo": "",
-      "header": "",
-      "nomorWhatsApp": "",
-      "linkInstagram": "",
-      "linkWebsite": "",
+      "date": "2023-07-11",
+      "description": "Lorem ipsum dolor sit amet consertum ",
+      "benefit": "Paling menguntunkan lah intinye",
+      "requirement": "Listrik",
+      "innovatorId": 1,
       "id": 3
     }
   ],

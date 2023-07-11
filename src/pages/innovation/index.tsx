@@ -5,41 +5,37 @@ import Container from "Components/container";
 import CardCategory from "Components/card/category";
 import { useNavigate, useParams, generatePath } from "react-router-dom";
 import CardInnovation from "Components/card/innovation";
+import { useQuery } from "react-query";
+import { getCategories } from "Services/categoryServices";
+import Loading from "Components/loading";
+import { getInnovation } from "Services/innovationServices";
 import {
   Container as CategoryContainer,
   DetailContainer,
-} from "./_categoryStyle";
-import { useQuery } from "react-query";
-import { getCategories } from "Services/category";
-import Loading from "Components/loading";
-import { getInnovation } from "Services/innovation";
+} from "./_innovationStyle";
 
 function Detail() {
   const navigate = useNavigate();
-
   const { category } = useParams();
-  const { data, isFetched } = useQuery("categories", getInnovation);
 
-  const [innovationByCategory, setInnovationByCategory] = useState([]);
-
-  console.log(innovationByCategory);
-  console.log(category);
-  useEffect(() => {
-    if (isFetched) {
-      const temp = data?.filter((item: any) => item.category === category);
-      setInnovationByCategory(temp);
-    }
-  }, [isFetched]);
+  const { data } = useQuery("innovationByCategory", getInnovation);
+  const innovationByCategory = data?.filter(
+    (item: any) => item.category === category
+  );
 
   if (innovationByCategory?.length === 0) return <p>Inovasi tidak ditemukan</p>;
 
   return (
     <DetailContainer>
-      {innovationByCategory?.map((item: any, idx) => (
+      {innovationByCategory?.map((item: any, idx: number) => (
         <CardInnovation
           key={idx}
           {...item}
-          onClick={() => navigate(paths.DETAIL_INNOVATION_PAGE)}
+          onClick={() =>
+            navigate(
+              generatePath(paths.DETAIL_INNOVATION_PAGE, { id: item?.id })
+            )
+          }
         />
       ))}
     </DetailContainer>
@@ -87,11 +83,13 @@ function List(props: ListProps) {
   );
 }
 
-function Category() {
+function Innovation() {
   const navigate = useNavigate();
   const { category } = useParams();
 
-  const { data, isFetched, isLoading } = useQuery("category", getCategories);
+  const { data, isFetched, isLoading } = useQuery("category", getCategories, {
+    enabled: !!category,
+  });
   const title = isFetched
     ? data?.find((item: any) => item.title === category)?.title
     : "Kategori Inovasi";
@@ -113,4 +111,4 @@ function Category() {
   );
 }
 
-export default Category;
+export default Innovation;

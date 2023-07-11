@@ -16,7 +16,7 @@ const forms = [
   {
     label: "Nama Inovator",
     type: "text",
-    name: "inovatorName",
+    name: "innovatorName",
   },
   {
     label: "Kategori Inovator",

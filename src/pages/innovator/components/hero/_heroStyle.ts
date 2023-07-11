@@ -1,8 +1,8 @@
 import styled from 'styled-components'
-import HeaderInovator from 'Assets/images/header-inovator.jpg'
+import HeaderInnovator from 'Assets/images/header-innovator.jpg'
 
 export const Background = styled.div`
-  background-image: url(${HeaderInovator});
+  background-image: url(${HeaderInnovator});
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

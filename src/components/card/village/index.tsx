@@ -39,7 +39,7 @@ function CardVillage(props: CardVillageProps) {
 
   return (
     <Container onClick={onClick}>
-      <Background src={header} alt={header} />
+      <Background src={header} alt='background' />
       <CardContent>
         <Logo src={logo} alt={logo} />
         <Title>{nameVillage}</Title>

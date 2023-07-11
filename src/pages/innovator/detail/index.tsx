@@ -1,6 +1,5 @@
 import React from "react";
 import TopBar from "Components/topBar";
-import Dot from "Assets/icons/dot.svg";
 import Button from "Components/button";
 import { useNavigate, useParams } from "react-router-dom";
 import Container from "Components/container";
@@ -11,7 +10,6 @@ import {
   Background,
   Title,
   ActionContainer,
-  Icon,
   Text,
   Logo,
   Description,
@@ -27,9 +25,8 @@ function Detail() {
   const { data, isLoading } = useQuery<any>("innovatorById", () =>
     getUserById(id)
   );
-  const { background, logo, inovatorName } = data || {};
-  const { product, category, description, modelBusiness, targetUser } =
-    data || {};
+  const { background, logo, innovatorName } = data || {};
+  const { product, description, modelBusiness, targetUser } = data || {};
 
   const grid = [
     {
@@ -54,17 +51,14 @@ function Detail() {
 
   return (
     <Container page>
-      <TopBar
-        title="Detail Inovator"
-        onBack={() => navigate(paths.INOVATOR_PAGE)}
-      />
+      <TopBar title="Detail Inovator" onBack={() => navigate(-1)} />
       <div style={{ position: "relative" }}>
         <Background src={background} alt="background" />
         <Logo mx={16} my={-40} src={logo} alt="logo" />
       </div>
 
       <ContentContainer>
-        <Title> {inovatorName} </Title>
+        <Title> {innovatorName} </Title>
         <div>
           <Text>Tentang</Text>
           <GridContainer>

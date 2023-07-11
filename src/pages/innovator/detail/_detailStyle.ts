@@ -56,6 +56,7 @@ export const Description = styled.p`
   text-align: justify;
   ${marginStyle}
 `;
+
 export const ActionContainer = styled.div`
   box-sizing: border-box;
   display: flex;
@@ -68,16 +69,6 @@ export const ActionContainer = styled.div`
   cursor: pointer;
 `;
 
-export const Icon = styled.img`
-  cursor: pointer;
-  position: flex;
-  justify-content: space-between;
-  height: 8px;
-  width: 10px;
-  border-radius: 0px;
-  ${marginStyle}
-`;
-
 export const Text = styled.p`
   position: flex;
   justify-content: space-between;
@@ -87,9 +78,7 @@ export const Text = styled.p`
   ${marginStyle}
 `;
 
-
 export const GridContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-`
-
+`;
