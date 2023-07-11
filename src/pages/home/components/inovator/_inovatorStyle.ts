@@ -6,7 +6,7 @@ export const CardContainer = styled.div`
   white-space: nowrap;
 `
 
-export const Vertical = styled.div`
+export const Horizontal = styled.div`
   display: flex;
   gap: 16px;
 `

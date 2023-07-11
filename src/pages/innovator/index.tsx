@@ -1,6 +1,6 @@
 import TopBar from "Components/topBar";
 import Hero from "./components/hero";
-import CardInovator from "Components/cardInovator";
+import CardInovator from "Components/card/inovator";
 import Container from "Components/container";
 import { useQuery } from "react-query";
 import { getUsers } from "Services/userServices";

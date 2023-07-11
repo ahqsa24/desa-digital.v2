@@ -2,21 +2,13 @@ import React, { useEffect, useState } from "react";
 import { paths } from "Consts/path";
 import TopBar from "Components/topBar";
 import Container from "Components/container";
-import CardCategory from "Components/cardCategory";
+import CardCategory from "Components/card/category";
 import { useNavigate, useParams, generatePath } from "react-router-dom";
-import CardInnovation from "Components/cardInnovation";
+import CardInnovation from "Components/card/innovation";
 import {
   Container as CategoryContainer,
   DetailContainer,
 } from "./_categoryStyle";
-import Encomotion from "Assets/images/encomotion.jpg";
-import SmartGreenHouse from "Assets/images/smart-green-house.jpg";
-import Efeeder from "Assets/images/efishery.jpg";
-import EFishery from "Assets/images/efishery-logo.jpg";
-import Biops from "Assets/images/biops-logo.jpg";
-import Alittifaq from "Assets/images/alittifaq-logo.jpg";
-import Jala from "Assets/images/jala.jpg";
-import Fishgo from "Assets/images/fishgo.jpg";
 import { useQuery } from "react-query";
 import { getCategories } from "Services/category";
 import Loading from "Components/loading";

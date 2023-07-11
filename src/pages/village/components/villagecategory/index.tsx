@@ -1,5 +1,5 @@
 import Container from "Components/container";
-import CardVillage from "Components/cardVillage";
+import CardVillage from "Components/card/village";
 import { CardContainer, Title, Horizontal } from "./_villageStyle";
 import LogoCilimus from "Assets/images/logo-desacilimus.jpg";
 import LogoAlamendah from "Assets/images/logo-desaalamendah.jpg";
@@ -10,8 +10,6 @@ import Encomotion from "Assets/images/encomotion.jpg";
 import HeaderAlamendah from "Assets/images/alamendah-header.jpg";
 import HeaderCilimus from "Assets/images/cilimus header.jpg";
 import { useNavigate } from "react-router-dom";
-import { paths } from "Consts/path";
-import { useQuery } from "react-query";
 
 const data = [
   {
@@ -47,7 +45,6 @@ const data = [
 function Village() {
   const navigate = useNavigate();
   // const { data, isFetched } = useQuery("villages", getVillages);
-  console.log(data);
 
   return (
     <Container>
