@@ -87,9 +87,7 @@ function Innovation() {
   const navigate = useNavigate();
   const { category } = useParams();
 
-  const { data, isFetched, isLoading } = useQuery("category", getCategories, {
-    enabled: !!category,
-  });
+  const { data, isFetched, isLoading } = useQuery("category", getCategories);
   const title = isFetched
     ? data?.find((item: any) => item.title === category)?.title
     : "Kategori Inovasi";

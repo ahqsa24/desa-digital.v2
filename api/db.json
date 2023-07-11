@@ -26,29 +26,12 @@
       "district": "3172",
       "subDistrict": "3172020",
       "village": "",
-      "nameVillage": "",
-      "description": "",
-      "logo": "",
-      "header": "",
-      "benefit": "",
-      "whatsApp": ""
-    },
-    {
-      "role": "innovator",
-      "email": "innovator@gmail.com",
-      "password": "innovator",
-      "id": 3,
-      "innovatorName": "MCD",
-      "category": "Pengembangan Masyarakat dan Ekonomi",
-      "targetUser": "Mahasiswa",
-      "product": "Mcspicy",
-      "modelBusiness": "Food n beverage",
-      "description": "Serah lu deh ",
+      "nameVillage": "C3 Fitria Nuryantika",
+      "description": "jjejawkjeeajkw",
       "logo": "https://asset.kompas.com/crops/xKbxkCjPBXzFRTmqLYwG8ps65nI=/0x0:0x0/750x500/data/photo/2021/11/05/61842538b5611.jpg",
-      "background": "https://asset.kompas.com/crops/xKbxkCjPBXzFRTmqLYwG8ps65nI=/0x0:0x0/750x500/data/photo/2021/11/05/61842538b5611.jpg",
-      "whatsApp": "08123123123",
-      "instagram": "https://asset.kompas.com/crops/xKbxkCjPBXzFRTmqLYwG8ps65nI=/0x0:0x0/750x500/data/photo/2021/11/05/61842538b5611.jpg",
-      "website": "https://asset.kompas.com/crops/xKbxkCjPBXzFRTmqLYwG8ps65nI=/0x0:0x0/750x500/data/photo/2021/11/05/61842538b5611.jpg"
+      "header": "https://asset.kompas.com/crops/xKbxkCjPBXzFRTmqLYwG8ps65nI=/0x0:0x0/750x500/data/photo/2021/11/05/61842538b5611.jpg",
+      "benefit": "besar",
+      "whatsApp": "0912019219318392"
     }
   ],
   "innovations": [
@@ -64,18 +47,6 @@
       "website": "https://google.com",
       "id": 2,
       "innovatorId": 1
-    },
-    {
-      "name": "Ini Inovasi Baru Gan",
-      "background": "https://asset.kompas.com/crops/xKbxkCjPBXzFRTmqLYwG8ps65nI=/0x0:0x0/750x500/data/photo/2021/11/05/61842538b5611.jpg",
-      "logo": "https://asset.kompas.com/crops/xKbxkCjPBXzFRTmqLYwG8ps65nI=/0x0:0x0/750x500/data/photo/2021/11/05/61842538b5611.jpg",
-      "category": "Pertanian Cerdas",
-      "date": "2023-07-11",
-      "description": "Lorem ipsum dolor sit amet consertum ",
-      "benefit": "Paling menguntunkan lah intinye",
-      "requirement": "Listrik",
-      "innovatorId": 1,
-      "id": 3
     }
   ],
   "villages": [
