@@ -90,7 +90,7 @@ function AddVillage() {
       name: "district",
       placeholder: "Pilih kabupaten/kota",
       defaultValue: data?.district,
-      isDisabled: !!data?.district, 
+      isDisabled: !!data?.district,
       options:
         kabupaten?.kota_kabupaten?.map((item: any) => ({
           id: item?.id,
@@ -133,10 +133,10 @@ function AddVillage() {
       placeholder: "Nama desa",
     },
     {
-      label: "Tentang Inovasi Desa",
+      label: "Tentang Desa",
       type: "text",
       name: "description",
-      placeholder: "Masukan deskripsi inovasi yang ada di desa",
+      placeholder: "Masukan deskripsi desa",
     },
     {
       label: "Logo Desa",
