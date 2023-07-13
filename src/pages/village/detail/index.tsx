@@ -1,11 +1,10 @@
+import React from "react";
 import TopBar from "Components/topBar";
-import Soge from "Assets/images/soge-logo.png";
-import Location from "Assets/icons/location.svg";
 import Container from "Components/container";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import Button from "Components/button";
+import Location from "Assets/icons/location.svg";
 import {
-  Img,
   Title,
   ActionContainer,
   Icon,
@@ -15,54 +14,59 @@ import {
   Description,
   ContentContainer,
   ChipContainer,
+  Background,
 } from "./_detailStyle";
-
+import { paths } from "Consts/path";
+import { getUserById } from "Services/userServices";
+import { useQuery } from "react-query";
 function DetailVillage() {
   const navigate = useNavigate();
+  const { id } = useParams();
+
+  const { data, isLoading } = useQuery<any>("villageById", () =>
+    getUserById(id)
+  );
+  const {
+    header,
+    logo,
+    nameVillage,
+    province,
+    district,
+    description,
+    benefit,
+    whatsApp,
+  } = data || {};
+  const onClickHere = () => {
+    window.open(`https://wa.me/+${whatsApp}`, "_blank");
+  };
+  console.log(data);
+
+  if (isLoading) return <p>Sedang memuat data...</p>;
 
   return (
-    <Container page>
-      <TopBar title="Profil Desa" onBack={() => navigate(-1)} />
-      <Img />
-      <Logo mb={16} my={-40} src={Soge} alt="logo" />
+    <Container>
+      <div style={{ position: "relative" }}>
+        <Background src={header} alt="background" />
+        <Logo mx={16} my={-40} src={logo} alt="logo" />
+      </div>
       <ContentContainer>
-        <Title> Desa Soge </Title>
+        <Title> {nameVillage} </Title>
         <ActionContainer>
-          {" "}
           <Description>
-            {" "}
             <Icon src={Location} alt="loc" />
-            Kecamatan Kandanghaur, Kabupaten Indramayu, <br></br>Jawa Barat
+            {district}
           </Description>
-        </ActionContainer>{" "}
+        </ActionContainer>
         <div>
           <Text mb={16}>Tentang</Text>
-          <Description>
-            Sebuah perusahaan swasta mengembangkan pengumpan ikan otomatis
-            menggunakan teknologi Internet-of-thing (IoT). Perangkat ini
-            menawarkan pemberian pakan otomatis ikan tangkapan secara berkala
-            menggunakan smartphone yang disinkronkan dengan pengumpan otomatis.
-            Bekerja sama dengan Pemerintah Provinsi Jawa Barat, perusahaan
-            menyediakan teknologi digital tersebut kepada produsen ikan lele di
-            desa Soge, Krimun, dan Puntang di Indonesia, yang menghasilkan
-            manfaat nyata berupa peningkatan rasio konversi pakan, penghematan
-            tenaga kerja, dan pendapatan yang lebih tinggi. Teknologi tersebut
-            juga dilengkapi dengan pinjaman modal usaha (pakan, benih) dan
-            sarana produksi budidaya lainnya, ditambah e-marketing dan
-            business-to-business (B2B) Commerce. Inovasi tersebut sangat
-            berhasil, ditunjukkan dengan meningkatnya adopsi di desa-desa di
-            Indramayu. Di beberapa tambak ikan, jumlah tambak yang dilengkapi
-            dengan auto-feeder meningkat dari 2 tambak ikan pada tahun 2019
-            menjadi lebih dari 40 tambak pada tahun 2022.
-          </Description>
+          <Description>{description}</Description>
         </div>
         <Text>Potensi Desa</Text>
         <ChipContainer>
-          <Label>Pertanian Cerdas</Label>
-          <Label>Perikanan Budidaya</Label>
+          <Label>{benefit}</Label>
         </ChipContainer>
       </ContentContainer>
-      <Button size="m" fullWidth mt={12} type="submit">
+      <Button size="m" fullWidth mt={12} type="submit" onClick={onClickHere}>
         Kontak Desa
       </Button>{" "}
     </Container>

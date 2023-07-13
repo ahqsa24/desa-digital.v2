@@ -17,7 +17,6 @@ import {
 } from "./_detailStyle";
 import { paths } from "Consts/path";
 import { getUserById } from "Services/userServices";
-
 function Detail() {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -26,7 +25,8 @@ function Detail() {
     getUserById(id)
   );
   const { background, logo, innovatorName } = data || {};
-  const { product, description, modelBusiness, targetUser } = data || {};
+  const { product, description, modelBusiness, targetUser, instagram } =
+    data || {};
 
   const grid = [
     {
@@ -44,7 +44,7 @@ function Detail() {
   ];
 
   const onClickHere = () => {
-    window.open("https://www.instagram.com/efishery/", "_blank");
+    window.open(instagram, "_blank");
   };
 
   if (isLoading) return <p>Sedang memuat data...</p>;
@@ -75,7 +75,7 @@ function Detail() {
           </GridContainer>
           <Description>{description}</Description>
         </div>
-        <Text>Produk Inovasi</Text>
+        {/* <Text>Produk Inovasi</Text> */}
         {/* <DetailContainer>
           {" "}
           {isFetched &&
@@ -87,10 +87,10 @@ function Detail() {
               />
             ))}
         </DetailContainer> */}
-        <Text>Desa Dampingan</Text>
-        <ActionContainer onClick={() => navigate(paths.DETAIL_VILLAGE_PAGE)}>
+        {/* <Text>Desa Dampingan</Text> */}
+        {/* <ActionContainer onClick={() => navigate(paths.DETAIL_VILLAGE_PAGE)}>
           <Text>Desa Soge</Text>
-        </ActionContainer>
+        </ActionContainer> */}
         <Button size="m" fullWidth mt={12} type="submit" onClick={onClickHere}>
           Kontak Inovator
         </Button>{" "}

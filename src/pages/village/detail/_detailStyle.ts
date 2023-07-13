@@ -10,17 +10,10 @@ export const ContentContainer = styled.div`
   margin-top: 16px;
 `;
 
-export const Img = styled.div`
-  background-image: url(${EFishery});
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  width: 360px;
-  height: 100px;
-`;
 export const Title = styled.p`
   font-size: 18px;
   font-weight: 700;
+  margin-top: 40px;
 `;
 export const TagContainer = styled.div`
   display: flex;
@@ -88,11 +81,23 @@ export const Text = styled.p`
   ${marginStyle}
 `;
 
-export const Logo = styled.img`
-  height: 80px;
-  width: 80px;
-  ${marginStyle}
+export const Background = styled.img`
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
 `;
+
+export const Logo = styled.img`
+  width: 80px;
+  height: 80px;
+  ${marginStyle}
+  border-radius: 50%;
+  object-fit: cover;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+`;
+
 export const ChipContainer = styled.div`
   display: flex;
   gap: 8px;

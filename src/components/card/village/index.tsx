@@ -8,8 +8,8 @@ import {
 } from "./_cardVillageStyle";
 
 type CardVillageProps = {
-  name?: string;
-  city?: string;
+  province?: string;
+  district?: string;
   subdistrict?: string;
   village?: string;
   description?: string;
@@ -24,8 +24,8 @@ type CardVillageProps = {
 
 function CardVillage(props: CardVillageProps) {
   const {
-    name,
-    city,
+    province,
+    district,
     subdistrict,
     village,
     description,
@@ -43,10 +43,9 @@ function CardVillage(props: CardVillageProps) {
       <CardContent>
         <Logo src={logo} alt={logo} />
         <Title>{nameVillage}</Title>
-        <Description>Inovasi</Description>
+        <Description>10 Inovasi diterapkan</Description>
         <Description>
-          {city},{subdistrict}
-        </Description>
+        {province} </Description>
       </CardContent>
     </Container>
   );

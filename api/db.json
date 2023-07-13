@@ -14,7 +14,7 @@
       "logo": "https://asset.kompas.com/crops/xKbxkCjPBXzFRTmqLYwG8ps65nI=/0x0:0x0/750x500/data/photo/2021/11/05/61842538b5611.jpg",
       "background": "https://asset.kompas.com/crops/xKbxkCjPBXzFRTmqLYwG8ps65nI=/0x0:0x0/750x500/data/photo/2021/11/05/61842538b5611.jpg",
       "whatsApp": "1221",
-      "instagram": "https://github.com/fitrianurynt/innovillage/assets/79956203/972f88e5-98de-4da1-ad1a-ec84d324979a",
+      "instagram": "https://www.instagram.com/fitrianurynt/",
       "website": "https://github.com/fitrianurynt/innovillage/assets/79956203/972f88e5-98de-4da1-ad1a-ec84d324979a"
     },
     {
@@ -23,47 +23,18 @@
       "password": "desa",
       "id": 2,
       "province": "31",
-      "district": "3172",
-      "subDistrict": "3172020",
+      "district": "1301",
+      "subDistrict": "1303040",
       "village": "",
-      "nameVillage": "C3 Fitria Nuryantika",
-      "description": "jjejawkjeeajkw",
-      "logo": "https://asset.kompas.com/crops/xKbxkCjPBXzFRTmqLYwG8ps65nI=/0x0:0x0/750x500/data/photo/2021/11/05/61842538b5611.jpg",
+      "nameVillage": "Desa Soge",
+      "description": "lorem ipsum",
+      "logo": "https://i.postimg.cc/rpQ8MZFB/logo-desacibodas.jpg",
       "header": "https://asset.kompas.com/crops/xKbxkCjPBXzFRTmqLYwG8ps65nI=/0x0:0x0/750x500/data/photo/2021/11/05/61842538b5611.jpg",
-      "benefit": "besar",
-      "whatsApp": "0912019219318392"
+      "benefit": "Pertanian cerdas",
+      "whatsApp": "6281372534485"
     }
   ],
-  "innovations": [
-    {
-      "name": "Tes",
-      "category": "Pemasaran Agri-Food dan E-Commerce",
-      "date": "2023-06-13",
-      "description": "Tes",
-      "benefit": "tes",
-      "requirement": "Tes",
-      "whatsapp": "0812121",
-      "instagram": "https://google.com",
-      "website": "https://google.com",
-      "id": 2,
-      "innovatorId": 1
-    }
-  ],
-  "villages": [
-    {
-      "name": "Jawa Barat",
-      "city": "Bandung",
-      "subdistrict": "Buah Batu",
-      "village": "Bojong Soang",
-      "description": "desa memiliki lalalalalla",
-      "nameVillage": "desa suka maju",
-      "logo": "",
-      "header": "",
-      "benefit": "lorem ipsum",
-      "nomorWhatsApp": "081298192192891",
-      "id": 1
-    }
-  ],
+  "innovations": [],
   "categories": [
     {
       "icon": "https://github.com/fitrianurynt/PSBO/assets/79956203/9a53a458-b8bd-488c-82a6-17b0b2a86c0a",

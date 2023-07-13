@@ -10,6 +10,16 @@ import { useMutation, useQuery } from "react-query";
 import { toast } from "react-toastify";
 import { updateProfile, getUserById } from "Services/userServices";
 import useAuthLS from "Hooks/useAuthLS";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+
+const schema = z.object({
+  innovatorName: z.string().min(1, { message: "*Nama inovator wajib diisi" }),
+  targerUser: z.string().min(1, { message: "*Target pengguna wajib diisi" }),
+  product: z.string().min(1, { message: "*Isi nama produk" }),
+  description: z.string().min(1, { message: "*Deskripsi desa wajib diisi" }),
+  instagram: z.string().min(1, { message: "*Instagram wajib diisi" }),
+});
 
 const forms = [
   {
@@ -75,7 +85,9 @@ const forms = [
 
 function Profile() {
   const navigate = useNavigate();
-  const form = useForm();
+  const form = useForm({
+    resolver: zodResolver(schema),
+  });
   const { handleSubmit, reset } = form;
 
   const { mutateAsync } = useMutation(updateProfile);

@@ -12,6 +12,15 @@ import { addInnovation } from "Services/innovationServices";
 import { toast } from "react-toastify";
 import { paths } from "Consts/path";
 import useAuthLS from "Hooks/useAuthLS";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+
+const schema = z.object({
+  name: z.string().min(1, { message: "*Nama inovator wajib diisi" }),
+  description: z.string().min(1, { message: "*Deskripsi desa wajib diisi" }),
+  benefit: z.string().min(1, { message: "*Keuntungan wajib diisi" }),
+  requirement: z.string().min(1, { message: "*Contoh: memerlukan listrik" }),
+});
 
 const forms = [
   {
@@ -75,7 +84,9 @@ const forms = [
 
 function AddInnovation() {
   const navigate = useNavigate();
-  const form = useForm();
+  const form = useForm({
+    resolver: zodResolver(schema),
+  });
   const { handleSubmit, reset } = form;
 
   const { mutateAsync } = useMutation(addInnovation);

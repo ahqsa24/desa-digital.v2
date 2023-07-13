@@ -4,7 +4,7 @@ export const paths = {
   REGISTER_PAGE: "/register",
   VILLAGE_PAGE: "/village",
   VILLAGE_PROFILE_PAGE: "/village/profile",
-  DETAIL_VILLAGE_PAGE: "/village/detail",
+  DETAIL_VILLAGE_PAGE: "/village/detail/:id",
   INNOVATOR_PAGE: "/innovator",
   INNOVATOR_PROFILE_PAGE: "/innovator/profile",
   DETAIL_INNOVATOR_PAGE: "/innovator/detail/:id",

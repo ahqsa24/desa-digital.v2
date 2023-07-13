@@ -17,8 +17,18 @@ import {
 import { updateProfile, getUserById } from "Services/userServices";
 import useAuthLS from "Hooks/useAuthLS";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+
+const schema = z.object({
+  nameVillage: z.string().min(1, { message: "*Nama desa wajib diisi" }),
+  description: z.string().min(1, { message: "*Deskripsi desa wajib diisi" }),
+  benefit: z.string().min(1, { message: "*Keuntungan wajib diisi" }),
+  whatsApp: z.string().min(1, { message: "*Nomor whatsapp wajib diisi" }),
+});
+
 function AddVillage() {
-  const form = useForm();
+  const form = useForm({ resolver: zodResolver(schema) });
   const { handleSubmit, reset } = form;
 
   const { auth } = useAuthLS();
@@ -141,7 +151,7 @@ function AddVillage() {
       label: "Nomor WhatsApp",
       type: "tel",
       name: "whatsApp",
-      placeholder: "0812345678",
+      placeholder: "62812345678",
     },
   ];
 
