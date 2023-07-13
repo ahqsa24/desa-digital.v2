@@ -12,6 +12,7 @@ interface DropDownProps {
   placeholder?: string;
   onChange?: (value: string | Option) => void;
   defaultValue?: string;
+  isDisabled?: boolean
 }
 
 function Dropdown(props: DropDownProps) {
@@ -22,6 +23,7 @@ function Dropdown(props: DropDownProps) {
     placeholder,
     onChange,
     defaultValue,
+    isDisabled
   } = props;
   const { register } = form;
 
@@ -34,6 +36,7 @@ function Dropdown(props: DropDownProps) {
       {...register(name)}
       onChange={handleOnChange}
       value={defaultValue}
+      isDisabled={isDisabled}
     >
       {!!placeholder && (
         <StyledOption value="" disabled hidden>

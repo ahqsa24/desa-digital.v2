@@ -10,13 +10,14 @@ function Innovator() {
   const navigate = useNavigate();
   const { data: users } = useQuery<any>("innovators", getUsers);
   const innovators = users?.filter((item: any) => item.role === "innovator");
+  const completedProfile = innovators?.filter((item: any) => Object.hasOwn(item, 'innovatorName'))
 
   return (
     <Container>
       <Title>Inovator Unggulan</Title>
       <CardContainer>
         <Horizontal>
-          {innovators?.map((item: any, idx: number) => (
+          {completedProfile?.map((item: any, idx: number) => (
             <CardInovator
               key={idx}
               {...item}

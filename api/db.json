@@ -32,9 +32,124 @@
       "header": "https://asset.kompas.com/crops/xKbxkCjPBXzFRTmqLYwG8ps65nI=/0x0:0x0/750x500/data/photo/2021/11/05/61842538b5611.jpg",
       "benefit": "Pertanian cerdas",
       "whatsApp": "6281372534485"
+    },
+    {
+      "role": "innovator",
+      "email": "biops@gmail.com",
+      "password": "biops",
+      "id": 3,
+      "innovatorName": "BIops Teknologi",
+      "targetUser": "Petani",
+      "product": "Encomotion ",
+      "description": "-",
+      "modelBusiness": "-",
+      "logo": "https://i.postimg.cc/L66zH5Kx/biops-logo.jpg ",
+      "background": "https://i.postimg.cc/d08FNq1Y/encomotion.jpg",
+      "whatsApp": "081236543",
+      "website": "https://www.biopsagrotekno.co.id/",
+      "instagram": "https://www.instagram.com/biopsagrotekno/"
+    },
+    {
+      "role": "innovator",
+      "email": "desalamendah@gmail.com",
+      "password": "desa",
+      "id": 4
+    },
+    {
+      "role": "village",
+      "email": "desaalamendah@gmail.com",
+      "password": "desa",
+      "id": 5,
+      "nameVillage": "Desa Alamendah",
+      "description": "Lorem ipsum dolor sit amet consertum ",
+      "benefit": "lokasi strategis",
+      "whatsApp": "6281372534485",
+      "province": "32",
+      "district": "3204",
+      "subDistrict": "3204011",
+      "village": "3204011005",
+      "logo": "https://i.postimg.cc/Sxg1y3vM/logo-desaalamendah.jpg",
+      "header": "https://i.postimg.cc/mDHmyD2Y/alamendah-header.jpg"
     }
   ],
-  "innovations": [],
+  "innovations": [
+    {
+      "name": "test",
+      "description": "lorem ipsum",
+      "benefit": "mudah digunakan",
+      "requirement": "listri",
+      "innovatorId": 3,
+      "id": 1
+    },
+    {
+      "name": "test",
+      "description": "lorem ipsum",
+      "benefit": "mudah digunakan",
+      "requirement": "listrilk",
+      "innovatorId": 3,
+      "id": 2
+    },
+    {
+      "name": "test",
+      "description": "lorem ipsum",
+      "benefit": "mudah digunakan",
+      "requirement": "listrilk",
+      "innovatorId": 3,
+      "id": 3
+    },
+    {
+      "name": "test",
+      "description": "lorem ipsum",
+      "benefit": "mudah digunakan",
+      "requirement": "listrilk",
+      "innovatorId": 3,
+      "id": 4
+    },
+    {
+      "name": "Inovasi Mutakhir",
+      "description": "lorem",
+      "benefit": "lorem",
+      "requirement": "lorem",
+      "innovatorId": 3,
+      "id": 5
+    },
+    {
+      "name": "Inovasi Mutakhir",
+      "description": "lorem",
+      "benefit": "lorem",
+      "requirement": "lorem",
+      "innovatorId": 3,
+      "id": 6
+    },
+    {
+      "name": "Inovasi Mutakhir",
+      "description": "lorem",
+      "benefit": "lorem",
+      "requirement": "lorem",
+      "innovatorId": 3,
+      "id": 7
+    },
+    {
+      "name": "Inovasi Mutakhir",
+      "description": "lorem",
+      "benefit": "lorem",
+      "requirement": "lorem",
+      "innovatorId": 3,
+      "id": 8
+    },
+    {
+      "name": "Inovasi Mutakhir",
+      "description": "lorem",
+      "benefit": "lorem",
+      "requirement": "lorem",
+      "background": "https://asset.kompas.com/crops/xKbxkCjPBXzFRTmqLYwG8ps65nI=/0x0:0x0/750x500/data/photo/2021/11/05/61842538b5611.jpg",
+      "logo": "https://i.postimg.cc/L66zH5Kx/biops-logo.jpg",
+      "category": "Pemasaran Agri-Food dan E-Commerce",
+      "date": "2023-07-13",
+      "innovatorId": 3,
+      "id": 9
+    }
+  ],
   "categories": [
     {
       "icon": "https://github.com/fitrianurynt/PSBO/assets/79956203/9a53a458-b8bd-488c-82a6-17b0b2a86c0a",

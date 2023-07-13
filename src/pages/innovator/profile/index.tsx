@@ -15,9 +15,14 @@ import * as z from "zod";
 
 const schema = z.object({
   innovatorName: z.string().min(1, { message: "*Nama inovator wajib diisi" }),
-  targerUser: z.string().min(1, { message: "*Target pengguna wajib diisi" }),
+  targetUser: z.string().min(1, { message: "*Target pengguna wajib diisi" }),
   product: z.string().min(1, { message: "*Isi nama produk" }),
-  description: z.string().min(1, { message: "*Deskripsi desa wajib diisi" }),
+  description: z.string().min(1, { message: "*Deskripsi wajib diisi" }),
+  modelBusiness: z.string().min(1, { message: "*Model bisnis wajib diisi" }),
+  logo: z.string().min(1, { message: "*Silahkan masukkan logo" }),
+  background: z.string().min(1, { message: "*Silahkan masukkan background" }),
+  whatsApp: z.string().min(1, { message: "*Nomor whatsapp wajib diisi" }),
+  website: z.string().min(1, { message: "*Website wajib diisi" }),
   instagram: z.string().min(1, { message: "*Instagram wajib diisi" }),
 });
 
@@ -93,11 +98,16 @@ function Profile() {
   const { mutateAsync } = useMutation(updateProfile);
   const { auth } = useAuthLS();
 
-  const { data, isFetched } = useQuery("profile", () => getUserById(auth?.id), {
-    enabled: !!auth?.id,
-  });
+  const { data, isFetched } = useQuery(
+    "profileInnovator",
+    () => getUserById(auth?.id),
+    {
+      enabled: !!auth?.id,
+    }
+  );
 
   const onProfileSave = async (data: any) => {
+    console.log(data);
     try {
       const payload = {
         id: auth?.id,

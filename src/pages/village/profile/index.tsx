@@ -25,6 +25,12 @@ const schema = z.object({
   description: z.string().min(1, { message: "*Deskripsi desa wajib diisi" }),
   benefit: z.string().min(1, { message: "*Keuntungan wajib diisi" }),
   whatsApp: z.string().min(1, { message: "*Nomor whatsapp wajib diisi" }),
+  province: z.string().min(1, { message: "*Pilih Provinsi" }),
+  district: z.string().min(1, { message: "*Pilih Kabupaten/Kota" }),
+  subDistrict: z.string().min(1, { message: "*Pilih Kecamatan" }),
+  village: z.string().min(1, { message: "*Pilih Kelurahan" }),
+  logo: z.string().min(1, { message: "*Silahkan masukkan logo" }),
+  header: z.string().min(1, { message: "*Silahkan masukkan background" }),
 });
 
 function AddVillage() {
@@ -34,7 +40,7 @@ function AddVillage() {
   const { auth } = useAuthLS();
   const { mutateAsync } = useMutation(updateProfile);
   const { data, isFetched } = useQuery<any>(
-    "profile",
+    "profileVillage",
     () => getUserById(auth?.id),
     {
       enabled: !!auth?.id,
@@ -70,6 +76,7 @@ function AddVillage() {
       name: "province",
       placeholder: "Pilih provinsi",
       defaultValue: data?.province,
+      isDisabled: !!data?.province,
       options:
         provinsi?.provinsi?.map((item: any) => ({
           id: item?.id,
@@ -83,6 +90,7 @@ function AddVillage() {
       name: "district",
       placeholder: "Pilih kabupaten/kota",
       defaultValue: data?.district,
+      isDisabled: !!data?.district, 
       options:
         kabupaten?.kota_kabupaten?.map((item: any) => ({
           id: item?.id,
@@ -96,6 +104,7 @@ function AddVillage() {
       name: "subDistrict",
       placeholder: "Pilih kecamatan",
       defaultValue: data?.subDistrict,
+      isDisabled: !!data?.subDistrict,
       options:
         kecamatan?.kecamatan?.map((item: any) => ({
           id: item?.id,
@@ -110,6 +119,7 @@ function AddVillage() {
       placeholder: "Pilih kelurahan",
       value: data?.village,
       defaultValue: data?.village,
+      isDisabled: data?.village,
       options:
         kelurahan?.kelurahan?.map((item: any) => ({
           id: item?.id,
@@ -182,7 +192,16 @@ function AddVillage() {
       <form onSubmit={handleSubmit(onProfileSave)}>
         {forms?.map(
           (
-            { label, type, name, placeholder, options, onChange, defaultValue },
+            {
+              label,
+              type,
+              name,
+              placeholder,
+              options,
+              onChange,
+              defaultValue,
+              isDisabled,
+            },
             idx
           ) => {
             // dropdown
@@ -197,6 +216,7 @@ function AddVillage() {
                     onChange={onChange}
                     placeholder={placeholder}
                     defaultValue={defaultValue}
+                    isDisabled={isDisabled}
                   />
                 </React.Fragment>
               );

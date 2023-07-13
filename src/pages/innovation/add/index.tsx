@@ -17,9 +17,15 @@ import * as z from "zod";
 
 const schema = z.object({
   name: z.string().min(1, { message: "*Nama inovator wajib diisi" }),
-  description: z.string().min(1, { message: "*Deskripsi desa wajib diisi" }),
+  description: z.string().min(1, { message: "*Deskripsi inovasi wajib diisi" }),
   benefit: z.string().min(1, { message: "*Keuntungan wajib diisi" }),
   requirement: z.string().min(1, { message: "*Contoh: memerlukan listrik" }),
+  background: z.string().min(1, { message: "*Silahkan masukkan background" }),
+  logo: z.string().min(1, { message: "*Silahkan masukkan logo" }),
+  category: z.string().min(1, { message: "*Pilih kategori" }),
+  date: z.string().min(1, { message: "*Pilih tanggal" }),
+
+
 });
 
 const forms = [
@@ -35,7 +41,7 @@ const forms = [
     placeholder: "https://",
   },
   {
-    label: "Icon Innovator",
+    label: "Logo Innovator",
     type: "url",
     name: "logo",
     placeholder: "https://",
@@ -93,6 +99,7 @@ function AddInnovation() {
   const { auth } = useAuthLS();
 
   const onAddInnovation = async (data: any) => {
+    console.log(data);
     try {
       const payload = {
         ...data,
@@ -107,6 +114,7 @@ function AddInnovation() {
       );
       reset();
     } catch (error) {
+      console.log(error);
       toast("Terjadi kesalahan jaringan", { type: "error" });
     }
   };

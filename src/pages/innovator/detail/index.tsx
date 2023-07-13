@@ -93,7 +93,7 @@ function Detail() {
         </ActionContainer> */}
         <Button size="m" fullWidth mt={12} type="submit" onClick={onClickHere}>
           Kontak Inovator
-        </Button>{" "}
+        </Button>
       </ContentContainer>
     </Container>
   );

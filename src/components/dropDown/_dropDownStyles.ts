@@ -1,6 +1,6 @@
-import styled from 'styled-components'
+import styled, {css} from "styled-components";
 
-export const StyledDropDown = styled.select`
+export const StyledDropDown = styled.select<{ isDisabled?: boolean }>`
   width: 100%;
   height: 40px;
   border-radius: 8px;
@@ -15,7 +15,17 @@ export const StyledDropDown = styled.select`
   &:focus {
     border: 2px solid #000000;
   }
-`
+
+  ${({isDisabled}) => {
+    if(isDisabled) 
+      return css`
+        opacity: 0.8; 
+        cursor: not-allowed;
+        pointer-events: none; 
+        background-color: #eaeaea;
+      `
+  }}
+`;
 
 export const StyledOption = styled.option`
   font-size: 14px;
@@ -26,4 +36,4 @@ export const StyledOption = styled.option`
   &:focus {
     border: 2px solid #000000;
   }
-`
+`;
