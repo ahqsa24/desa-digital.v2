@@ -8,9 +8,11 @@ import { CardContainer, Title, Horizontal } from "./_innovatorStyle";
 
 function Innovator() {
   const navigate = useNavigate();
-  const { data: users } = useQuery<any>("innovators", getUsers);
+  const { data: users } = useQuery<any>("completedInnovatorsProfile", getUsers);
   const innovators = users?.filter((item: any) => item.role === "innovator");
-  const completedProfile = innovators?.filter((item: any) => Object.hasOwn(item, 'innovatorName'))
+  const completedProfile = innovators?.filter((item: any) =>
+    Object.hasOwn(item, "innovatorName")
+  );
 
   return (
     <Container>
