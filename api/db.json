@@ -5,7 +5,7 @@
       "email": "demo@gmail.com",
       "password": "demo",
       "id": 1,
-      "innovatorName": "Potoe",
+      "innovatorName": "Efishery",
       "category": "Pemasaran Agri-Food dan E-Commerce",
       "targetUser": "Nelayan",
       "product": "Efeeder",
@@ -64,6 +64,22 @@
       "village": "3204011005",
       "logo": "https://i.postimg.cc/Sxg1y3vM/logo-desaalamendah.jpg",
       "header": "https://i.postimg.cc/mDHmyD2Y/alamendah-header.jpg"
+    },
+    {
+      "role": "innovator",
+      "email": "aruna@gmail.com",
+      "password": "aruna",
+      "id": 6,
+      "innovatorName": "Aruna",
+      "targetUser": "Nelayan",
+      "product": "JalaApp",
+      "description": "lorem",
+      "modelBusiness": "bisnis",
+      "logo": "https://i.postimg.cc/HsZbjmTd/aruna-logo.jpg",
+      "background": "https://i.postimg.cc/8PKnGx3r/hero-aruna.jpg",
+      "whatsApp": "081253646642",
+      "website": "https://aruna.id/id/the-largest-integrated-fisheries-commerce-in-indonesia-bahasa/",
+      "instagram": "https://www.instagram.com/aruna.indonesia/"
     }
   ],
   "innovations": [
@@ -82,6 +98,42 @@
       "requirement": "listrilk",
       "innovatorId": 3,
       "id": 2
+    },
+    {
+      "name": "Efeeder",
+      "description": "membantu pakan ternak",
+      "benefit": "ternak jd banyak",
+      "requirement": "Air",
+      "background": "https://asset.kompas.com/crops/xKbxkCjPBXzFRTmqLYwG8ps65nI=/0x0:0x0/750x500/data/photo/2021/11/05/61842538b5611.jpg",
+      "logo": "https://i.postimg.cc/rpQ8MZFB/logo-desacibodas.jpg",
+      "category": "Pertanian Cerdas",
+      "date": "2023-07-13",
+      "innovatorId": 1,
+      "id": 3
+    },
+    {
+      "name": "mcd",
+      "description": "lorem",
+      "benefit": "lorem ipsum",
+      "requirement": "Listrik",
+      "background": "https://asset.kompas.com/crops/xKbxkCjPBXzFRTmqLYwG8ps65nI=/0x0:0x0/750x500/data/photo/2021/11/05/61842538b5611.jpg",
+      "logo": "https://asset.kompas.com/crops/xKbxkCjPBXzFRTmqLYwG8ps65nI=/0x0:0x0/750x500/data/photo/2021/11/05/61842538b5611.jpg",
+      "category": "E-Government",
+      "date": "2023-07-13",
+      "innovatorId": 1,
+      "id": 4
+    },
+    {
+      "name": "JalaAPp",
+      "description": "test",
+      "benefit": "membantu nelayan",
+      "requirement": "air",
+      "background": "https://i.postimg.cc/8PKnGx3r/hero-aruna.jpg",
+      "logo": "https://i.postimg.cc/HsZbjmTd/aruna-logo.jpg",
+      "category": "Pertanian Cerdas",
+      "date": "2023-07-13",
+      "innovatorId": 6,
+      "id": 5
     }
   ],
   "categories": [

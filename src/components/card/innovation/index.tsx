@@ -13,7 +13,7 @@ import {
 
 type CardInnovationProps = {
   background?: string;
-  icon?: string;
+  logo?: string;
   name?: string;
   category?: string;
   description?: string;
@@ -24,7 +24,7 @@ type CardInnovationProps = {
 };
 
 function CardInnovation(props: CardInnovationProps) {
-  const { background, icon, name, category, description, year, onClick } =
+  const { background, logo, name, category, description, year, onClick } =
     props;
   console.log(background);
   return (
@@ -35,7 +35,7 @@ function CardInnovation(props: CardInnovationProps) {
         <Category>{category}</Category>
         <Description>{description}</Description>
         <CompanyContainer>
-          <Icon src={icon} alt={name} />
+          <Icon src={logo} alt={name} />
           <Company></Company>
         </CompanyContainer>
         <Applied>{year}</Applied>
