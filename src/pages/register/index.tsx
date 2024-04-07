@@ -1,11 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
+import { Text } from '@chakra-ui/react'
 import { paths } from "Consts/path";
 import { useNavigate } from "react-router";
 import { useForm } from "react-hook-form";
 import TextField from "Components/textField";
 import Button from "Components/button";
-import { useMutation } from "react-query";
-import { register as registerEndpoint } from "Services/authServices";
 import {
   Background,
   Container,
@@ -16,6 +15,9 @@ import {
   Action,
   CheckboxContainer,
 } from "./_registerStyle";
+import { auth } from "../../firebase/clientApp";
+import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth"
+import { FIREBASE_ERRORS } from "../../../src/firebase/errors";
 
 const forms = [
   {
@@ -30,30 +32,44 @@ const forms = [
   },
 ];
 
-function Register() {
+const Register: React.FC = () => {
+  const [regisForm, setRegisForm] = useState({
+    email: "",
+    password: "",
+    role: "",
+  })
+  const [error, setError] = useState('')
+  const [createUserWithEmailAndPassword, userCred, loading, userError] = useCreateUserWithEmailAndPassword(auth);
+
+  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if(error) setError('')
+    if(regisForm.email === '' || regisForm.password === '') 
+      return setError('Email dan kata sandi harus diisi')
+    if(regisForm.password.length < 6) 
+      return setError('Kata sandi minimal 6 karakter')
+    createUserWithEmailAndPassword(regisForm.email, regisForm.password)
+  }
+  const onChange = (event:React.ChangeEvent<HTMLInputElement>) => {
+    setRegisForm(prev => ({
+      ...prev,
+      [event.target.name]: event.target.value
+    }))
+  }
   const navigate = useNavigate();
+  
   const form = useForm();
-  const { handleSubmit, register, reset } = form;
 
-  const { mutateAsync } = useMutation(registerEndpoint);
 
-  const onRegister = async (data: any) => {
-    try {
-      await mutateAsync(data);
-      reset();
-      navigate(paths.LOGIN_PAGE);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+
 
   return (
     <Background>
       <Container>
         <Title>Halo!</Title>
-        <Description>Silakan melakukan registrasi akun</Description>
+        <Description>Silahkan melakukan registrasi akun</Description>
 
-        <form onSubmit={handleSubmit(onRegister)}>
+        <form onSubmit={onSubmit}>        
           {forms?.map(({ label, type, name }, idx) => (
             <React.Fragment key={idx}>
               <Label mt={12}>{label}</Label>
@@ -63,6 +79,7 @@ function Register() {
                 type={type}
                 name={name}
                 form={form}
+                onChange={onChange}
               />
             </React.Fragment>
           ))}
@@ -70,23 +87,32 @@ function Register() {
           <Label mt={12}>Daftar sebagai:</Label>
           <CheckboxContainer mt={12}>
             <input
+              name="role"
               type="radio"
               value="innovator"
-              {...register("role", { required: true })}
+              onChange={onChange}
+              required
             />
             <Label>Inovator</Label>
           </CheckboxContainer>
 
           <CheckboxContainer mt={12}>
             <input
+              name="role"
               type="radio"
               value="village"
-              {...register("role", { required: true })}
+              onChange={onChange}
+              required
             />
             <Label>Perangkat desa</Label>
           </CheckboxContainer>
-
-          <Button size="m" fullWidth mt={12} type="submit">
+          {(error || userError) && (
+            <Text textAlign='center' color='red' fontSize='10pt'>
+              {error || FIREBASE_ERRORS[userError?.message as keyof typeof FIREBASE_ERRORS]}
+            </Text>
+          )}
+          
+          <Button size="m" fullWidth mt={8} type="submit">
             Registrasi
           </Button>
         </form>
