@@ -44,6 +44,7 @@ const Register: React.FC = () => {
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if(error) setError('')
+    if(!regisForm.email.includes("@")) return setError("Email tidak valid")
     if(regisForm.email === '' || regisForm.password === '') 
       return setError('Email dan kata sandi harus diisi')
     if(regisForm.password.length < 6) 
