@@ -1,10 +1,9 @@
-import React, { useState } from "react";
-import { Text } from '@chakra-ui/react'
+import React, { useEffect, useState } from "react";
+import { Button, Text } from "@chakra-ui/react";
 import { paths } from "Consts/path";
 import { useNavigate } from "react-router";
 import { useForm } from "react-hook-form";
 import TextField from "Components/textField";
-import Button from "Components/button";
 import {
   Background,
   Container,
@@ -15,9 +14,11 @@ import {
   Action,
   CheckboxContainer,
 } from "./_registerStyle";
-import { auth } from "../../firebase/clientApp";
-import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth"
+import { auth, firestore } from "../../firebase/clientApp";
+import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { FIREBASE_ERRORS } from "../../../src/firebase/errors";
+import { User } from "firebase/auth";
+import { addDoc, collection } from "firebase/firestore";
 
 const forms = [
   {
@@ -37,32 +38,49 @@ const Register: React.FC = () => {
     email: "",
     password: "",
     role: "",
-  })
-  const [error, setError] = useState('')
-  const [createUserWithEmailAndPassword, userCred, loading, userError] = useCreateUserWithEmailAndPassword(auth);
+  });
+  const [error, setError] = useState("");
+  const [createUserWithEmailAndPassword, userCred, loading, userError] =
+    useCreateUserWithEmailAndPassword(auth);
 
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if(error) setError('')
-    if(!regisForm.email.includes("@")) return setError("Email tidak valid")
-    if(regisForm.email === '' || regisForm.password === '') 
-      return setError('Email dan kata sandi harus diisi')
-    if(regisForm.password.length < 6) 
-      return setError('Kata sandi minimal 6 karakter')
-    createUserWithEmailAndPassword(regisForm.email, regisForm.password)
-  }
-  const onChange = (event:React.ChangeEvent<HTMLInputElement>) => {
-    setRegisForm(prev => ({
+    if (error) setError("");
+    if (!regisForm.email.includes("@")) return setError("Email tidak valid");
+    if (regisForm.email === "" || regisForm.password === "")
+      return setError("Email dan kata sandi harus diisi");
+    if (regisForm.password.length < 6)
+      return setError("Kata sandi minimal 6 karakter");
+    createUserWithEmailAndPassword(regisForm.email, regisForm.password);
+  };
+  const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRegisForm((prev) => ({
       ...prev,
-      [event.target.name]: event.target.value
-    }))
-  }
+      [event.target.name]: event.target.value,
+    }));
+  };
   const navigate = useNavigate();
-  
+
   const form = useForm();
 
+  const createUserDocument = async (user: User) => {
+    const userData = {
+      id: user.uid,
+      email: user.email,
+      role: regisForm.role
+    };
+    await addDoc(
+      collection(firestore, "users"),
+      JSON.parse(JSON.stringify(userData))
+    );
+  };
 
-
+  useEffect(() => {
+    if (userCred) {
+      createUserDocument(userCred.user);
+      navigate(paths.LOGIN_PAGE);
+    }
+  }, [userCred, navigate]);
 
   return (
     <Background>
@@ -70,7 +88,7 @@ const Register: React.FC = () => {
         <Title>Halo!</Title>
         <Description>Silahkan melakukan registrasi akun</Description>
 
-        <form onSubmit={onSubmit}>        
+        <form onSubmit={onSubmit}>
           {forms?.map(({ label, type, name }, idx) => (
             <React.Fragment key={idx}>
               <Label mt={12}>{label}</Label>
@@ -108,12 +126,21 @@ const Register: React.FC = () => {
             <Label>Perangkat desa</Label>
           </CheckboxContainer>
           {(error || userError) && (
-            <Text textAlign='center' color='red' fontSize='10pt'>
-              {error || FIREBASE_ERRORS[userError?.message as keyof typeof FIREBASE_ERRORS]}
+            <Text textAlign="center" color="red" fontSize="10pt">
+              {error ||
+                FIREBASE_ERRORS[
+                  userError?.message as keyof typeof FIREBASE_ERRORS
+                ]}
             </Text>
           )}
-          
-          <Button size="m" fullWidth mt={8} type="submit">
+
+          <Button
+            mt={8}
+            type="submit"
+            alignItems="center"
+            width="100%"
+            isLoading={loading}
+          >
             Registrasi
           </Button>
         </form>
@@ -125,6 +152,6 @@ const Register: React.FC = () => {
       </Container>
     </Background>
   );
-}
+};
 
 export default Register;
