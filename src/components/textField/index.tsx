@@ -1,5 +1,6 @@
 import { MarginProps } from "Consts/sizing";
 import { Container, Input, Error } from "./_textFieldStyle";
+import React from "react";
 
 interface TextFieldProps extends MarginProps {
   placeholder: string;
@@ -7,6 +8,7 @@ interface TextFieldProps extends MarginProps {
   error?: string;
   form?: any;
   name?: string;
+  onChange?: (value: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 function TextField(props: TextFieldProps) {

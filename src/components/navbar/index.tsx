@@ -31,7 +31,7 @@ const menu = [
 
 const hide = [paths.LOGIN_PAGE, paths.REGISTER_PAGE]
 
-function Navbar() {
+const Navbar: React.FC = () => {
   const navigate = useNavigate()
   const { pathname } = useLocation()
 
