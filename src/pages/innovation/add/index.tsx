@@ -1,102 +1,65 @@
-import React from "react";
-import TopBar from "Components/topBar";
+import {
+  Button,
+  Flex,
+  Input,
+  Select,
+  Stack,
+  Text,
+  Textarea,
+} from "@chakra-ui/react";
 import Container from "Components/container";
-import TextField from "Components/textField";
-import Dropdown from "Components/dropDown";
-import Button from "Components/button";
-import { useForm } from "react-hook-form";
-import { generatePath, useNavigate } from "react-router-dom";
-import { Label } from "./_addStyle";
-import { useMutation } from "react-query";
-import { addInnovation } from "Services/innovationServices";
-import { toast } from "react-toastify";
+import TopBar from "Components/topBar";
 import { paths } from "Consts/path";
 import useAuthLS from "Hooks/useAuthLS";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-
-const schema = z.object({
-  name: z.string().min(1, { message: "*Nama inovator wajib diisi" }),
-  description: z.string().min(1, { message: "*Deskripsi inovasi wajib diisi" }),
-  benefit: z.string().min(1, { message: "*Keuntungan wajib diisi" }),
-  requirement: z.string().min(1, { message: "*Contoh: memerlukan listrik" }),
-  background: z.string().min(1, { message: "*Silahkan masukkan background" }),
-  logo: z.string().min(1, { message: "*Silahkan masukkan logo" }),
-  category: z.string().min(1, { message: "*Pilih kategori" }),
-  date: z.string().min(1, { message: "*Pilih tanggal" }),
+import { addInnovation } from "Services/innovationServices";
+import { User } from "firebase/auth";
+import React, { useRef, useState } from "react";
+import { useMutation } from "react-query";
+import { generatePath, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import ImageUpload from "../../formComponents/ImageUpload";
 
 
-});
+type AddInnovationProps = {
+  user: User;
+  textInputs: {
+    name: string;
+    year: string;
+    description: string;
+    requirement: string;
+  };
+  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
+  loading: boolean;
+};
 
-const forms = [
-  {
-    label: "Nama Inovasi",
-    type: "text",
-    name: "name",
-  },
-  {
-    label: "Header Inovasi",
-    type: "url",
-    name: "background",
-    placeholder: "https://",
-  },
-  {
-    label: "Logo Innovator",
-    type: "url",
-    name: "logo",
-    placeholder: "https://",
-  },
-  {
-    label: "Kategori Inovasi",
-    type: "text",
-    name: "category",
-    placeholder: "Pilih kategori",
-    options: [
-      "Pertanian Cerdas",
-      "Pemasaran Agri-Food dan E-Commerce",
-      "E-Government",
-      "Sistem Informasi",
-      "Layanan Keuangan",
-      "Pengembangan Masyarakat dan Ekonomi",
-      "Infrastruktur Lokal",
-      "Pengelolaan Sumber Daya",
-      "Layanan Sosial",
-      "E-Tourism",
-    ],
-  },
-  {
-    label: "Tanggal dibuat inovasi",
-    type: "date",
-    name: "date",
-  },
-  {
-    label: "Deskripsi",
-    type: "text",
-    name: "description",
-    placeholder: "Deskripsi singkat produk",
-  },
-  {
-    label: "Keuntungan",
-    type: "text",
-    name: "benefit",
-  },
-  {
-    label: "Perlu disiapkan",
-    placeholder: "Contoh: memerlukan listrik",
-    type: "text",
-    name: "requirement",
-  },
-];
-
-function AddInnovation() {
+const AddInnovation: React.FC<AddInnovationProps> = ({
+  user,
+  textInputs,
+  onChange,
+  handleSubmit,
+  loading,
+}) => {
   const navigate = useNavigate();
-  const form = useForm({
-    resolver: zodResolver(schema),
-  });
-  const { handleSubmit, reset } = form;
 
   const { mutateAsync } = useMutation(addInnovation);
   const { auth } = useAuthLS();
+
+  const [selectedFile, setSelectedFile] = useState<string>();
+  const selectFileRef = useRef<HTMLInputElement>(null);
+  const [error, setError] = useState("");
+
+  const onSelectImage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const reader = new FileReader();
+    if (event.target.files?.[0]) {
+      reader.readAsDataURL(event.target.files[0]);
+    }
+    reader.onload = (readerEvent) => {
+      if (readerEvent.target?.result) {
+        setSelectedFile(readerEvent.target?.result as string);
+      }
+    };
+  };
 
   const onAddInnovation = async (data: any) => {
     console.log(data);
@@ -122,41 +85,128 @@ function AddInnovation() {
   return (
     <Container page px={16}>
       <TopBar title="Tambahkan Inovasi" onBack={() => navigate(-1)} />
-      <form onSubmit={handleSubmit(onAddInnovation)}>
-        {forms?.map(({ label, type, name, placeholder, options }, idx) => {
-          if (!!options)
-            return (
-              <React.Fragment key={idx}>
-                <Label mt={12}>{label} </Label>
-                <Dropdown
-                  options={options}
-                  form={form}
-                  name={name}
-                  placeholder={placeholder}
-                />
-              </React.Fragment>
-            );
-
-          return (
-            <React.Fragment key={idx}>
-              <Label mt={12}>{label} </Label>
-              <TextField
-                mt={4}
-                placeholder={placeholder || label}
-                type={type}
-                name={name}
-                form={form}
-              />
-            </React.Fragment>
-          );
-        })}
-
-        <Button size="m" fullWidth mt={12} type="submit">
-          Tambah Inovasi{" "}
+      <form>
+        <Flex direction="column" marginTop="24px">
+          <Stack spacing={3} width="100%">
+            <Text fontWeight="400" fontSize="14px">
+              Nama Inovasi <span style={{ color: "red" }}>*</span>
+            </Text>
+            <Input
+              name="name"
+              fontSize="10pt"
+              placeholder="Nama Inovasi"
+              _placeholder={{ color: "gray.500" }}
+              _focus={{
+                outline: "none",
+                bg: "white",
+                border: "1px solid",
+                borderColor: "black",
+              }}
+              // value={}
+              // onChange={}
+            ></Input>
+            <Text fontWeight="400" fontSize="14px">
+              Kategori Inovasi <span style={{ color: "red" }}>*</span>
+            </Text>
+            <Select
+              placeholder="Pilih kategori"
+              name="category"
+              fontSize="10pt"
+              variant="outline"
+              color={"gray.500"}
+              _focus={{
+                outline: "none",
+                bg: "white",
+                border: "1px solid",
+                borderColor: "black",
+              }}
+              _placeholder={{ color: "gray.500" }}
+              // value={}
+              // onChange={}
+            >
+              <option value="option1">Pertanian Cerdas</option>
+              <option value="option2">
+                Pemasaran Agri-Food dan E-Commerce
+              </option>
+              <option value="option3">E-Government</option>
+              <option value="option3">Sistem Informasi</option>
+              <option value="option3">Layanan Keuangan</option>
+              <option value="option3">
+                Pengembangan Masyarakat dan Ekonomi
+              </option>
+              <option value="option3">Pengelolaan Sumberdaya</option>
+              <option value="option3">Layanan Sosial</option>
+              <option value="option3">E-Tourism</option>
+            </Select>
+            <Text fontWeight="400" fontSize="14px">
+              Tahun dibuat inovasi <span style={{ color: "red" }}>*</span>
+            </Text>
+            <Input
+              name="year"
+              fontSize="10pt"
+              placeholder="Ketik tahun"
+              _placeholder={{ color: "gray.500" }}
+              _focus={{
+                outline: "none",
+                bg: "white",
+                border: "1px solid",
+                borderColor: "black",
+              }}
+              // value={}
+              // onChange={}
+            ></Input>
+            <Text fontWeight="400" fontSize="14px">
+              Deskripsi <span style={{ color: "red" }}>*</span>
+            </Text>
+            <Textarea
+              name="description"
+              fontSize="10pt"
+              placeholder="Deskripsi singkat"
+              _placeholder={{ color: "gray.500" }}
+              _focus={{ outline: "none", bg: "white", borderColor: "black" }}
+              height="100px"
+              // value={}
+              // onChange={}
+            ></Textarea>
+            <Text fontWeight="400" fontSize="14px">
+              Foto inovasi <span style={{ color: "red" }}>*</span>
+            </Text>
+            <ImageUpload
+              selectedFile={selectedFile}
+              setSelectedFile={setSelectedFile}
+              selectFileRef={selectFileRef}
+              onSelectImage={onSelectImage}
+            />
+            <Text fontWeight="700" fontSize="16px">
+              Perlu disiapkan{" "}
+              <span
+                style={{ color: "red", fontSize: "14px", fontWeight: "400" }}
+              >
+                *
+              </span>
+            </Text>
+            <Input
+              name="requirement"
+              fontSize="10pt"
+              placeholder="Contoh: Memerlukan listrik, Memiliki air"
+              _placeholder={{ color: "gray.500" }}
+              _focus={{
+                outline: "none",
+                bg: "white",
+                border: "1px solid",
+                borderColor: "black",
+              }}
+              // value={}
+              // onChange={}
+            />
+          </Stack>
+        </Flex>
+        <Button type="submit" mt="20px" width="100%" isLoading={loading}>
+          Tambah Inovasi
         </Button>
       </form>
     </Container>
   );
-}
+};
 
 export default AddInnovation;
