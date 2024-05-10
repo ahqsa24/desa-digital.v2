@@ -30,13 +30,13 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
             mt={2}
             bg="red.500"
             _hover={{ bg: "red.600" }}
-            width="96px"
+            width="80px"
             height="32px"
             variant="solid"
             size="sm"
             onClick={() => setSelectedFile("")}
           >
-            Remove
+            Hapus
           </Button>
         </>
       ) : (
