@@ -9,16 +9,10 @@ import {
 } from "@chakra-ui/react";
 import Container from "Components/container";
 import TopBar from "Components/topBar";
-import { paths } from "Consts/path";
-import useAuthLS from "Hooks/useAuthLS";
-import { addInnovation } from "Services/innovationServices";
 import { User } from "firebase/auth";
 import React, { useRef, useState } from "react";
-import { useMutation } from "react-query";
-import { generatePath, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 import ImageUpload from "../../formComponents/ImageUpload";
-
 
 type AddInnovationProps = {
   user: User;
@@ -28,26 +22,23 @@ type AddInnovationProps = {
     description: string;
     requirement: string;
   };
-  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
-  loading: boolean;
 };
 
-const AddInnovation: React.FC<AddInnovationProps> = ({
-  user,
-  textInputs,
-  onChange,
-  handleSubmit,
-  loading,
-}) => {
+const AddInnovation: React.FC<AddInnovationProps> = ({ user, textInputs }) => {
   const navigate = useNavigate();
-
-  const { mutateAsync } = useMutation(addInnovation);
-  const { auth } = useAuthLS();
 
   const [selectedFile, setSelectedFile] = useState<string>();
   const selectFileRef = useRef<HTMLInputElement>(null);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [textInputsValue, setTextInputsValue] = useState({
+    name: "",
+    year: "",
+    description: "",
+  });
+  const [category, setCategory] = useState("");
+  const [requirements, setRequirements] = useState<string[]>([]);
+  const [newRequirement, setNewRequirement] = useState("");
 
   const onSelectImage = (event: React.ChangeEvent<HTMLInputElement>) => {
     const reader = new FileReader();
@@ -61,26 +52,27 @@ const AddInnovation: React.FC<AddInnovationProps> = ({
     };
   };
 
-  const onAddInnovation = async (data: any) => {
-    console.log(data);
-    try {
-      const payload = {
-        ...data,
-        innovatorId: auth?.id,
-      };
-      await mutateAsync(payload);
-      toast("Inovasi berhasil ditambahkan", { type: "success" });
-      navigate(
-        generatePath(paths.INNOVATION_CATEGORY_PAGE, {
-          category: data?.category,
-        })
-      );
-      reset();
-    } catch (error) {
-      console.log(error);
-      toast("Terjadi kesalahan jaringan", { type: "error" });
+  const onTextChange = ({
+    target: { name, value },
+  }: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setTextInputsValue((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const onSelectCategory = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setCategory(event.target.value);
+  };
+
+  const onAddRequirement = () => {
+    if (newRequirement.trim() !== "") {
+      setRequirements((prev) => [...prev, newRequirement]);
+      setNewRequirement("");
     }
   };
+
+  
 
   return (
     <Container page px={16}>
@@ -102,9 +94,9 @@ const AddInnovation: React.FC<AddInnovationProps> = ({
                 border: "1px solid",
                 borderColor: "black",
               }}
-              // value={}
-              // onChange={}
-            ></Input>
+              value={textInputsValue.name}
+              onChange={onTextChange}
+            />
             <Text fontWeight="400" fontSize="14px">
               Kategori Inovasi <span style={{ color: "red" }}>*</span>
             </Text>
@@ -113,6 +105,7 @@ const AddInnovation: React.FC<AddInnovationProps> = ({
               name="category"
               fontSize="10pt"
               variant="outline"
+              cursor="pointer"
               color={"gray.500"}
               _focus={{
                 outline: "none",
@@ -121,22 +114,24 @@ const AddInnovation: React.FC<AddInnovationProps> = ({
                 borderColor: "black",
               }}
               _placeholder={{ color: "gray.500" }}
-              // value={}
-              // onChange={}
+              value={category}
+              onChange={onSelectCategory}
             >
-              <option value="option1">Pertanian Cerdas</option>
-              <option value="option2">
+              <option value="Pertanian Cerdas">Pertanian Cerdas</option>
+              <option value="Pemasaran Agri-Food dan E-Commerce">
                 Pemasaran Agri-Food dan E-Commerce
               </option>
-              <option value="option3">E-Government</option>
-              <option value="option3">Sistem Informasi</option>
-              <option value="option3">Layanan Keuangan</option>
-              <option value="option3">
+              <option value="E-Government">E-Government</option>
+              <option value="Sistem Informasi">Sistem Informasi</option>
+              <option value="Layanan Keuangan">Layanan Keuangan</option>
+              <option value="Pengembangan Masyarakat dan Ekonomi">
                 Pengembangan Masyarakat dan Ekonomi
               </option>
-              <option value="option3">Pengelolaan Sumberdaya</option>
-              <option value="option3">Layanan Sosial</option>
-              <option value="option3">E-Tourism</option>
+              <option value="Pengelolaan Sumberdaya">
+                Pengelolaan Sumberdaya
+              </option>
+              <option value="Layanan Sosial">Layanan Sosial</option>
+              <option value="E-Tourism">E-Tourism</option>
             </Select>
             <Text fontWeight="400" fontSize="14px">
               Tahun dibuat inovasi <span style={{ color: "red" }}>*</span>
@@ -152,9 +147,9 @@ const AddInnovation: React.FC<AddInnovationProps> = ({
                 border: "1px solid",
                 borderColor: "black",
               }}
-              // value={}
-              // onChange={}
-            ></Input>
+              value={textInputsValue.year}
+              onChange={onTextChange}
+            />
             <Text fontWeight="400" fontSize="14px">
               Deskripsi <span style={{ color: "red" }}>*</span>
             </Text>
@@ -165,9 +160,9 @@ const AddInnovation: React.FC<AddInnovationProps> = ({
               _placeholder={{ color: "gray.500" }}
               _focus={{ outline: "none", bg: "white", borderColor: "black" }}
               height="100px"
-              // value={}
-              // onChange={}
-            ></Textarea>
+              value={textInputsValue.description}
+              onChange={onTextChange}
+            />
             <Text fontWeight="400" fontSize="14px">
               Foto inovasi <span style={{ color: "red" }}>*</span>
             </Text>
@@ -185,6 +180,24 @@ const AddInnovation: React.FC<AddInnovationProps> = ({
                 *
               </span>
             </Text>
+            {requirements.map((requirement, index) => (
+              <Flex
+                key={index}
+                justifyContent="space-between"
+                alignItems="center"
+                mt="10px"
+              >
+                <Text>{requirement}</Text>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setRequirements(requirements.filter((_, i) => i !== index));
+                  }}
+                >
+                  Hapus
+                </Button>
+              </Flex>
+            ))}
             <Input
               name="requirement"
               fontSize="10pt"
@@ -196,9 +209,22 @@ const AddInnovation: React.FC<AddInnovationProps> = ({
                 border: "1px solid",
                 borderColor: "black",
               }}
-              // value={}
-              // onChange={}
+              value={newRequirement}
+              onChange={(e) => setNewRequirement(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  onAddRequirement();
+                }
+              }}
             />
+            <Button
+              variant="outline"
+              onClick={onAddRequirement}
+              _hover={{ bg: "none" }}
+            >
+              Tambah Kebutuhan
+            </Button>
           </Stack>
         </Flex>
         <Button type="submit" mt="20px" width="100%" isLoading={loading}>
