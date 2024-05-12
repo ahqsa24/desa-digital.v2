@@ -1,3 +1,4 @@
+import { DeleteIcon } from "@chakra-ui/icons";
 import {
   Button,
   Flex,
@@ -10,24 +11,35 @@ import {
 import Container from "Components/container";
 import TopBar from "Components/topBar";
 import { User } from "firebase/auth";
+import { addDoc, collection, serverTimestamp, updateDoc } from "firebase/firestore";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import React, { useRef, useState } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
 import { useNavigate } from "react-router-dom";
+import { auth, firestore, storage } from "../../../firebase/clientApp";
 import ImageUpload from "../../formComponents/ImageUpload";
 
-type AddInnovationProps = {
+
+
+type Innovation = {
   user: User;
-  textInputs: {
-    name: string;
-    year: string;
-    description: string;
-    requirement: string;
-  };
+  name: string;
+  year: string;
+  description: string;
+  requirement: string;
+  innovatorName?: string;
+  innovatorImgURL?: string;
+  innovatorId: string;
+  
 };
 
-const AddInnovation: React.FC<AddInnovationProps> = ({ user, textInputs }) => {
-  const navigate = useNavigate();
 
-  const [selectedFile, setSelectedFile] = useState<string>();
+const AddInnovation: React.FC = () => {
+  const navigate = useNavigate();
+  const [user] = useAuthState(auth);
+
+  // const [selectedFile, setSelectedFile] = useState<string>();
+  const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
   const selectFileRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -40,16 +52,35 @@ const AddInnovation: React.FC<AddInnovationProps> = ({ user, textInputs }) => {
   const [requirements, setRequirements] = useState<string[]>([]);
   const [newRequirement, setNewRequirement] = useState("");
 
+  // const onSelectImage = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   const reader = new FileReader();
+  //   if (event.target.files?.[0]) {
+  //     reader.readAsDataURL(event.target.files[0]);
+  //   }
+  //   reader.onload = (readerEvent) => {
+  //     if (readerEvent.target?.result) {
+  //       setSelectedFile(readerEvent.target?.result as string);
+  //     }
+  //   };
+  // };
+
   const onSelectImage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const reader = new FileReader();
-    if (event.target.files?.[0]) {
-      reader.readAsDataURL(event.target.files[0]);
-    }
-    reader.onload = (readerEvent) => {
-      if (readerEvent.target?.result) {
-        setSelectedFile(readerEvent.target?.result as string);
+    const files = event.target.files;
+    if (files) {
+      const imagesArray: string[] = [];
+      for (let i = 0; i < files.length; i++) {
+        const reader = new FileReader();
+        reader.onload = (readerEvent) => {
+          if (readerEvent.target?.result) {
+            imagesArray.push(readerEvent.target.result as string);
+            if (imagesArray.length === files.length) {
+              setSelectedFiles((prev) => [...prev, ...imagesArray]);
+            }
+          }
+        };
+        reader.readAsDataURL(files[i]);
       }
-    };
+    }
   };
 
   const onTextChange = ({
@@ -72,12 +103,56 @@ const AddInnovation: React.FC<AddInnovationProps> = ({ user, textInputs }) => {
     }
   };
 
-  
+  const onAddInnovation = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setLoading(true);
+    const { name, year, description } = textInputsValue;
+    try {
+      const innovationDocRef = await addDoc(collection(firestore, "innovations"), {
+        namaInovasi: name,
+        tahunDibuat: year,
+        deskripsi: description,
+        kebutuhan: requirements,
+        kategori: category,
+        innovatorId: user?.uid,
+        createdAt: serverTimestamp(),
+        editedAt: serverTimestamp(),
+        namaInnovator: user?.displayName,
+        innovatorImgURL: user?.photoURL,
+      });
+
+      console.log("Document written with ID: ", innovationDocRef.id);
+      
+      const imagePromises = selectedFiles.map(async (file) => {
+        const response = await fetch(file);
+        const blob = await response.blob();
+        const imageRef = ref(
+          storage,
+          `innovations/${innovationDocRef.id}/image`
+        );
+        await uploadBytes(imageRef, blob);
+        const downloadURL = await getDownloadURL(imageRef);
+        return downloadURL;
+      });
+
+      const imageUrls = await Promise.all(imagePromises);
+      await updateDoc(innovationDocRef, {
+        images: imageUrls,
+      });
+      console.log("Images uploaded", imageUrls);
+      setLoading(false);
+    } catch (error) {
+      console.log("error", error);
+      setError("Gagal menambahkan inovasi");
+      setLoading(false);
+    }
+  };
+
 
   return (
     <Container page px={16}>
       <TopBar title="Tambahkan Inovasi" onBack={() => navigate(-1)} />
-      <form>
+      <form onSubmit={onAddInnovation}>
         <Flex direction="column" marginTop="24px">
           <Stack spacing={3} width="100%">
             <Text fontWeight="400" fontSize="14px">
@@ -167,8 +242,8 @@ const AddInnovation: React.FC<AddInnovationProps> = ({ user, textInputs }) => {
               Foto inovasi <span style={{ color: "red" }}>*</span>
             </Text>
             <ImageUpload
-              selectedFile={selectedFile}
-              setSelectedFile={setSelectedFile}
+              selectedFiles={selectedFiles}
+              setSelectedFiles={setSelectedFiles}
               selectFileRef={selectFileRef}
               onSelectImage={onSelectImage}
             />
@@ -185,16 +260,22 @@ const AddInnovation: React.FC<AddInnovationProps> = ({ user, textInputs }) => {
                 key={index}
                 justifyContent="space-between"
                 alignItems="center"
-                mt="10px"
               >
-                <Text>{requirement}</Text>
+                <Text fontWeight="400" fontSize="14px">
+                  {requirement}
+                </Text>
                 <Button
-                  variant="outline"
+                  bg="red.500"
+                  _hover={{ bg: "red.600" }}
+                  width="32px"
+                  height="32px"
+                  variant="solid"
+                  size="md"
                   onClick={() => {
                     setRequirements(requirements.filter((_, i) => i !== index));
                   }}
                 >
-                  Hapus
+                  <DeleteIcon />
                 </Button>
               </Flex>
             ))}
@@ -227,7 +308,7 @@ const AddInnovation: React.FC<AddInnovationProps> = ({ user, textInputs }) => {
             </Button>
           </Stack>
         </Flex>
-        <Button type="submit" mt="20px" width="100%" isLoading={loading}>
+        <Button type="submit" mt="20px" width="100%" isLoading={loading} >
           Tambah Inovasi
         </Button>
       </form>
