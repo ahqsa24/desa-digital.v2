@@ -1,4 +1,4 @@
-import { DeleteIcon } from "@chakra-ui/icons";
+import { AddIcon, DeleteIcon } from "@chakra-ui/icons";
 import {
   Button,
   Flex,
@@ -126,9 +126,10 @@ const AddInnovation: React.FC = () => {
       const imagePromises = selectedFiles.map(async (file) => {
         const response = await fetch(file);
         const blob = await response.blob();
+        const fileName = file.split("/").pop();
         const imageRef = ref(
           storage,
-          `innovations/${innovationDocRef.id}/image`
+          `innovations/${innovationDocRef.id}/images/${fileName}`
         );
         await uploadBytes(imageRef, blob);
         const downloadURL = await getDownloadURL(imageRef);
@@ -303,8 +304,9 @@ const AddInnovation: React.FC = () => {
               variant="outline"
               onClick={onAddRequirement}
               _hover={{ bg: "none" }}
+              leftIcon={<AddIcon />}
             >
-              Tambah Kebutuhan
+              Tambah persyaratan lain
             </Button>
           </Stack>
         </Flex>
