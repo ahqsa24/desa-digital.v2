@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { paths } from "Consts/path";
-import Button from "Components/button";
+// import Button from "Components/button";
+import { Button } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import TextField from "Components/textField";
 import { useNavigate } from "react-router-dom";
@@ -13,7 +14,10 @@ import {
   ActionContainer,
   Title,
 } from "./_loginStyle";
-import { useAuthState, useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
+import {
+  useAuthState,
+  useSignInWithEmailAndPassword,
+} from "react-firebase-hooks/auth";
 import { auth } from "../../firebase/clientApp";
 import { Text } from "@chakra-ui/react";
 import { FIREBASE_ERRORS } from "../../../src/firebase/errors";
@@ -40,14 +44,15 @@ const Login: React.FC = () => {
     useSignInWithEmailAndPassword(auth);
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if(error) setError("")
-    if(!loginForm.email.includes("@")) return setError("Email tidak valid")
-    if(loginForm.password.length < 6) return setError("Kata sandi minimal 6 karakter")
+    if (error) setError("");
+    if (!loginForm.email.includes("@")) return setError("Email tidak valid");
+    if (loginForm.password.length < 6)
+      return setError("Kata sandi minimal 6 karakter");
     signInWithEmailAndPassword(loginForm.email, loginForm.password);
   };
   const onChange = ({ target }: { target: HTMLInputElement }) => {
     setLoginForm((prev) => ({ ...prev, [target.name]: target.value }));
-    if(error) setError("")
+    if (error) setError("");
   };
   const [userAuth, loadingAuth, errorAuth] = useAuthState(auth);
 
@@ -81,11 +86,20 @@ const Login: React.FC = () => {
             </React.Fragment>
           ))}
           {(error || userError) && (
-            <Text textAlign='center' color='red' fontSize='10pt'>
-              {error || FIREBASE_ERRORS[userError?.message as keyof typeof FIREBASE_ERRORS]}
+            <Text textAlign="center" color="red" fontSize="10pt">
+              {error ||
+                FIREBASE_ERRORS[
+                  userError?.message as keyof typeof FIREBASE_ERRORS
+                ]}
             </Text>
           )}
-          <Button size="m" fullWidth mt={12} type="submit">
+          <Button
+            mt={8}
+            type="submit"
+            alignItems="center"
+            width="100%"
+            isLoading={loading}
+          >
             Masuk
           </Button>
         </form>
@@ -99,6 +113,6 @@ const Login: React.FC = () => {
       </Container>
     </Background>
   );
-}
+};
 
 export default Login;
