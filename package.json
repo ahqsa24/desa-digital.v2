@@ -27,8 +27,10 @@
     "react-hook-form": "^7.44.3",
     "react-query": "^3.39.3",
     "react-router-dom": "^6.11.2",
+    "react-slick": "^0.30.2",
     "react-toastify": "^9.1.3",
     "react-use": "^17.4.0",
+    "slick-carousel": "^1.8.1",
     "styled-components": "^5.3.11",
     "zod": "^3.21.4"
   },
@@ -36,6 +38,7 @@
     "@types/json-server": "^0.14.4",
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
+    "@types/react-slick": "^0.23.13",
     "@types/react-toastify": "^4.1.0",
     "@types/styled-components": "^5.1.26",
     "@types/uuid": "^9.0.1",

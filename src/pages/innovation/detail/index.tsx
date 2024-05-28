@@ -21,6 +21,12 @@ import {
 import { useQuery } from "react-query";
 import { getInnovationById } from "Services/innovationServices.ts";
 import { getUserById } from "Services/userServices.ts";
+import { useEffect, useState } from "react";
+import { DocumentData } from "firebase/firestore";
+import { getDocumentById } from "../../../firebase/inovationTable.ts";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 function DetailInnovation() {
   const navigate = useNavigate();
@@ -32,9 +38,21 @@ function DetailInnovation() {
       enabled: !!id,
     }
   );
+
+  const [data, setData] = useState<DocumentData>({});
+
   const { background, benefit, category } = innovation || {};
-  const { description, name, requirement, date, innovatorId } =
-    innovation || {};
+  const { description, name, requirement, date, innovatorId } = innovation || {};
+
+  useEffect(() => {
+    getDocumentById("innovations", id)
+      .then((detailInovasi) => {
+        setData(detailInovasi);
+      })
+      .catch((error) => {
+        // Handle error here
+      });
+  }, [id]);
 
   const { data: innovator } = useQuery<any>(
     "innovatorById",
@@ -44,16 +62,46 @@ function DetailInnovation() {
     }
   );
 
+  const [datainnovator, setDatainnovator] = useState<DocumentData>({});
+
+  useEffect(() => {
+    getDocumentById("users", data.innovatorId)
+      .then((detailInovasi) => {
+        setDatainnovator(detailInovasi);
+      })
+      .catch((error) => {
+        // Handle error here
+      });
+  }, [data.innovatorId]);
+
   const { innovatorName, logo } = innovator || {};
   const year = new Date(date).getFullYear();
+
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+  };
 
   return (
     <Container page>
       <TopBar title="Detail Inovasi" onBack={() => navigate(-1)} />
-      <Img src={background} alt="background" />
+      {data.images && data.images.length > 1 ? (
+        <Slider {...settings}>
+          {data.images.map((image: string, index: number) => (
+            <Img key={index} src={image} alt={`background-${index}`} />
+          ))}
+        </Slider>
+      ) : (
+        data.images && data.images.length === 1 && (
+          <Img src={data.images[0]} alt={`background-0`} />
+        )
+      )}
       <ContentContainer>
         <div>
-          <Title>{name}</Title>
+          <Title>{data.namaInovasi}</Title>
           <ChipContainer>
             <Label
               onClick={() =>
@@ -64,9 +112,9 @@ function DetailInnovation() {
                 )
               }
             >
-              {category}
+              {data.kategori}
             </Label>
-            <Description>Dibuat tahun {year}</Description>
+            <Description>Dibuat tahun {data.tahunDibuat}</Description>
           </ChipContainer>
         </div>
         <ActionContainer
@@ -77,18 +125,18 @@ function DetailInnovation() {
           }
         >
           <Logo src={logo} alt="logo" />
-          <Text>{innovatorName}</Text>
+          <Text>{datainnovator.innovatorName}</Text>
         </ActionContainer>
         <div>
           <Text mb={16}>Deskripsi</Text>
-          <Description>{description}</Description>
+          <Description>{data.deskripsi}</Description>
         </div>
 
         <div>
           <Text mb={16}>Keuntungan</Text>
           <BenefitContainer>
             <Icon mr={4} src={Dot} alt="dot" />
-            <Description>{benefit}</Description>
+            <Description></Description>
           </BenefitContainer>
         </div>
 
@@ -96,7 +144,7 @@ function DetailInnovation() {
           <Text mb={16}>Perlu Disiapkan</Text>
           <BenefitContainer>
             <Icon src={Check} alt="check" />
-            <Description>{requirement}</Description>
+            <Description>{data.kebutuhan}</Description>
           </BenefitContainer>
         </div>
 
