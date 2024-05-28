@@ -1,14 +1,14 @@
 import { Container, Title, Description, Content } from './_cardCategoryStyle'
 
 type CardCategoryProps = {
-  icon: string
-  title: string
-  description: string
-  onClick: () => void
+  icon: string;
+  title: string;
+  description: string;
+  onClick: () => void;
 }
 
 function CardCategory(props: CardCategoryProps) {
-  const { icon, title, description, onClick } = props
+  const { icon, title, description, onClick } = props;
 
   return (
     <Container onClick={onClick}>
@@ -18,7 +18,7 @@ function CardCategory(props: CardCategoryProps) {
         <Description>{description}</Description>
       </Content>
     </Container>
-  )
+  );
 }
 
-export default CardCategory
+export default CardCategory;
