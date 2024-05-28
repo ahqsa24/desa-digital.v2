@@ -8,32 +8,44 @@ import CardInnovation from "Components/card/innovation";
 import { useQuery } from "react-query";
 import { getCategories } from "Services/categoryServices";
 import Loading from "Components/loading";
-import { getInnovation } from "Services/innovationServices";
 import {
   Container as CategoryContainer,
   DetailContainer,
 } from "./_innovationStyle";
+import { getDocuments } from "../../firebase/inovationTable";
+import { DocumentData } from "firebase/firestore";
 
 function Detail() {
   const navigate = useNavigate();
   const { category } = useParams();
 
-  const { data } = useQuery("innovationByCategory", getInnovation);
-  const innovationByCategory = data?.filter(
-    (item: any) => item.category === category
+  const [data, setData] = useState<DocumentData[]>([]);
+
+  useEffect(() => {
+    getDocuments("innovations")
+      .then((detailInovasi) => {
+        setData(detailInovasi);
+      })
+      .catch((error) => {
+        // Handle error here
+      });
+  }, []);
+
+  const innovationByCategory = data.filter(
+    (item) => item.kategori === category
   );
 
-  if (innovationByCategory?.length === 0) return <p>Inovasi tidak ditemukan</p>;
+  if (innovationByCategory.length === 0) return <p>Inovasi tidak ditemukan</p>;
 
   return (
     <DetailContainer>
-      {innovationByCategory?.map((item: any, idx: number) => (
+      {innovationByCategory.map((item, idx) => (
         <CardInnovation
           key={idx}
           {...item}
           onClick={() =>
             navigate(
-              generatePath(paths.DETAIL_INNOVATION_PAGE, { id: item?.id })
+              generatePath(paths.DETAIL_INNOVATION_PAGE, { id: item.id })
             )
           }
         />
@@ -52,7 +64,7 @@ function List(props: ListProps) {
   const { data, isFetched, isLoading } = props;
 
   const navigate = useNavigate();
-  const [menu, setMenu] = useState<any>([]);
+  const [menu, setMenu] = useState<any[]>([]);
 
   const handleClick = (category: string) => {
     const path = generatePath(paths.INNOVATION_CATEGORY_PAGE, {
