@@ -1,28 +1,30 @@
 import { HamburgerIcon } from '@chakra-ui/icons';
 import { IconButton, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react';
 import { paths } from 'Consts/path';
-import { User, signOut } from 'firebase/auth';
+import { signOut } from 'firebase/auth';
 import React from 'react';
+import { useAuthState } from 'react-firebase-hooks/auth';
 import { useNavigate } from 'react-router';
 import { auth } from '../../../firebase/clientApp';
+import { CgProfile } from "react-icons/cg";
 
-type UserMenuProps = {
-    user?: User | null;
-};
 
-const UserMenu:React.FC<UserMenuProps> = ({ user }) => {
+
+const UserMenu:React.FC = () => {
     const navigate = useNavigate();
-
+    const [user] = useAuthState(auth);
     return (
       <Menu>
         <MenuButton
           as={IconButton}
           aria-label="Options"
-          icon={<HamburgerIcon />}
+          icon={<CgProfile/>}
+          fontSize={"24px"}
         />
         <MenuList>
             {user ? (
                 <>
+                    <MenuItem >Profile</MenuItem>
                     <MenuItem onClick={() => signOut(auth)}>Logout</MenuItem>
                 </>
             ) : (
