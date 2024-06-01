@@ -1,158 +1,408 @@
-import React, { useEffect } from "react";
-import TopBar from "Components/topBar";
+import { AddIcon, DeleteIcon } from "@chakra-ui/icons";
+import {
+  Button,
+  Flex,
+  Input,
+  Select,
+  Stack,
+  Text,
+  Textarea,
+} from "@chakra-ui/react";
 import Container from "Components/container";
-import TextField from "Components/textField";
-import Button from "Components/button";
-import { useForm } from "react-hook-form";
+import TopBar from "Components/topBar";
+import { User } from "firebase/auth";
+import {
+  addDoc,
+  collection,
+  serverTimestamp,
+  updateDoc,
+} from "firebase/firestore";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import React, { useRef, useState } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
 import { useNavigate } from "react-router-dom";
-import { Label, FormContainer } from "./_innovatorStyles";
-import { useMutation, useQuery } from "react-query";
-import { toast } from "react-toastify";
-import { updateProfile, getUserById } from "Services/userServices";
-import useAuthLS from "Hooks/useAuthLS";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
+import { auth, firestore, storage } from "../../../firebase/clientApp";
+import ImageUpload from "../../formComponents/ImageUpload";
 
-const schema = z.object({
-  innovatorName: z.string().min(1, { message: "*Nama inovator wajib diisi" }),
-  targetUser: z.string().min(1, { message: "*Target pengguna wajib diisi" }),
-  product: z.string().min(1, { message: "*Isi nama produk" }),
-  description: z.string().min(1, { message: "*Deskripsi wajib diisi" }),
-  modelBusiness: z.string().min(1, { message: "*Model bisnis wajib diisi" }),
-  logo: z.string().min(1, { message: "*Silahkan masukkan logo" }),
-  background: z.string().min(1, { message: "*Silahkan masukkan background" }),
-  whatsApp: z.string().min(1, { message: "*Nomor whatsapp wajib diisi" }),
-  website: z.string().min(1, { message: "*Website wajib diisi" }),
-  instagram: z.string().min(1, { message: "*Instagram wajib diisi" }),
-});
-
-const forms = [
-  {
-    label: "Nama Inovator",
-    type: "text",
-    name: "innovatorName",
-  },
-  {
-    label: "Target Pengguna",
-    type: "text",
-    name: "targetUser",
-    placeholder: "contoh: nelayan",
-  },
-  {
-    label: "Produk",
-    type: "text",
-    name: "product",
-    placeholder: "Masukkan nama produk",
-  },
-  {
-    label: "Model Bisnis Digital",
-    type: "text",
-    name: "modelBusiness",
-    placeholder: "Masukkan model bisnis secara singkat",
-  },
-  {
-    label: "Deskripsi",
-    type: "text",
-    name: "description",
-    placeholder: "Masukkan deskripsi singkat tentang inovator",
-  },
-  {
-    label: "Logo Inovator",
-    type: "url",
-    name: "logo",
-    placeholder: "https://",
-  },
-  {
-    label: "Header Inovator",
-    type: "url",
-    name: "background",
-    placeholder: "https://",
-  },
-  {
-    label: "Nomor WhatsApp",
-    type: "tel",
-    name: "whatsApp",
-    placeholder: "0812345678",
-  },
-  {
-    label: "Link Instagram",
-    type: "url",
-    name: "instagram",
-    placeholder: "https://instagram.com/username",
-  },
-  {
-    label: "Link Website",
-    type: "url",
-    name: "website",
-    placeholder: "https://",
-  },
+const provinces = [
+  "Aceh",
+  "Sumatera Utara",
+  "Sumatera Barat",
+  "Riau",
+  "Kepulauan Riau",
+  "Jambi",
+  "Sumatera Selatan",
+  "Bangka Belitung",
+  "Bengkulu",
+  "Lampung",
+  "DKI Jakarta",
+  "Jawa Barat",
+  "Banten",
+  "Jawa Tengah",
+  "DI Yogyakarta",
+  "Jawa Timur",
+  "Bali",
+  "Nusa Tenggara Barat",
+  "Nusa Tenggara Timur",
+  "Kalimantan Barat",
+  "Kalimantan Tengah",
+  "Kalimantan Selatan",
+  "Kalimantan Timur",
+  "Kalimantan Utara",
+  "Sulawesi Utara",
+  "Sulawesi Tengah",
+  "Sulawesi Selatan",
+  "Sulawesi Tenggara",
+  "Gorontalo",
+  "Sulawesi Barat",
+  "Maluku",
+  "Maluku Utara",
+  "Papua",
+  "Papua Barat",
+  "Papua Selatan",
+  "Papua Tengah",
+  "Papua Pegunungan",
+  "Papua Barat Daya",
 ];
 
-function Profile() {
+type Innovation = {
+  user: User;
+  name: string;
+  year: string;
+  description: string;
+  requirement: string;
+  innovatorName?: string;
+  innovatorImgURL?: string;
+  innovatorId: string;
+};
+
+const AddInnovation: React.FC = () => {
   const navigate = useNavigate();
-  const form = useForm({
-    resolver: zodResolver(schema),
+  const [user] = useAuthState(auth);
+
+  const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
+  const selectFileRef = useRef<HTMLInputElement>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [textInputsValue, setTextInputsValue] = useState({
+    name: "",
+    year: "",
+    description: "",
+    instagram: "",
+    website: "",
+    targetUser: "",
+    product: "",
+    modelBusiness: "",
+    whatsapp: "",
   });
-  const { handleSubmit, reset } = form;
+  const [category, setCategory] = useState("");
+  const [requirements, setRequirements] = useState<string[]>([]);
+  const [newRequirement, setNewRequirement] = useState("");
+  const [province, setProvince] = useState("");
 
-  const { mutateAsync } = useMutation(updateProfile);
-  const { auth } = useAuthLS();
-
-  const { data, isFetched } = useQuery(
-    "profileInnovator",
-    () => getUserById(auth?.id),
-    {
-      enabled: !!auth?.id,
-    }
-  );
-
-  const onProfileSave = async (data: any) => {
-    console.log(data);
-    try {
-      const payload = {
-        id: auth?.id,
-        data: data,
-      };
-      await mutateAsync(payload);
-      toast("Data profil berhasil disimpan", { type: "success" });
-    } catch (error) {
-      toast("Terjadi kesalahan jaringan", { type: "error" });
+  const onSelectImage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (files) {
+      const imagesArray: string[] = [];
+      for (let i = 0; i < files.length; i++) {
+        const reader = new FileReader();
+        reader.onload = (readerEvent) => {
+          if (readerEvent.target?.result) {
+            imagesArray.push(readerEvent.target.result as string);
+            if (imagesArray.length === files.length) {
+              setSelectedFiles((prev) => [...prev, ...imagesArray]);
+            }
+          }
+        };
+        reader.readAsDataURL(files[i]);
+      }
     }
   };
 
-  useEffect(() => {
-    if (isFetched) {
-      reset({
-        ...(data || {}),
-      });
+  const onTextChange = ({
+    target: { name, value },
+  }: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setTextInputsValue((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const onSelectCategory = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setCategory(event.target.value);
+  };
+
+  const onSelectProvince = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setProvince(event.target.value);
+  };
+
+  const onAddRequirement = () => {
+    if (newRequirement.trim() !== "") {
+      setRequirements((prev) => [...prev, newRequirement]);
+      setNewRequirement("");
     }
-  }, [isFetched]);
+  };
+
+  const onAddInnovation = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setLoading(true);
+    const {
+      name,
+      year,
+      description,
+      instagram,
+      website,
+      targetUser,
+      product,
+      modelBusiness,
+      whatsapp,
+    } = textInputsValue;
+    try {
+      const innovationDocRef = await addDoc(
+        collection(firestore, "innovations"),
+        {
+          namaInovasi: name,
+          tahunDibuat: year,
+          deskripsi: description,
+          kebutuhan: requirements,
+          kategori: category,
+          provinsi: province,
+          innovatorId: user?.uid,
+          createdAt: serverTimestamp(),
+          editedAt: serverTimestamp(),
+          namaInnovator: user?.displayName,
+          innovatorImgURL: user?.photoURL,
+          instagram,
+          website,
+          targetUser,
+          product,
+          modelBusiness,
+          whatsapp,
+        }
+      );
+
+      console.log("Document written with ID: ", innovationDocRef.id);
+
+      const imagePromises = selectedFiles.map(async (file) => {
+        const response = await fetch(file);
+        const blob = await response.blob();
+        const fileName = file.split("/").pop();
+        const imageRef = ref(
+          storage,
+          `innovations/${innovationDocRef.id}/images/${fileName}`
+        );
+        await uploadBytes(imageRef, blob);
+        const downloadURL = await getDownloadURL(imageRef);
+        return downloadURL;
+      });
+
+      const imageUrls = await Promise.all(imagePromises);
+      await updateDoc(innovationDocRef, {
+        images: imageUrls,
+      });
+      console.log("Images uploaded", imageUrls);
+      setLoading(false);
+    } catch (error) {
+      console.log("error", error);
+      setError("Gagal menambahkan inovasi");
+      setLoading(false);
+    }
+  };
 
   return (
-    <Container page>
-      <TopBar title="Profil Inovator" onBack={() => navigate(-1)} />
-      <FormContainer>
-        <form onSubmit={handleSubmit(onProfileSave)}>
-          {forms?.map(({ label, type, name, placeholder }, idx) => (
-            <React.Fragment key={idx}>
-              <Label mt={12}>{label} </Label>
-              <TextField
-                mt={4}
-                placeholder={placeholder || label}
-                type={type}
-                name={name}
-                form={form}
-              />
-            </React.Fragment>
-          ))}
-
-          <Button size="m" fullWidth mt={12} type="submit">
-            Simpan
-          </Button>
-        </form>
-      </FormContainer>
+    <Container page px={16}>
+      <TopBar title="Register Inovator" onBack={() => navigate(-1)} />
+      <form onSubmit={onAddInnovation}>
+        <Flex direction="column" marginTop="24px">
+          <Stack spacing={3} width="100%">
+            <Text fontWeight="400" fontSize="14px">
+              Nama Inovator <span style={{ color: "red" }}>*</span>
+            </Text>
+            <Input
+              name="name"
+              fontSize="10pt"
+              placeholder="Nama Inovator"
+              _placeholder={{ color: "gray.500" }}
+              _focus={{
+                outline: "none",
+                bg: "white",
+                border: "1px solid",
+                borderColor: "black",
+              }}
+              value={textInputsValue.name}
+              onChange={onTextChange}
+            />
+            <Text fontWeight="400" fontSize="14px">
+              Kategori Inovator <span style={{ color: "red" }}>*</span>
+            </Text>
+            <Select
+              placeholder="Pilih provinsi"
+              name="province"
+              fontSize="10pt"
+              variant="outline"
+              cursor="pointer"
+              color={"gray.500"}
+              _focus={{
+                outline: "none",
+                bg: "white",
+                border: "1px solid",
+                borderColor: "black",
+              }}
+              _placeholder={{ color: "gray.500" }}
+              value={province}
+              onChange={onSelectProvince}
+            >
+              {provinces.map((prov, index) => (
+                <option key={index} value={prov}>
+                  {prov}
+                </option>
+              ))}
+            </Select>
+            <Text fontWeight="400" fontSize="14px">
+              Target Pengguna <span style={{ color: "red" }}>*</span>
+            </Text>
+            <Input
+              name="targetUser"
+              fontSize="10pt"
+              placeholder="Contoh: Nelayan"
+              _placeholder={{ color: "gray.500" }}
+              _focus={{
+                outline: "none",
+                bg: "white",
+                border: "1px solid",
+                borderColor: "black",
+              }}
+              value={textInputsValue.targetUser}
+              onChange={onTextChange}
+            />
+            <Text fontWeight="400" fontSize="14px">
+              Produk <span style={{ color: "red" }}>*</span>
+            </Text>
+            <Input
+              name="product"
+              fontSize="10pt"
+              placeholder="Nama produk"
+              _placeholder={{ color: "gray.500" }}
+              _focus={{
+                outline: "none",
+                bg: "white",
+                border: "1px solid",
+                borderColor: "black",
+              }}
+              value={textInputsValue.product}
+              onChange={onTextChange}
+            />
+            <Text fontWeight="400" fontSize="14px">
+              Model Bisnis Digital <span style={{ color: "red" }}>*</span>
+            </Text>
+            <Input
+              name="modelBusiness"
+              fontSize="10pt"
+              placeholder="Masukkan model bisnis secara singkat"
+              _placeholder={{ color: "gray.500" }}
+              _focus={{ outline: "none", bg: "white", borderColor: "black" }}
+              value={textInputsValue.modelBusiness}
+              onChange={onTextChange}
+            />
+            <Text fontWeight="400" fontSize="14px">
+              Deskripsi <span style={{ color: "red" }}>*</span>
+            </Text>
+            <Textarea
+              name="description"
+              fontSize="10pt"
+              placeholder="Masukkan deskripsi singkat tentang inovator"
+              _placeholder={{ color: "gray.500" }}
+              _focus={{
+                outline: "none",
+                bg: "white",
+                borderColor: "black",
+              }}
+              height="100px"
+              value={textInputsValue.description}
+              onChange={onTextChange}
+            />
+            <Text fontWeight="400" fontSize="14px">
+              Logo Inovator <span style={{ color: "red" }}>*</span>
+            </Text>
+            <ImageUpload
+              selectedFiles={selectedFiles}
+              setSelectedFiles={setSelectedFiles}
+              selectFileRef={selectFileRef}
+              onSelectImage={onSelectImage}
+            />
+            <Text fontWeight="400" fontSize="14px">
+              Header Inovator
+            </Text>
+            <ImageUpload
+              selectedFiles={selectedFiles}
+              setSelectedFiles={setSelectedFiles}
+              selectFileRef={selectFileRef}
+              onSelectImage={onSelectImage}
+            />
+            <Text fontWeight="700" fontSize="16px">
+              Kontak Inovator
+            </Text>
+            <Text fontWeight="400" fontSize="14px">
+              Nomor WhatsApp <span style={{ color: "red" }}>*</span>
+            </Text>
+            <Input
+              name="whatsapp"
+              fontSize="10pt"
+              placeholder="Contoh: 08xxxxxx"
+              _placeholder={{ color: "gray.500" }}
+              _focus={{
+                outline: "none",
+                bg: "white",
+                border: "1px solid",
+                borderColor: "black",
+              }}
+              value={textInputsValue.whatsapp}
+              onChange={onTextChange}
+            />
+            <Text fontWeight="400" fontSize="14px">
+              Instagram <span style={{ color: "red" }}>*</span>
+            </Text>
+            <Input
+              name="instagram"
+              type="url" // Correctly specify the input type as URL
+              fontSize="10pt"
+              placeholder="Link instagram"
+              _placeholder={{ color: "gray.500" }}
+              _focus={{
+                outline: "none",
+                bg: "white",
+                border: "1px solid",
+                borderColor: "black",
+              }}
+              value={textInputsValue.instagram} // Ensure the state value corresponds to 'instagram'
+              onChange={onTextChange} // Use the correct change handler
+            />
+            <Text fontWeight="400" fontSize="14px">
+              Website <span style={{ color: "red" }}>*</span>
+            </Text>
+            <Input
+              name="website"
+              type="url" // Correctly specify the input type as URL
+              fontSize="10pt"
+              placeholder="Link website"
+              _placeholder={{ color: "gray.500" }}
+              _focus={{
+                outline: "none",
+                bg: "white",
+                border: "1px solid",
+                borderColor: "black",
+              }}
+              value={textInputsValue.website} // Ensure the state value corresponds to 'website'
+              onChange={onTextChange} // Use the correct change handler
+            />
+          </Stack>
+        </Flex>
+        <Button type="submit" mt="20px" width="100%" isLoading={loading}>
+          Daftarkan Akun
+        </Button>
+      </form>
     </Container>
   );
-}
+};
 
-export default Profile;
+export default AddInnovation;
