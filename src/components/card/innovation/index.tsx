@@ -6,39 +6,34 @@ import {
   Background,
   Content,
   Icon,
-  Company,
   CompanyContainer,
   Applied,
 } from "./_cardInnovationStyle";
 
 type CardInnovationProps = {
-  background?: string;
-  logo?: string;
-  name?: string;
-  category?: string;
-  description?: string;
-  year?: string;
-  // companyName?: string
-  // appliedInnovation?: number
+  images?: string[];
+  namaInovasi?: string;
+  kategori?: string;
+  deskripsi?: string;
+  tahunDibuat?: string;
   onClick?: () => void;
 };
 
 function CardInnovation(props: CardInnovationProps) {
-  const { background, logo, name, category, description, year, onClick } =
-    props;
-  console.log(background);
+  const { images, namaInovasi, kategori, deskripsi, tahunDibuat, onClick } = props;
+
   return (
     <Container onClick={onClick}>
-      <Background src={background} alt={name} />
+      <Background src={images ? images[0] : undefined} alt={namaInovasi} />
       <Content>
-        <Title>{name}</Title>
-        <Category>{category}</Category>
-        <Description>{description}</Description>
+        <Title>{namaInovasi}</Title>
+        <Category>{kategori}</Category>
+        <Description>{deskripsi}</Description>
         <CompanyContainer>
-          <Icon src={logo} alt={name} />
-          <Company></Company>
+          {/* Placeholder for future company-related icons or logos */}
+          <Icon src={""} alt={namaInovasi} />
         </CompanyContainer>
-        <Applied>{year}</Applied>
+        <Applied>{tahunDibuat}</Applied>
       </Content>
     </Container>
   );
