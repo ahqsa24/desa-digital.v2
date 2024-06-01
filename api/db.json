@@ -7,8 +7,8 @@
       "id": 1,
       "innovatorName": "Efishery",
       "category": "Pemasaran Agri-Food dan E-Commerce",
-      "targetUser": "Nelayan",
-      "product": "Efeeder",
+      "targetUser": "Nelayan budidaya (ikan darat)",
+      "product": "Otomasi teknologi budidaya ikan",
       "modelBusiness": "Layanan Berbayar untuk sewa alat dan pusat multi layanan",
       "description": "eFishery startup Aqua-Tech pertama di Asia, membangun ekosistem Akuakultur berkelanjutan dengan teknologi yang membantu budidaya ikan/udang.",
       "logo": "https://i.postimg.cc/gkyPhh0k/efishery-logo.png",
@@ -43,11 +43,17 @@
       "benefit": "Teknologi smart green house",
       "whatsApp": "6281372534485",
       "province": "32",
-      "district": "3204",
+      "district": "Kecamatan Rancabali, Kabupaten Bandung, Jawa Barat",
       "subDistrict": "3204011",
       "village": "3204011005",
       "logo": "https://i.postimg.cc/Sxg1y3vM/logo-desaalamendah.jpg",
       "header": "https://i.postimg.cc/mDHmyD2Y/alamendah-header.jpg"
+    },
+    {
+      "role": "innovator",
+      "email": "cheishaamandacheisha@apps.ipb.c.id",
+      "password": "12345",
+      "id": 4
     }
   ],
   "innovations": [],
@@ -68,14 +74,14 @@
       "description": "Pemerintah yang menggunakan teknologi seperti internet dan aplikasi untuk membantu masyarakat berinteraksi dengan pemerintah."
     },
     {
-      "icon": "https://github.com/fitrianurynt/PSBO/assets/79956203/8338ff39-61d6-4e78-895f-4f0577f699e1",
+      "icon": "https://github.com/cheishaamanda/capstone1/assets/90697739/e324ef2f-d3c9-443c-ad05-567676f6d76d",
       "title": "Sistem Informasi",
       "description": "Sebuah sistem yang mengumpulkan dan memproses informasi sehingga dapat diakses dan digunakan untuk berbagai keperluan."
     },
     {
-      "icon": "https://github.com/fitrianurynt/PSBO/assets/79956203/2538d702-7124-4ce5-8a33-b570e2cc3aac",
-      "title": "Layanan Keuangan",
-      "description": "Layanan yang membantu orang untuk mengelola uang mereka, seperti menabung, meminjam, atau berinvestasi."
+      "icon": "https://github.com/fitrianurynt/PSBO/assets/79956203/b4742250-5691-42ac-8a8a-6f9d5684b23b",
+      "title": "Infrastruktur Lokal",
+      "description": "Upaya untuk meningkatkan kualitas  infrastruktur (jalan, air, listrik) di suatu daerah."
     },
     {
       "icon": "https://github.com/fitrianurynt/PSBO/assets/79956203/759315b1-3e99-4011-8d86-70f00f3c0818",
@@ -83,9 +89,9 @@
       "description": "Upaya untuk meningkatkan kualitas masyarakat dan perekonomian di suatu daerah."
     },
     {
-      "icon": "https://github.com/fitrianurynt/PSBO/assets/79956203/b4742250-5691-42ac-8a8a-6f9d5684b23b",
-      "title": "Infrastruktur Lokal",
-      "description": "Upaya untuk meningkatkan kualitas  infrastruktur (jalan, air, listrik) di suatu daerah."
+      "icon": "https://github.com/fitrianurynt/PSBO/assets/79956203/2538d702-7124-4ce5-8a33-b570e2cc3aac",
+      "title": "Layanan Keuangan",
+      "description": "Layanan yang membantu orang untuk mengelola uang mereka, seperti menabung, meminjam, atau berinvestasi."
     },
     {
       "icon": "https://github.com/fitrianurynt/PSBO/assets/79956203/20bed91b-696a-482a-a19d-2b9aae07a12e",
@@ -104,7 +110,7 @@
     },
     {
       "icon": "https://github.com/fitrianurynt/PSBO/assets/79956203/41581f29-9da8-417c-b24d-07bad3acd60b",
-      "title": "Semua",
+      "title": "Lihat Semua",
       "description": ""
     }
   ]
