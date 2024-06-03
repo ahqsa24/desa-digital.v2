@@ -1,4 +1,3 @@
-import { AddIcon, DeleteIcon } from "@chakra-ui/icons";
 import {
   Button,
   Flex,
@@ -23,65 +22,30 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { useNavigate } from "react-router-dom";
 import { auth, firestore, storage } from "../../../firebase/clientApp";
 import ImageUpload from "../../formComponents/ImageUpload";
+import { string } from "zod";
+import LogoUpload from "../../formComponents/LogoUpload";
+import HeaderUpload from "../../formComponents/HeaderUpload";
 
-const provinces = [
-  "Aceh",
-  "Sumatera Utara",
-  "Sumatera Barat",
-  "Riau",
-  "Kepulauan Riau",
-  "Jambi",
-  "Sumatera Selatan",
-  "Bangka Belitung",
-  "Bengkulu",
-  "Lampung",
-  "DKI Jakarta",
-  "Jawa Barat",
-  "Banten",
-  "Jawa Tengah",
-  "DI Yogyakarta",
-  "Jawa Timur",
-  "Bali",
-  "Nusa Tenggara Barat",
-  "Nusa Tenggara Timur",
-  "Kalimantan Barat",
-  "Kalimantan Tengah",
-  "Kalimantan Selatan",
-  "Kalimantan Timur",
-  "Kalimantan Utara",
-  "Sulawesi Utara",
-  "Sulawesi Tengah",
-  "Sulawesi Selatan",
-  "Sulawesi Tenggara",
-  "Gorontalo",
-  "Sulawesi Barat",
-  "Maluku",
-  "Maluku Utara",
-  "Papua",
-  "Papua Barat",
-  "Papua Selatan",
-  "Papua Tengah",
-  "Papua Pegunungan",
-  "Papua Barat Daya",
+const categories = [
+  "Agribisnis",
+  "Akademisi",
+  "Dibawah Pemerintah",
+  "Layanan Finansial",
+  "Lembaga Swadaya Masyarakat (LSM)",
+  "Organisasi Pertanian",
+  "Pemerintah Daerah",
+  "Perusahaan",
+  "Start Up",
 ];
 
-type Innovation = {
-  user: User;
-  name: string;
-  year: string;
-  description: string;
-  requirement: string;
-  innovatorName?: string;
-  innovatorImgURL?: string;
-  innovatorId: string;
-};
-
-const AddInnovation: React.FC = () => {
+const InnovatorForm: React.FC = () => {
   const navigate = useNavigate();
   const [user] = useAuthState(auth);
 
-  const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
-  const selectFileRef = useRef<HTMLInputElement>(null);
+  const [selectedLogo, setSelectedLogo] = useState<string>("");
+  const [selectedHeader, setSelectedHeader] = useState<string>("");
+  const selectLogoRef = useRef<HTMLInputElement>(null);
+  const selectHeaderRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [textInputsValue, setTextInputsValue] = useState({
@@ -98,25 +62,28 @@ const AddInnovation: React.FC = () => {
   const [category, setCategory] = useState("");
   const [requirements, setRequirements] = useState<string[]>([]);
   const [newRequirement, setNewRequirement] = useState("");
-  const [province, setProvince] = useState("");
 
-  const onSelectImage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files) {
-      const imagesArray: string[] = [];
-      for (let i = 0; i < files.length; i++) {
-        const reader = new FileReader();
-        reader.onload = (readerEvent) => {
-          if (readerEvent.target?.result) {
-            imagesArray.push(readerEvent.target.result as string);
-            if (imagesArray.length === files.length) {
-              setSelectedFiles((prev) => [...prev, ...imagesArray]);
-            }
-          }
-        };
-        reader.readAsDataURL(files[i]);
-      }
+  const onSelectLogo = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const reader = new FileReader();
+    if (event.target.files?.[0]) {
+      reader.readAsDataURL(event.target.files[0]);
     }
+    reader.onload = (readerEvent) => {
+      if (readerEvent.target?.result) {
+        setSelectedLogo(readerEvent.target?.result as string);
+      }
+    };
+  };
+  const onSelectHeader = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const reader = new FileReader();
+    if (event.target.files?.[0]) {
+      reader.readAsDataURL(event.target.files[0]);
+    }
+    reader.onload = (readerEvent) => {
+      if (readerEvent.target?.result) {
+        setSelectedHeader(readerEvent.target?.result as string);
+      }
+    };
   };
 
   const onTextChange = ({
@@ -130,17 +97,6 @@ const AddInnovation: React.FC = () => {
 
   const onSelectCategory = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setCategory(event.target.value);
-  };
-
-  const onSelectProvince = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setProvince(event.target.value);
-  };
-
-  const onAddRequirement = () => {
-    if (newRequirement.trim() !== "") {
-      setRequirements((prev) => [...prev, newRequirement]);
-      setNewRequirement("");
-    }
   };
 
   const onAddInnovation = async (event: React.FormEvent) => {
@@ -166,7 +122,6 @@ const AddInnovation: React.FC = () => {
           deskripsi: description,
           kebutuhan: requirements,
           kategori: category,
-          provinsi: province,
           innovatorId: user?.uid,
           createdAt: serverTimestamp(),
           editedAt: serverTimestamp(),
@@ -236,8 +191,8 @@ const AddInnovation: React.FC = () => {
               Kategori Inovator <span style={{ color: "red" }}>*</span>
             </Text>
             <Select
-              placeholder="Pilih provinsi"
-              name="province"
+              placeholder="Pilih Kategori"
+              name="category"
               fontSize="10pt"
               variant="outline"
               cursor="pointer"
@@ -249,10 +204,10 @@ const AddInnovation: React.FC = () => {
                 borderColor: "black",
               }}
               _placeholder={{ color: "gray.500" }}
-              value={province}
-              onChange={onSelectProvince}
+              value={category}
+              onChange={onSelectCategory}
             >
-              {provinces.map((prov, index) => (
+              {categories.map((prov, index) => (
                 <option key={index} value={prov}>
                   {prov}
                 </option>
@@ -324,20 +279,20 @@ const AddInnovation: React.FC = () => {
             <Text fontWeight="400" fontSize="14px">
               Logo Inovator <span style={{ color: "red" }}>*</span>
             </Text>
-            <ImageUpload
-              selectedFiles={selectedFiles}
-              setSelectedFiles={setSelectedFiles}
-              selectFileRef={selectFileRef}
-              onSelectImage={onSelectImage}
+            <LogoUpload
+              selectedLogo={selectedLogo}
+              setSelectedLogo={setSelectedLogo}
+              selectFileRef={selectLogoRef}
+              onSelectLogo={onSelectLogo}
             />
             <Text fontWeight="400" fontSize="14px">
               Header Inovator
             </Text>
-            <ImageUpload
-              selectedFiles={selectedFiles}
-              setSelectedFiles={setSelectedFiles}
-              selectFileRef={selectFileRef}
-              onSelectImage={onSelectImage}
+            <HeaderUpload
+              selectedHeader={selectedHeader}
+              setSelectedHeader={setSelectedHeader}
+              selectFileRef={selectHeaderRef}
+              onSelectHeader={onSelectHeader}
             />
             <Text fontWeight="700" fontSize="16px">
               Kontak Inovator
@@ -405,4 +360,4 @@ const AddInnovation: React.FC = () => {
   );
 };
 
-export default AddInnovation;
+export default InnovatorForm;

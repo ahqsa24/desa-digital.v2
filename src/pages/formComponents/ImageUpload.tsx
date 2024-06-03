@@ -21,9 +21,14 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     setSelectedFiles(newFiles);
   };
   return (
-    <Flex direction="column" width="100%" wrap='wrap'>
+    <Flex direction="column" width="100%" wrap="wrap">
       {selectedFiles.map((file, index) => (
-        <Flex key={index} direction="row" alignItems="center" justifyContent="space-between">
+        <Flex
+          key={index}
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+        >
           <Image
             src={file}
             maxWidth="178px"
