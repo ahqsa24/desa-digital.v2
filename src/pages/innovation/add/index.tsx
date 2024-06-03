@@ -33,6 +33,18 @@ type Innovation = {
   
 };
 
+const categories = [
+  "Pertanian Cerdas",
+  "Pemasaran Agri-Food dan E-Commerce",
+  "E-Government",
+  "Sistem Informasi",
+  "Layanan Keuangan",
+  "Pengembangan Masyarakat dan Ekonomi",
+  "Pengelolaan Sumber Daya",
+  "Layanan Sosial",
+  "E-Tourism",
+]
+
 
 const AddInnovation: React.FC = () => {
   const navigate = useNavigate();
@@ -51,18 +63,6 @@ const AddInnovation: React.FC = () => {
   const [category, setCategory] = useState("");
   const [requirements, setRequirements] = useState<string[]>([]);
   const [newRequirement, setNewRequirement] = useState("");
-
-  // const onSelectImage = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   const reader = new FileReader();
-  //   if (event.target.files?.[0]) {
-  //     reader.readAsDataURL(event.target.files[0]);
-  //   }
-  //   reader.onload = (readerEvent) => {
-  //     if (readerEvent.target?.result) {
-  //       setSelectedFile(readerEvent.target?.result as string);
-  //     }
-  //   };
-  // };
 
   const onSelectImage = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -193,21 +193,11 @@ const AddInnovation: React.FC = () => {
               value={category}
               onChange={onSelectCategory}
             >
-              <option value="Pertanian Cerdas">Pertanian Cerdas</option>
-              <option value="Pemasaran Agri-Food dan E-Commerce">
-                Pemasaran Agri-Food dan E-Commerce
-              </option>
-              <option value="E-Government">E-Government</option>
-              <option value="Sistem Informasi">Sistem Informasi</option>
-              <option value="Layanan Keuangan">Layanan Keuangan</option>
-              <option value="Pengembangan Masyarakat dan Ekonomi">
-                Pengembangan Masyarakat dan Ekonomi
-              </option>
-              <option value="Pengelolaan Sumberdaya">
-                Pengelolaan Sumberdaya
-              </option>
-              <option value="Layanan Sosial">Layanan Sosial</option>
-              <option value="E-Tourism">E-Tourism</option>
+              {categories.map((category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
             </Select>
             <Text fontWeight="400" fontSize="14px">
               Tahun dibuat inovasi <span style={{ color: "red" }}>*</span>
