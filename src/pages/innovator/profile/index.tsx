@@ -9,22 +9,14 @@ import {
 } from "@chakra-ui/react";
 import Container from "Components/container";
 import TopBar from "Components/topBar";
-import { User } from "firebase/auth";
-import {
-  addDoc,
-  collection,
-  serverTimestamp,
-  updateDoc,
-} from "firebase/firestore";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import React, { useRef, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useNavigate } from "react-router-dom";
 import { auth, firestore, storage } from "../../../firebase/clientApp";
-import ImageUpload from "../../formComponents/ImageUpload";
-import { string } from "zod";
-import LogoUpload from "../../formComponents/LogoUpload";
 import HeaderUpload from "../../formComponents/HeaderUpload";
+import LogoUpload from "../../formComponents/LogoUpload";
+import { addDoc, collection, doc, serverTimestamp, updateDoc } from "firebase/firestore";
+import { getDownloadURL, ref, uploadString } from "firebase/storage";
 
 const categories = [
   "Agribisnis",
@@ -50,7 +42,6 @@ const InnovatorForm: React.FC = () => {
   const [error, setError] = useState("");
   const [textInputsValue, setTextInputsValue] = useState({
     name: "",
-    year: "",
     description: "",
     instagram: "",
     website: "",
@@ -60,8 +51,6 @@ const InnovatorForm: React.FC = () => {
     whatsapp: "",
   });
   const [category, setCategory] = useState("");
-  const [requirements, setRequirements] = useState<string[]>([]);
-  const [newRequirement, setNewRequirement] = useState("");
 
   const onSelectLogo = (event: React.ChangeEvent<HTMLInputElement>) => {
     const reader = new FileReader();
@@ -98,76 +87,67 @@ const InnovatorForm: React.FC = () => {
   const onSelectCategory = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setCategory(event.target.value);
   };
-
-  const onAddInnovation = async (event: React.FormEvent) => {
+  
+  const onSubmitForm = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setLoading(true);
-    const {
-      name,
-      year,
-      description,
-      instagram,
-      website,
-      targetUser,
-      product,
-      modelBusiness,
-      whatsapp,
-    } = textInputsValue;
+    setError("");
     try {
-      const innovationDocRef = await addDoc(
-        collection(firestore, "innovations"),
-        {
-          namaInovasi: name,
-          tahunDibuat: year,
-          deskripsi: description,
-          kebutuhan: requirements,
-          kategori: category,
-          innovatorId: user?.uid,
-          createdAt: serverTimestamp(),
-          editedAt: serverTimestamp(),
-          namaInnovator: user?.displayName,
-          innovatorImgURL: user?.photoURL,
-          instagram,
-          website,
-          targetUser,
-          product,
-          modelBusiness,
-          whatsapp,
-        }
-      );
-
-      console.log("Document written with ID: ", innovationDocRef.id);
-
-      const imagePromises = selectedFiles.map(async (file) => {
-        const response = await fetch(file);
-        const blob = await response.blob();
-        const fileName = file.split("/").pop();
-        const imageRef = ref(
-          storage,
-          `innovations/${innovationDocRef.id}/images/${fileName}`
-        );
-        await uploadBytes(imageRef, blob);
-        const downloadURL = await getDownloadURL(imageRef);
-        return downloadURL;
+      const { name, description, instagram, website, targetUser, product, modelBusiness, whatsapp } = textInputsValue;
+      if (!name || !description || !instagram || !website || !targetUser || !product || !modelBusiness || !whatsapp) {
+        return setError("Semua kolom harus diisi");
+      }
+      const docRef = await addDoc(collection(firestore, "innovators"), {
+        namaInovator: name,
+        id: user?.uid,
+        deskripsi: description,
+        kategori: category,
+        editedAt: serverTimestamp(),
+        jumlahInovasi: 0,
+        jumlahDesaDampingan: 0,
+        produk: product,
+        modelBisnis: modelBusiness,
+        instagram,
+        website,
+        targetPengguna: targetUser,
+        whatsapp
       });
+      console.log("Document written with ID: ", docRef.id);
+      if(!selectedLogo) {
+        return setError("Logo harus diisi");
+      } else {
+        const logoRef = ref(storage, 'innovators/' + docRef.id + '/logo');
+        await uploadString(logoRef, selectedLogo, 'data_url').then(async snapshot => {
+          const downloadURL = await getDownloadURL(logoRef);
+          await updateDoc(doc(firestore, "innovators", docRef.id), {
+            logo: downloadURL
+          }); 
+          console.log("File available at", downloadURL);
+        });
+      }
 
-      const imageUrls = await Promise.all(imagePromises);
-      await updateDoc(innovationDocRef, {
-        images: imageUrls,
-      });
-      console.log("Images uploaded", imageUrls);
+      if(selectedHeader) {
+        const headerRef = ref(storage, 'innovators/' + docRef.id + '/header');
+        await uploadString(headerRef, selectedHeader, 'data_url').then(async snapshot => {
+          const downloadURL = await getDownloadURL(headerRef);
+          await updateDoc(doc(firestore, "innovators", docRef.id), {
+            header: downloadURL
+          }); 
+          console.log("File available at", downloadURL);
+        });
+      }
       setLoading(false);
-    } catch (error) {
-      console.log("error", error);
-      setError("Gagal menambahkan inovasi");
+      }
+    catch (error) {
+      console.error("Error adding document: ", error);
       setLoading(false);
+      setError("Error adding document");
     }
-  };
-
+  }
   return (
     <Container page px={16}>
       <TopBar title="Register Inovator" onBack={() => navigate(-1)} />
-      <form onSubmit={onAddInnovation}>
+      <form onSubmit={onSubmitForm}>
         <Flex direction="column" marginTop="24px">
           <Stack spacing={3} width="100%">
             <Text fontWeight="400" fontSize="14px">
@@ -207,9 +187,9 @@ const InnovatorForm: React.FC = () => {
               value={category}
               onChange={onSelectCategory}
             >
-              {categories.map((prov, index) => (
-                <option key={index} value={prov}>
-                  {prov}
+              {categories.map((category) => (
+                <option key={category} value={category}>
+                  {category}
                 </option>
               ))}
             </Select>
