@@ -29,7 +29,7 @@ type TopBarProps = {
   onLogin?: () => void;
 };
 
-function TopBar(props: TopBarProps) {
+function TopiBar(props: TopBarProps) {
   const {
     title,
     position = "flex-start",
@@ -93,4 +93,4 @@ function TopBar(props: TopBarProps) {
   );
 }
 
-export default TopBar;
+export default TopiBar;
