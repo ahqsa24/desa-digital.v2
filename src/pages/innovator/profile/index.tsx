@@ -15,7 +15,13 @@ import { useNavigate } from "react-router-dom";
 import { auth, firestore, storage } from "../../../firebase/clientApp";
 import HeaderUpload from "../../formComponents/HeaderUpload";
 import LogoUpload from "../../formComponents/LogoUpload";
-import { addDoc, collection, doc, serverTimestamp, updateDoc } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  doc,
+  serverTimestamp,
+  updateDoc,
+} from "firebase/firestore";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
 
 const categories = [
@@ -87,15 +93,36 @@ const InnovatorForm: React.FC = () => {
   const onSelectCategory = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setCategory(event.target.value);
   };
-  
+
   const onSubmitForm = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setLoading(true);
     setError("");
     try {
-      const { name, description, instagram, website, targetUser, product, modelBusiness, whatsapp } = textInputsValue;
-      if (!name || !description || !instagram || !website || !targetUser || !product || !modelBusiness || !whatsapp) {
-        return setError("Semua kolom harus diisi");
+      const {
+        name,
+        description,
+        instagram,
+        website,
+        targetUser,
+        product,
+        modelBusiness,
+        whatsapp,
+      } = textInputsValue;
+      if (
+        !name ||
+        !description ||
+        !instagram ||
+        !website ||
+        !targetUser ||
+        !product ||
+        !modelBusiness ||
+        !whatsapp ||
+        !selectedLogo
+      ) {
+        setError("Semua kolom harus diisi");
+        setLoading(false);
+        return;
       }
       const docRef = await addDoc(collection(firestore, "innovators"), {
         namaInovator: name,
@@ -103,6 +130,7 @@ const InnovatorForm: React.FC = () => {
         deskripsi: description,
         kategori: category,
         editedAt: serverTimestamp(),
+        createdAt: serverTimestamp(),
         jumlahInovasi: 0,
         jumlahDesaDampingan: 0,
         produk: product,
@@ -110,40 +138,45 @@ const InnovatorForm: React.FC = () => {
         instagram,
         website,
         targetPengguna: targetUser,
-        whatsapp
+        whatsapp,
       });
       console.log("Document written with ID: ", docRef.id);
-      if(!selectedLogo) {
-        return setError("Logo harus diisi");
+      if (!selectedLogo) {
+        setError("Logo harus diisi");
+        setLoading(false);
+        return;
       } else {
-        const logoRef = ref(storage, 'innovators/' + docRef.id + '/logo');
-        await uploadString(logoRef, selectedLogo, 'data_url').then(async snapshot => {
-          const downloadURL = await getDownloadURL(logoRef);
-          await updateDoc(doc(firestore, "innovators", docRef.id), {
-            logo: downloadURL
-          }); 
-          console.log("File available at", downloadURL);
-        });
+        const logoRef = ref(storage, "innovators/" + docRef.id + "/logo");
+        await uploadString(logoRef, selectedLogo, "data_url").then(
+          async (snapshot) => {
+            const downloadURL = await getDownloadURL(logoRef);
+            await updateDoc(doc(firestore, "innovators", docRef.id), {
+              logo: downloadURL,
+            });
+            console.log("File available at", downloadURL);
+          }
+        );
       }
 
-      if(selectedHeader) {
-        const headerRef = ref(storage, 'innovators/' + docRef.id + '/header');
-        await uploadString(headerRef, selectedHeader, 'data_url').then(async snapshot => {
-          const downloadURL = await getDownloadURL(headerRef);
-          await updateDoc(doc(firestore, "innovators", docRef.id), {
-            header: downloadURL
-          }); 
-          console.log("File available at", downloadURL);
-        });
+      if (selectedHeader) {
+        const headerRef = ref(storage, "innovators/" + docRef.id + "/header");
+        await uploadString(headerRef, selectedHeader, "data_url").then(
+          async (snapshot) => {
+            const downloadURL = await getDownloadURL(headerRef);
+            await updateDoc(doc(firestore, "innovators", docRef.id), {
+              header: downloadURL,
+            });
+            console.log("File available at", downloadURL);
+          }
+        );
       }
       setLoading(false);
-      }
-    catch (error) {
+    } catch (error) {
       console.error("Error adding document: ", error);
       setLoading(false);
       setError("Error adding document");
     }
-  }
+  };
   return (
     <Container page px={16}>
       <TopBar title="Register Inovator" onBack={() => navigate(-1)} />
@@ -332,6 +365,12 @@ const InnovatorForm: React.FC = () => {
             />
           </Stack>
         </Flex>
+        {error && (
+          <Text color="red" fontSize="10pt" textAlign="center" mt={2}>
+            {error}
+          </Text>
+        )}
+
         <Button type="submit" mt="20px" width="100%" isLoading={loading}>
           Daftarkan Akun
         </Button>
