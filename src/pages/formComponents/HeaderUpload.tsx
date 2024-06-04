@@ -26,8 +26,10 @@ const HeaderUpload: React.FC<HeaderUploadProps> = ({
           >
             <Image
               src={selectedHeader}
-              maxWidth="178px"
-              maxHeight="178px"
+              width='272px'
+              height="86px"
+              maxWidth="272px"
+              maxHeight="86px"
               borderRadius="8px"
               mt={4}
             />
