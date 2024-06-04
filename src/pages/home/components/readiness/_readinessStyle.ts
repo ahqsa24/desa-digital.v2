@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import Readiness from 'Assets/images/readiness-background.jpg'
+import Readiness from 'Assets/images/readiness2-background.jpg'
 
 export const Background = styled.div`
   background-image: url(${Readiness});

@@ -11,34 +11,35 @@ import {
 import Container from "Components/container";
 import TopBar from "Components/topBar";
 import { User } from "firebase/auth";
-import { addDoc, collection, serverTimestamp, updateDoc } from "firebase/firestore";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import {
+  addDoc,
+  collection,
+  serverTimestamp,
+  updateDoc,
+} from "firebase/firestore";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import React, { useRef, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useNavigate } from "react-router-dom";
 import { auth, firestore, storage } from "../../../firebase/clientApp";
 import ImageUpload from "../../formComponents/ImageUpload";
 
-
-
-type Innovation = {
-  user: User;
-  name: string;
-  year: string;
-  description: string;
-  requirement: string;
-  innovatorName?: string;
-  innovatorImgURL?: string;
-  innovatorId: string;
-  
-};
-
+const categories = [
+  "Pertanian Cerdas",
+  "Pemasaran Agri-Food dan E-Commerce",
+  "E-Government",
+  "Sistem Informasi",
+  "Layanan Keuangan",
+  "Pengembangan Masyarakat dan Ekonomi",
+  "Pengelolaan Sumber Daya",
+  "Layanan Sosial",
+  "E-Tourism",
+];
 
 const AddInnovation: React.FC = () => {
   const navigate = useNavigate();
   const [user] = useAuthState(auth);
 
-  // const [selectedFile, setSelectedFile] = useState<string>();
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
   const selectFileRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
@@ -51,18 +52,6 @@ const AddInnovation: React.FC = () => {
   const [category, setCategory] = useState("");
   const [requirements, setRequirements] = useState<string[]>([]);
   const [newRequirement, setNewRequirement] = useState("");
-
-  // const onSelectImage = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   const reader = new FileReader();
-  //   if (event.target.files?.[0]) {
-  //     reader.readAsDataURL(event.target.files[0]);
-  //   }
-  //   reader.onload = (readerEvent) => {
-  //     if (readerEvent.target?.result) {
-  //       setSelectedFile(readerEvent.target?.result as string);
-  //     }
-  //   };
-  // };
 
   const onSelectImage = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -103,52 +92,99 @@ const AddInnovation: React.FC = () => {
     }
   };
 
+  const uploadFiles = async (
+    files: string[],
+    innovationId: string
+  ): Promise<string[]> => {
+    const promises: Promise<string>[] = [];
+    files.forEach((file, index) => {
+      const fileName = `image_${Date.now()}_${index}`;
+      const storageRef = ref(
+        storage,
+        `innovations/${innovationId}/images/${fileName}`
+      );
+
+      // Convert base64 to Blob
+      const byteString = atob(file.split(",")[1]);
+      const mimeString = file.split(",")[0].split(":")[1].split(";")[0];
+      const ab = new ArrayBuffer(byteString.length);
+      const ia = new Uint8Array(ab);
+      for (let i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+      }
+      const blob = new Blob([ab], { type: mimeString });
+
+      const uploadTask = uploadBytesResumable(storageRef, blob);
+      const promise = new Promise<string>((resolve, reject) => {
+        uploadTask.on(
+          "state_changed",
+          (snapshot) => {
+            const prog = Math.round(
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+            );
+            console.log(prog);
+          },
+          (error) => {
+            console.log(error);
+            reject(error);
+          },
+          async () => {
+            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+            console.log("File available at", downloadURL);
+            resolve(downloadURL);
+          }
+        );
+      });
+      promises.push(promise);
+    });
+    return Promise.all(promises);
+  };
+
   const onAddInnovation = async (event: React.FormEvent) => {
     event.preventDefault();
     setLoading(true);
     const { name, year, description } = textInputsValue;
+
+    if (!name || !year || !description || !category) {
+      setError("Semua kolom harus diisi");
+      setLoading(false);
+      return;
+    }
     try {
-      const innovationDocRef = await addDoc(collection(firestore, "innovations"), {
-        namaInovasi: name,
-        tahunDibuat: year,
-        deskripsi: description,
-        kebutuhan: requirements,
-        kategori: category,
-        innovatorId: user?.uid,
-        createdAt: serverTimestamp(),
-        editedAt: serverTimestamp(),
-        namaInnovator: user?.displayName,
-        innovatorImgURL: user?.photoURL,
-      });
+      const innovationDocRef = await addDoc(
+        collection(firestore, "innovations"),
+        {
+          namaInovasi: name,
+          tahunDibuat: year,
+          deskripsi: description,
+          kebutuhan: requirements,
+          kategori: category,
+          innovatorId: user?.uid,
+          createdAt: serverTimestamp(),
+          editedAt: serverTimestamp(),
+          namaInnovator: user?.displayName,
+          innovatorImgURL: user?.photoURL,
+        }
+      );
 
       console.log("Document written with ID: ", innovationDocRef.id);
-      
-      const imagePromises = selectedFiles.map(async (file) => {
-        const response = await fetch(file);
-        const blob = await response.blob();
-        const fileName = file.split("/").pop();
-        const imageRef = ref(
-          storage,
-          `innovations/${innovationDocRef.id}/images/${fileName}`
-        );
-        await uploadBytes(imageRef, blob);
-        const downloadURL = await getDownloadURL(imageRef);
-        return downloadURL;
-      });
 
-      const imageUrls = await Promise.all(imagePromises);
-      await updateDoc(innovationDocRef, {
-        images: imageUrls,
-      });
-      console.log("Images uploaded", imageUrls);
+      if (selectedFiles.length > 0) {
+        const imageUrls = await uploadFiles(selectedFiles, innovationDocRef.id);
+        await updateDoc(innovationDocRef, {
+          images: imageUrls,
+        });
+        console.log("Images uploaded", imageUrls);
+      }
+
       setLoading(false);
+      // navigate("/success-page"); // Ganti dengan rute yang sesuai
     } catch (error) {
       console.log("error", error);
       setError("Gagal menambahkan inovasi");
       setLoading(false);
     }
   };
-
 
   return (
     <Container page px={16}>
@@ -193,21 +229,11 @@ const AddInnovation: React.FC = () => {
               value={category}
               onChange={onSelectCategory}
             >
-              <option value="Pertanian Cerdas">Pertanian Cerdas</option>
-              <option value="Pemasaran Agri-Food dan E-Commerce">
-                Pemasaran Agri-Food dan E-Commerce
-              </option>
-              <option value="E-Government">E-Government</option>
-              <option value="Sistem Informasi">Sistem Informasi</option>
-              <option value="Layanan Keuangan">Layanan Keuangan</option>
-              <option value="Pengembangan Masyarakat dan Ekonomi">
-                Pengembangan Masyarakat dan Ekonomi
-              </option>
-              <option value="Pengelolaan Sumberdaya">
-                Pengelolaan Sumberdaya
-              </option>
-              <option value="Layanan Sosial">Layanan Sosial</option>
-              <option value="E-Tourism">E-Tourism</option>
+              {categories.map((category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
             </Select>
             <Text fontWeight="400" fontSize="14px">
               Tahun dibuat inovasi <span style={{ color: "red" }}>*</span>
@@ -232,9 +258,14 @@ const AddInnovation: React.FC = () => {
             <Textarea
               name="description"
               fontSize="10pt"
-              placeholder="Deskripsi singkat"
+              placeholder="Ketik deskripsi inovasi"
               _placeholder={{ color: "gray.500" }}
-              _focus={{ outline: "none", bg: "white", borderColor: "black" }}
+              _focus={{
+                outline: "none",
+                bg: "white",
+                border: "1px solid",
+                borderColor: "black",
+              }}
               height="100px"
               value={textInputsValue.description}
               onChange={onTextChange}
@@ -310,7 +341,12 @@ const AddInnovation: React.FC = () => {
             </Button>
           </Stack>
         </Flex>
-        <Button type="submit" mt="20px" width="100%" isLoading={loading} >
+        {error && (
+          <Text color="red.500" fontSize="12px" mt="4px">
+            {error}
+          </Text>
+        )}
+        <Button type="submit" mt="20px" width="100%" isLoading={loading}>
           Tambah Inovasi
         </Button>
       </form>
