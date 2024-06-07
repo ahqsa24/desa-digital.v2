@@ -48,7 +48,7 @@ function DetailInnovation() {
       getDocumentById("innovations", id)
         .then((detailInovasi) => {
           setData(detailInovasi);
-          console.log("Innovation Data:", detailInovasi);  // Log the fetched innovation data
+          console.log("Innovation Data:", detailInovasi); // Log the fetched innovation data
         })
         .catch((error) => {
           console.error("Error fetching innovation details:", error);
@@ -58,11 +58,11 @@ function DetailInnovation() {
 
   useEffect(() => {
     if (data.innovatorId) {
-      console.log("Fetching innovator with ID:", data.innovatorId);  // Log the innovator ID
+      console.log("Fetching innovator with ID:", data.innovatorId); // Log the innovator ID
       getDocumentById("innovators", data.innovatorId)
         .then((detailInnovator) => {
           setDatainnovator(detailInnovator);
-          console.log("Innovator Data:", detailInnovator);  // Log the fetched innovator data
+          console.log("Innovator Data:", detailInnovator); // Log the fetched innovator data
         })
         .catch((error) => {
           console.error("Error fetching innovator details:", error);
@@ -86,12 +86,32 @@ function DetailInnovation() {
       {data.images && data.images.length > 1 ? (
         <Slider {...settings}>
           {data.images.map((image: string, index: number) => (
-            <Img key={index} src={image} alt={`background-${index}`} />
+            <Img
+              maxWidth="360px"
+              maxHeight="248px"
+              width="360px"
+              height="248px"
+              objectFit="cover"
+              objectPosition="center"
+              key={index}
+              src={image}
+              alt={`background-${index}`}
+            />
           ))}
         </Slider>
       ) : (
-        data.images && data.images.length === 1 && (
-          <Img src={data.images[0]} maxWidth="360px" maxHeight="240px" width="360px" height="240px" alt="background" />
+        data.images &&
+        data.images.length === 1 && (
+          <Img
+            src={data.images[0]}
+            maxWidth="360px"
+            maxHeight="248px"
+            width="360px"
+            height="248px"
+            objectFit="cover"
+            objectPosition="center"
+            alt="background"
+          />
         )
       )}
       <ContentContainer>
@@ -115,7 +135,9 @@ function DetailInnovation() {
         <ActionContainer
           onClick={() =>
             navigate(
-              generatePath(paths.DETAIL_INNOVATOR_PAGE, { id: data.innovatorId })
+              generatePath(paths.DETAIL_INNOVATOR_PAGE, {
+                id: data.innovatorId,
+              })
             )
           }
         >
@@ -124,7 +146,6 @@ function DetailInnovation() {
             <Text2>Inovator</Text2>
             <Text>{datainnovator.namaInovator}</Text>
           </div>
-          
         </ActionContainer>
         <div>
           <Text mb={16}>Deskripsi</Text>
