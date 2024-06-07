@@ -56,6 +56,7 @@ export const Company = styled.p`
 `
 
 export const Applied = styled.p`
+  margin-top: 8px;
   font-size: 10px;
   font-weight: 400;
   color: #4b5563;
@@ -67,3 +68,9 @@ export const CompanyContainer = styled.div`
   margin-bottom: 4px;
   gap: 8px;
 `
+export const InnovatorName = styled.span`
+  font-size: 11px;
+  color: #000; // Adjust color as needed
+  margin-left: 2px;
+  align-self: center; // Adjust alignment as needed
+`;
