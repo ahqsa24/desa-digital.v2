@@ -125,20 +125,18 @@ function DetailInnovation() {
           <Description>{data.deskripsi}</Description>
         </div>
 
-        {/* <div>
-          <Text mb={16}>Keuntungan</Text>
-          <BenefitContainer>
-            <Icon mr={4} src={Dot} alt="dot" />
-            <Description></Description>
-          </BenefitContainer>
-        </div> */}
-
         <div>
           <Text mb={16}>Perlu Disiapkan</Text>
-          <BenefitContainer>
-            <Icon src={Check} alt="check" />
-            <Description>{data.kebutuhan}</Description>
-          </BenefitContainer>
+          {Array.isArray(data.kebutuhan) && data.kebutuhan.length > 0 ? (
+            data.kebutuhan.map((item, index) => (
+              <BenefitContainer key={index}>
+                <Icon src={Check} alt="check" />
+                <Description>{item}</Description>
+              </BenefitContainer>
+            ))
+          ) : (
+            <Description>No specific needs listed.</Description>
+          )}
         </div>
 
         <div>
