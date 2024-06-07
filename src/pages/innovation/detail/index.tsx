@@ -1,3 +1,4 @@
+import React from "react";
 import TopBar from "Components/topBar";
 import Soge from "Assets/images/soge-logo.png";
 import Dot from "Assets/icons/dot.svg";
@@ -12,6 +13,7 @@ import {
   ActionContainer,
   Icon,
   Text,
+  Text2,
   Logo,
   Description,
   ChipContainer,
@@ -118,7 +120,11 @@ function DetailInnovation() {
           }
         >
           <Logo src={datainnovator.logo} alt="logo" />
-          <Text>{datainnovator.namaInovator}</Text>
+          <div>
+            <Text2>Inovator</Text2>
+            <Text>{datainnovator.namaInovator}</Text>
+          </div>
+          
         </ActionContainer>
         <div>
           <Text mb={16}>Deskripsi</Text>
