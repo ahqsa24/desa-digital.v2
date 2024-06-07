@@ -6,7 +6,6 @@ import Container from "Components/container";
 import { generatePath, useNavigate, useParams } from "react-router-dom";
 import { paths } from "Consts/path.ts";
 import {
-  Img,
   Label,
   Title,
   ActionContainer,
@@ -27,6 +26,7 @@ import { getDocumentById } from "../../../firebase/inovationTable.ts";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { Img } from "@chakra-ui/react";
 
 function DetailInnovation() {
   const navigate = useNavigate();
@@ -96,7 +96,7 @@ function DetailInnovation() {
         </Slider>
       ) : (
         data.images && data.images.length === 1 && (
-          <Img src={data.images[0]} alt={`background-0`} />
+          <Img src={data.images[0]} maxWidth="360px" maxHeight="240px" width="360px" height="240px" alt="background" />
         )
       )}
       <ContentContainer>
