@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Button,
   Flex,
@@ -23,6 +23,10 @@ import { updateProfile, getUserById } from "Services/userServices";
 import useAuthLS from "Hooks/useAuthLS";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import ImageUpload from "../../formComponents/ImageUpload"; // Import the ImageUpload component
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { storage } from "../../../firebase/clientApp"; // Import Firebase storage
+import { useNavigate } from "react-router-dom";
 
 const schema = z.object({
   nameVillage: z.string().min(1, { message: "*Nama desa wajib diisi" }),
@@ -33,11 +37,12 @@ const schema = z.object({
   district: z.string().min(1, { message: "*Pilih Kabupaten/Kota" }),
   subDistrict: z.string().min(1, { message: "*Pilih Kecamatan" }),
   village: z.string().min(1, { message: "*Pilih Kelurahan" }),
-  logo: z.string().min(1, { message: "*Silahkan masukkan logo" }),
-  header: z.string().min(1, { message: "*Silahkan masukkan background" }),
+  logo: z.string().optional(),
+  header: z.string().optional(),
 });
 
 function AddVillage() {
+  const navigate = useNavigate();
   const form = useForm({ resolver: zodResolver(schema) });
   const { handleSubmit, reset } = form;
 
@@ -55,6 +60,11 @@ function AddVillage() {
   const [selectedKabupaten, setSelectedKabupaten] = useState("");
   const [selectedKecamatan, setSelectedKecamatan] = useState("");
 
+  const [logo, setLogo] = useState<string[]>([]);
+  const [header, setHeader] = useState<string[]>([]);
+
+  const selectFileRef = useRef<HTMLInputElement>(null);
+
   const { data: provinsi } = useQuery<any>("provinsi", getProvinsi);
   const { data: kabupaten } = useQuery<any>(
     ["kabupaten", selectedProvinsi],
@@ -71,6 +81,75 @@ function AddVillage() {
     () => getKelurahan(selectedKecamatan || data?.subDistrict),
     { enabled: !!selectedKecamatan || isFetched }
   );
+
+  const uploadFile = async (file: string, folder: string) => {
+    const fileName = `image_${Date.now()}`;
+    const storageRef = ref(storage, `village/${folder}/${fileName}`);
+
+    const byteString = atob(file.split(",")[1]);
+    const mimeString = file.split(",")[0].split(":")[1].split(";")[0];
+    const ab = new ArrayBuffer(byteString.length);
+    const ia = new Uint8Array(ab);
+    for (let i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i);
+    }
+    const blob = new Blob([ab], { type: mimeString });
+
+    const uploadTask = uploadBytesResumable(storageRef, blob);
+
+    return new Promise<string>((resolve, reject) => {
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const prog = Math.round(
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+          );
+          console.log(prog);
+        },
+        (error) => {
+          console.log(error);
+          reject(error);
+        },
+        async () => {
+          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+          console.log("File available at", downloadURL);
+          resolve(downloadURL);
+        }
+      );
+    });
+  };
+
+  const onProfileSave = async (data: any) => {
+    try {
+      const payload = {
+        id: auth?.id,
+        data: data,
+      };
+
+      if (logo.length > 0) {
+        const logoURL = await uploadFile(logo[0], "logo");
+        payload.data.logo = logoURL;
+      }
+
+      if (header.length > 0) {
+        const headerURL = await uploadFile(header[0], "header");
+        payload.data.header = headerURL;
+      }
+
+      await mutateAsync(payload);
+      toast("Data berhasil disimpan", { type: "success" });
+    } catch (error) {
+      toast("Terjadi kesalahan jaringan", { type: "error" });
+    }
+  };
+
+  useEffect(() => {
+    if (isFetched) {
+      reset({
+        ...(data || {}),
+      });
+    }
+  }, [isFetched]);
 
   const forms = [
     {
@@ -137,12 +216,12 @@ function AddVillage() {
     {
       label: "Logo Desa",
       name: "logo",
-      placeholder: "https://",
+      placeholder: "Unggah logo desa",
     },
     {
       label: "Header Desa",
       name: "header",
-      placeholder: "https://",
+      placeholder: "Unggah header desa",
     },
     {
       label: "Potensi Desa",
@@ -156,33 +235,12 @@ function AddVillage() {
     },
   ];
 
-  const onProfileSave = async (data: any) => {
-    try {
-      const payload = {
-        id: auth?.id,
-        data: data,
-      };
-      await mutateAsync(payload);
-      toast("Data berhasil disimpan", { type: "success" });
-    } catch (error) {
-      toast("Terjadi kesalahan jaringan", { type: "error" });
-    }
-  };
-
-  useEffect(() => {
-    if (isFetched) {
-      reset({
-        ...(data || {}),
-      });
-    }
-  }, [isFetched]);
-
   return (
     <Container page px={16}>
-      <TopBar title="Profil Desa" />
+      <TopBar title="Profil Desa" onBack={() => navigate("/village")}/>
       <form onSubmit={handleSubmit(onProfileSave)}>
         <Flex direction="column" marginTop="24px">
-          <Stack spacing={3} width="100%">
+          <Stack spacing={2} width="100%">
             {forms.map(
               (
                 {
@@ -230,13 +288,51 @@ function AddVillage() {
                     </React.Fragment>
                   );
 
+                // Image upload fields
+                if (name === "logo" || name === "header") {
+                  const imageFiles =
+                    name === "logo" ? logo : name === "header" ? header : [];
+                  const setImageFiles =
+                    name === "logo" ? setLogo : name === "header" ? setHeader : null;
+                  return (
+                    <React.Fragment key={idx}>
+                      <Text fontWeight="400" fontSize="14px">
+                        {label} <span style={{ color: "red" }}>*</span>
+                      </Text>
+                      <ImageUpload
+                        selectedFiles={imageFiles}
+                        setSelectedFiles={setImageFiles}
+                        selectFileRef={selectFileRef}
+                        onSelectImage={(event: React.ChangeEvent<HTMLInputElement>) => {
+                          const files = event.target.files;
+                          if (files) {
+                            const imagesArray: string[] = [];
+                            for (let i = 0; i < files.length; i++) {
+                              const reader = new FileReader();
+                              reader.onload = (readerEvent) => {
+                                if (readerEvent.target?.result) {
+                                  imagesArray.push(readerEvent.target.result as string);
+                                  if (imagesArray.length === files.length) {
+                                    setImageFiles((prev) => [...prev, ...imagesArray]);
+                                  }
+                                }
+                              };
+                              reader.readAsDataURL(files[i]);
+                            }
+                          }
+                        }}
+                      />
+                    </React.Fragment>
+                  );
+                }
+
                 return (
                   <React.Fragment key={idx}>
                     <Text fontWeight="400" fontSize="14px">
                       {label} <span style={{ color: "red" }}>*</span>
                     </Text>
                     <Input
-                      mt={4}
+                      mt={2}
                       placeholder={placeholder}
                       name={name}
                       fontSize="10pt"

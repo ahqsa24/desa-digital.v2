@@ -13,6 +13,7 @@ import {
   Icon,
   Text,
   Text2,
+  Text3,
   Logo,
   Description,
   ChipContainer,
@@ -170,7 +171,7 @@ function DetailInnovation() {
         <div>
           <Text mb={16}>Desa yang Menerapkan </Text>
           <ActionContainer>
-            <Text>Belum tersedia</Text>
+            <Text3>Belum tersedia</Text3>
           </ActionContainer>
           <Button
             width="100%"
