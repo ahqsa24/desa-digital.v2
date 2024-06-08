@@ -28,6 +28,7 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { Img } from "@chakra-ui/react";
+import { Button } from "@chakra-ui/react"; 
 
 function DetailInnovation() {
   const navigate = useNavigate();
@@ -171,6 +172,20 @@ function DetailInnovation() {
           <ActionContainer>
             <Text>Belum tersedia</Text>
           </ActionContainer>
+          <Button
+            width="100%"
+            marginTop={13}
+            marginBottom={3}
+            onClick={() =>
+              navigate(
+                generatePath(paths.EDIT_INNOVATION_PAGE, {
+                  id: data.id,
+                })
+              )
+            }
+          >
+            Edit
+          </Button>
         </div>
       </ContentContainer>
     </Container>
