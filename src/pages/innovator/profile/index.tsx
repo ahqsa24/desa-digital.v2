@@ -6,6 +6,7 @@ import {
   Stack,
   Text,
   Textarea,
+  useToast,
 } from "@chakra-ui/react";
 import Container from "Components/container";
 import TopBar from "Components/topBar";
@@ -58,6 +59,8 @@ const InnovatorForm: React.FC = () => {
     whatsapp: "",
   });
   const [category, setCategory] = useState("");
+
+  const toast = useToast();
 
   const onSelectLogo = (event: React.ChangeEvent<HTMLInputElement>) => {
     const reader = new FileReader();
@@ -189,10 +192,25 @@ const InnovatorForm: React.FC = () => {
       }
 
       setLoading(false);
+
+      toast({
+        title: "Profile berhasil dibuat",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+      navigate("/")
     } catch (error) {
       console.error("Error adding document: ", error);
       setLoading(false);
       setError("Error adding document");
+      toast({
+        title: "Error",
+        description: "Terjadi kesalahan saat menambahkan dokumen.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
     }
   };
 

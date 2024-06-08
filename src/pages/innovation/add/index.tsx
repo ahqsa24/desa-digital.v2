@@ -7,6 +7,7 @@ import {
   Stack,
   Text,
   Textarea,
+  useToast,
 } from "@chakra-ui/react";
 import Container from "Components/container";
 import TopBar from "Components/topBar";
@@ -23,6 +24,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { useNavigate } from "react-router-dom";
 import { auth, firestore, storage } from "../../../firebase/clientApp";
 import ImageUpload from "../../formComponents/ImageUpload";
+import { paths } from "Consts/path";
 
 const categories = [
   "Pertanian Cerdas",
@@ -53,6 +55,7 @@ const AddInnovation: React.FC = () => {
   const [requirements, setRequirements] = useState<string[]>([]);
   const [newRequirement, setNewRequirement] = useState("");
 
+  const toast = useToast();
   const onSelectImage = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (files) {
@@ -178,11 +181,24 @@ const AddInnovation: React.FC = () => {
       }
 
       setLoading(false);
-      // navigate("/success-page"); // Ganti dengan rute yang sesuai
+
+      toast({
+        title: "Inovasi berhasil ditambahkan",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+      navigate(paths.INNOVATION_CATEGORY_PAGE); // Ganti dengan rute yang sesuai
     } catch (error) {
       console.log("error", error);
       setError("Gagal menambahkan inovasi");
       setLoading(false);
+      toast({
+        title: "Gagal menambahkan inovasi",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      })
     }
   };
 
@@ -280,7 +296,7 @@ const AddInnovation: React.FC = () => {
               onSelectImage={onSelectImage}
             />
             <Text fontWeight="700" fontSize="16px">
-              Perlu disiapkan{" "}
+              Persiapan Infrastuktur{" "}
               <span
                 style={{ color: "red", fontSize: "14px", fontWeight: "400" }}
               >
@@ -311,10 +327,13 @@ const AddInnovation: React.FC = () => {
                 </Button>
               </Flex>
             ))}
+            <Text fontWeight="300" fontSize="8pt">
+              Contoh: Memiliki tambak, air, dan listrik
+            </Text>
             <Input
               name="requirement"
               fontSize="10pt"
-              placeholder="Contoh: Memerlukan listrik, Memiliki air"
+              placeholder="Masukan persiapan infrastuktur"
               _placeholder={{ color: "gray.500" }}
               _focus={{
                 outline: "none",
@@ -337,7 +356,7 @@ const AddInnovation: React.FC = () => {
               _hover={{ bg: "none" }}
               leftIcon={<AddIcon />}
             >
-              Tambah persyaratan lain
+              Tambah infrastruktur lain
             </Button>
           </Stack>
         </Flex>
@@ -347,7 +366,7 @@ const AddInnovation: React.FC = () => {
           </Text>
         )}
         <Button type="submit" mt="20px" width="100%" isLoading={loading}>
-          Tambah Inovasi
+          Simpan
         </Button>
       </form>
     </Container>
