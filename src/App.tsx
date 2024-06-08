@@ -13,10 +13,11 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import DetailInnovation from "./pages/innovation/detail";
 import DetailVillage from "./pages/village/detail";
 import DetailInnovator from "./pages/innovator/detail";
-import ProfileInnovator from "./pages/innovator/profile";
+// import ProfileInnovator from "./pages/innovator/form
 import AddInnovation from "./pages/innovation/add";
 import ProfileVillage from "./pages/village/profile";
 import { ToastContainer } from "react-toastify";
+import InnovatorForm from "./pages/innovator/form"; 
 import EditInnovation from "./pages/innovation/edit";
 
 const queryClient = new QueryClient();
@@ -57,11 +58,7 @@ const routes = [
     element: <Innovator />,
     exact: true,
   },
-  {
-    path: paths.INNOVATOR_PROFILE_PAGE,
-    element: <ProfileInnovator />,
-    exact: true,
-  },
+
   {
     path: paths.DETAIL_INNOVATOR_PAGE,
     element: <DetailInnovator />,
@@ -90,6 +87,11 @@ const routes = [
   {
     path: paths.EDIT_INNOVATION_PAGE,
     element: <EditInnovation />,
+    exact: true,
+  },
+  {
+    path: paths.INNOVATOR_FORM,
+    element: <InnovatorForm />,
     exact: true,
   },
 ];

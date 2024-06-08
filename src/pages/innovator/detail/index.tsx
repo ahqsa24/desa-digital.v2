@@ -75,25 +75,9 @@ function Detail() {
           </GridContainer>
           <Description>{description}</Description>
         </div>
-        {/* <Text>Produk Inovasi</Text> */}
-        {/* <DetailContainer>
-          {" "}
-          {isFetched &&
-            data?.map((item, idx) => (
-              <CardInnovation
-                key={idx}
-                {...item}
-                onClick={() => navigate(paths.DETAIL_INNOVATION_PAGE)}
-              />
-            ))}
-        </DetailContainer> */}
-        {/* <Text>Desa Dampingan</Text> */}
-        {/* <ActionContainer onClick={() => navigate(paths.DETAIL_VILLAGE_PAGE)}>
-          <Text>Desa Soge</Text>
-        </ActionContainer> */}
-        <Button size="m" fullWidth mt={12} type="submit" onClick={onClickHere}>
-          Kontak Inovator
-        </Button>
+        <Text>Produk Inovasi</Text>
+        
+        
       </ContentContainer>
     </Container>
   );
