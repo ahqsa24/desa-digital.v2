@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Button,
   Flex,
@@ -7,417 +7,481 @@ import {
   Stack,
   Text,
   Textarea,
+  useToast,
 } from "@chakra-ui/react";
 import TopBar from "Components/topBar";
 import Container from "Components/container";
 import { useForm } from "react-hook-form";
 import { useMutation, useQuery } from "react-query";
-import { toast } from "react-toastify";
-import {
-  getProvinsi,
-  getKabupaten,
-  getKecamatan,
-  getKelurahan,
-} from "Services/locationServices";
-import { updateProfile, getUserById } from "Services/userServices";
-import useAuthLS from "Hooks/useAuthLS";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import HeaderUpload from "../../formComponents/HeaderUpload";
+import LogoUpload from "../../formComponents/LogoUpload";
+import { getDownloadURL, ref, uploadString } from "firebase/storage";
+import { storage } from "../../../firebase/clientApp";
+import { useNavigate } from "react-router-dom";
+import { getProvinsi, getKabupaten, getKecamatan, getKelurahan } from "Services/locationServices";
+import { updateProfile, getUserById } from "Services/userServices";
+import useAuthLS from "Hooks/useAuthLS";
 
-// Validation schema
 const schema = z.object({
-  benefit: z.string().min(1, { message: "*Potensi desa wajib diisi" }),
+  nameVillage: z.string().min(1, { message: "*Nama desa wajib diisi" }),
+  description: z.string().min(1, { message: "*Deskripsi desa wajib diisi" }),
+  benefit: z.string().min(1, { message: "*Keuntungan wajib diisi" }),
   whatsApp: z.string().min(1, { message: "*Nomor whatsapp wajib diisi" }),
   province: z.string().min(1, { message: "*Pilih Provinsi" }),
   district: z.string().min(1, { message: "*Pilih Kabupaten/Kota" }),
   subDistrict: z.string().min(1, { message: "*Pilih Kecamatan" }),
   village: z.string().min(1, { message: "*Pilih Kelurahan" }),
-  logo: z
-    .instanceof(File)
-    .refine((file) => file.name !== "", "*Silahkan masukkan logo"),
-  header: z.instanceof(File).optional(),
-  innovation: z
-    .string()
-    .min(1, { message: "*Tentang inovasi di desa wajib diisi" }),
-  characteristics: z.object({
-    geographical: z.string().min(1, { message: "*Geografis wajib diisi" }),
-    infrastructure: z
-      .string()
-      .min(1, { message: "*Infrastruktur wajib diisi" }),
-    digitalReadiness: z
-      .string()
-      .min(1, { message: "*Kesiapan digital wajib diisi" }),
-    digitalLiteracy: z
-      .string()
-      .min(1, { message: "*Literasi digital wajib diisi" }),
-    serviceImprovement: z
-      .string()
-      .min(1, { message: "*Pemantapan pelayanan wajib diisi" }),
-    socialCulture: z
-      .string()
-      .min(1, { message: "*Sosial dan budaya wajib diisi" }),
-    naturalResources: z
-      .string()
-      .min(1, { message: "*Sumber daya alam wajib diisi" }),
-  }),
-  contact: z.object({
-    whatsApp: z.string().min(1, { message: "*Nomor whatsapp wajib diisi" }),
-    instagram: z.string().min(1, { message: "*Link Instagram wajib diisi" }),
-    website: z.string().min(1, { message: "*Link Website wajib diisi" }),
-  }),
+  logo: z.string().optional(),
+  header: z.string().optional(),
+  instagram: z.string().url({ message: "Invalid URL format" }).optional(),
+  website: z.string().url({ message: "Invalid URL format" }).optional(),
+  geographic: z.string().optional(),
+  infrastructure: z.string().optional(),
+  digitalReadiness: z.string().optional(),
+  digitalLiteracy: z.string().optional(),
+  serviceImprovement: z.string().optional(),
+  socialCulture: z.string().optional(),
+  naturalResources: z.string().optional(),
 });
 
-// ImageUpload component defined within the same file
-const ImageUpload = ({ selectedFile, onSelectImage, label, isRequired }) => {
-  return (
-    <Box
-      border="1px dashed #ccc"
-      padding="20px"
-      textAlign="center"
-      cursor="pointer"
-      position="relative"
-      onClick={() => document.getElementById(label).click()}
-      width="120px"
-      height="120px"
-      display="flex"
-      alignItems="center"
-      justifyContent="center"
-      borderRadius="10px" // Set border-radius to round the corners
-    >
-      {selectedFile ? (
-        <Image
-          src={selectedFile}
-          alt={label}
-          maxHeight="100%"
-          maxWidth="100%"
-          borderRadius="10px"
-        />
-      ) : (
-        <>
-          <Text color="gray.500">+ Tambah foto</Text>
-          {isRequired && <Text color="gray.500"></Text>}
-        </>
-      )}
-      <Input type="file" id={label} display="none" onChange={onSelectImage} />
-    </Box>
-  );
-};
-
-function AddVillage() {
-  const form = useForm({ resolver: zodResolver(schema) });
-  const { handleSubmit, reset, control } = form;
-
+const AddVillage: React.FC = () => {
+  const navigate = useNavigate();
   const { auth } = useAuthLS();
+  const { handleSubmit, reset, register, formState: { isSubmitting } } = useForm({ resolver: zodResolver(schema) });
   const { mutateAsync } = useMutation(updateProfile);
-  const { data, isFetched } = useQuery<any>(
-    "profileVillage",
-    () => getUserById(auth?.id),
-    {
-      enabled: !!auth?.id,
-    }
-  );
+  const { data, isFetched } = useQuery<any>("profileVillage", () => getUserById(auth?.id), { enabled: !!auth?.id });
+  const toast = useToast();
 
   const [selectedProvinsi, setSelectedProvinsi] = useState("");
   const [selectedKabupaten, setSelectedKabupaten] = useState("");
   const [selectedKecamatan, setSelectedKecamatan] = useState("");
-  const [selectedLogo, setSelectedLogo] = useState<string | null>(null);
-  const [selectedHeader, setSelectedHeader] = useState<string | null>(null);
+  const [selectedLogo, setSelectedLogo] = useState<string>("");
+  const [selectedHeader, setSelectedHeader] = useState<string>("");
+  const selectLogoRef = useRef<HTMLInputElement>(null);
+  const selectHeaderRef = useRef<HTMLInputElement>(null);
 
   const { data: provinsi } = useQuery<any>("provinsi", getProvinsi);
-  const { data: kabupaten } = useQuery<any>(
-    ["kabupaten", selectedProvinsi],
-    () => getKabupaten(selectedProvinsi || data?.province),
-    { enabled: !!selectedProvinsi || isFetched }
-  );
-  const { data: kecamatan } = useQuery<any>(
-    ["kecamatan", selectedKabupaten],
-    () => getKecamatan(selectedKabupaten || data?.district),
-    { enabled: !!selectedKabupaten || isFetched }
-  );
-  const { data: kelurahan } = useQuery<any>(
-    ["kelurahan", selectedKecamatan],
-    () => getKelurahan(selectedKecamatan || data?.subDistrict),
-    { enabled: !!selectedKecamatan || isFetched }
-  );
-
-  const onSelectImage = (
-    event: React.ChangeEvent<HTMLInputElement>,
-    setImage: React.Dispatch<React.SetStateAction<string | null>>
-  ) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (readerEvent) => {
-        if (readerEvent.target?.result) {
-          setImage(readerEvent.target.result as string);
-        }
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+  const { data: kabupaten } = useQuery<any>(["kabupaten", selectedProvinsi], () => getKabupaten(selectedProvinsi || data?.province), { enabled: !!selectedProvinsi || isFetched });
+  const { data: kecamatan } = useQuery<any>(["kecamatan", selectedKabupaten], () => getKecamatan(selectedKabupaten || data?.district), { enabled: !!selectedKabupaten || isFetched });
+  const { data: kelurahan } = useQuery<any>(["kelurahan", selectedKecamatan], () => getKelurahan(selectedKecamatan || data?.subDistrict), { enabled: !!selectedKecamatan || isFetched });
 
   useEffect(() => {
     if (isFetched) {
-      reset({
-        ...(data || {}),
-      });
+      reset({ ...(data || {}) });
     }
   }, [isFetched]);
 
-  const forms = [
-    {
-      label: "Provinsi",
-      name: "province",
-      placeholder: "Pilih provinsi",
-      defaultValue: data?.province,
-      isDisabled: !!data?.province,
-      options:
-        provinsi?.provinsi?.map((item: any) => ({
-          id: item?.id,
-          nama: item?.nama,
-        })) || [],
-      onChange: (id: any) => setSelectedProvinsi(id),
-    },
-    {
-      label: "Kabupaten/Kota",
-      name: "district",
-      placeholder: "Pilih kabupaten/kota",
-      defaultValue: data?.district,
-      isDisabled: !!data?.district,
-      options:
-        kabupaten?.kota_kabupaten?.map((item: any) => ({
-          id: item?.id,
-          nama: item?.nama,
-        })) || [],
-      onChange: (id: any) => setSelectedKabupaten(id),
-    },
-    {
-      label: "Kecamatan",
-      name: "subDistrict",
-      placeholder: "Pilih kecamatan",
-      defaultValue: data?.subDistrict,
-      isDisabled: !!data?.subDistrict,
-      options:
-        kecamatan?.kecamatan?.map((item: any) => ({
-          id: item?.id,
-          nama: item?.nama,
-        })) || [],
-      onChange: (id: any) => setSelectedKecamatan(id),
-    },
-    {
-      label: "Desa/Kelurahan",
-      name: "village",
-      placeholder: "Pilih kelurahan",
-      defaultValue: data?.village,
-      isDisabled: data?.village,
-      options:
-        kelurahan?.kelurahan?.map((item: any) => ({
-          id: item?.id,
-          nama: item?.nama,
-        })) || [],
-    },
-    {
-      label: "Nama Desa",
-      name: "nameVillage",
-      placeholder: "Nama desa",
-    },
-    {
-      label: "Tentang Desa",
-      name: "description",
-      placeholder: "Masukan deskripsi desa",
-    },
-    {
-      label: "Logo Desa",
-      name: "logo",
-      placeholder: "Upload logo",
-    },
-    {
-      label: "Header Desa",
-      name: "header",
-      placeholder: "Upload header",
-      isOptional: true,
-    },
-    {
-      label: "Tentang Inovasi di Desa",
-      type: "textarea",
-      name: "innovation",
-      placeholder: "Masukkan deskripsi inovasi yang ada di desa",
-    },
-    {
-      label: "Potensi Desa",
-      name: "benefit",
-      placeholder: "Masukkan potensi desa",
-    },
-    {
-      label: "Karakteristik Desa",
-      type: "heading",
-      isBold: true,
-    },
-    {
-      label: "Geografis",
-      type: "text",
-      name: "characteristics.geographical",
-      placeholder: "Masukkan informasi geografis",
-    },
-    {
-      label: "Infrastruktur",
-      type: "text",
-      name: "characteristics.infrastructure",
-      placeholder: "Masukkan informasi infrastruktur",
-    },
-    {
-      label: "Kesiapan Digital",
-      type: "text",
-      name: "characteristics.digitalReadiness",
-      placeholder: "Masukkan informasi kesiapan digital",
-    },
-    {
-      label: "Literasi Digital",
-      type: "text",
-      name: "characteristics.digitalLiteracy",
-      placeholder: "Masukkan informasi literasi digital",
-    },
-    {
-      label: "Pemantapan Pelayanan",
-      type: "text",
-      name: "characteristics.serviceImprovement",
-      placeholder: "Masukkan informasi pemantapan pelayanan",
-    },
-    {
-      label: "Sosial dan Budaya",
-      type: "text",
-      name: "characteristics.socialCulture",
-      placeholder: "Masukkan informasi sosial dan budaya",
-    },
-    {
-      label: "Sumber Daya Alam",
-      type: "text",
-      name: "characteristics.naturalResources",
-      placeholder: "Masukkan informasi sumber daya alam",
-    },
-    {
-      label: "Kontak Desa",
-      type: "heading",
-      isBold: true,
-    },
-    {
-      label: "Nomor WhatsApp",
-      name: "whatsApp",
-      placeholder: "62812345678",
-    },
-    {
-      label: "Link Instagram",
-      type: "url",
-      name: "contact.instagram",
-      placeholder: "https://instagram.com",
-    },
-    {
-      label: "Link Website",
-      type: "url",
-      name: "contact.website",
-      placeholder: "https://website.com",
-    },
-  ];
+  const uploadImage = async (image: string, folder: string, userId: string) => {
+    const storageRef = ref(storage, `village/${userId}/${folder}`);
+    await uploadString(storageRef, image, "data_url");
+    return await getDownloadURL(storageRef);
+  };
 
   const onProfileSave = async (data: any) => {
+    if (!auth?.id) {
+      toast({ title: "User ID is not defined. Please make sure you are logged in.", status: "error", duration: 5000, isClosable: true });
+      return;
+    }
+
     try {
       const payload = {
-        id: auth?.id,
+        id: auth.id,
         data: data,
       };
+
+      if (selectedLogo) {
+        const logoURL = await uploadImage(selectedLogo, "logo", auth.id);
+        payload.data.logo = logoURL;
+      }
+
+      if (selectedHeader) {
+        const headerURL = await uploadImage(selectedHeader, "header", auth.id);
+        payload.data.header = headerURL;
+      }
+
       await mutateAsync(payload);
-      toast("Data berhasil disimpan", { type: "success" });
+      toast({ title: "Data berhasil disimpan", status: "success", duration: 5000, isClosable: true });
+      navigate(-1);
     } catch (error) {
-      toast("Terjadi kesalahan jaringan", { type: "error" });
+      toast({ title: "Terjadi kesalahan jaringan", status: "error", duration: 5000, isClosable: true });
     }
+  };
+
+  const onSelectLogo = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const reader = new FileReader();
+    if (event.target.files?.[0]) {
+      reader.readAsDataURL(event.target.files[0]);
+    }
+    reader.onload = (readerEvent) => {
+      if (readerEvent.target?.result) {
+        setSelectedLogo(readerEvent.target.result as string);
+      }
+    };
+  };
+
+  const onSelectHeader = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const reader = new FileReader();
+    if (event.target.files?.[0]) {
+      reader.readAsDataURL(event.target.files[0]);
+    }
+    reader.onload = (readerEvent) => {
+      if (readerEvent.target?.result) {
+        setSelectedHeader(readerEvent.target.result as string);
+      }
+    };
   };
 
   return (
     <Container page px={16}>
-      <TopBar title="Edit Profil Desa" />
+      <TopBar title="Registrasi Desa" onBack={() => navigate(-1)} />
       <form onSubmit={handleSubmit(onProfileSave)}>
         <Flex direction="column" marginTop="24px">
           <Stack spacing={3} width="100%">
-            {forms.map(
-              (
-                {
-                  label,
-                  name,
-                  placeholder,
-                  options,
-                  onChange,
-                  defaultValue,
-                  isDisabled,
-                },
-                idx
-              ) => {
-                // dropdown
-                if (!!options)
-                  return (
-                    <React.Fragment key={idx}>
-                      <Text fontWeight="400" fontSize="14px">
-                        {label} <span style={{ color: "red" }}>*</span>
-                      </Text>
-                      <Select
-                        placeholder={placeholder}
-                        name={name}
-                        fontSize="10pt"
-                        variant="outline"
-                        cursor="pointer"
-                        color={"gray.500"}
-                        _focus={{
-                          outline: "none",
-                          bg: "white",
-                          border: "1px solid",
-                          borderColor: "black",
-                        }}
-                        _placeholder={{ color: "gray.500" }}
-                        defaultValue={defaultValue}
-                        onChange={(e) => onChange && onChange(e.target.value)}
-                        isDisabled={isDisabled}
-                      >
-                        {options.map((option: any) => (
-                          <option key={option.id} value={option.id}>
-                            {option.nama}
-                          </option>
-                        ))}
-                      </Select>
-                    </React.Fragment>
-                  );
+            <Text fontWeight="400" fontSize="14px">
+              Nama Desa <span style={{ color: "red" }}>*</span>
+            </Text>
+            <Input
+              fontSize="10pt"
+              placeholder="Nama Desa"
+              _placeholder={{ color: "gray.500" }}
+              _focus={{
+                outline: "none",
+                bg: "white",
+                border: "1px solid",
+                borderColor: "black",
+              }}
+              {...register("nameVillage")}
+            />
 
-                return (
-                  <React.Fragment key={idx}>
-                    <Text fontWeight="400" fontSize="14px">
-                      {label} <span style={{ color: "red" }}>*</span>
-                    </Text>
-                    <Input
-                      mt={4}
-                      placeholder={placeholder}
-                      name={name}
-                      fontSize="10pt"
-                      _placeholder={{ color: "gray.500" }}
-                      _focus={{
-                        outline: "none",
-                        bg: "white",
-                        border: "1px solid",
-                        borderColor: "black",
-                      }}
-                      defaultValue={defaultValue}
-                      isDisabled={isDisabled}
-                      {...form.register(name)}
-                    />
-                  </React.Fragment>
-                );
-              }
-            )}
+            <Text fontWeight="400" fontSize="14px">
+              Provinsi <span style={{ color: "red" }}>*</span>
+            </Text>
+            <Select
+              placeholder="Pilih Provinsi"
+              fontSize="10pt"
+              variant="outline"
+              cursor="pointer"
+              color={"gray.500"}
+              _focus={{
+                outline: "none",
+                bg: "white",
+                border: "1px solid",
+                borderColor: "black",
+              }}
+              {...register("province")}
+              onChange={(e) => setSelectedProvinsi(e.target.value)}
+            >
+              {provinsi?.provinsi?.map((item: any) => (
+                <option key={item.id} value={item.id}>
+                  {item.nama}
+                </option>
+              ))}
+            </Select>
+
+            <Text fontWeight="400" fontSize="14px">
+              Kabupaten/Kota <span style={{ color: "red" }}>*</span>
+            </Text>
+            <Select
+              placeholder="Pilih Kabupaten/Kota"
+              fontSize="10pt"
+              variant="outline"
+              cursor="pointer"
+              color={"gray.500"}
+              _focus={{
+                outline: "none",
+                bg: "white",
+                border: "1px solid",
+                borderColor: "black",
+              }}
+              {...register("district")}
+              onChange={(e) => setSelectedKabupaten(e.target.value)}
+            >
+              {kabupaten?.kota_kabupaten?.map((item: any) => (
+                <option key={item.id} value={item.id}>
+                  {item.nama}
+                </option>
+              ))}
+            </Select>
+
+            <Text fontWeight="400" fontSize="14px">
+              Kecamatan <span style={{ color: "red" }}>*</span>
+            </Text>
+            <Select
+              placeholder="Pilih Kecamatan"
+              fontSize="10pt"
+              variant="outline"
+              cursor="pointer"
+              color={"gray.500"}
+              _focus={{
+                outline: "none",
+                bg: "white",
+                border: "1px solid",
+                borderColor: "black",
+              }}
+              {...register("subDistrict")}
+              onChange={(e) => setSelectedKecamatan(e.target.value)}
+            >
+              {kecamatan?.kecamatan?.map((item: any) => (
+                <option key={item.id} value={item.id}>
+                  {item.nama}
+                </option>
+              ))}
+            </Select>
+
+            <Text fontWeight="400" fontSize="14px">
+              Desa/Kelurahan <span style={{ color: "red" }}>*</span>
+            </Text>
+            <Select
+              placeholder="Pilih Kelurahan"
+              fontSize="10pt"
+              variant="outline"
+              cursor="pointer"
+              color={"gray.500"}
+              _focus={{
+                outline: "none",
+                bg: "white",
+                border: "1px solid",
+                borderColor: "black",
+              }}
+              {...register("village")}
+            >
+              {kelurahan?.kelurahan?.map((item: any) => (
+                <option key={item.id} value={item.id}>
+                  {item.nama}
+                </option>
+              ))}
+            </Select>
+
+            <Text fontWeight="400" fontSize="14px">
+              Logo Desa <span style={{ color: "red" }}>*</span>
+            </Text>
+            <LogoUpload
+              selectedLogo={selectedLogo}
+              setSelectedLogo={setSelectedLogo}
+              selectFileRef={selectLogoRef}
+              onSelectLogo={onSelectLogo}
+            />
+
+            <Text fontWeight="400" fontSize="14px">
+              Header Desa
+            </Text>
+            <HeaderUpload
+              selectedHeader={selectedHeader}
+              setSelectedHeader={setSelectedHeader}
+              selectFileRef={selectHeaderRef}
+              onSelectHeader={onSelectHeader}
+            />
+
+            <Text fontWeight="400" fontSize="16px">
+              Tentang Inovasi di Desa <span style={{ color: "red" }}>*</span>
+            </Text>
+            <Textarea
+              fontSize="10pt"
+              placeholder="Masukkan deskripsi desa"
+              _placeholder={{ color: "gray.500" }}
+              _focus={{
+                outline: "none",
+                bg: "white",
+                border: "1px solid",
+                borderColor: "black",
+              }}
+              height="100px"
+              {...register("description")}
+            />
+
+            <Text fontWeight="400" fontSize="14px">
+              Potensi Desa <span style={{ color: "red" }}>*</span>
+            </Text>
+            <Input
+              fontSize="10pt"
+              placeholder="Masukkan potensi desa"
+              _placeholder={{ color: "gray.500" }}
+              _focus={{
+                outline: "none",
+                bg: "white",
+                border: "1px solid",
+                borderColor: "black",
+              }}
+              {...register("benefit")}
+            />
+
+            <Text fontWeight="700" fontSize="16px">
+              Karakteristik Desa
+            </Text>
+            <Text fontWeight="400" fontSize="14px">
+              Geografis <span style={{ color: "red" }}>*</span>
+            </Text>
+            <Input
+              fontSize="10pt"
+              placeholder="Deskripsi geografis desa"
+              _placeholder={{ color: "gray.500" }}
+              _focus={{
+                outline: "none",
+                bg: "white",
+                border: "1px solid",
+                borderColor: "black",
+              }}
+              {...register("geographic")}
+            />
+
+            <Text fontWeight="400" fontSize="14px">
+              Infrastruktur <span style={{ color: "red" }}>*</span>
+            </Text>
+            <Input
+              fontSize="10pt"
+              placeholder="Deskripsi infrastruktur desa"
+              _placeholder={{ color: "gray.500" }}
+              _focus={{
+                outline: "none",
+                bg: "white",
+                border: "1px solid",
+                borderColor: "black",
+              }}
+              {...register("infrastructure")}
+            />
+
+            <Text fontWeight="400" fontSize="14px">
+              Kesiapan Digital <span style={{ color: "red" }}>*</span>
+            </Text>
+            <Input
+              fontSize="10pt"
+              placeholder="Deskripsi kesiapan digital desa"
+              _placeholder={{ color: "gray.500" }}
+              _focus={{
+                outline: "none",
+                bg: "white",
+                border: "1px solid",
+                borderColor: "black",
+              }}
+              {...register("digitalReadiness")}
+            />
+
+            <Text fontWeight="400" fontSize="14px">
+              Literasi Digital <span style={{ color: "red" }}>*</span>
+            </Text>
+            <Input
+              fontSize="10pt"
+              placeholder="Deskripsi literasi digital desa"
+              _placeholder={{ color: "gray.500" }}
+              _focus={{
+                outline: "none",
+                bg: "white",
+                border: "1px solid",
+                borderColor: "black",
+              }}
+              {...register("digitalLiteracy")}
+            />
+
+            <Text fontWeight="400" fontSize="14px">
+              Pemantapan Pelayanan <span style={{ color: "red" }}>*</span>
+            </Text>
+            <Input
+              fontSize="10pt"
+              placeholder="Deskripsi pemantapan pelayanan desa"
+              _placeholder={{ color: "gray.500" }}
+              _focus={{
+                outline: "none",
+                bg: "white",
+                border: "1px solid",
+                borderColor: "black",
+              }}
+              {...register("serviceImprovement")}
+            />
+
+            <Text fontWeight="400" fontSize="14px">
+              Sosial dan Budaya <span style={{ color: "red" }}>*</span>
+            </Text>
+            <Input
+              fontSize="10pt"
+              placeholder="Deskripsi sosial dan budaya desa"
+              _placeholder={{ color: "gray.500" }}
+              _focus={{
+                outline: "none",
+                bg: "white",
+                border: "1px solid",
+                borderColor: "black",
+              }}
+              {...register("socialCulture")}
+            />
+
+            <Text fontWeight="400" fontSize="14px">
+              Sumber Daya Alam <span style={{ color: "red" }}>*</span>
+            </Text>
+            <Input
+              fontSize="10pt"
+              placeholder="Deskripsi sumber daya alam desa"
+              _placeholder={{ color: "gray.500" }}
+              _focus={{
+                outline: "none",
+                bg: "white",
+                border: "1px solid",
+                borderColor: "black",
+              }}
+              {...register("naturalResources")}
+            />
+
+            <Text fontWeight="700" fontSize="16px">
+              Kontak Desa
+            </Text>
+            <Text fontWeight="400" fontSize="14px">
+              Nomor WhatsApp <span style={{ color: "red" }}>*</span>
+            </Text>
+            <Input
+              fontSize="10pt"
+              placeholder="62812345678"
+              _placeholder={{ color: "gray.500" }}
+              _focus={{
+                outline: "none",
+                bg: "white",
+                border: "1px solid",
+                borderColor: "black",
+              }}
+              {...register("whatsApp")}
+            />
+
+            <Text fontWeight="400" fontSize="14px">
+              Link Instagram <span style={{ color: "red" }}>*</span>
+            </Text>
+            <Input
+              type="url"
+              fontSize="10pt"
+              placeholder="Link Instagram desa"
+              _placeholder={{ color: "gray.500" }}
+              _focus={{
+                outline: "none",
+                bg: "white",
+                border: "1px solid",
+                borderColor: "black",
+              }}
+              {...register("instagram")}
+            />
+
+            <Text fontWeight="400" fontSize="14px">
+              Link Website <span style={{ color: "red" }}>*</span>
+            </Text>
+            <Input
+              type="url"
+              fontSize="10pt"
+              placeholder="Link Website desa"
+              _placeholder={{ color: "gray.500" }}
+              _focus={{
+                outline: "none",
+                bg: "white",
+                border: "1px solid",
+                borderColor: "black",
+              }}
+              {...register("website")}
+            />
           </Stack>
         </Flex>
-        <Button type="submit" mt="20px" width="100%" isLoading={form.formState.isSubmitting}>
+        <Button type="submit" mt="20px" width="100%" isLoading={isSubmitting}>
           Simpan
         </Button>
       </form>
     </Container>
   );
-}
+};
 
 export default AddVillage;
