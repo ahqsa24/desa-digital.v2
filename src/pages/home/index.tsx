@@ -1,5 +1,4 @@
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { useToast } from '@chakra-ui/toast';
 import Add from "Assets/icons/add.svg";
 import Container from "Components/container";
 import TopBar from "Components/topBar/TopBar";
@@ -14,12 +13,13 @@ import {
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { FloatingButton } from "./_homeStyle";
 import Hero from "./components/hero";
 import Innovator from "./components/innovator";
 import Menu from "./components/menu";
 import Readiness from "./components/readiness";
-import { useToast } from '@chakra-ui/toast';
 
 function Home() {
   const navigate = useNavigate();

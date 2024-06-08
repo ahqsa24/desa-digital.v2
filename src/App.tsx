@@ -17,6 +17,7 @@ import ProfileInnovator from "./pages/innovator/profile";
 import AddInnovation from "./pages/innovation/add";
 import ProfileVillage from "./pages/village/profile";
 import { ToastContainer } from "react-toastify";
+import EditInnovation from "./pages/innovation/edit";
 
 const queryClient = new QueryClient();
 
@@ -84,6 +85,11 @@ const routes = [
   {
     path: paths.DETAIL_INNOVATION_PAGE,
     element: <DetailInnovation />,
+    exact: true,
+  },
+  {
+    path: paths.EDIT_INNOVATION_PAGE,
+    element: <EditInnovation />,
     exact: true,
   },
 ];
