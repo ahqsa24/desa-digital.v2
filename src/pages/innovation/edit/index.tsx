@@ -43,7 +43,7 @@ const EditInnovation: React.FC = () => {
 
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
   const selectFileRef = useRef<HTMLInputElement>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [textInputsValue, setTextInputsValue] = useState({
     name: "",
@@ -56,18 +56,25 @@ const EditInnovation: React.FC = () => {
 
   useEffect(() => {
     const fetchInnovation = async () => {
-      if (!id) return;
+      if (!id) {
+        console.error("No ID found in the URL parameters");
+        return;
+      }
       try {
+        console.log("Fetching document with ID:", id);
         const docRef = doc(firestore, "innovations", id);
         const docSnap = await getDoc(docRef);
+        console.log("Document fetched:", docSnap.exists());
+
         if (docSnap.exists()) {
           const data = docSnap.data();
+          console.log("Fetched data:", data);
           setTextInputsValue({
-            name: data.namaInovasi,
-            year: data.tahunDibuat,
-            description: data.deskripsi,
+            name: data.namaInovasi || "",
+            year: data.tahunDibuat || "",
+            description: data.deskripsi || "",
           });
-          setCategory(data.kategori);
+          setCategory(data.kategori || "");
           setRequirements(data.kebutuhan || []);
           setSelectedFiles(data.images || []);
         } else {
@@ -75,6 +82,8 @@ const EditInnovation: React.FC = () => {
         }
       } catch (error) {
         console.error("Error fetching innovation:", error);
+      } finally {
+        setLoading(false); // Set loading to false once data is fetched
       }
     };
     fetchInnovation();
@@ -208,6 +217,15 @@ const EditInnovation: React.FC = () => {
       setLoading(false);
     }
   };
+
+  if (loading) {
+    return (
+      <Container page px={16}>
+        <TopBar title="Edit Inovasi" onBack={() => navigate(-1)} />
+        <Text>Loading...</Text>
+      </Container>
+    );
+  }
 
   return (
     <Container page px={16}>

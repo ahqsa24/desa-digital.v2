@@ -27,15 +27,35 @@ import ImageUpload from "../../formComponents/ImageUpload";
 import { paths } from "Consts/path";
 
 const categories = [
-  "Pertanian Cerdas",
-  "Pemasaran Agri-Food dan E-Commerce",
   "E-Government",
-  "Sistem Informasi",
+  "E-Tourism",
   "Layanan Keuangan",
+  "Layanan Sosial",
+  "Pemasaran Agri-Food dan E-Commerce",
   "Pengembangan Masyarakat dan Ekonomi",
   "Pengelolaan Sumber Daya",
-  "Layanan Sosial",
-  "E-Tourism",
+  "Pertanian Cerdas",
+  "Sistem Informasi",
+];
+
+const targetUsers = [
+  "Agen keuangan/perbankan",
+  "Agen pemerintah",
+  "Agro-preneur",
+  "Lansia/Pensiunan desa",
+  "Nelayan",
+  "Pemasok",
+  "Pemuda",
+  "Penyedia layanan",
+  "Perangkat desa",
+  "Petani",
+  "Peternak",
+  "Pedagang",
+  "Pekerja/Buruh",
+  "Produsen",
+  "Tokoh masyarakat setempat",
+  "Wanita pedesaan",
+  "Lainnya",
 ];
 
 const AddInnovation: React.FC = () => {
@@ -50,10 +70,13 @@ const AddInnovation: React.FC = () => {
     name: "",
     year: "",
     description: "",
+    customTargetUser: "",
   });
   const [category, setCategory] = useState("");
   const [requirements, setRequirements] = useState<string[]>([]);
   const [newRequirement, setNewRequirement] = useState("");
+  const [targetUser, setTargetUser] = useState("");
+  const [isCustomTargetUser, setIsCustomTargetUser] = useState(false);
 
   const toast = useToast();
   const onSelectImage = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -86,6 +109,12 @@ const AddInnovation: React.FC = () => {
 
   const onSelectCategory = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setCategory(event.target.value);
+  };
+
+  const onSelectTargetUser = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = event.target.value;
+    setTargetUser(value);
+    setIsCustomTargetUser(value === "Lainnya");
   };
 
   const onAddRequirement = () => {
@@ -146,9 +175,11 @@ const AddInnovation: React.FC = () => {
   const onAddInnovation = async (event: React.FormEvent) => {
     event.preventDefault();
     setLoading(true);
-    const { name, year, description } = textInputsValue;
+    const { name, year, description, customTargetUser } = textInputsValue;
 
-    if (!name || !year || !description || !category) {
+    const finalTargetUser = isCustomTargetUser ? customTargetUser : targetUser;
+
+    if (!name || !year || !description || !category || !finalTargetUser) {
       setError("Semua kolom harus diisi");
       setLoading(false);
       return;
@@ -162,6 +193,7 @@ const AddInnovation: React.FC = () => {
           deskripsi: description,
           kebutuhan: requirements,
           kategori: category,
+          targetPengguna: finalTargetUser,
           innovatorId: user?.uid,
           createdAt: serverTimestamp(),
           editedAt: serverTimestamp(),
@@ -251,6 +283,43 @@ const AddInnovation: React.FC = () => {
                 </option>
               ))}
             </Select>
+            <Text fontWeight="400" fontSize="14px">
+              Target Pengguna <span style={{ color: "red" }}>*</span>
+            </Text>
+            <Select
+              placeholder="Pilih target pengguna"
+              name="targetUser"
+              fontSize="10pt"
+              variant="outline"
+              cursor="pointer"
+              color={"gray.500"}
+              _focus={{
+                outline: "none",
+                bg: "white",
+                border: "1px solid",
+                borderColor: "black",
+              }}
+              _placeholder={{ color: "gray.500" }}
+              value={targetUser}
+              onChange={onSelectTargetUser}
+            >
+              {targetUsers.map((user) => (
+                <option key={user} value={user}>
+                  {user}
+                </option>
+              ))}
+            </Select>
+            {isCustomTargetUser && (
+              <Input
+                name="customTargetUser"
+                fontSize="10pt"
+                placeholder="Masukkan target pengguna"
+                _placeholder={{ color: "gray.500" }}
+                _focus={{ outline: "none", bg: "white", borderColor: "black" }}
+                value={textInputsValue.customTargetUser}
+                onChange={onTextChange}
+              />
+            )}
             <Text fontWeight="400" fontSize="14px">
               Tahun dibuat inovasi <span style={{ color: "red" }}>*</span>
             </Text>
