@@ -1,19 +1,19 @@
 import { DocumentData, collection, getDocs, doc, getDoc } from "firebase/firestore";
 import { firestore } from "./clientApp";
 
-
 export const getDocuments = async (collectionName: string) : Promise<DocumentData[]> => {
     try {
         const collectionRef = collection(firestore, collectionName);
         const querySnapshot = await getDocs(collectionRef);
 
-        const innovations: DocumentData[] = [];
+        const documents: DocumentData[] = [];
 
         querySnapshot.forEach(doc => {
-            innovations.push(doc.data());
-            innovations[innovations.length - 1].id = doc.id;
+            const data = doc.data();
+            data.id = doc.id;
+            documents.push(data);
         });
-        return innovations;
+        return documents;
     } catch (error) {
         console.error("Error fetching documents:", error);
         return [];
@@ -30,7 +30,7 @@ export const getDocumentById = async (collectionName: string, documentId: string
         const docSnapshot = await getDoc(docRef);
 
         if (docSnapshot.exists()) {
-            return docSnapshot.data();
+            return { id: docSnapshot.id, ...docSnapshot.data() };
         } else {
             console.error("No document found with the provided ID:", documentId);
             return {};
@@ -39,4 +39,14 @@ export const getDocumentById = async (collectionName: string, documentId: string
         console.error("Error fetching document:", error);
         return {};
     }
+};
+
+const fetchInnovators = async () => {
+    const innovators = await getDocuments("innovators");
+    console.log(innovators);
+};
+
+const fetchInnovatorById = async (documentId: string) => {
+    const innovator = await getDocumentById("innovators", documentId);
+    console.log(innovator);
 };

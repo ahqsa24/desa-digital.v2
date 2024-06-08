@@ -16,10 +16,11 @@ import { auth, firestore, storage } from "../../../firebase/clientApp";
 import HeaderUpload from "../../formComponents/HeaderUpload";
 import LogoUpload from "../../formComponents/LogoUpload";
 import {
-  addDoc,
-  collection,
+  DocumentData,
+  DocumentReference,
   doc,
   serverTimestamp,
+  setDoc,
   updateDoc,
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
@@ -98,6 +99,14 @@ const InnovatorForm: React.FC = () => {
     event.preventDefault();
     setLoading(true);
     setError("");
+
+    // Ensure user and user.uid are defined
+    if (!user?.uid) {
+      setError("User ID is not defined. Please make sure you are logged in.");
+      setLoading(false);
+      return;
+    }
+
     try {
       const {
         name,
@@ -109,6 +118,8 @@ const InnovatorForm: React.FC = () => {
         modelBusiness,
         whatsapp,
       } = textInputsValue;
+
+      // Check if all required fields are filled
       if (
         !name ||
         !description ||
@@ -124,9 +135,14 @@ const InnovatorForm: React.FC = () => {
         setLoading(false);
         return;
       }
-      const docRef = await addDoc(collection(firestore, "innovators"), {
+
+      const userId = user.uid;
+
+      // Use setDoc to set the document with a specific ID
+      const docRef = doc(firestore, "innovators", userId);
+      await setDoc(docRef, {
         namaInovator: name,
-        id: user?.uid,
+        id: userId,
         deskripsi: description,
         kategori: category,
         editedAt: serverTimestamp(),
@@ -140,36 +156,38 @@ const InnovatorForm: React.FC = () => {
         targetPengguna: targetUser,
         whatsapp,
       });
-      console.log("Document written with ID: ", docRef.id);
-      if (!selectedLogo) {
+      console.log("Document written with ID: ", userId);
+
+      // Upload logo
+      if (selectedLogo) {
+        const logoRef = ref(storage, `innovators/${userId}/logo`);
+        await uploadString(logoRef, selectedLogo, "data_url").then(async () => {
+          const downloadURL = await getDownloadURL(logoRef);
+          await updateDoc(doc(firestore, "innovators", userId), {
+            logo: downloadURL,
+          });
+          console.log("File available at", downloadURL);
+        });
+      } else {
         setError("Logo harus diisi");
         setLoading(false);
         return;
-      } else {
-        const logoRef = ref(storage, "innovators/" + docRef.id + "/logo");
-        await uploadString(logoRef, selectedLogo, "data_url").then(
-          async (snapshot) => {
-            const downloadURL = await getDownloadURL(logoRef);
-            await updateDoc(doc(firestore, "innovators", docRef.id), {
-              logo: downloadURL,
-            });
-            console.log("File available at", downloadURL);
-          }
-        );
       }
 
+      // Upload header if provided
       if (selectedHeader) {
-        const headerRef = ref(storage, "innovators/" + docRef.id + "/header");
+        const headerRef = ref(storage, `innovators/${userId}/header`);
         await uploadString(headerRef, selectedHeader, "data_url").then(
-          async (snapshot) => {
+          async () => {
             const downloadURL = await getDownloadURL(headerRef);
-            await updateDoc(doc(firestore, "innovators", docRef.id), {
+            await updateDoc(doc(firestore, "innovators", userId), {
               header: downloadURL,
             });
             console.log("File available at", downloadURL);
           }
         );
       }
+
       setLoading(false);
     } catch (error) {
       console.error("Error adding document: ", error);
@@ -177,6 +195,7 @@ const InnovatorForm: React.FC = () => {
       setError("Error adding document");
     }
   };
+
   return (
     <Container page px={16}>
       <TopBar title="Register Inovator" onBack={() => navigate(-1)} />

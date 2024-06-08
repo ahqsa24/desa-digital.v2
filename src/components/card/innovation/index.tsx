@@ -8,6 +8,7 @@ import {
   Icon,
   CompanyContainer,
   Applied,
+  InnovatorName,
 } from "./_cardInnovationStyle";
 
 type CardInnovationProps = {
@@ -16,11 +17,13 @@ type CardInnovationProps = {
   kategori?: string;
   deskripsi?: string;
   tahunDibuat?: string;
+  innovatorLogo?: string;
+  innovatorName?: string;
   onClick?: () => void;
 };
 
 function CardInnovation(props: CardInnovationProps) {
-  const { images, namaInovasi, kategori, deskripsi, tahunDibuat, onClick } = props;
+  const { images, namaInovasi, kategori, deskripsi, tahunDibuat, innovatorLogo, innovatorName, onClick } = props;
 
   return (
     <Container onClick={onClick}>
@@ -30,8 +33,8 @@ function CardInnovation(props: CardInnovationProps) {
         <Category>{kategori}</Category>
         <Description>{deskripsi}</Description>
         <CompanyContainer>
-          {/* Placeholder for future company-related icons or logos */}
-          <Icon src={""} alt={namaInovasi} />
+          <Icon src={innovatorLogo || ""} alt={namaInovasi} />
+          <InnovatorName>{innovatorName}</InnovatorName>
         </CompanyContainer>
         <Applied>{tahunDibuat}</Applied>
       </Content>

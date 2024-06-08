@@ -1,3 +1,4 @@
+import React from "react";
 import TopBar from "Components/topBar";
 import Soge from "Assets/images/soge-logo.png";
 import Dot from "Assets/icons/dot.svg";
@@ -6,12 +7,12 @@ import Container from "Components/container";
 import { generatePath, useNavigate, useParams } from "react-router-dom";
 import { paths } from "Consts/path.ts";
 import {
-  Img,
   Label,
   Title,
   ActionContainer,
   Icon,
   Text,
+  Text2,
   Logo,
   Description,
   ChipContainer,
@@ -20,13 +21,13 @@ import {
 } from "./_detailStyle.ts";
 import { useQuery } from "react-query";
 import { getInnovationById } from "Services/innovationServices.ts";
-import { getUserById } from "Services/userServices.ts";
 import { useEffect, useState } from "react";
 import { DocumentData } from "firebase/firestore";
 import { getDocumentById } from "../../../firebase/inovationTable.ts";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { Img } from "@chakra-ui/react";
 
 function DetailInnovation() {
   const navigate = useNavigate();
@@ -40,42 +41,36 @@ function DetailInnovation() {
   );
 
   const [data, setData] = useState<DocumentData>({});
-
-  const { background, benefit, category } = innovation || {};
-  const { description, name, requirement, date, innovatorId } = innovation || {};
-
-  useEffect(() => {
-    getDocumentById("innovations", id)
-      .then((detailInovasi) => {
-        setData(detailInovasi);
-      })
-      .catch((error) => {
-        // Handle error here
-      });
-  }, [id]);
-
-  const { data: innovator } = useQuery<any>(
-    "innovatorById",
-    () => getUserById(innovatorId),
-    {
-      enabled: !!innovatorId,
-    }
-  );
-
   const [datainnovator, setDatainnovator] = useState<DocumentData>({});
 
   useEffect(() => {
-    getDocumentById("users", data.innovatorId)
-      .then((detailInovasi) => {
-        setDatainnovator(detailInovasi);
-      })
-      .catch((error) => {
-        // Handle error here
-      });
+    if (id) {
+      getDocumentById("innovations", id)
+        .then((detailInovasi) => {
+          setData(detailInovasi);
+          console.log("Innovation Data:", detailInovasi); // Log the fetched innovation data
+        })
+        .catch((error) => {
+          console.error("Error fetching innovation details:", error);
+        });
+    }
+  }, [id]);
+
+  useEffect(() => {
+    if (data.innovatorId) {
+      console.log("Fetching innovator with ID:", data.innovatorId); // Log the innovator ID
+      getDocumentById("innovators", data.innovatorId)
+        .then((detailInnovator) => {
+          setDatainnovator(detailInnovator);
+          console.log("Innovator Data:", detailInnovator); // Log the fetched innovator data
+        })
+        .catch((error) => {
+          console.error("Error fetching innovator details:", error);
+        });
+    }
   }, [data.innovatorId]);
 
-  const { innovatorName, logo } = innovator || {};
-  const year = new Date(date).getFullYear();
+  const year = new Date(data.tahunDibuat).getFullYear();
 
   const settings = {
     dots: true,
@@ -91,12 +86,32 @@ function DetailInnovation() {
       {data.images && data.images.length > 1 ? (
         <Slider {...settings}>
           {data.images.map((image: string, index: number) => (
-            <Img key={index} src={image} alt={`background-${index}`} />
+            <Img
+              maxWidth="360px"
+              maxHeight="248px"
+              width="360px"
+              height="248px"
+              objectFit="cover"
+              objectPosition="center"
+              key={index}
+              src={image}
+              alt={`background-${index}`}
+            />
           ))}
         </Slider>
       ) : (
-        data.images && data.images.length === 1 && (
-          <Img src={data.images[0]} alt={`background-0`} />
+        data.images &&
+        data.images.length === 1 && (
+          <Img
+            src={data.images[0]}
+            maxWidth="360px"
+            maxHeight="248px"
+            width="360px"
+            height="248px"
+            objectFit="cover"
+            objectPosition="center"
+            alt="background"
+          />
         )
       )}
       <ContentContainer>
@@ -107,25 +122,30 @@ function DetailInnovation() {
               onClick={() =>
                 navigate(
                   generatePath(paths.INNOVATION_CATEGORY_PAGE, {
-                    category: category,
+                    category: data.kategori,
                   })
                 )
               }
             >
               {data.kategori}
             </Label>
-            <Description>Dibuat tahun {data.tahunDibuat}</Description>
+            <Description>Dibuat tahun {year}</Description>
           </ChipContainer>
         </div>
         <ActionContainer
           onClick={() =>
             navigate(
-              generatePath(paths.DETAIL_INNOVATOR_PAGE, { id: innovatorId })
+              generatePath(paths.DETAIL_INNOVATOR_PAGE, {
+                id: data.innovatorId,
+              })
             )
           }
         >
-          <Logo src={logo} alt="logo" />
-          <Text>{datainnovator.innovatorName}</Text>
+          <Logo src={datainnovator.logo} alt="logo" />
+          <div>
+            <Text2>Inovator</Text2>
+            <Text>{datainnovator.namaInovator}</Text>
+          </div>
         </ActionContainer>
         <div>
           <Text mb={16}>Deskripsi</Text>
@@ -133,26 +153,23 @@ function DetailInnovation() {
         </div>
 
         <div>
-          <Text mb={16}>Keuntungan</Text>
-          <BenefitContainer>
-            <Icon mr={4} src={Dot} alt="dot" />
-            <Description></Description>
-          </BenefitContainer>
-        </div>
-
-        <div>
           <Text mb={16}>Perlu Disiapkan</Text>
-          <BenefitContainer>
-            <Icon src={Check} alt="check" />
-            <Description>{data.kebutuhan}</Description>
-          </BenefitContainer>
+          {Array.isArray(data.kebutuhan) && data.kebutuhan.length > 0 ? (
+            data.kebutuhan.map((item, index) => (
+              <BenefitContainer key={index}>
+                <Icon src={Check} alt="check" />
+                <Description>{item}</Description>
+              </BenefitContainer>
+            ))
+          ) : (
+            <Description>No specific needs listed.</Description>
+          )}
         </div>
 
         <div>
           <Text mb={16}>Desa yang Menerapkan </Text>
-          <ActionContainer onClick={() => navigate(paths.DETAIL_VILLAGE_PAGE)}>
-            <Logo src={Soge} alt={Logo} />
-            <Text>Desa Soge</Text>
+          <ActionContainer>
+            <Text>Belum tersedia</Text>
           </ActionContainer>
         </div>
       </ContentContainer>
