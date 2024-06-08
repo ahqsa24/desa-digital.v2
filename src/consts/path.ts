@@ -12,4 +12,5 @@ export const paths = {
   ADD_INNOVATION: "/innovation/add",
   INNOVATION_CATEGORY_PAGE: "/innovation/:category",
   DETAIL_INNOVATION_PAGE: "/innovation/detail/:id",
+  EDIT_INNOVATION_PAGE: "/innovation/edit/:id",
 };
