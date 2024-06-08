@@ -1,37 +1,30 @@
-import React, { useEffect, useState } from "react";
-import { Button, Text } from "@chakra-ui/react";
-import { paths } from "Consts/path";
-import { useNavigate } from "react-router";
-import { useForm } from "react-hook-form";
-import TextField from "Components/textField";
 import {
-  Background,
-  Container,
-  Title,
-  Description,
-  Label,
-  ActionContainer,
-  Action,
-  CheckboxContainer,
-} from "./_registerStyle";
-import { auth, firestore } from "../../firebase/clientApp";
-import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
-import { FIREBASE_ERRORS } from "../../../src/firebase/errors";
+  Button,
+  Input,
+  InputGroup,
+  InputRightElement,
+  Text,
+} from "@chakra-ui/react";
+import { paths } from "Consts/path";
 import { User } from "firebase/auth";
 import { addDoc, collection } from "firebase/firestore";
+import React, { useEffect, useState } from "react";
+import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
+import { FaEye, FaEyeSlash } from "react-icons/fa"; // Import icons
+import { useNavigate } from "react-router";
+import { FIREBASE_ERRORS } from "../../../src/firebase/errors";
+import { auth, firestore } from "../../firebase/clientApp";
+import {
+  Action,
+  ActionContainer,
+  Background,
+  CheckboxContainer,
+  Container,
+  Description,
+  Label,
+  Title,
+} from "./_registerStyle";
 
-const forms = [
-  {
-    label: "Email",
-    type: "email",
-    name: "email",
-  },
-  {
-    label: "Kata sandi",
-    type: "password",
-    name: "password",
-  },
-];
 
 const Register: React.FC = () => {
   const [regisForm, setRegisForm] = useState({
@@ -43,6 +36,8 @@ const Register: React.FC = () => {
   const [createUserWithEmailAndPassword, userCred, loading, userError] =
     useCreateUserWithEmailAndPassword(auth);
 
+  const [show, setShow] = useState(false);
+  const onShowPassword = () => setShow(!show);
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (error) setError("");
@@ -61,13 +56,12 @@ const Register: React.FC = () => {
   };
   const navigate = useNavigate();
 
-  const form = useForm();
 
   const createUserDocument = async (user: User) => {
     const userData = {
       id: user.uid,
       email: user.email,
-      role: regisForm.role
+      role: regisForm.role,
     };
     await addDoc(
       collection(firestore, "users"),
@@ -89,20 +83,37 @@ const Register: React.FC = () => {
         <Description>Silahkan melakukan registrasi akun</Description>
 
         <form onSubmit={onSubmit}>
-          {forms?.map(({ label, type, name }, idx) => (
-            <React.Fragment key={idx}>
-              <Label mt={12}>{label}</Label>
-              <TextField
-                mt={4}
-                placeholder={label}
-                type={type}
-                name={name}
-                form={form}
-                onChange={onChange}
-              />
-            </React.Fragment>
-          ))}
+          <Text fontSize="10pt" mt="12px">
+            Email
+          </Text>
+          <Input
+            name="email"
+            type="email"
+            onChange={onChange}
+            required
+            placeholder="Email"
+            mt="4px"
+          />
+          <Text fontSize="10pt" mt="12px">
+            Password
+          </Text>
 
+          <InputGroup mt="4px" alignItems="center">
+            <Input
+              name="password"
+              type={show ? "text" : "password"}
+              onChange={onChange}
+              required
+              placeholder="Password"
+            />
+            <InputRightElement
+              onClick={onShowPassword}
+              cursor="pointer"
+              mt="4px"
+            >
+              {show ? <FaEyeSlash /> : <FaEye />}
+            </InputRightElement>
+          </InputGroup>
           <Label mt={12}>Daftar sebagai:</Label>
           <CheckboxContainer mt={12}>
             <input

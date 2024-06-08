@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from "react";
+import {
+  Button,
+  Flex,
+  Input,
+  Select,
+  Stack,
+  Text,
+  Textarea,
+} from "@chakra-ui/react";
 import TopBar from "Components/topBar";
 import Container from "Components/container";
-import TextField from "Components/textField";
-import Button from "Components/button";
 import { useForm } from "react-hook-form";
-import { Label } from "./_profileStyle";
-import Dropdown from "Components/dropDown";
 import { useMutation, useQuery } from "react-query";
 import { toast } from "react-toastify";
 import {
@@ -16,9 +21,6 @@ import {
 } from "Services/locationServices";
 import { updateProfile, getUserById } from "Services/userServices";
 import useAuthLS from "Hooks/useAuthLS";
-
-import { Box, Image, Input, Text, Textarea } from "@chakra-ui/react"; // Ensure Textarea is imported
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 
@@ -165,7 +167,6 @@ function AddVillage() {
   const forms = [
     {
       label: "Provinsi",
-      type: "text",
       name: "province",
       placeholder: "Pilih provinsi",
       defaultValue: data?.province,
@@ -179,7 +180,6 @@ function AddVillage() {
     },
     {
       label: "Kabupaten/Kota",
-      type: "text",
       name: "district",
       placeholder: "Pilih kabupaten/kota",
       defaultValue: data?.district,
@@ -193,7 +193,6 @@ function AddVillage() {
     },
     {
       label: "Kecamatan",
-      type: "text",
       name: "subDistrict",
       placeholder: "Pilih kecamatan",
       defaultValue: data?.subDistrict,
@@ -207,10 +206,8 @@ function AddVillage() {
     },
     {
       label: "Desa/Kelurahan",
-      type: "text",
       name: "village",
       placeholder: "Pilih kelurahan",
-      value: data?.village,
       defaultValue: data?.village,
       isDisabled: data?.village,
       options:
@@ -220,14 +217,22 @@ function AddVillage() {
         })) || [],
     },
     {
+      label: "Nama Desa",
+      name: "nameVillage",
+      placeholder: "Nama desa",
+    },
+    {
+      label: "Tentang Desa",
+      name: "description",
+      placeholder: "Masukan deskripsi desa",
+    },
+    {
       label: "Logo Desa",
-      type: "file",
       name: "logo",
       placeholder: "Upload logo",
     },
     {
       label: "Header Desa",
-      type: "file",
       name: "header",
       placeholder: "Upload header",
       isOptional: true,
@@ -240,7 +245,6 @@ function AddVillage() {
     },
     {
       label: "Potensi Desa",
-      type: "text",
       name: "benefit",
       placeholder: "Masukkan potensi desa",
     },
@@ -298,8 +302,7 @@ function AddVillage() {
     },
     {
       label: "Nomor WhatsApp",
-      type: "tel",
-      name: "contact.whatsApp",
+      name: "whatsApp",
       placeholder: "62812345678",
     },
     {
@@ -333,114 +336,83 @@ function AddVillage() {
     <Container page px={16}>
       <TopBar title="Edit Profil Desa" />
       <form onSubmit={handleSubmit(onProfileSave)}>
-        {forms?.map(
-          (
-            {
-              label,
-              type,
-              name,
-              placeholder,
-              options,
-              onChange,
-              defaultValue,
-              isDisabled,
-              isOptional,
-              isBold,
-            },
-            idx
-          ) => {
-            if (type === "heading") {
-              return (
-                <React.Fragment key={idx}>
-                  <Text
-                    as="h2"
-                    fontWeight={isBold ? "bold" : "normal"}
-                    color="black"
-                  >
-                    {label}
-                  </Text>
-                </React.Fragment>
-              );
-            }
-            if (type === "file") {
-              return (
-                <React.Fragment key={idx}>
-                  <Label mt={12} color="black">
-                    {label}
-                    {!isOptional && <span style={{ color: "red" }}> * </span>}
-                  </Label>
-                  <ImageUpload
-                    selectedFile={
-                      name === "logo" ? selectedLogo : selectedHeader
-                    }
-                    onSelectImage={(e) =>
-                      onSelectImage(
-                        e,
-                        name === "logo" ? setSelectedLogo : setSelectedHeader
-                      )
-                    }
-                    label={name}
-                    isRequired={!isOptional}
-                  />
-                </React.Fragment>
-              );
-            }
-            if (type === "textarea") {
-              return (
-                <React.Fragment key={idx}>
-                  <Label mt={12} color="black">
-                    {label}
-                    {!isOptional && <span style={{ color: "red" }}> * </span>}
-                  </Label>
-                  <Textarea
-                    mt={4}
-                    placeholder={placeholder || label}
-                    name={name}
-                    form={form}
-                    rows={4} // Add rows attribute to make the textarea larger
-                    color="black" // Make text inside textarea black
-                  />
-                </React.Fragment>
-              );
-            }
-            if (!!options)
-              return (
-                <React.Fragment key={idx}>
-                  <Label mt={12} color="black">
-                    {label}
-                    {!isOptional && <span style={{ color: "red" }}> * </span>}
-                  </Label>
-                  <Dropdown
-                    form={form}
-                    name={name}
-                    options={options}
-                    onChange={onChange}
-                    placeholder={placeholder}
-                    defaultValue={defaultValue}
-                    isDisabled={isDisabled}
-                  />
-                </React.Fragment>
-              );
+        <Flex direction="column" marginTop="24px">
+          <Stack spacing={3} width="100%">
+            {forms.map(
+              (
+                {
+                  label,
+                  name,
+                  placeholder,
+                  options,
+                  onChange,
+                  defaultValue,
+                  isDisabled,
+                },
+                idx
+              ) => {
+                // dropdown
+                if (!!options)
+                  return (
+                    <React.Fragment key={idx}>
+                      <Text fontWeight="400" fontSize="14px">
+                        {label} <span style={{ color: "red" }}>*</span>
+                      </Text>
+                      <Select
+                        placeholder={placeholder}
+                        name={name}
+                        fontSize="10pt"
+                        variant="outline"
+                        cursor="pointer"
+                        color={"gray.500"}
+                        _focus={{
+                          outline: "none",
+                          bg: "white",
+                          border: "1px solid",
+                          borderColor: "black",
+                        }}
+                        _placeholder={{ color: "gray.500" }}
+                        defaultValue={defaultValue}
+                        onChange={(e) => onChange && onChange(e.target.value)}
+                        isDisabled={isDisabled}
+                      >
+                        {options.map((option: any) => (
+                          <option key={option.id} value={option.id}>
+                            {option.nama}
+                          </option>
+                        ))}
+                      </Select>
+                    </React.Fragment>
+                  );
 
-            return (
-              <React.Fragment key={idx}>
-                <Label mt={12} color="black">
-                  {label}
-                  {!isOptional && <span style={{ color: "red" }}> * </span>}
-                </Label>
-                <TextField
-                  mt={4}
-                  placeholder={placeholder || label}
-                  type={type}
-                  name={name}
-                  form={form}
-                  color="black" // Make text inside TextField black
-                />
-              </React.Fragment>
-            );
-          }
-        )}
-        <Button size="m" fullWidth mt={12} type="submit">
+                return (
+                  <React.Fragment key={idx}>
+                    <Text fontWeight="400" fontSize="14px">
+                      {label} <span style={{ color: "red" }}>*</span>
+                    </Text>
+                    <Input
+                      mt={4}
+                      placeholder={placeholder}
+                      name={name}
+                      fontSize="10pt"
+                      _placeholder={{ color: "gray.500" }}
+                      _focus={{
+                        outline: "none",
+                        bg: "white",
+                        border: "1px solid",
+                        borderColor: "black",
+                      }}
+                      defaultValue={defaultValue}
+                      isDisabled={isDisabled}
+                      {...form.register(name)}
+                    />
+                  </React.Fragment>
+                );
+              }
+            )}
+          </Stack>
+        </Flex>
+        <Button type="submit" mt="20px" width="100%" isLoading={form.formState.isSubmitting}>
           Simpan
         </Button>
       </form>

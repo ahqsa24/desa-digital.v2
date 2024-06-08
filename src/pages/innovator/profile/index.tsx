@@ -6,6 +6,7 @@ import {
   Stack,
   Text,
   Textarea,
+  useToast,
 } from "@chakra-ui/react";
 import Container from "Components/container";
 import TopBar from "Components/topBar";
@@ -37,6 +38,13 @@ const categories = [
   "Start Up",
 ];
 
+const businessModels = [
+  "Layanan Berbayar",
+  "Layanan Gratis",
+  "Layanan Subsidi",
+  "Lainnya",
+];
+
 const InnovatorForm: React.FC = () => {
   const navigate = useNavigate();
   const [user] = useAuthState(auth);
@@ -56,8 +64,13 @@ const InnovatorForm: React.FC = () => {
     product: "",
     modelBusiness: "",
     whatsapp: "",
+    customModelBusiness: "",
   });
   const [category, setCategory] = useState("");
+  const [modelBusiness, setModelBusiness] = useState("");
+  const [isCustomModelBusiness, setIsCustomModelBusiness] = useState(false);
+
+  const toast = useToast();
 
   const onSelectLogo = (event: React.ChangeEvent<HTMLInputElement>) => {
     const reader = new FileReader();
@@ -70,6 +83,7 @@ const InnovatorForm: React.FC = () => {
       }
     };
   };
+
   const onSelectHeader = (event: React.ChangeEvent<HTMLInputElement>) => {
     const reader = new FileReader();
     if (event.target.files?.[0]) {
@@ -95,6 +109,12 @@ const InnovatorForm: React.FC = () => {
     setCategory(event.target.value);
   };
 
+  const onSelectModelBusiness = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = event.target.value;
+    setModelBusiness(value);
+    setIsCustomModelBusiness(value === "Lainnya");
+  };
+
   const onSubmitForm = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setLoading(true);
@@ -117,7 +137,11 @@ const InnovatorForm: React.FC = () => {
         product,
         modelBusiness,
         whatsapp,
+        customModelBusiness,
       } = textInputsValue;
+
+      // Determine the final model business value
+      const finalModelBusiness = isCustomModelBusiness ? customModelBusiness : modelBusiness;
 
       // Check if all required fields are filled
       if (
@@ -127,7 +151,7 @@ const InnovatorForm: React.FC = () => {
         !website ||
         !targetUser ||
         !product ||
-        !modelBusiness ||
+        !finalModelBusiness ||
         !whatsapp ||
         !selectedLogo
       ) {
@@ -150,7 +174,7 @@ const InnovatorForm: React.FC = () => {
         jumlahInovasi: 0,
         jumlahDesaDampingan: 0,
         produk: product,
-        modelBisnis: modelBusiness,
+        modelBisnis: finalModelBusiness,
         instagram,
         website,
         targetPengguna: targetUser,
@@ -189,10 +213,25 @@ const InnovatorForm: React.FC = () => {
       }
 
       setLoading(false);
+
+      toast({
+        title: "Profile berhasil dibuat",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+      navigate("/")
     } catch (error) {
       console.error("Error adding document: ", error);
       setLoading(false);
       setError("Error adding document");
+      toast({
+        title: "Error",
+        description: "Terjadi kesalahan saat menambahkan dokumen.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
     }
   };
 
@@ -246,53 +285,44 @@ const InnovatorForm: React.FC = () => {
               ))}
             </Select>
             <Text fontWeight="400" fontSize="14px">
-              Target Pengguna <span style={{ color: "red" }}>*</span>
-            </Text>
-            <Input
-              name="targetUser"
-              fontSize="10pt"
-              placeholder="Contoh: Nelayan"
-              _placeholder={{ color: "gray.500" }}
-              _focus={{
-                outline: "none",
-                bg: "white",
-                border: "1px solid",
-                borderColor: "black",
-              }}
-              value={textInputsValue.targetUser}
-              onChange={onTextChange}
-            />
-            <Text fontWeight="400" fontSize="14px">
-              Produk <span style={{ color: "red" }}>*</span>
-            </Text>
-            <Input
-              name="product"
-              fontSize="10pt"
-              placeholder="Nama produk"
-              _placeholder={{ color: "gray.500" }}
-              _focus={{
-                outline: "none",
-                bg: "white",
-                border: "1px solid",
-                borderColor: "black",
-              }}
-              value={textInputsValue.product}
-              onChange={onTextChange}
-            />
-            <Text fontWeight="400" fontSize="14px">
               Model Bisnis Digital <span style={{ color: "red" }}>*</span>
             </Text>
-            <Input
+            <Select
+              placeholder="Pilih Model Bisnis"
               name="modelBusiness"
               fontSize="10pt"
-              placeholder="Masukkan model bisnis secara singkat"
+              variant="outline"
+              cursor="pointer"
+              color={"gray.500"}
+              _focus={{
+                outline: "none",
+                bg: "white",
+                border: "1px solid",
+                borderColor: "black",
+              }}
               _placeholder={{ color: "gray.500" }}
-              _focus={{ outline: "none", bg: "white", borderColor: "black" }}
-              value={textInputsValue.modelBusiness}
-              onChange={onTextChange}
-            />
+              value={modelBusiness}
+              onChange={onSelectModelBusiness}
+            >
+              {businessModels.map((model) => (
+                <option key={model} value={model}>
+                  {model}
+                </option>
+              ))}
+            </Select>
+            {isCustomModelBusiness && (
+              <Input
+                name="customModelBusiness"
+                fontSize="10pt"
+                placeholder="Masukkan model bisnis secara singkat"
+                _placeholder={{ color: "gray.500" }}
+                _focus={{ outline: "none", bg: "white", borderColor: "black" }}
+                value={textInputsValue.customModelBusiness}
+                onChange={onTextChange}
+              />
+            )}
             <Text fontWeight="400" fontSize="14px">
-              Deskripsi <span style={{ color: "red" }}>*</span>
+              Deskripsi Inovator <span style={{ color: "red" }}>*</span>
             </Text>
             <Textarea
               name="description"

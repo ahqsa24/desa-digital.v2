@@ -36,7 +36,7 @@ function CardInnovation(props: CardInnovationProps) {
           <Icon src={innovatorLogo || ""} alt={namaInovasi} />
           <InnovatorName>{innovatorName}</InnovatorName>
         </CompanyContainer>
-        <Applied>{tahunDibuat}</Applied>
+        <Applied>Sejak {tahunDibuat}</Applied>
       </Content>
     </Container>
   );
