@@ -7,6 +7,7 @@ interface ButtonProps extends MarginProps {
   onClick?: () => void
   fullWidth?: boolean
   type?: any
+  isLoading?: boolean
 }
 
 function Button(props: ButtonProps) {
