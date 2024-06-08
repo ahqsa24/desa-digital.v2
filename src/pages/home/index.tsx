@@ -19,6 +19,7 @@ import Hero from "./components/hero";
 import Innovator from "./components/innovator";
 import Menu from "./components/menu";
 import Readiness from "./components/readiness";
+import { useToast } from '@chakra-ui/toast';
 
 function Home() {
   const navigate = useNavigate();
@@ -26,6 +27,7 @@ function Home() {
   const [isInnovator, setIsInnovator] = useState(false); // State untuk mengecek apakah pengguna ada di koleksi innovators
   const auth = getAuth(); // Dapatkan instance auth dari Firebase
 
+  const toast = useToast();
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -67,7 +69,13 @@ function Home() {
     if (isInnovator) {
       navigate(paths.ADD_INNOVATION);
     } else {
-      toast.warning("You need to fill up your innovator profile first before adding an innovation.");
+      toast({
+        title: "Lengkapi Profil terlebih dahulu",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+        position: "top",
+      })
     }
   };
 
