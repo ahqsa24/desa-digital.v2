@@ -25,7 +25,7 @@ function Menu() {
       title: "E-Government",
     },
     {
-      icon: "https://github.com/cheishaamanda/capstone1/assets/90697739/e324ef2f-d3c9-443c-ad05-567676f6d76d",
+      icon: "https://github.com/cheishaamanda/capstone1/assets/90697739/12fd7714-7871-4956-b3e0-e6e62a495bfe",
       title: "Sistem Informasi",
     },
     {
