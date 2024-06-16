@@ -1,30 +1,28 @@
 import {
-    Button,
-    Flex,
-    Input,
-    Select,
-    Stack,
-    Text,
-    Textarea,
-    useToast,
-  } from "@chakra-ui/react";
-  import Container from "Components/container";
-  import TopBar from "Components/topBar";
-  import React, { useRef, useState } from "react";
-  import { useAuthState } from "react-firebase-hooks/auth";
-  import { useNavigate } from "react-router-dom";
-  import { auth, firestore, storage } from "../../../firebase/clientApp";
-  import HeaderUpload from "../../formComponents/HeaderUpload";
-  import LogoUpload from "../../formComponents/LogoUpload";
-  import {
-    DocumentData,
-    DocumentReference,
-    doc,
-    serverTimestamp,
-    setDoc,
-    updateDoc,
-  } from "firebase/firestore";
-  import { getDownloadURL, ref, uploadString } from "firebase/storage";
+  Button,
+  Flex,
+  Input,
+  Select,
+  Stack,
+  Text,
+  Textarea,
+  useToast,
+} from "@chakra-ui/react";
+import Container from "Components/container";
+import TopBar from "Components/topBar";
+import {
+  doc,
+  serverTimestamp,
+  setDoc,
+  updateDoc
+} from "firebase/firestore";
+import { getDownloadURL, ref, uploadString } from "firebase/storage";
+import React, { useRef, useState } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useNavigate } from "react-router-dom";
+import { auth, firestore, storage } from "../../../firebase/clientApp";
+import HeaderUpload from "../../formComponents/HeaderUpload";
+import LogoUpload from "../../formComponents/LogoUpload";
   
   const categories = [
     "Agribisnis",
@@ -149,9 +147,8 @@ import {
           !description ||
           !instagram ||
           !website ||
-          !targetUser ||
+          // !targetUser ||
           !product ||
-          !finalModelBusiness ||
           !whatsapp ||
           !selectedLogo
         ) {
@@ -234,7 +231,8 @@ import {
         });
       }
     };
-  
+    console.log();
+    
     return (
       <Container page px={16}>
         <TopBar title="Register Inovator" onBack={() => navigate(-1)} />

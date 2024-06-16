@@ -21,7 +21,7 @@ import {
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import React, { useRef, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { useNavigate } from "react-router-dom";
+import { generatePath, useNavigate } from "react-router-dom";
 import { auth, firestore, storage } from "../../../firebase/clientApp";
 import ImageUpload from "../../formComponents/ImageUpload";
 import { paths } from "Consts/path";
@@ -220,7 +220,9 @@ const AddInnovation: React.FC = () => {
         duration: 3000,
         isClosable: true,
       });
-      navigate(paths.INNOVATION_CATEGORY_PAGE); // Ganti dengan rute yang sesuai
+      navigate(generatePath(paths.INNOVATION_CATEGORY_PAGE,{
+        category: category,
+      })); // Ganti dengan rute yang sesuai
     } catch (error) {
       console.log("error", error);
       setError("Gagal menambahkan inovasi");
