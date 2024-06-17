@@ -1,7 +1,8 @@
 import { Flex, Icon, Stack, Text } from "@chakra-ui/react";
+import CardInnovation from "Components/card/innovation";
 import Container from "Components/container";
 import TopBar from "Components/topBar/index";
-import { DocumentData, Firestore, collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
+import { DocumentData, collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { FaWandMagicSparkles } from "react-icons/fa6";
 import { LuDot } from "react-icons/lu";
@@ -9,18 +10,16 @@ import { TbPlant2 } from "react-icons/tb";
 import { useNavigate, useParams } from "react-router-dom";
 import { firestore } from "../../../firebase/clientApp";
 import {
+  CardContainer,
+  Horizontal,
+} from "../../../pages/home/components/innovator/_innovatorStyle";
+import {
   Background,
   ContentContainer,
   Label,
   Logo,
   Title,
 } from "./_detailStyle";
-import CardInnovation from "Components/card/innovation";
-import {
-  CardContainer,
-  Horizontal,
-} from "../../../pages/home/components/innovator/_innovatorStyle";
-import CardVillage from "Components/card/village";
 
 const DetailInnovator: React.FC = () => {
   const navigate = useNavigate();

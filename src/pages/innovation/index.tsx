@@ -8,6 +8,7 @@ import CardInnovation from "Components/card/innovation";
 import { useQuery } from "react-query";
 import { getCategories } from "Services/categoryServices";
 import Loading from "Components/loading";
+import Skeleton from "react-loading-skeleton";
 import {
   Container as CategoryContainer,
   DetailContainer,
@@ -20,9 +21,8 @@ function Detail() {
   const { category } = useParams();
 
   const [data, setData] = useState<DocumentData[]>([]);
-  const [innovators, setInnovators] = useState<Record<string, DocumentData>>(
-    {}
-  );
+  const [innovators, setInnovators] = useState<Record<string, DocumentData>>({});
+  const [loadingInnovators, setLoadingInnovators] = useState<boolean>(true);
 
   useEffect(() => {
     getDocuments("innovations")
@@ -36,6 +36,7 @@ function Detail() {
 
   useEffect(() => {
     const fetchInnovators = async () => {
+      setLoadingInnovators(true);
       const innovatorData: Record<string, DocumentData> = {};
       for (const item of data) {
         if (item.innovatorId) {
@@ -47,6 +48,7 @@ function Detail() {
         }
       }
       setInnovators(innovatorData);
+      setLoadingInnovators(false);
     };
 
     if (data.length > 0) {
@@ -66,8 +68,12 @@ function Detail() {
         <CardInnovation
           key={idx}
           {...item}
-          innovatorLogo={innovators[item.innovatorId]?.logo}
-          innovatorName={innovators[item.innovatorId]?.namaInovator}
+          innovatorLogo={
+            loadingInnovators ? <Skeleton circle width={50} height={50} /> : (innovators[item.innovatorId]?.logo || <img src="path/to/placeholder-image.png" alt="Placeholder" />)
+          }
+          innovatorName={
+            loadingInnovators ? <Skeleton width={100} /> : (innovators[item.innovatorId]?.namaInovator || "Unknown Innovator")
+          }
           onClick={() =>
             navigate(
               generatePath(paths.DETAIL_INNOVATION_PAGE, { id: item.id })
