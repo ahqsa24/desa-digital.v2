@@ -8,45 +8,34 @@ import {
 } from "./_cardInnovatorStyle";
 
 type CardInnovatorProps = {
-  background?: string;
-  logo?: string;
-  innovatorName?: string;
-  category?: string;
-  targetUser?: string;
-  product?: string;
-  modelBusiness?: string;
-  whatsApp?: string;
-  instagram?: string;
-  website?: string;
-  id?: number;
-  description?: string;
-
+  id: string;
+  header: string;
+  logo: string;
+  innovatorName: string;
+  description: string;
+  jumlahDesaDampingan: number
+  jumlahInovasi: number
   onClick: () => void;
 };
 
 function CardInnovator(props: CardInnovatorProps) {
   const {
-    background,
+    header,
     logo,
     innovatorName,
-    category,
-    targetUser,
-    product,
-    modelBusiness,
-    whatsApp,
-    instagram,
-    website,
     onClick,
+    jumlahDesaDampingan,
+    jumlahInovasi
   } = props;
   
   return (
     <Container onClick={onClick}>
-      <Background src={background} alt={innovatorName} />
+      <Background src={header} alt={innovatorName} />
       <CardContent>
         <Logo src={logo} alt={logo} />
         <Title>{innovatorName}</Title>
-        <Description>10 Desa Dampingan</Description>
-        <Description>10 Inovasi</Description>
+        <Description>{jumlahDesaDampingan} Desa Dampingan</Description>
+        <Description>{jumlahInovasi} Inovasi</Description>
       </CardContent>
     </Container>
   );

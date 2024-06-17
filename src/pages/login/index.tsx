@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { paths } from "Consts/path";
 // import Button from "Components/button";
-import { Button } from "@chakra-ui/react";
+import { Button, Input, InputGroup, InputRightElement } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import TextField from "Components/textField";
 import { useNavigate } from "react-router-dom";
@@ -21,18 +21,8 @@ import {
 import { auth } from "../../firebase/clientApp";
 import { Text } from "@chakra-ui/react";
 import { FIREBASE_ERRORS } from "../../../src/firebase/errors";
-const forms = [
-  {
-    label: "Email",
-    type: "email",
-    name: "email",
-  },
-  {
-    label: "Kata sandi",
-    type: "password",
-    name: "password",
-  },
-];
+import { FaEyeSlash, FaEye } from "react-icons/fa";
+import { CheckboxContainer } from "../register/_registerStyle";
 
 const Login: React.FC = () => {
   const [loginForm, setLoginForm] = useState({
@@ -42,6 +32,9 @@ const Login: React.FC = () => {
   const [error, setError] = useState("");
   const [signInWithEmailAndPassword, user, loading, userError] =
     useSignInWithEmailAndPassword(auth);
+
+  const [show, setShow] = useState(false);
+  const onShowPassword = () => setShow(!show);
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (error) setError("");
@@ -72,19 +65,37 @@ const Login: React.FC = () => {
         <Description>Silakan masukkan akun</Description>
 
         <form onSubmit={onSubmit}>
-          {forms?.map(({ label, type, name }, idx) => (
-            <React.Fragment key={idx}>
-              <Label mt={12}>{label}</Label>
-              <TextField
-                mt={4}
-                placeholder={label}
-                type={type}
-                name={name}
-                form={form}
-                onChange={onChange}
-              />
-            </React.Fragment>
-          ))}
+          <Text fontSize="10pt" mt="12px">
+            Email
+          </Text>
+          <Input
+            name="email"
+            type="email"
+            onChange={onChange}
+            required
+            placeholder="Email"
+            mt="4px"
+          />
+          <Text fontSize="10pt" mt="12px">
+            Password
+          </Text>
+
+          <InputGroup mt="4px" alignItems="center">
+            <Input
+              name="password"
+              type={show ? "text" : "password"}
+              onChange={onChange}
+              required
+              placeholder="Password"
+            />
+            <InputRightElement
+              onClick={onShowPassword}
+              cursor="pointer"
+              mt="4px"
+            >
+              {show ? <FaEyeSlash /> : <FaEye />}
+            </InputRightElement>
+          </InputGroup>
           {(error || userError) && (
             <Text textAlign="center" color="red" fontSize="10pt">
               {error ||
@@ -93,6 +104,7 @@ const Login: React.FC = () => {
                 ]}
             </Text>
           )}
+
           <Button
             mt={8}
             type="submit"

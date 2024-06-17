@@ -29,7 +29,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ user }) => {
       <MenuList>
         {user ? (
           <>
-            <MenuItem onClick={() => navigate(paths.INNOVATOR_PROFILE_PAGE)}>
+            <MenuItem onClick={() => navigate(paths.INNOVATOR_FORM)}>
               Profile
             </MenuItem>{" "}
             {/* Tambahkan item Profile */}

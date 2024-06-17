@@ -68,9 +68,31 @@ export const Text = styled.p`
   ${marginStyle}
 `;
 
+export const Text2 = styled.p`
+  position: flex;
+  justify-content: space-between;
+  margin-right: 100px;
+  font-weight: 400;
+  font-size: 10px;
+  margin-top: 0px;
+  ${marginStyle}
+`;
+
+export const Text3 = styled.p`
+  position: flex;
+  justify-content: space-between;
+  margin-right: 100px;
+  font-weight: 400;
+  font-size: 14px;
+  margin-top: 0px;
+  ${marginStyle}
+`;
+
+
 export const Logo = styled.img`
   height: 36px;
   width: 36px;
+  margin-right: 6px;
   border-radius: 50%;
   object-fit: cover;
 `;
@@ -89,3 +111,4 @@ export const BenefitContainer = styled.div`
   align-items: center;
   margin-bottom: 8px;
 `;
+

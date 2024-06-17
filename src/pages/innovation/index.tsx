@@ -12,7 +12,7 @@ import {
   Container as CategoryContainer,
   DetailContainer,
 } from "./_innovationStyle";
-import { getDocuments } from "../../firebase/inovationTable";
+import { getDocuments, getDocumentById } from "../../firebase/inovationTable";
 import { DocumentData } from "firebase/firestore";
 
 function Detail() {
@@ -20,6 +20,9 @@ function Detail() {
   const { category } = useParams();
 
   const [data, setData] = useState<DocumentData[]>([]);
+  const [innovators, setInnovators] = useState<Record<string, DocumentData>>(
+    {}
+  );
 
   useEffect(() => {
     getDocuments("innovations")
@@ -27,9 +30,29 @@ function Detail() {
         setData(detailInovasi);
       })
       .catch((error) => {
-        // Handle error here
+        console.error(error); // Handle error here
       });
   }, []);
+
+  useEffect(() => {
+    const fetchInnovators = async () => {
+      const innovatorData: Record<string, DocumentData> = {};
+      for (const item of data) {
+        if (item.innovatorId) {
+          const detailInnovator = await getDocumentById(
+            "innovators",
+            item.innovatorId
+          );
+          innovatorData[item.innovatorId] = detailInnovator;
+        }
+      }
+      setInnovators(innovatorData);
+    };
+
+    if (data.length > 0) {
+      fetchInnovators();
+    }
+  }, [data]);
 
   const innovationByCategory = data.filter(
     (item) => item.kategori === category
@@ -43,6 +66,8 @@ function Detail() {
         <CardInnovation
           key={idx}
           {...item}
+          innovatorLogo={innovators[item.innovatorId]?.logo}
+          innovatorName={innovators[item.innovatorId]?.namaInovator}
           onClick={() =>
             navigate(
               generatePath(paths.DETAIL_INNOVATION_PAGE, { id: item.id })

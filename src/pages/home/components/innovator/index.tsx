@@ -1,31 +1,44 @@
-import { paths } from "Consts/path";
-import { useQuery } from "react-query";
+import CardInnovator from "Components/card/innovator";
 import Container from "Components/container";
-import { getUsers } from "Services/userServices";
-import CardInovator from "Components/card/innovator";
+import { paths } from "Consts/path";
+import { DocumentData, collection, getDocs } from "firebase/firestore";
+import { useEffect, useState } from "react";
 import { generatePath, useNavigate } from "react-router-dom";
-import { CardContainer, Title, Horizontal } from "./_innovatorStyle";
+import { firestore } from "../../../../firebase/clientApp";
+import { CardContainer, Horizontal, Title } from "./_innovatorStyle";
 
 function Innovator() {
   const navigate = useNavigate();
-  const { data: users } = useQuery<any>("completedInnovatorsProfile", getUsers);
-  const innovators = users?.filter((item: any) => item.role === "innovator");
-  const completedProfile = innovators?.filter((item: any) =>
-    Object.hasOwn(item, "innovatorName")
-  );
+  const innovatorsRef = collection(firestore, "innovators");
+  const [innovators, setInnovators] = useState<DocumentData[]>([]);
+
+  useEffect(() => {
+    const fetchInnovators = async () => {
+      const innovatorsSnapshot = await getDocs(innovatorsRef);
+      const innovatorsData = innovatorsSnapshot.docs.map((doc) => doc.data());
+      setInnovators(innovatorsData);
+    };
+    fetchInnovators();
+  }, [firestore]);
 
   return (
     <Container>
       <Title>Inovator Unggulan</Title>
       <CardContainer>
         <Horizontal>
-          {completedProfile?.map((item: any, idx: number) => (
-            <CardInovator
+          {innovators.map((item, idx) => (
+            <CardInnovator
               key={idx}
-              {...item}
+              id={item.id}
+              header={item.header}
+              logo={item.logo}
+              innovatorName={item.namaInovator}
+              description={item.deskripsi}
+              jumlahDesaDampingan={item.jumlahDesaDampingan}
+              jumlahInovasi={item.jumlahInovasi}
               onClick={() =>
                 navigate(
-                  generatePath(paths.DETAIL_INNOVATOR_PAGE, { id: item?.id })
+                  generatePath(paths.DETAIL_INNOVATOR_PAGE, { id: item.id })
                 )
               }
             />

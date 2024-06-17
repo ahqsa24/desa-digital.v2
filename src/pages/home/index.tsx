@@ -1,3 +1,4 @@
+import { useToast } from '@chakra-ui/toast';
 import Add from "Assets/icons/add.svg";
 import Container from "Components/container";
 import TopBar from "Components/topBar/TopBar";
@@ -12,6 +13,8 @@ import {
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { FloatingButton } from "./_homeStyle";
 import Hero from "./components/hero";
 import Innovator from "./components/innovator";
@@ -21,8 +24,10 @@ import Readiness from "./components/readiness";
 function Home() {
   const navigate = useNavigate();
   const [userRole, setUserRole] = useState(null); // State untuk menyimpan peran pengguna
+  const [isInnovator, setIsInnovator] = useState(false); // State untuk mengecek apakah pengguna ada di koleksi innovators
   const auth = getAuth(); // Dapatkan instance auth dari Firebase
 
+  const toast = useToast();
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -39,14 +44,40 @@ function Home() {
               setUserRole(userData.role); // Set peran pengguna ke state
             }
           });
+
+          // Periksa apakah pengguna ada di koleksi innovators
+          const innovatorsRef = collection(db, "innovators");
+          const qInnovators = query(innovatorsRef, where("id", "==", user.uid)); // Filter berdasarkan ID pengguna yang terautentikasi
+          onSnapshot(qInnovators, (snapshot) => {
+            if (!snapshot.empty) {
+              setIsInnovator(true); // Set isInnovator ke true jika pengguna ada di koleksi innovators
+            } else {
+              setIsInnovator(false); // Set isInnovator ke false jika pengguna tidak ada di koleksi innovators
+            }
+          });
         });
       } else {
         setUserRole(null); // Set state menjadi null jika pengguna tidak terautentikasi
+        setIsInnovator(false); // Set isInnovator ke false jika pengguna tidak terautentikasi
       }
     });
 
     return () => unsubscribe();
   }, [auth]);
+
+  const handleAddInnovationClick = () => {
+    if (isInnovator) {
+      navigate(paths.ADD_INNOVATION);
+    } else {
+      toast({
+        title: "Lengkapi Profil terlebih dahulu",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+        position: "top",
+      })
+    }
+  };
 
   return (
     <Container page>
@@ -55,11 +86,12 @@ function Home() {
       <Menu />
       <Readiness />
       <Innovator />
-      {userRole === "innovator" && ( // Tampilkan tombol hanya jika pengguna memiliki peran "innovator"
-        <FloatingButton onClick={() => navigate(paths.ADD_INNOVATION)}>
+      {userRole === "innovator" && (
+        <FloatingButton onClick={handleAddInnovationClick}>
           <img src={Add} width={20} height={20} alt="add icon" />
         </FloatingButton>
       )}
+      <ToastContainer />
     </Container>
   );
 }

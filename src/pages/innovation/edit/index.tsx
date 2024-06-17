@@ -7,81 +7,83 @@ import {
   Stack,
   Text,
   Textarea,
-  useToast,
 } from "@chakra-ui/react";
 import Container from "Components/container";
 import TopBar from "Components/topBar";
 import { User } from "firebase/auth";
-import {
-  addDoc,
-  collection,
-  doc,
-  getDoc,
-  increment,
-  serverTimestamp,
-  updateDoc,
-} from "firebase/firestore";
+import { doc, getDoc, updateDoc, serverTimestamp } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { generatePath, useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { auth, firestore, storage } from "../../../firebase/clientApp";
 import ImageUpload from "../../../components/form/ImageUpload";
-import { paths } from "Consts/path";
 
 const categories = [
-  "E-Government",
-  "E-Tourism",
-  "Layanan Keuangan",
-  "Layanan Sosial",
+  "Pertanian Cerdas",
   "Pemasaran Agri-Food dan E-Commerce",
+  "E-Government",
+  "Sistem Informasi",
+  "Layanan Keuangan",
   "Pengembangan Masyarakat dan Ekonomi",
   "Pengelolaan Sumber Daya",
-  "Pertanian Cerdas",
-  "Sistem Informasi",
+  "Layanan Sosial",
+  "E-Tourism",
 ];
 
-const targetUsers = [
-  "Agen keuangan/perbankan",
-  "Agen pemerintah",
-  "Agro-preneur",
-  "Lansia/Pensiunan desa",
-  "Nelayan",
-  "Pemasok",
-  "Pemuda",
-  "Penyedia layanan",
-  "Perangkat desa",
-  "Petani",
-  "Peternak",
-  "Pedagang",
-  "Pekerja/Buruh",
-  "Produsen",
-  "Tokoh masyarakat setempat",
-  "Wanita pedesaan",
-  "Lainnya",
-];
-
-const AddInnovation: React.FC = () => {
+const EditInnovation: React.FC = () => {
   const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>(); // Assuming the route contains the innovation ID as a parameter
   const [user] = useAuthState(auth);
 
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
   const selectFileRef = useRef<HTMLInputElement>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [textInputsValue, setTextInputsValue] = useState({
     name: "",
     year: "",
     description: "",
-    customTargetUser: "",
   });
   const [category, setCategory] = useState("");
   const [requirements, setRequirements] = useState<string[]>([]);
   const [newRequirement, setNewRequirement] = useState("");
-  const [targetUser, setTargetUser] = useState("");
-  const [isCustomTargetUser, setIsCustomTargetUser] = useState(false);
 
-  const toast = useToast();
+  useEffect(() => {
+    const fetchInnovation = async () => {
+      if (!id) {
+        console.error("No ID found in the URL parameters");
+        return;
+      }
+      try {
+        console.log("Fetching document with ID:", id);
+        const docRef = doc(firestore, "innovations", id);
+        const docSnap = await getDoc(docRef);
+        console.log("Document fetched:", docSnap.exists());
+
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          console.log("Fetched data:", data);
+          setTextInputsValue({
+            name: data.namaInovasi || "",
+            year: data.tahunDibuat || "",
+            description: data.deskripsi || "",
+          });
+          setCategory(data.kategori || "");
+          setRequirements(data.kebutuhan || []);
+          setSelectedFiles(data.images || []);
+        } else {
+          console.log("No such document!");
+        }
+      } catch (error) {
+        console.error("Error fetching innovation:", error);
+      } finally {
+        setLoading(false); // Set loading to false once data is fetched
+      }
+    };
+    fetchInnovation();
+  }, [id]);
+
   const onSelectImage = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (files) {
@@ -112,12 +114,6 @@ const AddInnovation: React.FC = () => {
 
   const onSelectCategory = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setCategory(event.target.value);
-  };
-
-  const onSelectTargetUser = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = event.target.value;
-    setTargetUser(value);
-    setIsCustomTargetUser(value === "Lainnya");
   };
 
   const onAddRequirement = () => {
@@ -175,57 +171,30 @@ const AddInnovation: React.FC = () => {
     return Promise.all(promises);
   };
 
-  const onAddInnovation = async (event: React.FormEvent) => {
+  const onUpdateInnovation = async (event: React.FormEvent) => {
     event.preventDefault();
     setLoading(true);
-    const { name, year, description, customTargetUser } = textInputsValue;
+    const { name, year, description } = textInputsValue;
 
-    const finalTargetUser = isCustomTargetUser ? customTargetUser : targetUser;
-
-    if (!name || !year || !description || !category || !finalTargetUser) {
+    if (!name || !year || !description || !category) {
       setError("Semua kolom harus diisi");
       setLoading(false);
       return;
     }
-
-    // Fetch innovator data
-    const innovatorDocRef = doc(firestore, "innovators", user?.uid as string);
-    const innovatorDocSnap = await getDoc(innovatorDocRef);
-
-    if (!innovatorDocSnap.exists()) {
-      console.error("Innovator document not found");
-      setError("Gagal menambahkan inovasi");
-      setLoading(false);
-      toast({
-        title: "Gagal menambahkan inovasi",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-      return;
-    }
-
-    const innovatorData = innovatorDocSnap.data();
-
     try {
-      const innovationDocRef = await addDoc(
-        collection(firestore, "innovations"),
-        {
-          namaInovasi: name,
-          tahunDibuat: year,
-          deskripsi: description,
-          kebutuhan: requirements,
-          kategori: category,
-          targetPengguna: finalTargetUser,
-          innovatorId: user?.uid,
-          createdAt: serverTimestamp(),
-          editedAt: serverTimestamp(),
-          namaInnovator: innovatorData?.namaInovator,
-          innovatorImgURL: innovatorData?.logo,
-        }
-      );
+      const innovationDocRef = doc(firestore, "innovations", id!);
 
-      console.log("Document written with ID: ", innovationDocRef.id);
+      await updateDoc(innovationDocRef, {
+        namaInovasi: name,
+        tahunDibuat: year,
+        deskripsi: description,
+        kebutuhan: requirements,
+        kategori: category,
+        editedAt: serverTimestamp(),
+        images: selectedFiles, // assume previously uploaded images are part of selectedFiles
+      });
+
+      console.log("Document updated with ID: ", innovationDocRef.id);
 
       if (selectedFiles.length > 0) {
         const imageUrls = await uploadFiles(selectedFiles, innovationDocRef.id);
@@ -236,41 +205,27 @@ const AddInnovation: React.FC = () => {
       }
 
       setLoading(false);
-      
-      // Update jumlahInovasi in innovators collection
-      const innovatorDocRef = doc(firestore, "innovators", user?.uid as string);
-      await updateDoc(innovatorDocRef, {
-        jumlahInovasi: increment(1),
-      });
-
-      toast({
-        title: "Inovasi berhasil ditambahkan",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
-      navigate(
-        generatePath(paths.INNOVATION_CATEGORY_PAGE, {
-          category: category,
-        })
-      ); // Ganti dengan rute yang sesuai
+      navigate(`/innovation/detail/${id}`); // Navigate to the detail page after successful update
     } catch (error) {
       console.log("error", error);
-      setError("Gagal menambahkan inovasi");
+      setError("Gagal mengubah inovasi");
       setLoading(false);
-      toast({
-        title: "Gagal menambahkan inovasi",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
     }
   };
 
+  if (loading) {
+    return (
+      <Container page px={16}>
+        <TopBar title="Edit Inovasi" onBack={() => navigate(-1)} />
+        <Text>Loading...</Text>
+      </Container>
+    );
+  }
+
   return (
     <Container page px={16}>
-      <TopBar title="Tambahkan Inovasi" onBack={() => navigate(-1)} />
-      <form onSubmit={onAddInnovation}>
+      <TopBar title="Edit Inovasi" onBack={() => navigate(-1)} />
+      <form onSubmit={onUpdateInnovation}>
         <Flex direction="column" marginTop="24px">
           <Stack spacing={3} width="100%">
             <Text fontWeight="400" fontSize="14px">
@@ -317,43 +272,6 @@ const AddInnovation: React.FC = () => {
               ))}
             </Select>
             <Text fontWeight="400" fontSize="14px">
-              Target Pengguna <span style={{ color: "red" }}>*</span>
-            </Text>
-            <Select
-              placeholder="Pilih target pengguna"
-              name="targetUser"
-              fontSize="10pt"
-              variant="outline"
-              cursor="pointer"
-              color={"gray.500"}
-              _focus={{
-                outline: "none",
-                bg: "white",
-                border: "1px solid",
-                borderColor: "black",
-              }}
-              _placeholder={{ color: "gray.500" }}
-              value={targetUser}
-              onChange={onSelectTargetUser}
-            >
-              {targetUsers.map((user) => (
-                <option key={user} value={user}>
-                  {user}
-                </option>
-              ))}
-            </Select>
-            {isCustomTargetUser && (
-              <Input
-                name="customTargetUser"
-                fontSize="10pt"
-                placeholder="Masukkan target pengguna"
-                _placeholder={{ color: "gray.500" }}
-                _focus={{ outline: "none", bg: "white", borderColor: "black" }}
-                value={textInputsValue.customTargetUser}
-                onChange={onTextChange}
-              />
-            )}
-            <Text fontWeight="400" fontSize="14px">
               Tahun dibuat inovasi <span style={{ color: "red" }}>*</span>
             </Text>
             <Input
@@ -398,7 +316,7 @@ const AddInnovation: React.FC = () => {
               onSelectImage={onSelectImage}
             />
             <Text fontWeight="700" fontSize="16px">
-              Persiapan Infrastuktur{" "}
+              Perlu disiapkan{" "}
               <span
                 style={{ color: "red", fontSize: "14px", fontWeight: "400" }}
               >
@@ -429,13 +347,10 @@ const AddInnovation: React.FC = () => {
                 </Button>
               </Flex>
             ))}
-            <Text fontWeight="300" fontSize="8pt">
-              Contoh: Memiliki tambak, air, dan listrik
-            </Text>
             <Input
               name="requirement"
               fontSize="10pt"
-              placeholder="Masukan persiapan infrastuktur"
+              placeholder="Contoh: Memerlukan listrik, Memiliki air"
               _placeholder={{ color: "gray.500" }}
               _focus={{
                 outline: "none",
@@ -458,7 +373,7 @@ const AddInnovation: React.FC = () => {
               _hover={{ bg: "none" }}
               leftIcon={<AddIcon />}
             >
-              Tambah infrastruktur lain
+              Tambah persyaratan lain
             </Button>
           </Stack>
         </Flex>
@@ -468,11 +383,11 @@ const AddInnovation: React.FC = () => {
           </Text>
         )}
         <Button type="submit" mt="20px" width="100%" isLoading={loading}>
-          Simpan
+          Update Inovasi
         </Button>
       </form>
     </Container>
   );
 };
 
-export default AddInnovation;
+export default EditInnovation;
