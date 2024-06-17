@@ -15,6 +15,9 @@ import { User } from "firebase/auth";
 import {
   addDoc,
   collection,
+  doc,
+  getDoc,
+  increment,
   serverTimestamp,
   updateDoc,
 } from "firebase/firestore";
@@ -23,7 +26,7 @@ import React, { useRef, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { generatePath, useNavigate } from "react-router-dom";
 import { auth, firestore, storage } from "../../../firebase/clientApp";
-import ImageUpload from "../../formComponents/ImageUpload";
+import ImageUpload from "../../../components/form/ImageUpload";
 import { paths } from "Consts/path";
 
 const categories = [
@@ -184,6 +187,26 @@ const AddInnovation: React.FC = () => {
       setLoading(false);
       return;
     }
+
+    // Fetch innovator data
+    const innovatorDocRef = doc(firestore, "innovators", user?.uid as string);
+    const innovatorDocSnap = await getDoc(innovatorDocRef);
+
+    if (!innovatorDocSnap.exists()) {
+      console.error("Innovator document not found");
+      setError("Gagal menambahkan inovasi");
+      setLoading(false);
+      toast({
+        title: "Gagal menambahkan inovasi",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    const innovatorData = innovatorDocSnap.data();
+
     try {
       const innovationDocRef = await addDoc(
         collection(firestore, "innovations"),
@@ -197,8 +220,8 @@ const AddInnovation: React.FC = () => {
           innovatorId: user?.uid,
           createdAt: serverTimestamp(),
           editedAt: serverTimestamp(),
-          namaInnovator: user?.displayName,
-          innovatorImgURL: user?.photoURL,
+          namaInnovator: innovatorData?.namaInovator,
+          innovatorImgURL: innovatorData?.logo,
         }
       );
 
@@ -213,6 +236,12 @@ const AddInnovation: React.FC = () => {
       }
 
       setLoading(false);
+      
+      // Update jumlahInovasi in innovators collection
+      const innovatorDocRef = doc(firestore, "innovators", user?.uid as string);
+      await updateDoc(innovatorDocRef, {
+        jumlahInovasi: increment(1),
+      });
 
       toast({
         title: "Inovasi berhasil ditambahkan",
@@ -220,9 +249,11 @@ const AddInnovation: React.FC = () => {
         duration: 3000,
         isClosable: true,
       });
-      navigate(generatePath(paths.INNOVATION_CATEGORY_PAGE,{
-        category: category,
-      })); // Ganti dengan rute yang sesuai
+      navigate(
+        generatePath(paths.INNOVATION_CATEGORY_PAGE, {
+          category: category,
+        })
+      ); // Ganti dengan rute yang sesuai
     } catch (error) {
       console.log("error", error);
       setError("Gagal menambahkan inovasi");
@@ -232,7 +263,7 @@ const AddInnovation: React.FC = () => {
         status: "error",
         duration: 3000,
         isClosable: true,
-      })
+      });
     }
   };
 
