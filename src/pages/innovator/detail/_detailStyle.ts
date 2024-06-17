@@ -2,10 +2,9 @@ import styled from "styled-components";
 import { marginStyle } from "Consts/sizing";
 
 export const ContentContainer = styled.div`
-  padding: 0 16px;
+  padding: 0 20px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
   margin-top: 16px;
 `;
 
@@ -30,20 +29,22 @@ export const Logo = styled.img`
 export const Title = styled.p`
   font-size: 18px;
   font-weight: 700;
-  margin-top: 40px;
+  margin-top: 34px;
 `;
 
-export const TagContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
+export const Label = styled.p`
+  font-style: normal;
   padding: 4px 8px;
-  width: 150px;
-  height: 25px;
   background: #e5e7eb;
   border-radius: 20px;
   font-weight: 400;
-  margin-left: 16px;
+  font-size: 12px;
+  color: #000000;
+  text-align: justify;
+  width: fit-content;
+  cursor: pointer;
+  margin-top: -16px
+  ${marginStyle}
 `;
 
 export const Description = styled.p`

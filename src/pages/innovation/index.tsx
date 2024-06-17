@@ -20,7 +20,9 @@ function Detail() {
   const { category } = useParams();
 
   const [data, setData] = useState<DocumentData[]>([]);
-  const [innovators, setInnovators] = useState<Record<string, DocumentData>>({});
+  const [innovators, setInnovators] = useState<Record<string, DocumentData>>(
+    {}
+  );
 
   useEffect(() => {
     getDocuments("innovations")
@@ -28,7 +30,7 @@ function Detail() {
         setData(detailInovasi);
       })
       .catch((error) => {
-        // Handle error here
+        console.error(error); // Handle error here
       });
   }, []);
 
@@ -37,7 +39,10 @@ function Detail() {
       const innovatorData: Record<string, DocumentData> = {};
       for (const item of data) {
         if (item.innovatorId) {
-          const detailInnovator = await getDocumentById("innovators", item.innovatorId);
+          const detailInnovator = await getDocumentById(
+            "innovators",
+            item.innovatorId
+          );
           innovatorData[item.innovatorId] = detailInnovator;
         }
       }

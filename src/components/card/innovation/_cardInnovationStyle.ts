@@ -69,8 +69,9 @@ export const CompanyContainer = styled.div`
   gap: 8px;
 `
 export const InnovatorName = styled.span`
-  font-size: 11px;
-  color: #000; // Adjust color as needed
+  font-size: 10px;
+  font-weight: 500;
+  color: #4B5563; // Adjust color as needed
   margin-left: 2px;
   align-self: center; // Adjust alignment as needed
 `;
