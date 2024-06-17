@@ -1,35 +1,31 @@
-import React from "react";
-import TopBar from "Components/topBar";
-import Soge from "Assets/images/soge-logo.png";
-import Dot from "Assets/icons/dot.svg";
+import { Button, Img } from "@chakra-ui/react";
 import Check from "Assets/icons/check-circle.svg";
 import Container from "Components/container";
-import { generatePath, useNavigate, useParams } from "react-router-dom";
+import TopBar from "Components/topBar";
 import { paths } from "Consts/path.ts";
+import { getInnovationById } from "Services/innovationServices.ts";
+import { DocumentData } from "firebase/firestore";
+import { useEffect, useState } from "react";
+import { useQuery } from "react-query";
+import { generatePath, useNavigate, useParams } from "react-router-dom";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick-theme.css";
+import "slick-carousel/slick/slick.css";
+import { getDocumentById } from "../../../firebase/inovationTable.ts";
 import {
-  Label,
-  Title,
   ActionContainer,
+  BenefitContainer,
+  ChipContainer,
+  ContentContainer,
+  Description,
   Icon,
+  Label,
+  Logo,
   Text,
   Text2,
   Text3,
-  Logo,
-  Description,
-  ChipContainer,
-  ContentContainer,
-  BenefitContainer,
+  Title,
 } from "./_detailStyle.ts";
-import { useQuery } from "react-query";
-import { getInnovationById } from "Services/innovationServices.ts";
-import { useEffect, useState } from "react";
-import { DocumentData } from "firebase/firestore";
-import { getDocumentById } from "../../../firebase/inovationTable.ts";
-import Slider from "react-slick";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
-import { Img } from "@chakra-ui/react";
-import { Button } from "@chakra-ui/react"; 
 
 function DetailInnovation() {
   const navigate = useNavigate();
