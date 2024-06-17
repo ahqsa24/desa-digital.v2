@@ -20,9 +20,7 @@ function Detail() {
   const { category } = useParams();
 
   const [data, setData] = useState<DocumentData[]>([]);
-  const [innovators, setInnovators] = useState<Record<string, DocumentData>>(
-    {}
-  );
+  const [innovators, setInnovators] = useState<Record<string, DocumentData>>({});
 
   useEffect(() => {
     getDocuments("innovations")
