@@ -7,6 +7,13 @@ import {
   Stack,
   Text,
   Textarea,
+  useToast,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
 } from "@chakra-ui/react";
 import Container from "Components/container";
 import TopBar from "Components/topBar";
@@ -15,6 +22,7 @@ import {
   doc,
   getDoc,
   updateDoc,
+  deleteDoc,
   serverTimestamp,
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
@@ -22,7 +30,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useNavigate, useParams } from "react-router-dom";
 import { auth, firestore, storage } from "../../../firebase/clientApp";
-import ImageUpload from "../../formComponents/ImageUpload";
+import ImageUpload from "../../../components/form/ImageUpload";
 
 const categories = [
   "Pertanian Cerdas",
@@ -38,6 +46,7 @@ const categories = [
 
 const EditInnovation: React.FC = () => {
   const navigate = useNavigate();
+  const toast = useToast();
   const { id } = useParams<{ id: string }>(); // Assuming the route contains the innovation ID as a parameter
   const [user] = useAuthState(auth);
 
@@ -53,6 +62,9 @@ const EditInnovation: React.FC = () => {
   const [category, setCategory] = useState("");
   const [requirements, setRequirements] = useState<string[]>([]);
   const [newRequirement, setNewRequirement] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+  const cancelRef = useRef<HTMLButtonElement>(null);
+  const [isSuccessOpen, setIsSuccessOpen] = useState(false);
 
   useEffect(() => {
     const fetchInnovation = async () => {
@@ -180,7 +192,7 @@ const EditInnovation: React.FC = () => {
     event.preventDefault();
     setLoading(true);
     const { name, year, description } = textInputsValue;
-
+  
     if (!name || !year || !description || !category) {
       setError("Semua kolom harus diisi");
       setLoading(false);
@@ -188,7 +200,7 @@ const EditInnovation: React.FC = () => {
     }
     try {
       const innovationDocRef = doc(firestore, "innovations", id!);
-
+  
       await updateDoc(innovationDocRef, {
         namaInovasi: name,
         tahunDibuat: year,
@@ -198,24 +210,64 @@ const EditInnovation: React.FC = () => {
         editedAt: serverTimestamp(),
         images: selectedFiles, // assume previously uploaded images are part of selectedFiles
       });
-
+  
       console.log("Document updated with ID: ", innovationDocRef.id);
-
+  
       if (selectedFiles.length > 0) {
-        const imageUrls = await uploadFiles(selectedFiles, innovationDocRef.id);
-        await updateDoc(innovationDocRef, {
-          images: imageUrls,
-        });
-        console.log("Images uploaded", imageUrls);
+        try {
+          const imageUrls = await uploadFiles(selectedFiles, innovationDocRef.id);
+          await updateDoc(innovationDocRef, {
+            images: imageUrls,
+          });
+          console.log("Images uploaded", imageUrls);
+        } catch (uploadError) {
+          console.error("Error uploading images:", uploadError);
+          setError("Gagal mengupload gambar");
+        }
       }
-
+  
       setLoading(false);
-      navigate(`/innovation/detail/${id}`); // Navigate to the detail page after successful update
+      setIsSuccessOpen(true); // Open the success alert dialog
     } catch (error) {
       console.log("error", error);
       setError("Gagal mengubah inovasi");
       setLoading(false);
     }
+  };
+  
+
+  const onDeleteInnovation = async () => {
+    setLoading(true);
+    try {
+      const innovationDocRef = doc(firestore, "innovations", id!);
+      await deleteDoc(innovationDocRef);
+      setLoading(false);
+      toast({
+        title: "Inovasi dihapus.",
+        description: "Inovasi telah berhasil dihapus.",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+      navigate("/");
+    } catch (error) {
+      console.log("error", error);
+      setError("Gagal menghapus inovasi");
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteClick = () => {
+    setIsOpen(true);
+  };
+
+  const handleClose = () => {
+    setIsOpen(false);
+  };
+
+  const handleSuccessClose = () => {
+    setIsSuccessOpen(false);
+    navigate(`/innovation/detail/${id}`);
   };
 
   if (loading) {
@@ -390,7 +442,72 @@ const EditInnovation: React.FC = () => {
         <Button type="submit" mt="20px" width="100%" isLoading={loading}>
           Update Inovasi
         </Button>
+        <Button
+          type="button"
+          mt="4"
+          width="100%"
+          bg="red.500"
+          color="white"
+          _hover={{ bg: "red.600" }}
+          onClick={handleDeleteClick}
+        >
+          Delete Inovasi
+        </Button>
       </form>
+      <AlertDialog
+        isOpen={isOpen}
+        leastDestructiveRef={cancelRef}
+        onClose={handleClose}
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              Hapus Inovasi
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              Apakah Anda yakin? Anda tidak dapat membatalkan tindakan ini
+              setelah inovasi dihapus.
+            </AlertDialogBody>
+
+            <AlertDialogFooter>
+              <Button ref={cancelRef} onClick={handleClose}>
+                Batal
+              </Button>
+              <Button
+                colorScheme="red"
+                onClick={onDeleteInnovation}
+                ml={3}
+                bg="red.500"
+                _hover={{ bg: "red.600" }}
+              >
+                Hapus
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
+      <AlertDialog
+        isOpen={isSuccessOpen}
+        leastDestructiveRef={cancelRef}
+        onClose={handleSuccessClose}
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              Sukses
+            </AlertDialogHeader>
+            <AlertDialogBody>
+              Inovasi telah berhasil diperbarui.
+            </AlertDialogBody>
+            <AlertDialogFooter>
+              <Button ref={cancelRef} onClick={handleSuccessClose}>
+                OK
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
     </Container>
   );
 };
