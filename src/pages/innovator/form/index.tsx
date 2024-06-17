@@ -42,7 +42,6 @@ const businessModels = [
   "Layanan Berbayar",
   "Layanan Gratis",
   "Layanan Subsidi",
-  "Lainnya",
 ];
 
 const InnovatorForm: React.FC = () => {
@@ -62,13 +61,10 @@ const InnovatorForm: React.FC = () => {
     website: "",
     targetUser: "",
     product: "",
-    modelBusiness: "",
     whatsapp: "",
-    customModelBusiness: "",
   });
   const [category, setCategory] = useState("");
   const [modelBusiness, setModelBusiness] = useState("");
-  const [isCustomModelBusiness, setIsCustomModelBusiness] = useState(false);
 
   const toast = useToast();
 
@@ -110,9 +106,7 @@ const InnovatorForm: React.FC = () => {
   };
 
   const onSelectModelBusiness = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = event.target.value;
-    setModelBusiness(value);
-    setIsCustomModelBusiness(value === "Lainnya");
+    setModelBusiness(event.target.value);
   };
 
   const onSubmitForm = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -135,13 +129,8 @@ const InnovatorForm: React.FC = () => {
         website,
         targetUser,
         product,
-        modelBusiness,
         whatsapp,
-        customModelBusiness,
       } = textInputsValue;
-
-      // Determine the final model business value
-      const finalModelBusiness = isCustomModelBusiness ? customModelBusiness : modelBusiness;
 
       // Check if all required fields are filled
       if (
@@ -149,14 +138,23 @@ const InnovatorForm: React.FC = () => {
         !description ||
         !instagram ||
         !website ||
-        !targetUser ||
-        !product ||
-        !finalModelBusiness ||
+        !modelBusiness ||
         !whatsapp ||
-        !selectedLogo
+        !selectedLogo ||
+        !category
       ) {
         setError("Semua kolom harus diisi");
         setLoading(false);
+        console.log({
+          name,
+          description,
+          instagram,
+          website,
+          modelBusiness,
+          whatsapp,
+          selectedLogo,
+          category,
+        });
         return;
       }
 
@@ -174,7 +172,7 @@ const InnovatorForm: React.FC = () => {
         jumlahInovasi: 0,
         jumlahDesaDampingan: 0,
         produk: product,
-        modelBisnis: finalModelBusiness,
+        modelBisnis: modelBusiness,
         instagram,
         website,
         targetPengguna: targetUser,
@@ -310,17 +308,6 @@ const InnovatorForm: React.FC = () => {
                 </option>
               ))}
             </Select>
-            {isCustomModelBusiness && (
-              <Input
-                name="customModelBusiness"
-                fontSize="10pt"
-                placeholder="Masukkan model bisnis secara singkat"
-                _placeholder={{ color: "gray.500" }}
-                _focus={{ outline: "none", bg: "white", borderColor: "black" }}
-                value={textInputsValue.customModelBusiness}
-                onChange={onTextChange}
-              />
-            )}
             <Text fontWeight="400" fontSize="14px">
               Deskripsi Inovator <span style={{ color: "red" }}>*</span>
             </Text>
