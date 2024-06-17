@@ -10,21 +10,14 @@ import {
 } from "@chakra-ui/react";
 import Container from "Components/container";
 import TopBar from "Components/topBar";
+import { doc, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
+import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import React, { useRef, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useNavigate } from "react-router-dom";
 import { auth, firestore, storage } from "../../../firebase/clientApp";
 import HeaderUpload from "../../../components/form/HeaderUpload";
 import LogoUpload from "../../../components/form/LogoUpload";
-import {
-  DocumentData,
-  DocumentReference,
-  doc,
-  serverTimestamp,
-  setDoc,
-  updateDoc,
-} from "firebase/firestore";
-import { getDownloadURL, ref, uploadString } from "firebase/storage";
 
 const categories = [
   "Agribisnis",
@@ -109,7 +102,9 @@ const InnovatorForm: React.FC = () => {
     setCategory(event.target.value);
   };
 
-  const onSelectModelBusiness = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const onSelectModelBusiness = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     const value = event.target.value;
     setModelBusiness(value);
     setIsCustomModelBusiness(value === "Lainnya");
@@ -141,7 +136,9 @@ const InnovatorForm: React.FC = () => {
       } = textInputsValue;
 
       // Determine the final model business value
-      const finalModelBusiness = isCustomModelBusiness ? customModelBusiness : modelBusiness;
+      const finalModelBusiness = isCustomModelBusiness
+        ? customModelBusiness
+        : modelBusiness;
 
       // Check if all required fields are filled
       if (
@@ -149,9 +146,8 @@ const InnovatorForm: React.FC = () => {
         !description ||
         !instagram ||
         !website ||
-        !targetUser ||
+        // !targetUser ||
         !product ||
-        !finalModelBusiness ||
         !whatsapp ||
         !selectedLogo
       ) {
@@ -173,7 +169,6 @@ const InnovatorForm: React.FC = () => {
         createdAt: serverTimestamp(),
         jumlahInovasi: 0,
         jumlahDesaDampingan: 0,
-        produk: product,
         modelBisnis: finalModelBusiness,
         instagram,
         website,
@@ -220,7 +215,7 @@ const InnovatorForm: React.FC = () => {
         duration: 5000,
         isClosable: true,
       });
-      navigate("/")
+      navigate("/");
     } catch (error) {
       console.error("Error adding document: ", error);
       setLoading(false);
@@ -234,6 +229,7 @@ const InnovatorForm: React.FC = () => {
       });
     }
   };
+  console.log();
 
   return (
     <Container page px={16}>

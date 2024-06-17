@@ -18,13 +18,7 @@ import {
 import Container from "Components/container";
 import TopBar from "Components/topBar";
 import { User } from "firebase/auth";
-import {
-  doc,
-  getDoc,
-  updateDoc,
-  deleteDoc,
-  serverTimestamp,
-} from "firebase/firestore";
+import { doc, getDoc, updateDoc, serverTimestamp } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import React, { useEffect, useRef, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
