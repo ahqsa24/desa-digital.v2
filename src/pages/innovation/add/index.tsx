@@ -23,7 +23,7 @@ import React, { useRef, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { generatePath, useNavigate } from "react-router-dom";
 import { auth, firestore, storage } from "../../../firebase/clientApp";
-import ImageUpload from "../../formComponents/ImageUpload";
+import ImageUpload from "../../../components/form/ImageUpload";
 import { paths } from "Consts/path";
 
 const categories = [
