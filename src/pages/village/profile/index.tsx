@@ -15,12 +15,17 @@ import { useForm } from "react-hook-form";
 import { useMutation, useQuery } from "react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import HeaderUpload from "../../formComponents/HeaderUpload";
-import LogoUpload from "../../formComponents/LogoUpload";
+import HeaderUpload from "../../../components/form/HeaderUpload";
+import LogoUpload from "../../../components/form/LogoUpload";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import { storage } from "../../../firebase/clientApp";
 import { useNavigate } from "react-router-dom";
-import { getProvinsi, getKabupaten, getKecamatan, getKelurahan } from "Services/locationServices";
+import {
+  getProvinsi,
+  getKabupaten,
+  getKecamatan,
+  getKelurahan,
+} from "Services/locationServices";
 import { updateProfile, getUserById } from "Services/userServices";
 import useAuthLS from "Hooks/useAuthLS";
 
@@ -49,9 +54,18 @@ const schema = z.object({
 const AddVillage: React.FC = () => {
   const navigate = useNavigate();
   const { auth } = useAuthLS();
-  const { handleSubmit, reset, register, formState: { isSubmitting } } = useForm({ resolver: zodResolver(schema) });
+  const {
+    handleSubmit,
+    reset,
+    register,
+    formState: { isSubmitting },
+  } = useForm({ resolver: zodResolver(schema) });
   const { mutateAsync } = useMutation(updateProfile);
-  const { data, isFetched } = useQuery<any>("profileVillage", () => getUserById(auth?.id), { enabled: !!auth?.id });
+  const { data, isFetched } = useQuery<any>(
+    "profileVillage",
+    () => getUserById(auth?.id),
+    { enabled: !!auth?.id }
+  );
   const toast = useToast();
 
   const [selectedProvinsi, setSelectedProvinsi] = useState("");
@@ -63,9 +77,21 @@ const AddVillage: React.FC = () => {
   const selectHeaderRef = useRef<HTMLInputElement>(null);
 
   const { data: provinsi } = useQuery<any>("provinsi", getProvinsi);
-  const { data: kabupaten } = useQuery<any>(["kabupaten", selectedProvinsi], () => getKabupaten(selectedProvinsi || data?.province), { enabled: !!selectedProvinsi || isFetched });
-  const { data: kecamatan } = useQuery<any>(["kecamatan", selectedKabupaten], () => getKecamatan(selectedKabupaten || data?.district), { enabled: !!selectedKabupaten || isFetched });
-  const { data: kelurahan } = useQuery<any>(["kelurahan", selectedKecamatan], () => getKelurahan(selectedKecamatan || data?.subDistrict), { enabled: !!selectedKecamatan || isFetched });
+  const { data: kabupaten } = useQuery<any>(
+    ["kabupaten", selectedProvinsi],
+    () => getKabupaten(selectedProvinsi || data?.province),
+    { enabled: !!selectedProvinsi || isFetched }
+  );
+  const { data: kecamatan } = useQuery<any>(
+    ["kecamatan", selectedKabupaten],
+    () => getKecamatan(selectedKabupaten || data?.district),
+    { enabled: !!selectedKabupaten || isFetched }
+  );
+  const { data: kelurahan } = useQuery<any>(
+    ["kelurahan", selectedKecamatan],
+    () => getKelurahan(selectedKecamatan || data?.subDistrict),
+    { enabled: !!selectedKecamatan || isFetched }
+  );
 
   useEffect(() => {
     if (isFetched) {
@@ -81,7 +107,12 @@ const AddVillage: React.FC = () => {
 
   const onProfileSave = async (data: any) => {
     if (!auth?.id) {
-      toast({ title: "User ID is not defined. Please make sure you are logged in.", status: "error", duration: 5000, isClosable: true });
+      toast({
+        title: "User ID is not defined. Please make sure you are logged in.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
       return;
     }
 
@@ -102,10 +133,20 @@ const AddVillage: React.FC = () => {
       }
 
       await mutateAsync(payload);
-      toast({ title: "Data berhasil disimpan", status: "success", duration: 5000, isClosable: true });
+      toast({
+        title: "Data berhasil disimpan",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
       navigate(-1);
     } catch (error) {
-      toast({ title: "Terjadi kesalahan jaringan", status: "error", duration: 5000, isClosable: true });
+      toast({
+        title: "Terjadi kesalahan jaringan",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
     }
   };
 
