@@ -6,7 +6,7 @@ import {
   Stack,
   Text,
   Textarea,
-  useToast
+  useToast,
 } from "@chakra-ui/react";
 import Container from "Components/container";
 import TopBar from "Components/topBar";
@@ -26,10 +26,8 @@ import {
 
 interface Location {
   id: string;
-  nama: string;
+  name: string;
 }
-
-
 
 const AddVillage: React.FC = () => {
   const navigate = useNavigate();
@@ -65,14 +63,12 @@ const AddVillage: React.FC = () => {
     try {
       const provincesData = await getProvinces();
       setProvinces(provincesData);
-      console.log(provincesData);
-      
+      console.log(provincesData); // For debugging
     } catch (error) {
       console.error("Error fetching provinces:", error);
     }
   };
 
-  
   const handleFetchRegencies = async (provinceId: string) => {
     try {
       const regenciesData = await getRegencies(provinceId);
@@ -99,7 +95,7 @@ const AddVillage: React.FC = () => {
       console.error("Error fetching villages:", error);
     }
   };
-  
+
   useEffect(() => {
     handleFetchProvinces();
   }, []);
@@ -203,10 +199,14 @@ const AddVillage: React.FC = () => {
               onChange={handleProvinceChange}
             >
               {provinces.map((item) => (
-          <option key={item.id} value={item.id}>
-            {item.nama}
-          </option>
-        ))}
+                <option
+                  key={item.id}
+                  value={item.id}
+                  style={{ color: "black" }}
+                >
+                  {item.name}
+                </option>
+              ))}
             </Select>
 
             <Text fontWeight="400" fontSize="14px">
@@ -229,7 +229,7 @@ const AddVillage: React.FC = () => {
             >
               {regencies.map((item) => (
                 <option key={item.id} value={item.id}>
-                  {item.nama}
+                  {item.name}
                 </option>
               ))}
             </Select>
@@ -254,7 +254,7 @@ const AddVillage: React.FC = () => {
             >
               {districts.map((item) => (
                 <option key={item.id} value={item.id}>
-                  {item.nama}
+                  {item.name}
                 </option>
               ))}
             </Select>
@@ -278,7 +278,7 @@ const AddVillage: React.FC = () => {
             >
               {villages.map((item) => (
                 <option key={item.id} value={item.id}>
-                  {item.nama}
+                  {item.name}
                 </option>
               ))}
             </Select>

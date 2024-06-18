@@ -1,20 +1,69 @@
-import apiLocation from "./apiLocation";
-
+// locationServices.ts
 interface Location {
   id: string;
-  nama: string;
+  name: string;
 }
 
-type ApiResponse<T> = T[];
+const BASE_LOCATION_URL = "https://adsattt.github.io/api-wilayah-indonesia";
 
-export const getProvinces = async () =>
-  await apiLocation("/api/provinces.json");
+export const getProvinces = async (): Promise<Location[]> => {
+  try {
+    const response = await fetch(`${BASE_LOCATION_URL}/api/provinces.json`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data: Location[] = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching provinces:", error);
+    return []; // Return an empty array on error
+  }
+};
 
-export const getRegencies = async (idProvince: string) =>
-  await apiLocation(`/api/regencies/${idProvince}.json`);
+export const getRegencies = async (idProvince: string): Promise<Location[]> => {
+  try {
+    const response = await fetch(
+      `${BASE_LOCATION_URL}/api/regencies/${idProvince}.json`
+    );
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data: Location[] = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching regencies:", error);
+    return []; // Return an empty array on error
+  }
+};
 
-export const getDistricts = async (idRegency: string) =>
-  await apiLocation(`/api/districts/${idRegency}.json`);
+export const getDistricts = async (idRegency: string): Promise<Location[]> => {
+  try {
+    const response = await fetch(
+      `${BASE_LOCATION_URL}/api/districts/${idRegency}.json`
+    );
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data: Location[] = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching districts:", error);
+    return []; // Return an empty array on error
+  }
+};
 
-export const getVillages = async (idDistrict: string) =>
-  await apiLocation(`/api/villages/${idDistrict}.json`);
+export const getVillages = async (idDistrict: string): Promise<Location[]> => {
+  try {
+    const response = await fetch(
+      `${BASE_LOCATION_URL}/api/villages/${idDistrict}.json`
+    );
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data: Location[] = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching villages:", error);
+    return []; // Return an empty array on error
+  }
+};
