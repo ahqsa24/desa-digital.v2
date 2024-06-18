@@ -15,7 +15,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { useNavigate } from "react-router-dom";
 import HeaderUpload from "../../../components/form/HeaderUpload";
 import LogoUpload from "../../../components/form/LogoUpload";
-import { auth } from "../../../firebase/clientApp";
+import { auth, firestore, storage } from "../../../firebase/clientApp";
 
 import {
   getProvinces,
@@ -23,6 +23,8 @@ import {
   getDistricts,
   getVillages,
 } from "../../../services/locationServices";
+import { doc, setDoc, updateDoc } from "firebase/firestore";
+import { getDownloadURL, ref, uploadString } from "firebase/storage";
 
 interface Location {
   id: string;
@@ -58,12 +60,15 @@ const AddVillage: React.FC = () => {
   const [regencies, setRegencies] = useState<Location[]>([]);
   const [districts, setDistricts] = useState<Location[]>([]);
   const [villages, setVillages] = useState<Location[]>([]);
+  const [selectedProvince, setSelectedProvince] = useState<string>("");
+  const [selectedRegency, setSelectedRegency] = useState<string>("");
+  const [selectedDistrict, setSelectedDistrict] = useState<string>("");
+  const [selectedVillage, setSelectedVillage] = useState<string>("");
 
   const handleFetchProvinces = async () => {
     try {
       const provincesData = await getProvinces();
       setProvinces(provincesData);
-      console.log(provincesData); // For debugging
     } catch (error) {
       console.error("Error fetching provinces:", error);
     }
@@ -104,25 +109,45 @@ const AddVillage: React.FC = () => {
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
     const provinceId = event.target.value;
+    const provinceName = event.target.options[event.target.selectedIndex].text;
+    setSelectedProvince(provinceName);
     handleFetchRegencies(provinceId);
-    setDistricts([]); // Clear districts
-    setVillages([]); // Clear villages
+    setRegencies([]);
+    setDistricts([]);
+    setVillages([]);
+    setSelectedRegency("");
+    setSelectedDistrict("");
+    setSelectedVillage("");
   };
 
   const handleRegencyChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const regencyId = event.target.value;
+    const regencyName = event.target.options[event.target.selectedIndex].text;
+    setSelectedRegency(regencyName);
     handleFetchDistricts(regencyId);
-    setVillages([]); // Clear villages
+    setDistricts([]);
+    setVillages([]);
+    setSelectedDistrict("");
+    setSelectedVillage("");
   };
 
   const handleDistrictChange = (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
     const districtId = event.target.value;
+    const districtName = event.target.options[event.target.selectedIndex].text;
+    setSelectedDistrict(districtName);
     handleFetchVillages(districtId);
+    setVillages([]);
+    setSelectedVillage("");
   };
 
-  const toas = useToast();
+  const handleVillageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const villageName = event.target.options[event.target.selectedIndex].text;
+    setSelectedVillage(villageName);
+  };
+
+  const toast = useToast();
 
   const onSelectLogo = (event: React.ChangeEvent<HTMLInputElement>) => {
     const reader = new FileReader();
@@ -157,10 +182,139 @@ const AddVillage: React.FC = () => {
     }));
   };
 
+  const onSubmitForm = async (event: React.FormEvent<HTMLElement>) => {
+    event.preventDefault();
+    setLoading(true);
+    setError("");
+
+    if (!user?.uid) {
+      setError("User ID is not defined. Please make sure you are logged in.");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const {
+        name,
+        description,
+        potensi,
+        geografis,
+        infrastruktur,
+        kesiapan,
+        literasi,
+        pemantapan,
+        sosial,
+        resource,
+        whatsapp,
+        instagram,
+        website,
+      } = textInputValue;
+      if (
+        !name ||
+        !description ||
+        !potensi ||
+        !geografis ||
+        !infrastruktur ||
+        !kesiapan ||
+        !literasi ||
+        !pemantapan ||
+        !sosial ||
+        !resource ||
+        !whatsapp ||
+        !instagram ||
+        !website 
+        // !selectedProvince ||
+        // !selectedDistrict ||
+        // !selectedRegency ||
+        // !selectedVillage
+      ) {
+        setError("Semua kolom harus diisi");
+        setLoading(false);
+        return;
+      }
+      console.log(textInputValue);
+      
+      const userId = user.uid;
+      const docRef = doc(firestore, "villages", userId);
+      await setDoc(docRef, {
+        namaDesa: name,
+        id: userId,
+        deskripsi: description,
+        potensiDesa: potensi,
+        geografisDesa: geografis,
+        infrastrukturDesa: infrastruktur,
+        kesiapanDesa: kesiapan,
+        literasiDesa: literasi,
+        pemantapanDesa: pemantapan,
+        sosialBudaya: sosial,
+        sumberDaya: resource,
+        whatsapp: whatsapp,
+        instagram: instagram,
+        website: website,
+        lokasi: {
+          provinsi: selectedProvince,
+          kabupatenKota: selectedRegency,
+          kecamatan: selectedDistrict,
+          desaKelurahan: selectedVillage,
+        },
+      });
+      console.log("Document writen with ID: ", userId);
+      // Upload logo
+      if (selectedLogo) {
+        const logoRef = ref(storage, `villages/${userId}/logo`);
+        await uploadString(logoRef, selectedLogo, "data_url").then(async () => {
+          const downloadURL = await getDownloadURL(logoRef);
+          await updateDoc(doc(firestore, "villages", userId), {
+            logo: downloadURL,
+          });
+          console.log("File available at", downloadURL);
+        });
+      } else {
+        setError("Logo harus diisi");
+        setLoading(false);
+        return;
+      }
+
+      // Upload header if provided
+      if (selectedHeader) {
+        const headerRef = ref(storage, `villages/${userId}/header`);
+        await uploadString(headerRef, selectedHeader, "data_url").then(
+          async () => {
+            const downloadURL = await getDownloadURL(headerRef);
+            await updateDoc(doc(firestore, "villages", userId), {
+              header: downloadURL,
+            });
+            console.log("File available at", downloadURL);
+          }
+        );
+      }
+
+      setLoading(false);
+
+      toast({
+        title: "Profile berhasil dibuat",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+    } catch (error) {
+      console.error("Error adding document: ", error);
+      setLoading(false);
+      setError("Error adding document");
+      toast({
+        title: "Error",
+        description: "Terjadi kesalahan saat menambahkan dokumen.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  };
+
   return (
     <Container page px={16}>
       <TopBar title="Registrasi Desa" onBack={() => navigate(-1)} />
-      <form>
+      <form onSubmit={onSubmitForm}>
         <Flex direction="column" marginTop="24px">
           <Stack spacing={3} width="100%">
             <Text fontWeight="400" fontSize="14px">
@@ -275,6 +429,7 @@ const AddVillage: React.FC = () => {
                 borderColor: "black",
               }}
               disabled={villages.length === 0}
+              onChange={handleVillageChange}
             >
               {villages.map((item) => (
                 <option key={item.id} value={item.id}>
@@ -307,7 +462,7 @@ const AddVillage: React.FC = () => {
               Tentang Inovasi di Desa <span style={{ color: "red" }}>*</span>
             </Text>
             <Textarea
-              name="deskripsi"
+              name="description"
               fontSize="10pt"
               placeholder="Masukkan deskripsi desa"
               _placeholder={{ color: "gray.500" }}
@@ -326,6 +481,7 @@ const AddVillage: React.FC = () => {
               Potensi Desa <span style={{ color: "red" }}>*</span>
             </Text>
             <Input
+              name="potensi"
               fontSize="10pt"
               placeholder="Masukkan potensi desa"
               _placeholder={{ color: "gray.500" }}
@@ -346,6 +502,7 @@ const AddVillage: React.FC = () => {
               Geografis <span style={{ color: "red" }}>*</span>
             </Text>
             <Input
+              name="geografis"
               fontSize="10pt"
               placeholder="Deskripsi geografis desa"
               _placeholder={{ color: "gray.500" }}
@@ -363,6 +520,7 @@ const AddVillage: React.FC = () => {
               Infrastruktur <span style={{ color: "red" }}>*</span>
             </Text>
             <Input
+              name="infrastruktur"
               fontSize="10pt"
               placeholder="Deskripsi infrastruktur desa"
               _placeholder={{ color: "gray.500" }}
@@ -380,6 +538,7 @@ const AddVillage: React.FC = () => {
               Kesiapan Digital <span style={{ color: "red" }}>*</span>
             </Text>
             <Input
+              name="kesiapan"
               fontSize="10pt"
               placeholder="Deskripsi kesiapan digital desa"
               _placeholder={{ color: "gray.500" }}
@@ -397,6 +556,7 @@ const AddVillage: React.FC = () => {
               Literasi Digital <span style={{ color: "red" }}>*</span>
             </Text>
             <Input
+              name="literasi"
               fontSize="10pt"
               placeholder="Deskripsi literasi digital desa"
               _placeholder={{ color: "gray.500" }}
@@ -414,6 +574,7 @@ const AddVillage: React.FC = () => {
               Pemantapan Pelayanan <span style={{ color: "red" }}>*</span>
             </Text>
             <Input
+              name="pemantapan"
               fontSize="10pt"
               placeholder="Deskripsi pemantapan pelayanan desa"
               _placeholder={{ color: "gray.500" }}
@@ -431,6 +592,7 @@ const AddVillage: React.FC = () => {
               Sosial dan Budaya <span style={{ color: "red" }}>*</span>
             </Text>
             <Input
+              name="sosial"
               fontSize="10pt"
               placeholder="Deskripsi sosial dan budaya desa"
               _placeholder={{ color: "gray.500" }}
@@ -448,6 +610,7 @@ const AddVillage: React.FC = () => {
               Sumber Daya Alam <span style={{ color: "red" }}>*</span>
             </Text>
             <Input
+              name="resource"
               fontSize="10pt"
               placeholder="Deskripsi sumber daya alam desa"
               _placeholder={{ color: "gray.500" }}
@@ -468,8 +631,10 @@ const AddVillage: React.FC = () => {
               Nomor WhatsApp <span style={{ color: "red" }}>*</span>
             </Text>
             <Input
+              name="whatsapp"
               fontSize="10pt"
               placeholder="62812345678"
+              type="number"
               _placeholder={{ color: "gray.500" }}
               _focus={{
                 outline: "none",
@@ -485,6 +650,7 @@ const AddVillage: React.FC = () => {
               Link Instagram <span style={{ color: "red" }}>*</span>
             </Text>
             <Input
+              name="instagram"
               type="url"
               fontSize="10pt"
               placeholder="Link Instagram desa"
@@ -503,6 +669,7 @@ const AddVillage: React.FC = () => {
               Link Website <span style={{ color: "red" }}>*</span>
             </Text>
             <Input
+              name="website"
               type="url"
               fontSize="10pt"
               placeholder="Link Website desa"
@@ -518,7 +685,12 @@ const AddVillage: React.FC = () => {
             />
           </Stack>
         </Flex>
-        <Button type="submit" mt="20px" width="100%">
+        {error && (
+          <Text color="red" fontSize="10pt" textAlign="center" mt={2}>
+            {error}
+          </Text>
+        )}
+        <Button type="submit" mt="20px" width="100%" isLoading={loading}>
           Simpan
         </Button>
       </form>
