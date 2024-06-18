@@ -30,7 +30,7 @@ function Detail() {
         setData(detailInovasi);
       })
       .catch((error) => {
-        console.error(error); // Handle error here
+        // Handle error here
       });
   }, []);
 
@@ -40,10 +40,7 @@ function Detail() {
       const innovatorData: Record<string, DocumentData> = {};
       for (const item of data) {
         if (item.innovatorId) {
-          const detailInnovator = await getDocumentById(
-            "innovators",
-            item.innovatorId
-          );
+          const detailInnovator = await getDocumentById("innovators", item.innovatorId);
           innovatorData[item.innovatorId] = detailInnovator;
         }
       }
