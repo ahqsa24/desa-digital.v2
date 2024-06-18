@@ -171,11 +171,9 @@ const InnovatorForm: React.FC = () => {
         createdAt: serverTimestamp(),
         jumlahInovasi: 0,
         jumlahDesaDampingan: 0,
-        produk: product,
         modelBisnis: modelBusiness,
         instagram,
         website,
-        targetPengguna: targetUser,
         whatsapp,
       });
       console.log("Document written with ID: ", userId);
