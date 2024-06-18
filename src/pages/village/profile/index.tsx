@@ -1,4 +1,3 @@
-import React, { useState, useEffect, useRef } from "react";
 import {
   Button,
   Flex,
@@ -7,148 +6,127 @@ import {
   Stack,
   Text,
   Textarea,
-  useToast,
+  useToast
 } from "@chakra-ui/react";
-import TopBar from "Components/topBar";
 import Container from "Components/container";
-import { useForm } from "react-hook-form";
-import { useMutation, useQuery } from "react-query";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
+import TopBar from "Components/topBar";
+import React, { useEffect, useRef, useState } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useNavigate } from "react-router-dom";
 import HeaderUpload from "../../../components/form/HeaderUpload";
 import LogoUpload from "../../../components/form/LogoUpload";
-import { getDownloadURL, ref, uploadString } from "firebase/storage";
-import { storage } from "../../../firebase/clientApp";
-import { useNavigate } from "react-router-dom";
-import {
-  getProvinsi,
-  getKabupaten,
-  getKecamatan,
-  getKelurahan,
-} from "Services/locationServices";
-import { updateProfile, getUserById } from "Services/userServices";
-import useAuthLS from "Hooks/useAuthLS";
+import { auth } from "../../../firebase/clientApp";
 
-const schema = z.object({
-  nameVillage: z.string().min(1, { message: "*Nama desa wajib diisi" }),
-  description: z.string().min(1, { message: "*Deskripsi desa wajib diisi" }),
-  benefit: z.string().min(1, { message: "*Keuntungan wajib diisi" }),
-  whatsApp: z.string().min(1, { message: "*Nomor whatsapp wajib diisi" }),
-  province: z.string().min(1, { message: "*Pilih Provinsi" }),
-  district: z.string().min(1, { message: "*Pilih Kabupaten/Kota" }),
-  subDistrict: z.string().min(1, { message: "*Pilih Kecamatan" }),
-  village: z.string().min(1, { message: "*Pilih Kelurahan" }),
-  logo: z.string().optional(),
-  header: z.string().optional(),
-  instagram: z.string().url({ message: "Invalid URL format" }).optional(),
-  website: z.string().url({ message: "Invalid URL format" }).optional(),
-  geographic: z.string().optional(),
-  infrastructure: z.string().optional(),
-  digitalReadiness: z.string().optional(),
-  digitalLiteracy: z.string().optional(),
-  serviceImprovement: z.string().optional(),
-  socialCulture: z.string().optional(),
-  naturalResources: z.string().optional(),
-});
+import {
+  getProvinces,
+  getRegencies,
+  getDistricts,
+  getVillages,
+} from "../../../services/locationServices";
+
+interface Location {
+  id: string;
+  nama: string;
+}
+
+
 
 const AddVillage: React.FC = () => {
   const navigate = useNavigate();
-  const { auth } = useAuthLS();
-  const {
-    handleSubmit,
-    reset,
-    register,
-    formState: { isSubmitting },
-  } = useForm({ resolver: zodResolver(schema) });
-  const { mutateAsync } = useMutation(updateProfile);
-  const { data, isFetched } = useQuery<any>(
-    "profileVillage",
-    () => getUserById(auth?.id),
-    { enabled: !!auth?.id }
-  );
-  const toast = useToast();
+  const [user] = useAuthState(auth);
 
-  const [selectedProvinsi, setSelectedProvinsi] = useState("");
-  const [selectedKabupaten, setSelectedKabupaten] = useState("");
-  const [selectedKecamatan, setSelectedKecamatan] = useState("");
   const [selectedLogo, setSelectedLogo] = useState<string>("");
   const [selectedHeader, setSelectedHeader] = useState<string>("");
-  const selectLogoRef = useRef<HTMLInputElement>(null);
-  const selectHeaderRef = useRef<HTMLInputElement>(null);
+  const selectedLogoRef = useRef<HTMLInputElement>(null);
+  const selectedHeaderRef = useRef<HTMLInputElement>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [textInputValue, setTextInputValue] = useState({
+    name: "",
+    description: "",
+    potensi: "",
+    geografis: "",
+    infrastruktur: "",
+    kesiapan: "",
+    literasi: "",
+    pemantapan: "",
+    sosial: "",
+    resource: "",
+    whatsapp: "",
+    instagram: "",
+    website: "",
+  });
+  const [provinces, setProvinces] = useState<Location[]>([]);
+  const [regencies, setRegencies] = useState<Location[]>([]);
+  const [districts, setDistricts] = useState<Location[]>([]);
+  const [villages, setVillages] = useState<Location[]>([]);
 
-  const { data: provinsi } = useQuery<any>("provinsi", getProvinsi);
-  const { data: kabupaten } = useQuery<any>(
-    ["kabupaten", selectedProvinsi],
-    () => getKabupaten(selectedProvinsi || data?.province),
-    { enabled: !!selectedProvinsi || isFetched }
-  );
-  const { data: kecamatan } = useQuery<any>(
-    ["kecamatan", selectedKabupaten],
-    () => getKecamatan(selectedKabupaten || data?.district),
-    { enabled: !!selectedKabupaten || isFetched }
-  );
-  const { data: kelurahan } = useQuery<any>(
-    ["kelurahan", selectedKecamatan],
-    () => getKelurahan(selectedKecamatan || data?.subDistrict),
-    { enabled: !!selectedKecamatan || isFetched }
-  );
-
-  useEffect(() => {
-    if (isFetched) {
-      reset({ ...(data || {}) });
-    }
-  }, [isFetched]);
-
-  const uploadImage = async (image: string, folder: string, userId: string) => {
-    const storageRef = ref(storage, `village/${userId}/${folder}`);
-    await uploadString(storageRef, image, "data_url");
-    return await getDownloadURL(storageRef);
-  };
-
-  const onProfileSave = async (data: any) => {
-    if (!auth?.id) {
-      toast({
-        title: "User ID is not defined. Please make sure you are logged in.",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      });
-      return;
-    }
-
+  const handleFetchProvinces = async () => {
     try {
-      const payload = {
-        id: auth.id,
-        data: data,
-      };
-
-      if (selectedLogo) {
-        const logoURL = await uploadImage(selectedLogo, "logo", auth.id);
-        payload.data.logo = logoURL;
-      }
-
-      if (selectedHeader) {
-        const headerURL = await uploadImage(selectedHeader, "header", auth.id);
-        payload.data.header = headerURL;
-      }
-
-      await mutateAsync(payload);
-      toast({
-        title: "Data berhasil disimpan",
-        status: "success",
-        duration: 5000,
-        isClosable: true,
-      });
-      navigate(-1);
+      const provincesData = await getProvinces();
+      setProvinces(provincesData);
+      console.log(provincesData);
+      
     } catch (error) {
-      toast({
-        title: "Terjadi kesalahan jaringan",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      });
+      console.error("Error fetching provinces:", error);
     }
   };
+
+  
+  const handleFetchRegencies = async (provinceId: string) => {
+    try {
+      const regenciesData = await getRegencies(provinceId);
+      setRegencies(regenciesData);
+    } catch (error) {
+      console.error("Error fetching regencies:", error);
+    }
+  };
+
+  const handleFetchDistricts = async (regencyId: string) => {
+    try {
+      const districtsData = await getDistricts(regencyId);
+      setDistricts(districtsData);
+    } catch (error) {
+      console.error("Error fetching districts:", error);
+    }
+  };
+
+  const handleFetchVillages = async (districtId: string) => {
+    try {
+      const villagesData = await getVillages(districtId);
+      setVillages(villagesData);
+    } catch (error) {
+      console.error("Error fetching villages:", error);
+    }
+  };
+  
+  useEffect(() => {
+    handleFetchProvinces();
+  }, []);
+
+  const handleProvinceChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const provinceId = event.target.value;
+    handleFetchRegencies(provinceId);
+    setDistricts([]); // Clear districts
+    setVillages([]); // Clear villages
+  };
+
+  const handleRegencyChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const regencyId = event.target.value;
+    handleFetchDistricts(regencyId);
+    setVillages([]); // Clear villages
+  };
+
+  const handleDistrictChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const districtId = event.target.value;
+    handleFetchVillages(districtId);
+  };
+
+  const toas = useToast();
 
   const onSelectLogo = (event: React.ChangeEvent<HTMLInputElement>) => {
     const reader = new FileReader();
@@ -157,7 +135,7 @@ const AddVillage: React.FC = () => {
     }
     reader.onload = (readerEvent) => {
       if (readerEvent.target?.result) {
-        setSelectedLogo(readerEvent.target.result as string);
+        setSelectedLogo(readerEvent.target?.result as string);
       }
     };
   };
@@ -169,21 +147,31 @@ const AddVillage: React.FC = () => {
     }
     reader.onload = (readerEvent) => {
       if (readerEvent.target?.result) {
-        setSelectedHeader(readerEvent.target.result as string);
+        setSelectedHeader(readerEvent.target?.result as string);
       }
     };
+  };
+
+  const onTextChange = ({
+    target: { name, value },
+  }: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setTextInputValue((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   return (
     <Container page px={16}>
       <TopBar title="Registrasi Desa" onBack={() => navigate(-1)} />
-      <form onSubmit={handleSubmit(onProfileSave)}>
+      <form>
         <Flex direction="column" marginTop="24px">
           <Stack spacing={3} width="100%">
             <Text fontWeight="400" fontSize="14px">
               Nama Desa <span style={{ color: "red" }}>*</span>
             </Text>
             <Input
+              name="name"
               fontSize="10pt"
               placeholder="Nama Desa"
               _placeholder={{ color: "gray.500" }}
@@ -193,7 +181,8 @@ const AddVillage: React.FC = () => {
                 border: "1px solid",
                 borderColor: "black",
               }}
-              {...register("nameVillage")}
+              value={textInputValue.name}
+              onChange={onTextChange}
             />
 
             <Text fontWeight="400" fontSize="14px">
@@ -211,14 +200,13 @@ const AddVillage: React.FC = () => {
                 border: "1px solid",
                 borderColor: "black",
               }}
-              {...register("province")}
-              onChange={(e) => setSelectedProvinsi(e.target.value)}
+              onChange={handleProvinceChange}
             >
-              {provinsi?.provinsi?.map((item: any) => (
-                <option key={item.id} value={item.id}>
-                  {item.nama}
-                </option>
-              ))}
+              {provinces.map((item) => (
+          <option key={item.id} value={item.id}>
+            {item.nama}
+          </option>
+        ))}
             </Select>
 
             <Text fontWeight="400" fontSize="14px">
@@ -236,10 +224,10 @@ const AddVillage: React.FC = () => {
                 border: "1px solid",
                 borderColor: "black",
               }}
-              {...register("district")}
-              onChange={(e) => setSelectedKabupaten(e.target.value)}
+              onChange={handleRegencyChange}
+              disabled={regencies.length === 0}
             >
-              {kabupaten?.kota_kabupaten?.map((item: any) => (
+              {regencies.map((item) => (
                 <option key={item.id} value={item.id}>
                   {item.nama}
                 </option>
@@ -261,10 +249,10 @@ const AddVillage: React.FC = () => {
                 border: "1px solid",
                 borderColor: "black",
               }}
-              {...register("subDistrict")}
-              onChange={(e) => setSelectedKecamatan(e.target.value)}
+              onChange={handleDistrictChange}
+              disabled={districts.length === 0}
             >
-              {kecamatan?.kecamatan?.map((item: any) => (
+              {districts.map((item) => (
                 <option key={item.id} value={item.id}>
                   {item.nama}
                 </option>
@@ -286,9 +274,9 @@ const AddVillage: React.FC = () => {
                 border: "1px solid",
                 borderColor: "black",
               }}
-              {...register("village")}
+              disabled={villages.length === 0}
             >
-              {kelurahan?.kelurahan?.map((item: any) => (
+              {villages.map((item) => (
                 <option key={item.id} value={item.id}>
                   {item.nama}
                 </option>
@@ -301,7 +289,7 @@ const AddVillage: React.FC = () => {
             <LogoUpload
               selectedLogo={selectedLogo}
               setSelectedLogo={setSelectedLogo}
-              selectFileRef={selectLogoRef}
+              selectFileRef={selectedLogoRef}
               onSelectLogo={onSelectLogo}
             />
 
@@ -311,7 +299,7 @@ const AddVillage: React.FC = () => {
             <HeaderUpload
               selectedHeader={selectedHeader}
               setSelectedHeader={setSelectedHeader}
-              selectFileRef={selectHeaderRef}
+              selectFileRef={selectedHeaderRef}
               onSelectHeader={onSelectHeader}
             />
 
@@ -319,6 +307,7 @@ const AddVillage: React.FC = () => {
               Tentang Inovasi di Desa <span style={{ color: "red" }}>*</span>
             </Text>
             <Textarea
+              name="deskripsi"
               fontSize="10pt"
               placeholder="Masukkan deskripsi desa"
               _placeholder={{ color: "gray.500" }}
@@ -329,7 +318,8 @@ const AddVillage: React.FC = () => {
                 borderColor: "black",
               }}
               height="100px"
-              {...register("description")}
+              value={textInputValue.description}
+              onChange={onTextChange}
             />
 
             <Text fontWeight="400" fontSize="14px">
@@ -345,7 +335,8 @@ const AddVillage: React.FC = () => {
                 border: "1px solid",
                 borderColor: "black",
               }}
-              {...register("benefit")}
+              value={textInputValue.potensi}
+              onChange={onTextChange}
             />
 
             <Text fontWeight="700" fontSize="16px">
@@ -364,7 +355,8 @@ const AddVillage: React.FC = () => {
                 border: "1px solid",
                 borderColor: "black",
               }}
-              {...register("geographic")}
+              value={textInputValue.geografis}
+              onChange={onTextChange}
             />
 
             <Text fontWeight="400" fontSize="14px">
@@ -380,7 +372,8 @@ const AddVillage: React.FC = () => {
                 border: "1px solid",
                 borderColor: "black",
               }}
-              {...register("infrastructure")}
+              value={textInputValue.infrastruktur}
+              onChange={onTextChange}
             />
 
             <Text fontWeight="400" fontSize="14px">
@@ -396,7 +389,8 @@ const AddVillage: React.FC = () => {
                 border: "1px solid",
                 borderColor: "black",
               }}
-              {...register("digitalReadiness")}
+              value={textInputValue.kesiapan}
+              onChange={onTextChange}
             />
 
             <Text fontWeight="400" fontSize="14px">
@@ -412,7 +406,8 @@ const AddVillage: React.FC = () => {
                 border: "1px solid",
                 borderColor: "black",
               }}
-              {...register("digitalLiteracy")}
+              value={textInputValue.literasi}
+              onChange={onTextChange}
             />
 
             <Text fontWeight="400" fontSize="14px">
@@ -428,7 +423,8 @@ const AddVillage: React.FC = () => {
                 border: "1px solid",
                 borderColor: "black",
               }}
-              {...register("serviceImprovement")}
+              value={textInputValue.pemantapan}
+              onChange={onTextChange}
             />
 
             <Text fontWeight="400" fontSize="14px">
@@ -444,7 +440,8 @@ const AddVillage: React.FC = () => {
                 border: "1px solid",
                 borderColor: "black",
               }}
-              {...register("socialCulture")}
+              value={textInputValue.sosial}
+              onChange={onTextChange}
             />
 
             <Text fontWeight="400" fontSize="14px">
@@ -460,7 +457,8 @@ const AddVillage: React.FC = () => {
                 border: "1px solid",
                 borderColor: "black",
               }}
-              {...register("naturalResources")}
+              value={textInputValue.resource}
+              onChange={onTextChange}
             />
 
             <Text fontWeight="700" fontSize="16px">
@@ -479,7 +477,8 @@ const AddVillage: React.FC = () => {
                 border: "1px solid",
                 borderColor: "black",
               }}
-              {...register("whatsApp")}
+              value={textInputValue.whatsapp}
+              onChange={onTextChange}
             />
 
             <Text fontWeight="400" fontSize="14px">
@@ -496,7 +495,8 @@ const AddVillage: React.FC = () => {
                 border: "1px solid",
                 borderColor: "black",
               }}
-              {...register("instagram")}
+              value={textInputValue.instagram}
+              onChange={onTextChange}
             />
 
             <Text fontWeight="400" fontSize="14px">
@@ -513,11 +513,12 @@ const AddVillage: React.FC = () => {
                 border: "1px solid",
                 borderColor: "black",
               }}
-              {...register("website")}
+              value={textInputValue.website}
+              onChange={onTextChange}
             />
           </Stack>
         </Flex>
-        <Button type="submit" mt="20px" width="100%" isLoading={isSubmitting}>
+        <Button type="submit" mt="20px" width="100%">
           Simpan
         </Button>
       </form>
