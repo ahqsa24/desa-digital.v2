@@ -26,6 +26,8 @@ import {
   Text3,
   Title,
 } from "./_detailStyle.ts";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "../../../firebase/clientApp";
 
 function DetailInnovation() {
   const navigate = useNavigate();
@@ -38,6 +40,7 @@ function DetailInnovation() {
     }
   );
 
+  const [user] = useAuthState(auth); // Get the current logged-in user
   const [data, setData] = useState<DocumentData>({});
   const [datainnovator, setDatainnovator] = useState<DocumentData>({});
 
@@ -77,6 +80,8 @@ function DetailInnovation() {
     slidesToShow: 1,
     slidesToScroll: 1,
   };
+
+  const isUserCreator = user && user.uid === data.innovatorId; // Check if the current user is the creator
 
   return (
     <Container page>
@@ -127,7 +132,7 @@ function DetailInnovation() {
             >
               {data.kategori}
             </Label>
-            <Description>Dibuat sejak tahun {year}</Description>
+            <Description>Sejak tahun {year}</Description>
           </ChipContainer>
         </div>
         <ActionContainer
@@ -169,20 +174,22 @@ function DetailInnovation() {
           <ActionContainer>
             <Text3>Belum tersedia</Text3>
           </ActionContainer>
-          <Button
-            width="100%"
-            marginTop={13}
-            marginBottom={3}
-            onClick={() =>
-              navigate(
-                generatePath(paths.EDIT_INNOVATION_PAGE, {
-                  id: data.id,
-                })
-              )
-            }
-          >
-            Edit
-          </Button>
+          {isUserCreator && ( // Conditionally render the Edit button
+            <Button
+              width="100%"
+              marginTop={13}
+              marginBottom={3}
+              onClick={() =>
+                navigate(
+                  generatePath(paths.EDIT_INNOVATION_PAGE, {
+                    id: data.id,
+                  })
+                )
+              }
+            >
+              Edit
+            </Button>
+          )}
         </div>
       </ContentContainer>
     </Container>

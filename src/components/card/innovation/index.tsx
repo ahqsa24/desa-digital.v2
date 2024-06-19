@@ -1,3 +1,5 @@
+import React from "react";
+import Skeleton from "react-loading-skeleton";
 import {
   Container,
   Title,
@@ -17,8 +19,8 @@ type CardInnovationProps = {
   kategori?: string;
   deskripsi?: string;
   tahunDibuat?: string;
-  innovatorLogo?: string;
-  innovatorName?: string;
+  innovatorLogo?: string | React.ReactNode;
+  innovatorName?: string | React.ReactNode;
   onClick?: () => void;
 };
 
@@ -33,8 +35,16 @@ function CardInnovation(props: CardInnovationProps) {
         <Category>{kategori}</Category>
         <Description>{deskripsi}</Description>
         <CompanyContainer>
-          <Icon src={innovatorLogo || ""} alt={namaInovasi} />
-          <InnovatorName>{innovatorName}</InnovatorName>
+          {typeof innovatorLogo === "string" ? (
+            <Icon src={innovatorLogo} alt={namaInovasi} />
+          ) : (
+            <div>{innovatorLogo}</div>
+          )}
+          {typeof innovatorName === "string" ? (
+            <InnovatorName>{innovatorName}</InnovatorName>
+          ) : (
+            <div>{innovatorName}</div>
+          )}
         </CompanyContainer>
         <Applied>Sejak {tahunDibuat}</Applied>
       </Content>

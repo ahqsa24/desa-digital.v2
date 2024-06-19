@@ -1,13 +1,19 @@
-import { Flex, Icon, Stack, Text } from "@chakra-ui/react";
-import Container from "Components/container";
-import TopBar from "Components/topBar/index";
-import { DocumentData, Firestore, collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
+import { useNavigate, useParams, generatePath } from "react-router-dom";
+import { DocumentData, collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
 import { FaWandMagicSparkles } from "react-icons/fa6";
 import { LuDot } from "react-icons/lu";
 import { TbPlant2 } from "react-icons/tb";
-import { useNavigate, useParams } from "react-router-dom";
+import { Flex, Icon, Stack, Text } from "@chakra-ui/react";
 import { firestore } from "../../../firebase/clientApp";
+import { paths } from "Consts/path";
+import CardInnovation from "Components/card/innovation";
+import Container from "Components/container";
+import TopBar from "Components/topBar/index";
+import {
+  CardContainer,
+  Horizontal,
+} from "../../../pages/home/components/innovator/_innovatorStyle";
 import {
   Background,
   ContentContainer,
@@ -15,12 +21,6 @@ import {
   Logo,
   Title,
 } from "./_detailStyle";
-import CardInnovation from "Components/card/innovation";
-import {
-  CardContainer,
-  Horizontal,
-} from "../../../pages/home/components/innovator/_innovatorStyle";
-import CardVillage from "Components/card/village";
 
 const DetailInnovator: React.FC = () => {
   const navigate = useNavigate();
@@ -59,7 +59,7 @@ const DetailInnovator: React.FC = () => {
     fetchInnovatorData();
   }, [id]);
   console.log("data: ", innovatorData);
-  
+
   // Fetch innovations data
   useEffect(() => {
     const fetchInnovations = async () => {
@@ -67,7 +67,10 @@ const DetailInnovator: React.FC = () => {
         const innovationsRef = collection(firestore, "innovations");
         const q = query(innovationsRef, where("innovatorId", "==", id));
         const innovationsDocs = await getDocs(q);
-        const innovationsData = innovationsDocs.docs.map((doc) => doc.data());
+        const innovationsData = innovationsDocs.docs.map((doc) => ({
+          id: doc.id, // Ensure the ID is included
+          ...doc.data(),
+        }));
         setInnovations(innovationsData);
       } catch (error) {
         console.error("Error fetching innovations data:", error);
@@ -120,20 +123,25 @@ const DetailInnovator: React.FC = () => {
             <Text fontSize="16px" fontWeight="700">
               Tentang
             </Text>
-            <Flex direction="row">
+            <Flex direction="row" alignItems="center">
               <Text
                 fontSize="12px"
                 fontWeight="700"
                 color="#4B5563"
                 mr={2}
-                width="90%"
               >
                 Model bisnis digital:
               </Text>
-              <Text fontSize="12px" fontWeight="400" color="#4B5563">
+              <Text
+                fontSize="12px"
+                fontWeight="400"
+                color="#4B5563"
+                flex="1"
+              >
                 {innovatorData.modelBisnis}
               </Text>
             </Flex>
+
             <Text fontSize="12px" fontWeight="400" color="#4B5563">
               {innovatorData.deskripsi}
             </Text>
@@ -156,7 +164,7 @@ const DetailInnovator: React.FC = () => {
                   innovatorLogo={innovation.innovatorImgURL}
                   innovatorName={innovation.namaInnovator}
                   onClick={() =>
-                    navigate("/innovation-detail", { state: innovation })
+                    navigate(generatePath(paths.DETAIL_INNOVATION_PAGE, { id: innovation.id }))
                   }
                 />
               ))}
@@ -172,5 +180,5 @@ const DetailInnovator: React.FC = () => {
     </Container>
   );
 };
-export default DetailInnovator;
 
+export default DetailInnovator;
