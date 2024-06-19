@@ -132,7 +132,7 @@ function DetailInnovation() {
             >
               {data.kategori}
             </Label>
-            <Description>Dibuat sejak tahun {year}</Description>
+            <Description>Sejak tahun {year}</Description>
           </ChipContainer>
         </div>
         <ActionContainer

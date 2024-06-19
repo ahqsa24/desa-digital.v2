@@ -18,7 +18,9 @@ function Innovator() {
       <TopBar title="Inovator" />
       <Hero />
 
-      <GridContainer>
+      <p>This page is currently still in development.</p>
+
+      {/* <GridContainer>
         {isFetched &&
           innovators?.map((item: any, idx: number) => (
             <CardInnovator
@@ -31,7 +33,7 @@ function Innovator() {
               }
             />
           ))}
-      </GridContainer>
+      </GridContainer> */}
     </Container>
   );
 }
