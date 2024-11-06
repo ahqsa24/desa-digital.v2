@@ -5,8 +5,8 @@ To get started with the Desa Digital App, follow these steps:
 1. **Clone the repository:**
 
     ```bash
-    git clone https://github.com/mochammadkevin/desa-digital.git
-    cd desa-digital
+    git clone https://github.com/Adsattt/desa-digital.v2.git
+    cd desa-digital.v2
     ```
 
 2. **Install dependencies:**
