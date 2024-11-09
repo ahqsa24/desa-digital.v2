@@ -32,6 +32,7 @@ const Register: React.FC = () => {
     password: "",
     role: "",
   });
+  const [confirmPassword, setConfirmPassword] = useState(""); // State untuk konfirmasi kata sandi
   const [error, setError] = useState("");
   const [createUserWithEmailAndPassword, userCred, loading, userError] =
     useCreateUserWithEmailAndPassword(auth);
@@ -46,6 +47,8 @@ const Register: React.FC = () => {
       return setError("Email dan kata sandi harus diisi");
     if (regisForm.password.length < 6)
       return setError("Kata sandi minimal 6 karakter");
+    if (regisForm.password !== confirmPassword)
+      return setError("Kata sandi dan konfirmasi kata sandi tidak cocok"); // Cek kesesuaian kata sandi
     createUserWithEmailAndPassword(regisForm.email, regisForm.password);
   };
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -54,6 +57,11 @@ const Register: React.FC = () => {
       [event.target.name]: event.target.value,
     }));
   };
+
+  const onConfirmPasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setConfirmPassword(event.target.value); // Update konfirmasi kata sandi
+  };
+
   const navigate = useNavigate();
 
 
@@ -95,7 +103,7 @@ const Register: React.FC = () => {
             mt="4px"
           />
           <Text fontSize="10pt" mt="12px">
-            Password
+            Kata sandi
           </Text>
 
           <InputGroup mt="4px" alignItems="center">
@@ -104,7 +112,7 @@ const Register: React.FC = () => {
               type={show ? "text" : "password"}
               onChange={onChange}
               required
-              placeholder="Password"
+              placeholder="Kata sandi"
             />
             <InputRightElement
               onClick={onShowPassword}
@@ -114,6 +122,28 @@ const Register: React.FC = () => {
               {show ? <FaEyeSlash /> : <FaEye />}
             </InputRightElement>
           </InputGroup>
+
+          <Text fontSize="10pt" mt="12px">
+            Konfirmasi kata sandi
+          </Text>
+
+          <InputGroup mt="4px" alignItems="center">
+            <Input
+              name="password"
+              type={show ? "text" : "password"}
+              onChange={onConfirmPasswordChange} // Gunakan onConfirmPasswordChange
+              required
+              placeholder="Konfirmasi kata sandi"
+            />
+            <InputRightElement
+              onClick={onShowPassword}
+              cursor="pointer"
+              mt="4px"
+            >
+              {show ? <FaEyeSlash /> : <FaEye />}
+            </InputRightElement>
+          </InputGroup>
+
           <Label mt={12}>Daftar sebagai:</Label>
           <CheckboxContainer mt={12}>
             <input
@@ -136,8 +166,9 @@ const Register: React.FC = () => {
             />
             <Label>Perangkat desa</Label>
           </CheckboxContainer>
+
           {(error || userError) && (
-            <Text textAlign="center" color="red" fontSize="10pt">
+            <Text textAlign="center" color="red" fontSize="10pt" mt={1} >
               {error ||
                 FIREBASE_ERRORS[
                   userError?.message as keyof typeof FIREBASE_ERRORS
@@ -146,7 +177,7 @@ const Register: React.FC = () => {
           )}
 
           <Button
-            mt={8}
+            mt={2}
             type="submit"
             alignItems="center"
             width="100%"
