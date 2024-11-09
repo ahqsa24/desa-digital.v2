@@ -7,6 +7,8 @@ export const Container = styled.div`
   min-width: 120px;
   overflow: hidden;
   cursor: pointer;
+  width : 156px;
+  height : 170px;
 `
 
 export const Background = styled.img`
