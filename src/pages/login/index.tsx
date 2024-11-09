@@ -97,7 +97,7 @@ const Login: React.FC = () => {
             </InputRightElement>
           </InputGroup>
           {(error || userError) && (
-            <Text textAlign="center" color="red" fontSize="10pt">
+            <Text textAlign="center" color="red" fontSize="10pt" mt={2}>
               {error ||
                 FIREBASE_ERRORS[
                   userError?.message as keyof typeof FIREBASE_ERRORS
@@ -106,7 +106,7 @@ const Login: React.FC = () => {
           )}
 
           <Button
-            mt={8}
+            mt={4}
             type="submit"
             alignItems="center"
             width="100%"
