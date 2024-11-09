@@ -7,9 +7,7 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 
-type SearchBarProps = {};
-
-const SearchBarVil: React.FC<SearchBarProps> = () => {
+const SearchBarVil: React.FC = () => {
   return (
     <Flex justify="center" maxW="360px" width="100%">
         <InputGroup>
