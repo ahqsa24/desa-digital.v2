@@ -91,7 +91,6 @@ const Login: React.FC = () => {
             <InputRightElement
               onClick={onShowPassword}
               cursor="pointer"
-              mt="4px"
             >
               {show ? <FaEyeSlash /> : <FaEye />}
             </InputRightElement>
