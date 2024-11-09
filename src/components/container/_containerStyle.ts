@@ -9,7 +9,7 @@ export const StyledContainer = styled.div<StyledContainerProps>`
   ${({ page }) => {
     if (page)
       return css`
-        padding: 50.67px 0 70px 0;
+        padding: 43px 0 70px 0;
       `
     return css`
       padding: 0 16px;

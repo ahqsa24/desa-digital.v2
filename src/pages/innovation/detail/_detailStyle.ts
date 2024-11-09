@@ -88,7 +88,6 @@ export const Text3 = styled.p`
   ${marginStyle}
 `;
 
-
 export const Logo = styled.img`
   height: 36px;
   width: 36px;
