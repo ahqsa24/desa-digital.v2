@@ -7,22 +7,30 @@ import { GridContainer,
           Containers, 
           Text, 
           Texthighlight,
-          Column} from "./_villageStyle";
+          Column1, 
+          Column2} from "./_villageStyle";
 import CardVillage from "Components/card/village";
 import { paths } from "Consts/path";
 import Container from "Components/container";
 import {Box, Select} from "@chakra-ui/react";
+import {
+  Drawer,
+  DrawerBody,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerCloseButton,
+} from '@chakra-ui/react'
+import SearchBar from "Components/search/SearchBar";
+import SearchBarVil from "./components/SearchBarVil";
 
 const categories = [
-  "E-Government",
-  "E-Tourism",
-  "Layanan Keuangan",
-  "Layanan Sosial",
-  "Pemasaran Agri-Food dan E-Commerce",
-  "Pengembangan Masyarakat dan Ekonomi",
-  "Pengelolaan Sumber Daya",
-  "Pertanian Cerdas",
-  "Sistem Informasi",
+  "Kabupaten Bandung",
+  "Kabupaten Bogor",
+  "Kota Bogor",
+  "Kabupaten Kuningan"
+,
 ];
 
 function Village() {
@@ -35,34 +43,65 @@ function Village() {
       <Hero />
       <Containers> 
         <CardContent> 
-          <Column>
-          <Text>
-              Pilih Provinsi
-            </Text>
-            <Select
-              placeholder="Pilih Provinsi"
-              name="category"
-              fontSize="10pt"
-              variant="outline"
-              cursor="pointer"
-              color={"gray.500"}
-              _focus={{
-                outline: "none",
-                bg: "white",
-                border: "1px solid",
-                borderColor: "#E5E7EB",
-              }}
-              //value={category}
-              //onChange={onSelectCategory}
-            >
-              {categories.map((category) => (
-                <option key={category} value={category}>
-                  {category}
-                </option>
-              ))}
-            </Select>
-          </Column>
-          <Column>b</Column>
+          <Column1>
+            <Column2>
+              <Text>
+                Pilih Provinsi
+              </Text>
+              <Select
+                placeholder="Pilih Provinsi"
+                name="category"
+                fontSize="10pt"
+                variant="outline"
+                cursor="pointer"
+                color={"gray.500"}
+                _focus={{
+                  outline: "none",
+                  bg: "white",
+                  border: "1px solid",
+                  borderColor: "#E5E7EB",
+                }}
+                //value={category}
+                //onChange={onSelectCategory}
+              >
+                {categories.map((category) => (
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
+                ))}
+              </Select>
+            </Column2>
+            <Column2>
+              <Text>
+                Pilih Kabupaten/Kota
+              </Text>
+              <Select
+                placeholder="Pilih Kab/Kota"
+                name="category"
+                fontSize="10pt"
+                variant="outline"
+                cursor="pointer"
+                color={"gray.500"}
+                _focus={{
+                  outline: "none",
+                  bg: "white",
+                  border: "1px solid",
+                  borderColor: "#E5E7EB",
+                }}
+                //value={category}
+                //onChange={onSelectCategory}
+              >
+                {categories.map((category) => (
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
+                ))}
+              </Select>
+            </Column2>
+          </Column1>
+          <Column2> 
+                <SearchBarVil/>
+          </Column2>
         </CardContent>
         <Text> Menampilkan 8 desa untuk <Texthighlight>"Semua Provinsi"</Texthighlight> </Text>
         <GridContainer>
@@ -79,6 +118,7 @@ function Village() {
               />
             ))}
         </GridContainer>
+        
       </Containers>
     </Box>
   );
