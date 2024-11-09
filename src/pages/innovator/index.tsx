@@ -2,10 +2,29 @@ import Hero from "./components/hero";
 import { useQuery } from "react-query";
 import { getUsers } from "Services/userServices";
 import { useNavigate, generatePath } from "react-router-dom";
-import { GridContainer, CardContent, Containers } from "./_innovatorStyle";
+import { GridContainer, 
+        CardContent, 
+        Containers,
+        Text, 
+        Texthighlight,
+        Column } from "./_innovatorStyle";
 import CardInnovator from "Components/card/innovator";
 import { paths } from "Consts/path";
-import { Box, Flex, Text } from "@chakra-ui/react";
+import Container from "Components/container";
+import { Box, Select,} from "@chakra-ui/react";
+
+const categories = [
+  "Semua Kategori",
+  "Start-up",
+  "Di bawah Pemerintah",
+  "Pemerintah Daerah",
+  "Agribisnis",
+  "Perusahaan",
+  "Organisasi Pertanian",
+  "Layanan Finansial",
+  "Lembaga Swadaya Masyarakat (LSM)",
+  "Akademisi",
+];
 
 function Innovator() {
   const navigate = useNavigate();
@@ -16,8 +35,34 @@ function Innovator() {
   <Box>
     <Hero />
     <Containers>
-      <Text mt= "95px">aa</Text>
-      <CardContent/>
+      <CardContent>
+        <Column>
+        <Text>
+            Pilih Innovator
+          </Text>
+          <Select
+            placeholder= "Pilih Kategori Innovator"
+            name="category"
+            fontSize="10pt"
+            variant="outline"
+            cursor="pointer"
+            color={"gray.500"}
+            _focus={{
+              outline: "none",
+              bg: "white",
+              border: "1px solid",
+              borderColor: "#E5E7EB",
+            }}
+          >
+            {categories.map((category) => (
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
+            ))}
+          </Select>
+        </Column>
+      </CardContent>
+      <Text> Menampilkan 2 innovator untuk <Texthighlight> "Semua Kategori" </Texthighlight> </Text>
       <GridContainer>
         {isFetched &&
           innovators?.map((item: any, idx: number) => (
