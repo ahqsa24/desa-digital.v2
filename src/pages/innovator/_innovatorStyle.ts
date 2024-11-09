@@ -44,7 +44,7 @@ export const Text = styled.p`
   font-weight: 400;
   text-align: left;
   display: inline;
-  flex-direction: column;
+  flex-direction: left;
   align-items: flex-start;
 `;
 
