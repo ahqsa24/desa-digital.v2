@@ -1,12 +1,11 @@
-import TopBar from "Components/topBar";
 import Hero from "./components/hero";
-import CardInnovator from "Components/card/innovator";
-import Container from "Components/container";
 import { useQuery } from "react-query";
 import { getUsers } from "Services/userServices";
-import { paths } from "Consts/path";
 import { useNavigate, generatePath } from "react-router-dom";
-import { GridContainer } from "./_innovatorStyle";
+import { GridContainer, CardContent, Containers } from "./_innovatorStyle";
+import CardInnovator from "Components/card/innovator";
+import { paths } from "Consts/path";
+import { Box, Flex, Text } from "@chakra-ui/react";
 
 function Innovator() {
   const navigate = useNavigate();
@@ -14,28 +13,28 @@ function Innovator() {
   const innovators = users?.filter((item: any) => item.role === "innovator");
 
   return (
-    <Container page>
-      <TopBar title="Inovator" />
-      <Hero />
-
-      <p>This page is currently still in development.</p>
-
-      {/* <GridContainer>
+  <Box>
+    <Hero />
+    <Containers>
+      <Text mt= "95px">aa</Text>
+      <CardContent/>
+      <GridContainer>
         {isFetched &&
           innovators?.map((item: any, idx: number) => (
-            <CardInnovator
-              key={idx}
-              {...item}
-              onClick={() =>
-                navigate(
-                  generatePath(paths.DETAIL_INNOVATOR_PAGE, { id: item.id })
-                )
-              }
-            />
-          ))}
-      </GridContainer> */}
-    </Container>
+          <CardInnovator
+            key={idx}
+            {...item}
+            onClick={() =>
+              navigate(
+                generatePath(paths.INNOVATOR_PROFILE_PAGE, { id: item.id})
+              )
+            }
+          />
+        ))}
+      </GridContainer>
+    </Containers>
+  </Box>
   );
 }
-
+     
 export default Innovator;
