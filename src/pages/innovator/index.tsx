@@ -12,6 +12,17 @@ import CardInnovator from "Components/card/innovator";
 import { paths } from "Consts/path";
 import Container from "Components/container";
 import { Box, Select,} from "@chakra-ui/react";
+import {
+  Drawer,
+  DrawerBody,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerCloseButton,
+} from '@chakra-ui/react'
+import SearchBar from "Components/search/SearchBar";
+import SearchBarInnov from "./components/hero/SearchBarInnov";
 
 const categories = [
   "Semua Kategori",
@@ -60,6 +71,7 @@ function Innovator() {
                   </option>
             ))}
           </Select>
+          <SearchBarInnov/>
         </Column>
       </CardContent>
       <Text> Menampilkan 2 innovator untuk <Texthighlight> "Semua Kategori" </Texthighlight> </Text>
