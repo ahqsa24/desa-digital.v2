@@ -29,9 +29,10 @@ export const CardContent = styled.div`
     width: 100%;
     height: 135px;
     padding: 16px;
-    flex-direction: row;
+    Padding-top: 12px;
+    flex-direction: column;
     align-items: left;
-    gap: 12px;
+    gap: 8px;
     position: relative;
     background: #FFF;
     top: 0px;
@@ -42,7 +43,6 @@ export const Text = styled.p`
   font-weight: 400;
   text-align: left;
   display: inline;
-  flex-direction: column;
   align-items: flex-start;
 `;
 
@@ -52,12 +52,21 @@ export const Texthighlight = styled.span`
   display: inline;
 `;
 
-export const Column = styled.div`
+export const Column1 = styled.div`
 display: flex;
-padding-top: 1px;
-flex-direction: column;
 justify-content: center;
 align-items: flex-start;
 gap: 6px;
-width: 100%
+width: 100%;
+flex-direction: row;
+`;
+
+export const Column2 = styled.div`
+display: flex;
+padding-top: px;
+justify-content: center;
+align-items: flex-start;
+gap: 6x;
+width: 100%;
+flex-direction: column;
 `;
