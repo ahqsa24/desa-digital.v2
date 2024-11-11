@@ -19,7 +19,8 @@ import ProfileVillage from "./pages/village/profile";
 import { ToastContainer } from "react-toastify";
 import InnovatorForm from "./pages/innovator/form"; 
 import EditInnovation from "./pages/innovation/edit";
-import ResetPassword from "./pages/reset_password/ResetPassword";
+import ResetPassword from "./pages/resetpw/ResetPassword";
+import NewPassword from "./pages/resetpw/newpw/NewPassword";
 
 const queryClient = new QueryClient();
 
@@ -98,6 +99,11 @@ const routes = [
   {
     path: paths.RESET_PASSWORD_PAGE,
     element: <ResetPassword />,
+    exact: true,
+  },
+  {
+    path: paths.NEW_PASSWORD_PAGE,
+    element: <NewPassword />,
     exact: true,
   }
 ];
