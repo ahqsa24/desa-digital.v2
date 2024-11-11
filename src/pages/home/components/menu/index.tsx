@@ -7,7 +7,15 @@ import { MenuContainer, GridContainer, GridItem, Text } from "./_menuStyle";
 import { useQuery } from "react-query";
 import { getCategories } from "Services/categoryServices";
 
-function Menu() {
+import React from 'react';
+import { Image } from "@chakra-ui/react";
+
+type MenuProps = {
+  isAdmin?: boolean;
+  
+};
+
+const Menu:React.FC<MenuProps> = ({isAdmin = false}) => {
   const navigate = useNavigate();
   const { data, isLoading, isFetched } = useQuery("menu", getCategories);
 
@@ -34,14 +42,42 @@ function Menu() {
     },
     {
       icon: "./src/assets/icons/menu-all.svg",
-      title: "Lihat Semua",
+      title: "Semua Kategori Innovasi",
     },
   ];
 
-  const [menu, setMenu] = useState<any>(predefinedCategories);
+  const adminMenu = [
+    {
+      icon: "./src/assets/icons/verifikasi-desa.svg",
+      title: "Verifikasi Desa",
+    },
+    {
+      icon: "./src/assets/icons/verifikasi-innovator.svg",
+      title: "Verifikasi Innovator",
+    },
+    {
+      icon: "./src/assets/icons/verifikasi-klaim.svg",
+      title: "Verifikasi Innovasi",
+    },
+    {
+      icon: "./src/assets/icons/verifikasi-tambah-innovasi.svg",
+      title: "Verifikasi Tambah Innovasi",
+    },
+    {
+      icon: "./src/assets/icons/pembuatan-innovasi.svg",
+      title: "Pembuatan Iklan",
+    },
+    {
+      icon: "./src/assets/icons/menu-all.svg",
+      title: "Semua Kategori Innovasi",
+    },
+  ];
+
+  const [menu, setMenu] = useState<{ icon: string; title: string }[]>([]);
+  const menuItems = isAdmin ? adminMenu : predefinedCategories;
 
   const onClick = (category: string) => {
-    if (category === "Lihat Semua") {
+    if (category === "Semua Kategori Innovasi") {
       navigate(paths.INNOVATION_PAGE);
       return;
     }
@@ -53,11 +89,9 @@ function Menu() {
 
   useEffect(() => {
     if (isFetched && data) {
-      //const temp = [...data?.slice(0, 5), data[data?.length - 1]];
-      //setMenu(temp);
-      setMenu(predefinedCategories);
+      setMenu(menuItems);
     }
-  }, [isFetched, data]);
+  }, [isFetched, data, isAdmin]);
 
   return (
     <Container>
@@ -67,7 +101,7 @@ function Menu() {
           <GridContainer>
             {menu?.map(({ icon, title }: any, idx: number) => (
               <GridItem key={idx} onClick={() => onClick(title)}>
-                <img src={icon} alt={title} width={40} height={40} />
+                <Image src={icon} alt={title} width={10} height={10} />
                 <Text>{title}</Text>
               </GridItem>
             ))}
@@ -76,6 +110,6 @@ function Menu() {
       </MenuContainer>
     </Container>
   );
+  
 }
-
 export default Menu;
