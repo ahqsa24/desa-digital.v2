@@ -1,10 +1,10 @@
-import Button from 'Components/button'
-import styled from 'styled-components'
+import Button from 'Components/button';
+import styled from 'styled-components';
 
 export const FloatingButton = styled(Button)`
   border-radius: 50%;
-  height: 50px;
-  width: 50px;
+  height: 60px;
+  width: 60px;
   padding: 0;
   display: flex;
   align-items: center;
@@ -13,5 +13,7 @@ export const FloatingButton = styled(Button)`
   z-index: 999;
   bottom: 70px;
   margin-left: auto;
-  margin-right: 10px;
-`
+  margin-right: 19px;
+`;
+
+
