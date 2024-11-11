@@ -10,18 +10,7 @@ import { GridContainer,
         Column } from "./_innovatorStyle";
 import CardInnovator from "Components/card/innovator";
 import { paths } from "Consts/path";
-import Container from "Components/container";
 import { Box, Select,} from "@chakra-ui/react";
-import {
-  Drawer,
-  DrawerBody,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerOverlay,
-  DrawerContent,
-  DrawerCloseButton,
-} from '@chakra-ui/react'
-import SearchBar from "Components/search/SearchBar";
 import SearchBarInnov from "./components/hero/SearchBarInnov";
 
 const categories = [
@@ -83,7 +72,7 @@ function Innovator() {
             {...item}
             onClick={() =>
               navigate(
-                generatePath(paths.INNOVATOR_PROFILE_PAGE, { id: item.id})
+                generatePath(paths.DETAIL_INNOVATOR_PAGE, { id: item.id})
               )
             }
           />
