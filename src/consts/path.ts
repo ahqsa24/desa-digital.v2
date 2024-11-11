@@ -16,5 +16,6 @@ export const paths = {
   DETAIL_INNOVATION: "/innovation/detail",
   EDIT_INNOVATION_PAGE: "/innovation/edit/:id",
   INNOVATOR_FORM : "/innovator/form",
-  RESET_PASSWORD_PAGE : "/resetpswd"
+  RESET_PASSWORD_PAGE : "/resetpw",
+  NEW_PASSWORD_PAGE : "/resetpw/newpw"
 };
