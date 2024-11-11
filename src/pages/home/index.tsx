@@ -20,50 +20,68 @@ import Hero from "./components/hero";
 import Innovator from "./components/innovator";
 import Menu from "./components/menu";
 import Readiness from "./components/readiness";
+import { Toast } from './_homeStyle';
+
 
 function Home() {
   const navigate = useNavigate();
-  const [userRole, setUserRole] = useState(null); // State untuk menyimpan peran pengguna
-  const [isInnovator, setIsInnovator] = useState(false); // State untuk mengecek apakah pengguna ada di koleksi innovators
-  const auth = getAuth(); // Dapatkan instance auth dari Firebase
-
+  const [userRole, setUserRole] = useState(null);
+  const [isInnovator, setIsInnovator] = useState(false);
+  const auth = getAuth();
   const toast = useToast();
+
   useEffect(() => {
+    const hasLoggedIn = localStorage.getItem("hasLoggedIn");
+
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        // Jika pengguna berhasil login, dapatkan token otentikasi
+        if (!hasLoggedIn) {
+          toast({
+            title: "Anda berhasil login!",
+            status: "success",
+            duration: 1000,
+            isClosable: true,
+            position: "top",
+            render: () => (
+              <Toast>
+                Anda berhasil login!
+              </Toast>
+            ),
+          });
+          localStorage.setItem("hasLoggedIn", "true");
+        }
+
         user.getIdToken().then((token) => {
           const db = getFirestore();
           const colRef = collection(db, "users");
-          const q = query(colRef, where("id", "==", user.uid)); // Filter berdasarkan ID pengguna yang terautentikasi
+          const q = query(colRef, where("id", "==", user.uid));
 
-          // Periksa peran pengguna dalam database Firestore
           onSnapshot(q, (snapshot) => {
             if (!snapshot.empty) {
               const userData = snapshot.docs[0].data();
-              setUserRole(userData.role); // Set peran pengguna ke state
+              setUserRole(userData.role);
             }
           });
 
-          // Periksa apakah pengguna ada di koleksi innovators
           const innovatorsRef = collection(db, "innovators");
-          const qInnovators = query(innovatorsRef, where("id", "==", user.uid)); // Filter berdasarkan ID pengguna yang terautentikasi
+          const qInnovators = query(innovatorsRef, where("id", "==", user.uid));
           onSnapshot(qInnovators, (snapshot) => {
             if (!snapshot.empty) {
-              setIsInnovator(true); // Set isInnovator ke true jika pengguna ada di koleksi innovators
+              setIsInnovator(true);
             } else {
-              setIsInnovator(false); // Set isInnovator ke false jika pengguna tidak ada di koleksi innovators
+              setIsInnovator(false);
             }
           });
         });
       } else {
-        setUserRole(null); // Set state menjadi null jika pengguna tidak terautentikasi
-        setIsInnovator(false); // Set isInnovator ke false jika pengguna tidak terautentikasi
+        setUserRole(null);
+        setIsInnovator(false);
+        localStorage.removeItem("hasLoggedIn");
       }
     });
 
     return () => unsubscribe();
-  }, [auth]);
+  }, [auth, toast]);
 
   const handleAddInnovationClick = () => {
     if (isInnovator) {
@@ -72,10 +90,10 @@ function Home() {
       toast({
         title: "Lengkapi Profil terlebih dahulu",
         status: "error",
-        duration: 3000,
-        isClosable: true,
+        duration: 1000,
+        isClosable: false,
         position: "top",
-      })
+      });
     }
   };
 
