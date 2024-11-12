@@ -19,6 +19,7 @@ import ProfileVillage from "./pages/village/profile";
 import { ToastContainer } from "react-toastify";
 import InnovatorForm from "./pages/innovator/form"; 
 import EditInnovation from "./pages/innovation/edit";
+import AdminPage from "./pages/admin/AdminPage";
 
 const queryClient = new QueryClient();
 
@@ -94,6 +95,11 @@ const routes = [
     element: <InnovatorForm />,
     exact: true,
   },
+  {
+    path: paths.ADMIN_PAGE,
+    element: <AdminPage />,
+    exact: true,
+  }
 ];
 
 const App: React.FC = () => {

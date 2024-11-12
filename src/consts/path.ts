@@ -15,5 +15,6 @@ export const paths = {
   DETAIL_INNOVATION_PAGE: "/innovation/detail/:id",
   DETAIL_INNOVATION: "/innovation/detail",
   EDIT_INNOVATION_PAGE: "/innovation/edit/:id",
-  INNOVATOR_FORM : "/innovator/form",
+  INNOVATOR_FORM: "/innovator/form",
+  ADMIN_PAGE: "/admin",
 };

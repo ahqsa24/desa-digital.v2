@@ -1,5 +1,6 @@
 import { SearchIcon } from "@chakra-ui/icons";
 import {
+    Button,
     Flex,
     Input,
     InputGroup,
@@ -11,8 +12,8 @@ type SearchBarProps = {};
 
 const SearchBar: React.FC<SearchBarProps> = () => {
   return (
-    <Flex justify="center" mt={2} maxW="360px">
-      <Flex>
+    <Flex justify="center" maxW="360px" mb='16px'>
+      <Flex position='absolute' top='175px'>
         <InputGroup>
           <InputLeftElement
             pointerEvents="none"
@@ -21,6 +22,7 @@ const SearchBar: React.FC<SearchBarProps> = () => {
           <Input
             placeholder="Search"
             fontSize="10pt"
+            bg="white"
             _placeholder={{ color: "gray.500" }}
             _hover={{
               bg: "white",
