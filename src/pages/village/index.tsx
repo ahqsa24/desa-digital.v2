@@ -11,24 +11,21 @@ import { GridContainer,
           Column2} from "./_villageStyle";
 import CardVillage from "Components/card/village";
 import { paths } from "Consts/path";
-import Container from "Components/container";
-import {Box, Select} from "@chakra-ui/react";
 import {
-  Drawer,
-  DrawerBody,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerOverlay,
-  DrawerContent,
-  DrawerCloseButton,
-} from '@chakra-ui/react'
-import SearchBar from "Components/search/SearchBar";
+  Box,
+  Select, 
+} from "@chakra-ui/react";
 import SearchBarVil from "./components/SearchBarVil";
+import Container from "Components/container";
+import Dropdown from "./components/filter";
 
 const categories = [
-  "Kabupaten Bandung",
+  "JAw",
   "Kabupaten Bogor",
   "Kota Bogor",
+  "Kabupaten Kuningan ",
+  "Kabupaten Kuningan",
+  "Kabupaten Kuningan",
   "Kabupaten Kuningan"
 ,
 ];
@@ -40,7 +37,7 @@ function Village() {
 
   return (
   <Box>
-      <Hero />
+    <Hero />
       <Containers> 
         <CardContent> 
           <Column1>
@@ -48,55 +45,13 @@ function Village() {
               <Text>
                 Pilih Provinsi
               </Text>
-              <Select
-                placeholder="Pilih Provinsi"
-                name="category"
-                fontSize="10pt"
-                variant="outline"
-                cursor="pointer"
-                color={"gray.500"}
-                _focus={{
-                  outline: "none",
-                  bg: "white",
-                  border: "1px solid",
-                  borderColor: "#E5E7EB",
-                }}
-                //value={category}
-                //onChange={onSelectCategory}
-              >
-                {categories.map((category) => (
-                  <option key={category} value={category}>
-                    {category}
-                  </option>
-                ))}
-              </Select>
+              <Dropdown/> 
             </Column2>
             <Column2>
               <Text>
-                Pilih Kabupaten/Kota
+                Pilih Kab/Kota
               </Text>
-              <Select
-                placeholder="Pilih Kab/Kota"
-                name="category"
-                fontSize="10pt"
-                variant="outline"
-                cursor="pointer"
-                color={"gray.500"}
-                _focus={{
-                  outline: "none",
-                  bg: "white",
-                  border: "1px solid",
-                  borderColor: "#E5E7EB",
-                }}
-                //value={category}
-                //onChange={onSelectCategory}
-              >
-                {categories.map((category) => (
-                  <option key={category} value={category}>
-                    {category}
-                  </option>
-                ))}
-              </Select>
+              <Dropdown/>  
             </Column2>
           </Column1>
           <Column2> 
@@ -116,11 +71,36 @@ function Village() {
                   )
                 }
               />
-            ))}
-        </GridContainer>
-        
-      </Containers>
+          ))}
+          {isFetched &&
+            villages?.map((item: any, idx: number) => (
+              <CardVillage
+                key={idx}
+                {...item}
+                onClick={() =>
+                  navigate(
+                    generatePath(paths.DETAIL_VILLAGE_PAGE, { id: item.id })
+                  )
+                }
+              />
+          ))}
+          {isFetched &&
+            villages?.map((item: any, idx: number) => (
+              <CardVillage
+                key={idx}
+                {...item}
+                onClick={() =>
+                  navigate(
+                    generatePath(paths.DETAIL_VILLAGE_PAGE, { id: item.id })
+                  )
+                }
+              />
+          ))}
+        </GridContainer>    
+      </Containers>  
+      
     </Box>
+    
   );
 }
 

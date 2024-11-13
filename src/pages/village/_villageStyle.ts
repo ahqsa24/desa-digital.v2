@@ -4,18 +4,23 @@ export const GridContainer = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   align-content: center;
+  align-items: left;
   gap: 16px;
-  padding: 6px;
+  padding: px;
+  position: relative;
+  width: 100%;
 `;
 
 export const Containers = styled.div`
   display: inline-flex;
   flex-direction: column;
-  align-items: left;
   gap: 16px;
   position: relative;
   top: -60px;
   margin: 16px;
+  width: 100%;  
+  padding: 16px;
+  margin: 0px 0;
 `;
 
 export const CardContent = styled.div`
@@ -70,3 +75,4 @@ gap: 6x;
 width: 100%;
 flex-direction: column;
 `;
+

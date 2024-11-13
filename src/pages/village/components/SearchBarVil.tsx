@@ -11,14 +11,14 @@ type SearchBarProps = {};
 
 const SearchBarVil: React.FC<SearchBarProps> = () => {
   return (
-    <Flex justify="center" maxW="360px" width="100%">
+    <Flex justify="center" maxW="474px" width="100%">
         <InputGroup>
           <InputLeftElement
             pointerEvents="none"
             children={<SearchIcon color="gray.300" />}
           />
           <Input
-            placeholder="Search"
+            placeholder="Cari..."
             fontSize="10pt"
             _placeholder={{ color: "gray.500" }}
             _hover={{

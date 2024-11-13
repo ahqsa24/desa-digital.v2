@@ -5,12 +5,13 @@ export const Container = styled.div`
   border: 1px solid #e5e7eb;
   border-radius: 8px;
   display: flex;
-  width: 156px;
+  width: 100%;
   height: 189px;
   flex-direction: column;
   align-items: flex-start;
   overflow: hidden;
   cursor: pointer;
+  
 `
 
 export const Background = styled.img`
@@ -38,7 +39,7 @@ export const CardContent = styled.div`
 `
 export const ContBadge = styled.div`
   display: flex;
-  width: 140px;
+  width: 100%;
   height: 21px;
   gap: 10 px;
   align-items: center;
