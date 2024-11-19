@@ -3,19 +3,18 @@ import { paths } from "Consts/path";
 import Loading from "Components/loading";
 import Container from "Components/container";
 import { generatePath, useNavigate } from "react-router-dom";
-import { MenuContainer, GridContainer, GridItem, Text } from "./_menuStyle";
+import { MenuContainer, GridContainer, GridItem } from "./_menuStyle";
 import { useQuery } from "react-query";
 import { getCategories } from "Services/categoryServices";
 
-import React from 'react';
-import { Image } from "@chakra-ui/react";
+import React from "react";
+import { Image, Text } from "@chakra-ui/react";
 
 type MenuProps = {
   isAdmin?: boolean;
-  
 };
 
-const Menu:React.FC<MenuProps> = ({isAdmin = false}) => {
+const Menu: React.FC<MenuProps> = ({ isAdmin = false }) => {
   const navigate = useNavigate();
   const { data, isLoading, isFetched } = useQuery("menu", getCategories);
 
@@ -57,7 +56,7 @@ const Menu:React.FC<MenuProps> = ({isAdmin = false}) => {
     },
     {
       icon: "./src/assets/icons/verifikasi-klaim.svg",
-      title: "Verifikasi Innovasi",
+      title: "Verifikasi Klaim Innovasi",
     },
     {
       icon: "./src/assets/icons/verifikasi-tambah-innovasi.svg",
@@ -81,10 +80,20 @@ const Menu:React.FC<MenuProps> = ({isAdmin = false}) => {
       navigate(paths.INNOVATION_PAGE);
       return;
     }
-    const path = generatePath(paths.INNOVATION_CATEGORY_PAGE, {
-      category: category,
-    });
-    navigate(path);
+    const isAdminCategory = adminMenu.some((item) => item.title === category);
+
+    if (isAdmin && isAdminCategory) {
+      const path = generatePath(paths.VERIFICATION_PAGE, {
+        category: category,
+      });
+      navigate(path);
+      return;
+    } else {
+      const path = generatePath(paths.INNOVATION_CATEGORY_PAGE, {
+        category: category,
+      });
+      navigate(path);
+    }
   };
 
   useEffect(() => {
@@ -101,8 +110,18 @@ const Menu:React.FC<MenuProps> = ({isAdmin = false}) => {
           <GridContainer>
             {menu?.map(({ icon, title }: any, idx: number) => (
               <GridItem key={idx} onClick={() => onClick(title)}>
-                <Image src={icon} alt={title} width={10} height={10} />
-                <Text>{title}</Text>
+                <Image src={icon} alt={title} width={12} height={12} />
+                <Text
+                  fontSize="12px"
+                  fontWeight="400"
+                  lineHeight="140%"
+                  textAlign="center"
+                  mt="8px"
+                  width="90px"
+                  height="auto"
+                >
+                  {title}
+                </Text>
               </GridItem>
             ))}
           </GridContainer>
@@ -110,6 +129,5 @@ const Menu:React.FC<MenuProps> = ({isAdmin = false}) => {
       </MenuContainer>
     </Container>
   );
-  
-}
+};
 export default Menu;
