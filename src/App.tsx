@@ -17,10 +17,11 @@ import DetailInnovator from "./pages/innovator/detail";
 import AddInnovation from "./pages/innovation/add";
 import ProfileVillage from "./pages/village/profile";
 import { ToastContainer } from "react-toastify";
-import InnovatorForm from "./pages/innovator/form"; 
+import InnovatorForm from "./pages/innovator/form";
 import EditInnovation from "./pages/innovation/edit";
 import AdminPage from "./pages/admin/AdminPage";
-
+import VerificationPage from "./pages/admin/verification/VerificationPage";
+import MakeAds from "./pages/admin/ads/make/MakeAds";
 const queryClient = new QueryClient();
 
 const routes = [
@@ -99,6 +100,16 @@ const routes = [
     path: paths.ADMIN_PAGE,
     element: <AdminPage />,
     exact: true,
+  },
+  {
+    path: paths.VERIFICATION_PAGE,
+    element: <VerificationPage />,
+    exact: true,
+  },
+  {
+    path: paths.MAKE_ADS,
+    element: <MakeAds />,
+    exact: true,
   }
 ];
 
@@ -118,6 +129,6 @@ const App: React.FC = () => {
       <ToastContainer />
     </QueryClientProvider>
   );
-}
+};
 
 export default App;

@@ -1,14 +1,14 @@
+import { Box, Flex, Stack } from "@chakra-ui/react";
+import Ads from "Components/ads/Ads";
+import BestBanner from "Components/banner/BestBanner";
 import Container from "Components/container";
+import Rediness from "Components/rediness/Rediness";
+import SearchBarLink from "Components/search/SearchBarLink";
 import TopBar from "Components/topBar";
 import React from "react";
 import Hero from "../home/components/hero";
-import SearchBar from "Components/search/SearchBar";
-import Menu from "../home/components/menu";
-import { Box, Flex, Stack } from "@chakra-ui/react";
-import Rediness from "Components/rediness/Rediness";
-import Ads from "Components/ads/Ads";
 import Innovator from "../home/components/innovator";
-import BestBanner from "Components/banner/BestBanner";
+import Menu from "../home/components/menu";
 
 const AdminPage: React.FC = () => {
   return (
@@ -20,7 +20,7 @@ const AdminPage: React.FC = () => {
         isAdmin={true}
       />
       <Stack direction="column" gap={2}>
-        <SearchBar />
+        <SearchBarLink />
         <Menu isAdmin={true} />
         <Flex direction="row" justifyContent="space-between" padding="0 14px">
           <Rediness />

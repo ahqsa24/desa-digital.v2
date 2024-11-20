@@ -17,4 +17,6 @@ export const paths = {
   EDIT_INNOVATION_PAGE: "/innovation/edit/:id",
   INNOVATOR_FORM: "/innovator/form",
   ADMIN_PAGE: "/admin",
+  VERIFICATION_PAGE:"/admin/verification/:category",
+  MAKE_ADS: "/admin/ads/make",
 };
