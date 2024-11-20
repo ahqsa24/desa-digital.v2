@@ -20,7 +20,7 @@ import { ToastContainer } from "react-toastify";
 import InnovatorForm from "./pages/innovator/form"; 
 import EditInnovation from "./pages/innovation/edit";
 import ResetPassword from "./pages/reset_password/ResetPassword";
-
+import Notification from "./pages/notification/Notification"
 const queryClient = new QueryClient();
 
 const routes = [
@@ -98,6 +98,11 @@ const routes = [
   {
     path: paths.RESET_PASSWORD_PAGE,
     element: <ResetPassword />,
+    exact: true,
+  },
+  {
+    path: paths.NOTIFICATION_PAGE,
+    element: <Notification/>,
     exact: true,
   }
 ];

@@ -16,24 +16,31 @@ import {
   Select, 
 } from "@chakra-ui/react";
 import SearchBarVil from "./components/SearchBarVil";
-import Container from "Components/container";
-import Dropdown from "./components/filter";
+import Dropdown from "./components/Filter";
 
-const categories = [
-  "JAw",
-  "Kabupaten Bogor",
-  "Kota Bogor",
-  "Kabupaten Kuningan ",
-  "Kabupaten Kuningan",
-  "Kabupaten Kuningan",
-  "Kabupaten Kuningan"
-,
-];
+
 
 function Village() {
   const navigate = useNavigate();
   const { data: users, isFetched } = useQuery<any>("villages", getUsers);
   const villages = users?.filter((item: any) => item.role === "village");
+  const kabKotaOptions = [
+    { label: 'Semua Kab/Kota', value: 'all' },
+    { label: 'Kab Bogor', value: 'Kab bogor' },
+    { label: 'Kota Bogor', value: 'Kota bogor' },
+    { label: 'Kab Kuningan', value: 'Kab kuningan' },
+    { label: 'Kab Bandung', value: 'Kab bandung' },
+  ];
+  
+  const provinsiOptions = [
+    { label: 'Semua Provinsi', value: 'all' },
+    { label: 'Jawa Barat', value: 'jabar' },
+    { label: 'Jawa Timur', value: 'jatim' },
+    { label: 'Jawa Tengah', value: 'jateng' },
+    { label: 'Sumatera Barat', value: 'sumbar' },
+    { label: 'Sumatera Utara', value: 'sumut' },
+    { label: 'Sumatera Selatan', value: 'sumsel' },
+  ];
 
   return (
   <Box>
@@ -45,13 +52,13 @@ function Village() {
               <Text>
                 Pilih Provinsi
               </Text>
-              <Dropdown/> 
+              <Dropdown placeholder="Pilih Provinsi" options={provinsiOptions}/> 
             </Column2>
             <Column2>
               <Text>
                 Pilih Kab/Kota
               </Text>
-              <Dropdown/>  
+              <Dropdown placeholder="Pilih Kab/Kota" options={kabKotaOptions}/>  
             </Column2>
           </Column1>
           <Column2> 
