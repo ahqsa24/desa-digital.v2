@@ -5,12 +5,14 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
+  Button
 } from "@chakra-ui/react";
 import { paths } from "Consts/path";
 import { User, signOut } from "firebase/auth";
 import { useNavigate } from "react-router";
 import { auth, firestore } from "../../../firebase/clientApp";
 import profileIcon from "Assets/icons/profile.svg";
+import notification from "Assets/icons/bell.svg";
 import { doc, getDoc } from "firebase/firestore";
 
 type UserMenuProps = {
@@ -49,11 +51,17 @@ const UserMenu: React.FC<UserMenuProps> = ({ user }) => {
 
   return (
     <Menu>
+      <Button padding={1}
+        as={IconButton}
+        aria-label="Options"
+        icon={<img src={notification} alt="Bell" width="24" height="24" />}
+      />
       <MenuButton
         as={IconButton}
         aria-label="Options"
         icon={<img src={profileIcon} alt="Profile" width="24" height="24" />}
       />
+      
       <MenuList>
         {user ? (
           <>

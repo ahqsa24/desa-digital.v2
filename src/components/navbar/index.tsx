@@ -29,7 +29,7 @@ const menu = [
   },
 ]
 
-const hide = [paths.LOGIN_PAGE, paths.REGISTER_PAGE, paths.MAKE_ADS]
+const hide = [paths.LOGIN_PAGE, paths.REGISTER_PAGE, paths.MAKE_ADS, paths.RESET_PASSWORD_PAGE, paths.DETAIL_VILLAGE_PAGE, paths.NOTIFICATION_PAGE]
 
 const Navbar: React.FC = () => {
   const navigate = useNavigate()

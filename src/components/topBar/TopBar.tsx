@@ -10,8 +10,8 @@ const TopBar: React.FC = () => {
   return (
     <Container>
       <Flex justify='space-between' align='center'>
-        <Text fontSize="16px" fontWeight="700" color="white">
-          Innovilage
+        <Text fontSize="18px" fontWeight="700" color="white">
+          Desa Digital Indonesia
         </Text>
         <RightContent user={user} />
       </Flex>

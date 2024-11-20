@@ -77,7 +77,7 @@ const Login: React.FC = () => {
             mt="4px"
           />
           <Text fontSize="10pt" mt="12px">
-            Password
+            Kata sandi
           </Text>
 
           <InputGroup mt="4px" alignItems="center">
@@ -86,7 +86,7 @@ const Login: React.FC = () => {
               type={show ? "text" : "password"}
               onChange={onChange}
               required
-              placeholder="Password"
+              placeholder="Kata sandi"
             />
             <InputRightElement
               onClick={onShowPassword}
@@ -116,6 +116,13 @@ const Login: React.FC = () => {
         </form>
 
         <ActionContainer mt={24}>
+          <Label>Lupa kata sandi</Label>
+          <Action onClick={() => navigate(paths.RESET_PASSWORD_PAGE)}>
+            Klik disini
+          </Action>
+        </ActionContainer> 
+
+        <ActionContainer mt={4}>
           <Label>Belum memiliki akun?</Label>
           <Action onClick={() => navigate(paths.REGISTER_PAGE)}>
             Registrasi
