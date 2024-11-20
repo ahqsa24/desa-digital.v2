@@ -81,6 +81,8 @@ const Menu: React.FC<MenuProps> = ({ isAdmin = false }) => {
       return;
     }
     const isAdminCategory = adminMenu.some((item) => item.title === category);
+    
+    // TODO: Buat jika menu admin, maka navbar tidak muncul
 
     if (isAdmin && isAdminCategory) {
       const path = generatePath(paths.VERIFICATION_PAGE, {
