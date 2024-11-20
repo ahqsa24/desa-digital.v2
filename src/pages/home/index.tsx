@@ -82,7 +82,7 @@ function Home() {
   return (
     <Container page>
       <TopBar />
-      <Hero />
+      <Hero description='Inovasi Digital' text='Indonesia'/>
       <Menu />
       <Readiness />
       <Innovator />
