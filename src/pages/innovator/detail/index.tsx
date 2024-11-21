@@ -1,15 +1,16 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate, useParams, generatePath } from "react-router-dom";
-import { DocumentData, collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
-import { FaWandMagicSparkles } from "react-icons/fa6";
-import { LuDot } from "react-icons/lu";
-import { TbPlant2 } from "react-icons/tb";
-import { Flex, Icon, Stack, Text } from "@chakra-ui/react";
-import { firestore } from "../../../firebase/clientApp";
-import { paths } from "Consts/path";
+import { Flex, Icon, Stack, Text, useDisclosure, Box, Image, Drawer, DrawerBody, DrawerFooter, DrawerHeader, DrawerOverlay, DrawerContent, Button as ChakraButton, Link } from "@chakra-ui/react";
+import Button from "Components/button";
 import CardInnovation from "Components/card/innovation";
 import Container from "Components/container";
 import TopBar from "Components/topBar/index";
+import { paths } from "Consts/path";
+import { DocumentData, collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
+import React, { useEffect, useState } from "react";
+import { FaWandMagicSparkles } from "react-icons/fa6";
+import { LuDot } from "react-icons/lu";
+import { TbPlant2 } from "react-icons/tb";
+import { generatePath, useNavigate, useParams } from "react-router-dom";
+import { firestore } from "../../../firebase/clientApp";
 import {
   CardContainer,
   Horizontal,
@@ -19,16 +20,20 @@ import {
   ContentContainer,
   Label,
   Logo,
-  Title,
+  Title
 } from "./_detailStyle";
+import { ChevronRightIcon } from "@chakra-ui/icons"; 
+import { FaWhatsapp, FaInstagram, FaGlobe } from "react-icons/fa";
 
 const DetailInnovator: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams(); // Ensure TypeScript knows id is a string
+  const { isOpen, onOpen, onClose } = useDisclosure()
   const [innovatorData, setInnovatorData] = useState<DocumentData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [innovations, setInnovations] = useState<DocumentData[]>([]);
+  const [villages, setVillages] = useState<DocumentData[]>([]); // Add state for villages
 
   // Fetch innovator data
   useEffect(() => {
@@ -83,6 +88,19 @@ const DetailInnovator: React.FC = () => {
     }
   }, [id]);
 
+  // Dummy data untuk Desa Dampingan, nantinya ini akan diganti dengan data dari Firestore
+  useEffect(() => {
+    const dummyVillages = [
+      {
+        id: "village1",
+        namaDesa: "Desa Puntang",
+        inovasiDiterapkan: ["Pakan Otomatis (eFeeder)", "Lapak Ikan (eFisheryFeed)"],
+        logo: "https://via.placeholder.com/50"
+      },
+    ];
+    setVillages(dummyVillages);
+  }, []);
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -97,16 +115,19 @@ const DetailInnovator: React.FC = () => {
 
   return (
     <Container page>
-      <TopBar title="Detail Innovator" onBack={() => navigate(-1)} />
+      <TopBar 
+        title="Detail Innovator"  
+        onBack={() => navigate(-1)} 
+        />
       <Flex position="relative">
         <Background src={innovatorData.header} alt="header" />
         <Logo src={innovatorData.logo} alt="logo" mx={16} my={-40} />
       </Flex>
       <ContentContainer>
-        <Stack gap={6}>
+        <Stack gap={3}>
           <Title>{innovatorData.namaInovator}</Title>
           <Label>{innovatorData.kategori}</Label>
-          <Flex direction="row" gap={2} mt={-3} alignItems="center">
+          <Flex direction="row" gap={3} mt={0} alignItems="center">
             <Icon as={FaWandMagicSparkles} color="#4B5563" />
             <Text fontSize="12px" fontWeight="400" color="#4B5563">
               {innovatorData.jumlahInovasi} Inovasi
@@ -118,7 +139,7 @@ const DetailInnovator: React.FC = () => {
             </Text>
           </Flex>
         </Stack>
-        <Flex mt="24px">
+        <Flex>
           <Stack direction="column">
             <Text fontSize="16px" fontWeight="700">
               Tentang
@@ -147,7 +168,7 @@ const DetailInnovator: React.FC = () => {
             </Text>
           </Stack>
         </Flex>
-        <Flex mt="24px" direction="column">
+        <Flex direction="column">
           <Text fontSize="16px" fontWeight="700">
             Produk Inovasi
           </Text>
@@ -171,11 +192,108 @@ const DetailInnovator: React.FC = () => {
             </Horizontal>
           </CardContainer>
         </Flex>
-        <Flex mt="24px" direction="column">
-          <Text fontSize="16px" fontWeight="700">
+        <Flex direction="column">
+          <Text fontSize="16px" fontWeight="700" mb={3}>
             Desa Dampingan
           </Text>
+          {villages.map((village) => (
+            <Box
+              key={village.id}
+              borderWidth="1px"
+              borderRadius="lg"
+              overflow="hidden"
+              p={2}
+              mb={4}
+              cursor="pointer"
+              backgroundColor="white"
+              borderColor="gray.200"
+              onClick={() =>
+                navigate(generatePath(paths.DETAIL_VILLAGE_PAGE, { id: village.id }))
+              }
+            >
+              <Flex alignItems="center" mb={3}>
+                <Image
+                  src={village.logo}
+                  alt={`${village.namaDesa} Logo`}
+                  boxSize="40px"
+                  borderRadius="full"
+                  mr={4}
+                />
+                <Text fontSize="12px" fontWeight="600">{village.namaDesa}</Text>
+                <ChevronRightIcon color="gray.500" ml="auto"/>
+              </Flex>
+              {/* Menambahkan Border Pembatas Di Atas "Inovasi Diterapkan" */}
+              <Box borderTop="1px" borderColor="gray.300" pt={3} mt={3}></Box>
+              <Text fontSize="12px" fontWeight="400" mb={2} color="#9CA3AF">
+                Inovasi diterapkan
+              </Text>
+              <Flex direction="row" gap={2} flexWrap="wrap">
+                {Array.isArray(village.inovasiDiterapkan) &&
+                  village.inovasiDiterapkan.map((inovasi, index) => (
+                    <Box
+                      key={index}
+                      px={1}
+                      py={1}
+                      backgroundColor="gray.100"
+                      borderRadius="full"
+                      fontSize="12px"
+                    >
+                      {inovasi}
+                    </Box>
+                  ))}
+              </Flex>
+            </Box>
+          ))}
         </Flex>
+        <Button mt={-3} size="m" fullWidth type="submit" onClick={onOpen}>
+          Kontak Innovator
+        </Button>
+
+        <Drawer isOpen={isOpen}
+          placement="bottom"
+          onClose={onClose}
+          size="xs" // Atur ukuran Drawer agar tidak mempengaruhi layout keseluruhan
+          lockFocusAcrossFrames={false} // Mencegah perubahan fokus yang mempengaruhi layout
+          useInert={false} // Menghindari perubahan elemen di luar Drawer
+        >
+          <DrawerOverlay />
+          <DrawerContent
+            position="fixed"
+            borderTopRadius="xl"  // Membuat bagian atas Drawer menjadi bulat
+            p={6}                  // Memberikan padding pada DrawerContent
+            maxWidth="400px"       // Mengatur lebar maksimal Drawer agar terlihat seperti pada layout mobil
+            boxShadow="xl"
+            >
+            <DrawerHeader textAlign="center">Kontak Innovator</DrawerHeader>
+            <DrawerBody>
+              <Text mb={4} textAlign="center">
+                Terapkan produk inovasi desa digital dengan cara menghubungi innovator melalui saluran di bawah ini:
+              </Text>
+              <Stack spacing={4}>
+                <Flex alignItems="center" p={3} borderWidth="1px" borderRadius="md" cursor="pointer">
+                  <Icon as={FaWhatsapp} boxSize={6} color="green.500" mr={4} />
+                  <Text flex="1">WhatsApp</Text>
+                  <ChevronRightIcon />
+                </Flex>
+                <Flex alignItems="center" p={3} borderWidth="1px" borderRadius="md" cursor="pointer">
+                  <Icon as={FaInstagram} boxSize={6} color="green.500" mr={4} />
+                  <Text flex="1">Instagram</Text>
+                  <ChevronRightIcon />
+                </Flex>
+                <Flex alignItems="center" p={3} borderWidth="1px" borderRadius="md" cursor="pointer">
+                  <Icon as={FaGlobe} boxSize={6} color="blue.500" mr={4} />
+                  <Text flex="1">Website</Text>
+                  <ChevronRightIcon />
+                </Flex>
+              </Stack>
+            </DrawerBody>
+            <DrawerFooter justifyContent="center">
+              <ChakraButton variant="outline" mr={3} onClick={onClose}>
+                Tutup
+              </ChakraButton>
+            </DrawerFooter>
+          </DrawerContent>
+        </Drawer>
       </ContentContainer>
     </Container>
   );
