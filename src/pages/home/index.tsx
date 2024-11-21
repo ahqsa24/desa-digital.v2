@@ -98,7 +98,7 @@ function Home() {
       toast({
         title: "Lengkapi Profil terlebih dahulu",
         status: "error",
-        duration: 2500,
+        duration: 1000,
         isClosable: false,
         position: "top",
       })
