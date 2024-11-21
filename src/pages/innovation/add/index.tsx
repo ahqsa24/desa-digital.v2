@@ -94,16 +94,13 @@ const AddInnovation: React.FC = () => {
   const [category, setCategory] = useState("");
   const [requirements, setRequirements] = useState<string[]>([]);
   const [newRequirement, setNewRequirement] = useState("");
-  const [benefit, setBenefit] = useState<string[]>([]);
   const [newBenefit, setNewBenefit] = useState("");
-  const [benefitDescription, setBenefitDescription] = useState<string[]>([]);
-  const [newBenefitDescription, setNewBenefitDescription] = useState("");
   const [selectedModels, setSelectedModels] = useState([]);
   const [otherBusinessModel, setOtherBusinessModel] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedTargetUser, setSelectedTargetUser] = useState<OptionType | null>(null);
   const [customTargetUser, setCustomTargetUser] = useState<string>("");
-
+  const [benefit, setBenefit] = useState([{ benefit: "", description: "" }]);
 
   const toast = useToast();
   const onSelectImage = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -189,16 +186,10 @@ const AddInnovation: React.FC = () => {
   };
 
   const onAddRequirement = () => {
-    if (newRequirement.trim() !== "") {
+    const wordCount = newRequirement.split(/\s+/).filter((word) => word !== "").length;
+    if (newRequirement.trim() !== "" && wordCount <= 3) {
       setRequirements((prev) => [...prev, newRequirement]);
       setNewRequirement("");
-    }
-  };
-
-  const onAddBenefit = () => {
-    if (newBenefit.trim() !== "") {
-      setBenefit((prev) => [...prev, newBenefit]);
-      setNewBenefit("");
     }
   };
 
@@ -687,7 +678,7 @@ const AddInnovation: React.FC = () => {
               Foto inovasi <span style={{ color: "red" }}>*</span>
             </Text>
               <Flex direction="column" alignItems="flex-start" >
-                <Text fontWeight="400" fontStyle= "normal" fontSize="10px" color="#9CA3AF" mb="-3">
+                <Text fontWeight="400" fontStyle= "normal" fontSize="10px" color="#9CA3AF" mb="0">
                   Maks 5 foto, format: png, jpg.
                 </Text>
               <ImageUpload 
@@ -698,152 +689,200 @@ const AddInnovation: React.FC = () => {
               />
               </Flex>
 
-            <Text fontWeight="700" fontSize="16px" mb="-2">
-              Manfaat Inovasi{" "} <span style={{ color: "red", fontSize: "14px", fontWeight: "400" }}>*</span>
-            </Text>
-            {benefit.map((benefit, index) => (
-              <Flex
-                key={index}
-                justifyContent="space-between"
-                alignItems="center"
-              >
-                <Text fontWeight="400" fontSize="14px">
-                  {benefit}
-                </Text>
-                <Button
-                  bg="red.500"
-                  _hover={{ bg: "red.600" }}
-                  width="32px"
-                  height="32px"
-                  variant="solid"
-                  size="md"
-                  onClick={() => {
-                    setBenefit(benefit.filter((_: any, i: number) => i !== index));
-                  }}
-                >
-                  <DeleteIcon />
-                </Button>
-              </Flex>
-            ))}
-            <Text fontWeight="400" fontStyle= "normal" fontSize="10px" color="#9CA3AF" >
-              Contoh: Pencatatan data otomatis
-            </Text>
-            <Text fontWeight="400" fontSize="14px" mb="-2">
-              Manfaat 1<span style={{ color: "red" }}>*</span>
-            </Text>
-            <Input
-              name="benefit"
-              fontSize="14px"
-              placeholder="Masukkan manfaat singkat inovasi"
-              _placeholder={{ color: "#9CA3AF" }}
-              _focus={{
-                outline: "none",
-                bg: "white",
-                border: "none",
-              }}
-              value={newBenefit}
-              onChange={(e) => setNewBenefit(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  onAddBenefit();
-                }
-              }}
-            />
+              <Text fontWeight="700" fontSize="16px" mb="-2" mt="2">
+                Manfaat Inovasi{" "} 
+                <span style={{ color: "red", fontSize: "14px", fontWeight: "400" }}>*</span>
+              </Text>
 
-            <Text fontWeight="400" fontSize="14px" mb="-2">
-              Deskripsi Manfaat<span style={{ color: "red" }}>*</span>
-            </Text>
-            <Input
-              name="benefitDescription"
-              fontSize="14px"
-              placeholder="Masukkan deskripsi manfaat"
-              _placeholder={{ color: "#9CA3AF" }}
-              _focus={{
-                outline: "none",
-                bg: "white",
-                border: "none",
-              }}
-              value={newBenefitDescription}
-              onChange={(e) => setNewBenefitDescription(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  onAddBenefit();
-                }
-              }}
-            />
-            <Button
-              variant="outline"
-              onClick={onAddBenefit}
-              _hover={{ bg: "none" }}
-              leftIcon={<AddIcon />}
-            >
-              Tambah Manfaat lain
-            </Button>
+              {/* Map untuk manfaat */}
+              {benefit.map((item, index) => (
+                <Flex key={index} direction="column" mb={2}>
+                  <Text fontWeight="400" fontSize="14px">
+                    Manfaat {index + 1} <span style={{ color: "red" }}>*</span>
+                  </Text>
+                  <Flex alignItems="center" position="relative" gap={2} mt={1}>
+                    <Input
+                      fontSize="14px"
+                      placeholder="Masukkan manfaat singkat inovasi"
+                      _placeholder={{ color: "#9CA3AF" }}
+                      _focus={{ outline: "none", bg: "white", border: "none" }}
+                      value={item.benefit}
+                      onChange={(e) => {
+                        const wordCount = e.target.value.split(/\s+/).filter((word) => word !== "").length;
+                        if (wordCount <= 5) { 
+                          const updatedBenefits = [...benefit];
+                          updatedBenefits[index].benefit = e.target.value;
+                          setBenefit(updatedBenefits);
+                        }
+                      }}
+                    />
+                    {benefit.length > 1 && (
+                      <DeleteIcon
+                        cursor="pointer"
+                        color="red.500"
+                        onClick={() => {
+                          setBenefit((prev) => prev.filter((_, i) => i !== index));
+                        }}
+                      />
+                    )}
+                  </Flex>
+                  <Text
+                    position="relative"
+                    fontSize="10px"
+                    color="#9CA3AF"
+                    mt="2px"
+                  >
+                    {item.benefit.split(/\s+/).filter((word) => word !== "").length}/5 kata
+                  </Text>
 
-            <Text fontWeight="700" fontSize="16px" mb="-2">
-              Persiapan Infrastuktur{" "}
-              <span
-                style={{ color: "red", fontSize: "14px", fontWeight: "400" }}
+                  <Text fontWeight="400" fontSize="14px" mt={2}>
+                    Deskripsi Manfaat <span style={{ color: "red" }}>*</span>
+                  </Text>
+                  <Flex direction="column" position="relative" mt={1}>
+                    <Textarea
+                      fontSize="14px"
+                      placeholder="Masukkan deskripsi manfaat"
+                      _placeholder={{ color: "#9CA3AF" }}
+                      _focus={{ outline: "none", bg: "white", border: "none" }}
+                      value={item.description}
+                      onChange={(e) => {
+                        const wordCount = e.target.value.split(/\s+/).filter((word) => word !== "").length;
+                        if (wordCount <= 10) { // Batas 10 kata
+                          const updatedBenefits = [...benefit];
+                          updatedBenefits[index].description = e.target.value;
+                          setBenefit(updatedBenefits);
+                        }
+                      }}
+                    />
+                    <Text
+                      position="relative"
+                      fontSize="10px"
+                      color="#9CA3AF"
+                      mt="2px"
+                    >
+                      {item.description.split(/\s+/).filter((word) => word !== "").length}/10 kata
+                    </Text>
+                  </Flex>
+                </Flex>
+              ))}
+
+              {/* Tombol tambah manfaat */}
+              <Button
+                mt={-3}
+                variant="outline"
+                leftIcon={<AddIcon />}
+                onClick={() => {
+                  // Validasi input terakhir sebelum menambahkan manfaat baru
+                  const lastBenefit = benefit[benefit.length - 1];
+                  if (!lastBenefit?.benefit || !lastBenefit?.description) {
+                    alert("Silakan isi manfaat dan deskripsi sebelum menambahkan manfaat baru.");
+                    return;
+                  }
+                  // Tambahkan manfaat baru
+                  setBenefit([...benefit, { benefit: "", description: "" }]);
+                }}
+                _hover={{ bg: "none" }}
               >
-                *
-              </span>
-            </Text>
-            {requirements.map((requirement, index) => (
-              <Flex
-                key={index}
-                justifyContent="space-between"
-                alignItems="center"
-              >
-                <Text fontWeight="400" fontSize="14px">
-                  {requirement}
+                Tambah Manfaat Lain
+              </Button>
+
+              <Text fontWeight="700" fontSize="16px" mb="-2" mt="2">
+                Persiapan Infrastruktur{" "}
+                <span style={{ color: "red", fontSize: "14px", fontWeight: "400" }}>*</span>
+              </Text>
+
+              <Flex direction="column" mt={0}>
+                {/* Map untuk persiapan infrastruktur */}
+                {requirements.map((requirement, index) => (
+                  <Flex key={index} direction="column" mb={3}>
+                    {/* Input untuk persiapan infrastruktur */}
+                    <Flex alignItems="center" position="relative" gap={2}>
+                      <Input
+                        fontSize="14px"
+                        placeholder={index === 0 ? "Masukkan persiapan infrastruktur" : ""}
+                        _placeholder={{ color: "#9CA3AF" }}
+                        _focus={{ outline: "none", bg: "white", border: "none" }}
+                        value={requirement}
+                        onChange={(e) => {
+                          const wordCount = e.target.value.split(/\s+/).filter((word) => word !== "").length;
+                          if (wordCount <= 3) { // Batas maksimal 3 kata
+                            const updatedRequirements = [...requirements];
+                            updatedRequirements[index] = e.target.value;
+                            setRequirements(updatedRequirements);
+                          }
+                        }}
+                      />
+                      {/* Ikon hapus hanya muncul jika ada lebih dari satu kolom */}
+                      {requirements.length > 1 && (
+                        <DeleteIcon
+                          cursor="pointer"
+                          color="red.500"
+                          onClick={() => {
+                            setRequirements((prev) => prev.filter((_, i) => i !== index));
+                          }}
+                        />
+                      )}
+                    </Flex>
+                    {/* Keterangan jumlah kata */}
+                    <Text
+                      position="relative"
+                      fontSize="10px"
+                      color="gray.500"
+                      mt="2px"
+                    >
+                      {requirement.split(/\s+/).filter((word) => word !== "").length}/3 kata
+                    </Text>
+                  </Flex>
+                ))}
+
+                {/* Contoh */}
+                <Text fontWeight="400" fontStyle="normal" fontSize="10px" color="#9CA3AF">
+                  Contoh: Mempunyai listrik
                 </Text>
-                <Button
-                  bg="red.500"
-                  _hover={{ bg: "red.600" }}
-                  width="32px"
-                  height="32px"
-                  variant="solid"
-                  size="md"
-                  onClick={() => {
-                    setRequirements(requirements.filter((_, i) => i !== index));
-                  }}
-                >
-                  <DeleteIcon />
-                </Button>
+
+                {/* Input untuk menambahkan persiapan infrastruktur baru */}
+                <Flex direction="column" mt={2}>
+                  <Input
+                    name="newRequirement"
+                    fontSize="14px"
+                    placeholder="Masukkan persiapan infrastruktur"
+                    _placeholder={{ color: "#9CA3AF" }}
+                    _focus={{ outline: "none", bg: "white", border: "none" }}
+                    value={newRequirement}
+                    onChange={(e) => {
+                      const wordCount = e.target.value.split(/\s+/).filter((word) => word !== "").length;
+                      if (wordCount <= 3) { // Batas maksimal 3 kata
+                        setNewRequirement(e.target.value);
+                      }
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        onAddRequirement();
+                      }
+                    }}
+                  />
+                  {/* Keterangan jumlah kata untuk input baru */}
+                  <Text
+                    position="relative"
+                    fontSize="10px"
+                    color="gray.500"
+                    mt="2px"
+                  >
+                    {newRequirement.split(/\s+/).filter((word) => word !== "").length}/3 kata
+                  </Text>
+                  <Button
+                    variant="outline"
+                    onClick={onAddRequirement}
+                    _hover={{ bg: "none" }}
+                    leftIcon={<AddIcon />}
+                    mt={2}
+                  >
+                    Tambah Infrastruktur Lain
+                  </Button>
+                </Flex>
               </Flex>
-            ))}
-            <Text fontWeight="400" fontStyle= "normal" fontSize="10px" color="#9CA3AF">
-              Contoh: Mempunyai listrik
-            </Text>
-            <Input
-              name="requirement"
-              fontSize="14px"
-              placeholder="Masukkan persyaratan"
-              _placeholder={{ color: "#9CA3AF" }}
-              _focus={{
-                outline: "none",
-                bg: "white",
-                border: "none",
-              }}
-              value={newRequirement}
-              onChange={(e) => setNewRequirement(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  onAddRequirement();
-                }
-              }}
-            />
-            <Button
-              variant="outline"
-              onClick={onAddRequirement}
-              _hover={{ bg: "none" }}
-              leftIcon={<AddIcon />}
-            >
-              Tambah infrastruktur lain
-            </Button>
+
           </Stack>
         </Flex>
         {error && (
