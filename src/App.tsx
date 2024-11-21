@@ -20,6 +20,7 @@ import ProfileInnovator from "./pages/innovator/profile";
 import { ToastContainer } from "react-toastify";
 import InnovatorForm from "./pages/innovator/form"; 
 import EditInnovation from "./pages/innovation/edit";
+import Notification from "./pages/notification/Notification"
 import ResetPassword from "./pages/resetpassword/ResetPassword";
 import EmailReset from "./pages/emailreset/EmailReset";
 import NewPassword from "./pages/resetpassword/newpassword/NewPassword";
@@ -105,7 +106,12 @@ const routes = [
   },
   {
     path: paths.RESET_PASSWORD_PAGE,
-    element: <ResetPassword/>,
+    element: <ResetPassword />,
+    exact: true,
+  },
+  {
+    path: paths.NOTIFICATION_PAGE,
+    element: <Notification/>,
     exact: true,
   },
   {

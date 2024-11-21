@@ -34,7 +34,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
             maxWidth="178px"
             maxHeight="178px"
             borderRadius="8px"
-            mt={4}
+          
           />
           <Button
             bg="red.500"
@@ -62,7 +62,6 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
           height="128px"
           borderColor="gray.500"
           onClick={() => selectFileRef.current?.click()}
-          mt={4}
         >
           <Icon as={AddIcon} color="gray.300" fontSize="16px" />
           <Text fontSize="10pt" color="gray.500" mt={2}>
