@@ -15,55 +15,81 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { FloatingButton } from "./_homeStyle";
 import Hero from "./components/hero";
 import Innovator from "./components/innovator";
 import Menu from "./components/menu";
 import Readiness from "./components/readiness";
+import { Box, Button, Flex, IconButton, Text, Tooltip, } from '@chakra-ui/react';
+import { AddIcon } from '@chakra-ui/icons';
 
 function Home() {
   const navigate = useNavigate();
   const [userRole, setUserRole] = useState(null); // State untuk menyimpan peran pengguna
   const [isInnovator, setIsInnovator] = useState(false); // State untuk mengecek apakah pengguna ada di koleksi innovators
+  const [hasLoggedIn, setHasLoggedIn] = useState(false);
   const auth = getAuth(); // Dapatkan instance auth dari Firebase
 
   const toast = useToast();
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        // Jika pengguna berhasil login, dapatkan token otentikasi
+        // Jika pengguna berhasil login, cek apakah toast sudah ditampilkan
+        if (!localStorage.getItem("hasLoggedIn")) {
+          toast({
+            title: "Anda berhasil login!",
+            status: "success",
+            duration: 2500,
+            isClosable: true,
+            position: "top",
+            render: () => (
+              <Box
+                color="#16A34A"
+                p={2}
+                bg="#FFF"
+                borderRadius="md"
+                fontFamily="Inter"
+                fontSize="14px"
+                boxShadow="lg"
+              >
+                Anda berhasil login!
+              </Box>
+            ),
+          });
+  
+          // Tandai bahwa toast login sudah ditampilkan
+          localStorage.setItem("hasLoggedIn", "true");
+        }
+  
+        // Dapatkan token otentikasi dan lakukan query database
         user.getIdToken().then((token) => {
           const db = getFirestore();
           const colRef = collection(db, "users");
-          const q = query(colRef, where("id", "==", user.uid)); // Filter berdasarkan ID pengguna yang terautentikasi
-
-          // Periksa peran pengguna dalam database Firestore
+          const q = query(colRef, where("id", "==", user.uid));
+  
           onSnapshot(q, (snapshot) => {
             if (!snapshot.empty) {
               const userData = snapshot.docs[0].data();
-              setUserRole(userData.role); // Set peran pengguna ke state
+              setUserRole(userData.role);
             }
           });
-
-          // Periksa apakah pengguna ada di koleksi innovators
+  
           const innovatorsRef = collection(db, "innovators");
-          const qInnovators = query(innovatorsRef, where("id", "==", user.uid)); // Filter berdasarkan ID pengguna yang terautentikasi
+          const qInnovators = query(innovatorsRef, where("id", "==", user.uid));
+  
           onSnapshot(qInnovators, (snapshot) => {
-            if (!snapshot.empty) {
-              setIsInnovator(true); // Set isInnovator ke true jika pengguna ada di koleksi innovators
-            } else {
-              setIsInnovator(false); // Set isInnovator ke false jika pengguna tidak ada di koleksi innovators
-            }
+            setIsInnovator(!snapshot.empty);
           });
         });
       } else {
-        setUserRole(null); // Set state menjadi null jika pengguna tidak terautentikasi
-        setIsInnovator(false); // Set isInnovator ke false jika pengguna tidak terautentikasi
+        setUserRole(null);
+        setIsInnovator(false);
+        localStorage.removeItem("hasLoggedIn"); // Hapus status login saat logout
       }
     });
-
+  
     return () => unsubscribe();
-  }, [auth]);
+  }, [auth, toast]);
+  
 
   const handleAddInnovationClick = () => {
     if (isInnovator) {
@@ -72,8 +98,8 @@ function Home() {
       toast({
         title: "Lengkapi Profil terlebih dahulu",
         status: "error",
-        duration: 3000,
-        isClosable: true,
+        duration: 2500,
+        isClosable: false,
         position: "top",
       })
     }
@@ -85,11 +111,43 @@ function Home() {
       <Hero />
       <Menu />
       <Readiness />
-      <Innovator />
+      <Box padding='0 14px' mt={4}>
+        <Text fontSize='16px' fontWeight='700' mb={2}>
+          Innovator Unggulan
+        </Text>
+        <Innovator />
+      </Box>
       {userRole === "innovator" && (
-        <FloatingButton onClick={handleAddInnovationClick}>
-          <img src={Add} width={20} height={20} alt="add icon" />
-        </FloatingButton>
+        <Tooltip
+          label="Tambah Inovasi"
+          aria-label="Tambah Inovasi Tooltip"
+          placement="top"
+          hasArrow
+          bg="#347357"
+          color="white"
+          fontSize="12px"
+          p={1}
+          borderRadius='8'
+        >
+          <Button 
+            borderRadius='50%' 
+            width='60px' 
+            height='60px' 
+            padding='0' 
+            display='flex' 
+            alignItems='center' 
+            justifyContent='center' 
+            position='fixed' 
+            zIndex='999' 
+            bottom='68px' 
+            marginLeft='267px' 
+            marginRight='33px'
+            marginBottom='1'
+            onClick={handleAddInnovationClick}
+          >
+            <IconButton icon={<AddIcon />} aria-label="Tambah Inovasi" />
+          </Button>
+        </Tooltip>
       )}
       <ToastContainer />
     </Container>
