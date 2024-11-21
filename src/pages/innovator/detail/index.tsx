@@ -1,4 +1,4 @@
-import { Flex, Icon, Stack, Text, useDisclosure, Box, Image, Drawer, DrawerBody, DrawerFooter, DrawerHeader, DrawerOverlay, DrawerContent, Button as ChakraButton, Link } from "@chakra-ui/react";
+import { Flex, Icon, Stack, Text, useDisclosure, Box, DrawerCloseButton, Image, Drawer, DrawerBody, DrawerFooter, DrawerHeader, DrawerOverlay, DrawerContent, Button as ChakraButton, Link } from "@chakra-ui/react";
 import Button from "Components/button";
 import CardInnovation from "Components/card/innovation";
 import Container from "Components/container";
@@ -232,11 +232,12 @@ const DetailInnovator: React.FC = () => {
                   village.inovasiDiterapkan.map((inovasi, index) => (
                     <Box
                       key={index}
-                      px={1}
-                      py={1}
+                      px={0}
+                      py={0}
                       backgroundColor="gray.100"
                       borderRadius="full"
                       fontSize="12px"
+                      display="inline-flex"
                     >
                       {inovasi}
                     </Box>
@@ -248,24 +249,34 @@ const DetailInnovator: React.FC = () => {
         <Button mt={-3} size="m" fullWidth type="submit" onClick={onOpen}>
           Kontak Innovator
         </Button>
-
-        <Drawer isOpen={isOpen}
-          placement="bottom"
+      </ContentContainer>
+        <Drawer 
+          isOpen={isOpen}
+          placement='bottom'
           onClose={onClose}
-          size="xs" // Atur ukuran Drawer agar tidak mempengaruhi layout keseluruhan
-          lockFocusAcrossFrames={false} // Mencegah perubahan fokus yang mempengaruhi layout
-          useInert={false} // Menghindari perubahan elemen di luar Drawer
+          variant="purple"
         >
           <DrawerOverlay />
           <DrawerContent
-            position="fixed"
-            borderTopRadius="xl"  // Membuat bagian atas Drawer menjadi bulat
-            p={6}                  // Memberikan padding pada DrawerContent
-            maxWidth="400px"       // Mengatur lebar maksimal Drawer agar terlihat seperti pada layout mobil
-            boxShadow="xl"
+            sx={{
+              borderTopRadius: "16px", // Radius atas untuk gaya drawer seperti aplikasi mobile
+              width: "100%",           // Pastikan drawer memenuhi lebar layar
+              maxWidth: "480px",       // Batasi lebar maksimum untuk pengalaman mobile yang baik
+              margin: "0 auto",        // Pusatkan drawer pada layar
+              bg: "white",             // Warna latar belakang yang bersih
+            }}
             >
-            <DrawerHeader textAlign="center">Kontak Innovator</DrawerHeader>
-            <DrawerBody>
+            <DrawerHeader 
+              sx={{
+              display: "flex",
+              justifyContent: "center",
+              color: "#1F2937",
+              fontSize: "16px"
+              }}
+              >Kontak Innovator
+            </DrawerHeader>
+            <DrawerCloseButton mt={1} />
+            <DrawerBody padding="16px">
               <Text mb={4} textAlign="center">
                 Terapkan produk inovasi desa digital dengan cara menghubungi innovator melalui saluran di bawah ini:
               </Text>
@@ -281,20 +292,16 @@ const DetailInnovator: React.FC = () => {
                   <ChevronRightIcon />
                 </Flex>
                 <Flex alignItems="center" p={3} borderWidth="1px" borderRadius="md" cursor="pointer">
-                  <Icon as={FaGlobe} boxSize={6} color="blue.500" mr={4} />
+                  <Icon as={FaGlobe} boxSize={6} color="green.500" mr={4} />
                   <Text flex="1">Website</Text>
                   <ChevronRightIcon />
                 </Flex>
               </Stack>
             </DrawerBody>
             <DrawerFooter justifyContent="center">
-              <ChakraButton variant="outline" mr={3} onClick={onClose}>
-                Tutup
-              </ChakraButton>
             </DrawerFooter>
           </DrawerContent>
         </Drawer>
-      </ContentContainer>
     </Container>
   );
 };
