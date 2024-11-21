@@ -16,9 +16,13 @@ import DetailInnovator from "./pages/innovator/detail";
 // import ProfileInnovator from "./pages/innovator/form
 import AddInnovation from "./pages/innovation/add";
 import ProfileVillage from "./pages/village/profile";
+import ProfileInnovator from "./pages/innovator/profile";
 import { ToastContainer } from "react-toastify";
 import InnovatorForm from "./pages/innovator/form"; 
 import EditInnovation from "./pages/innovation/edit";
+import ResetPassword from "./pages/resetpassword/ResetPassword";
+import EmailReset from "./pages/emailreset/EmailReset";
+import NewPassword from "./pages/resetpassword/newpassword/NewPassword";
 
 const queryClient = new QueryClient();
 
@@ -46,6 +50,11 @@ const routes = [
   {
     path: paths.VILLAGE_PROFILE_PAGE,
     element: <ProfileVillage />,
+    exact: true,
+  },
+  {
+    path: paths.VILLAGE_PROFILE_PAGE,
+    element: <ProfileInnovator />,
     exact: true,
   },
   {
@@ -94,6 +103,21 @@ const routes = [
     element: <InnovatorForm />,
     exact: true,
   },
+  {
+    path: paths.RESET_PASSWORD_PAGE,
+    element: <ResetPassword/>,
+    exact: true,
+  },
+  {
+    path: paths.EMAIL_RESET_PASSWORD_PAGE,
+    element: <EmailReset/>,
+    exact: true,
+  },
+  {
+    path: paths.NEW_PASSWORD_PAGE,
+    element: <NewPassword/>,
+    exact: true,
+  }
 ];
 
 const App: React.FC = () => {
