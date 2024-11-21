@@ -23,14 +23,18 @@ const HeaderUpload: React.FC<HeaderUploadProps> = ({
             direction="row"
             alignItems="center"
             justifyContent="space-between"
+            height="100%"
+            width="100%"
+            
           >
             <Image
               src={selectedHeader}
-              width='272px'
-              height="86px"
+              width='360px'
+              height="100px"
               maxWidth="272px"
               maxHeight="86px"
               borderRadius="8px"
+              objectFit="cover"
 
             />
             <Button
@@ -59,7 +63,7 @@ const HeaderUpload: React.FC<HeaderUploadProps> = ({
           height="128px"
           borderColor="gray.500"
           onClick={() => selectFileRef.current?.click()}
-          
+
         >
           <Icon as={AddIcon} color="gray.300" fontSize="16px" />
           <Text fontSize="10pt" color="gray.500" mt={2}>

@@ -6,6 +6,7 @@ import Location from "Assets/icons/location.svg";
 import Whatsapp from "Assets/icons/whatsapp.svg";
 import Instagram from "Assets/icons/instagram.svg";
 import Web from "Assets/icons/web.svg";
+import Geography from "Assets/icons/geography.svg";
 import {
   Title,
   ActionContainer,
@@ -20,6 +21,16 @@ import {
   ContPotensiDesa,
   ButtonKontak
 } from "./_detailStyle";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionPanel,
+  AccordionIcon,
+  Flex,
+  UnorderedList,
+  ListItem,
+} from '@chakra-ui/react'
 import { paths } from "Consts/path";
 import { getUserById } from "Services/userServices";
 import { useQuery } from "react-query";
@@ -95,9 +106,41 @@ export default function DetailVillage() {
               <ChipContainer>
                 <Label>{benefit}</Label>
               </ChipContainer>
-
             </ContPotensiDesa>
           </div>
+          <Accordion defaultIndex={[0]} allowMultiple>
+            <AccordionItem>
+              <h2>
+                <AccordionButton>
+                  <Flex as='span' flex='1' textAlign='left' fontSize="12px" fontWeight="700" gap={2}>
+                    <Icon src={Geography} alt="geo" /> Geografis
+                  </Flex>
+                  <AccordionIcon color="#347357" />
+                </AccordionButton>
+              </h2>
+              <AccordionPanel pb={4} fontSize={12}>
+                Dataran rendah seluas 4,50 Km
+              </AccordionPanel>
+            </AccordionItem>
+
+            <AccordionItem>
+              <h2>
+                <AccordionButton>
+                  <Box as='span' flex='1' textAlign='left'>
+                    Section 2 title
+                  </Box>
+                  <AccordionIcon />
+                </AccordionButton>
+              </h2>
+              <AccordionPanel pb={4}>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+                tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+                veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+                commodo consequat.
+              </AccordionPanel>
+            </AccordionItem>
+          </Accordion>
+
           <Button size="m" fullWidth mb={70} type="submit" onClick={onOpen}>
             Kontak Desa
           </Button>{" "}
@@ -131,15 +174,15 @@ export default function DetailVillage() {
           <DrawerBody fontSize={12} color="#374151" paddingX={4} gap={4}>
             Terapkan produk inovasi desa digital dengan cara menghubungi inovator melalui saluran di bawah ini:
             <ButtonKontak onClick={onClickHere}>
-            <Icon src={Whatsapp} alt="WA" />
+              <Icon src={Whatsapp} alt="WA" />
               WhatsApp
             </ButtonKontak>
             <ButtonKontak>
-            <Icon src={Instagram} alt="IG" />
+              <Icon src={Instagram} alt="IG" />
               Instagram
             </ButtonKontak>
             <ButtonKontak>
-            <Icon src={Web} alt="WA" />
+              <Icon src={Web} alt="WA" />
               Website
             </ButtonKontak>
 

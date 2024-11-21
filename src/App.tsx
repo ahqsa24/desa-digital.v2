@@ -24,6 +24,7 @@ import VerificationPage from "./pages/admin/verification/VerificationPage";
 import MakeAds from "./pages/admin/ads/make/MakeAds";
 import ResetPassword from "./pages/reset_password/ResetPassword";
 import Notification from "./pages/notification/Notification"
+import ProfileVillageFill from "./pages/village/profile_fill"
 const queryClient = new QueryClient();
 
 const routes = [
@@ -121,6 +122,11 @@ const routes = [
   {
     path: paths.NOTIFICATION_PAGE,
     element: <Notification title={""} description={""}/>,
+    exact: true,
+  },
+  {
+    path: paths.VILLAGE_PROFILE_FILL_PAGE, 
+    element: <ProfileVillageFill />,
     exact: true,
   }
 ];

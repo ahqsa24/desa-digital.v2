@@ -20,5 +20,6 @@ export const paths = {
   VERIFICATION_PAGE:"/admin/verification/:category",
   MAKE_ADS: "/admin/ads/make",
   RESET_PASSWORD_PAGE : "/resetpswd",
-  NOTIFICATION_PAGE : "/notification"
+  NOTIFICATION_PAGE : "/notification",
+  VILLAGE_PROFILE_FILL_PAGE : "/village/profile_fill",
 };

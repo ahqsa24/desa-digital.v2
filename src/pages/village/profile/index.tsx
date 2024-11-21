@@ -17,6 +17,7 @@ import HeaderUpload from "../../../components/form/HeaderUpload";
 import LogoUpload from "../../../components/form/LogoUpload";
 import ImageUpload from "../../../components/form/ImageUpload";
 import { auth, firestore, storage } from "../../../firebase/clientApp";
+import Dropdown from "../components/Filter";
 
 import {
   getProvinces,
@@ -92,8 +93,8 @@ const AddVillage: React.FC = () => {
 
   const handleFetchProvinces = async () => {
     try {
-      const provincesData = await getProvinces();
-      setProvinces(provincesData);
+      const provincesData: Location[] = await getProvinces();
+      setProvinces(provincesData); // Simpan data apa adanya
     } catch (error) {
       console.error("Error fetching provinces:", error);
     }
@@ -130,9 +131,7 @@ const AddVillage: React.FC = () => {
     handleFetchProvinces();
   }, []);
 
-  const handleProvinceChange = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
+  const handleProvinceChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const provinceId = event.target.value;
     const provinceName = event.target.options[event.target.selectedIndex].text;
     setSelectedProvince(provinceName);
@@ -336,6 +335,7 @@ const AddVillage: React.FC = () => {
     }
   };
 
+  //TODO yang gue tambahin itu <dropdown> cuma ya gitu belum work dengan benar. perlu dibenerin adi. tolong sekalian sesuain untuk kab kota, dll
   return (
     <Container page px={16}>
       <TopBar title="Registrasi Profil Desa" onBack={() => navigate(-1)} />
@@ -364,11 +364,15 @@ const AddVillage: React.FC = () => {
                 onChange={onTextChange}
               />
             </Box>
-
             <Box>
               <Text fontWeight="400" fontSize="14px" mb="4px">
                 Provinsi <span style={{ color: "red" }}>*</span>
               </Text>
+              <Dropdown
+                placeholder="Pilih Provinsi"
+                options={provinces} // Data provinsi yang sudah diformat
+                onChange={handleProvinceChange}>
+              </Dropdown>
               <Select
                 placeholder="Pilih Provinsi"
                 fontSize="10pt"
@@ -382,7 +386,7 @@ const AddVillage: React.FC = () => {
                   borderColor: "black",
                 }}
                 onChange={handleProvinceChange}
-              >
+                >
                 {provinces.map((item) => (
                   <option
                     key={item.id}
@@ -393,6 +397,8 @@ const AddVillage: React.FC = () => {
                   </option>
                 ))}
               </Select>
+             
+            
             </Box>
 
             <Box>
@@ -511,7 +517,7 @@ const AddVillage: React.FC = () => {
                 Foto Inovasi di Desa
               </Text>
               <Text fontWeight="400" fontSize="10px" mb="6px" color="#9CA3AF">
-                Maks 1 foto. format: png, jpg.
+                Maks 5 foto. format: png, jpg.
               </Text>
               <ImageUpload
                 selectedFiles={selectedFiles}
@@ -642,93 +648,93 @@ const AddVillage: React.FC = () => {
             </Box>
 
             <Box>
-            <Text fontWeight="400" fontSize="14px">
-              Kemampuan Penggunaan Teknologi <span style={{ color: "red" }}>*</span>
-            </Text>
-            <Input
-              name="literasi"
-              fontSize="10pt"
-              placeholder="Deskripsi kemampuan digital desa"
-              _placeholder={{ color: "gray.500" }}
-              _focus={{
-                outline: "none",
-                bg: "white",
-                border: "1px solid",
-                borderColor: "black",
-              }}
-              value={textInputValue.literasi}
-              onChange={onTextChange}
-            />
-            <Text fontWeight="400" fontSize="10px" mb="6px" color="#9CA3AF">
+              <Text fontWeight="400" fontSize="14px">
+                Kemampuan Penggunaan Teknologi <span style={{ color: "red" }}>*</span>
+              </Text>
+              <Input
+                name="literasi"
+                fontSize="10pt"
+                placeholder="Deskripsi kemampuan digital desa"
+                _placeholder={{ color: "gray.500" }}
+                _focus={{
+                  outline: "none",
+                  bg: "white",
+                  border: "1px solid",
+                  borderColor: "black",
+                }}
+                value={textInputValue.literasi}
+                onChange={onTextChange}
+              />
+              <Text fontWeight="400" fontSize="10px" mb="6px" color="#9CA3AF">
                 0/30 kata
               </Text>
             </Box>
 
             <Box>
-            <Text fontWeight="400" fontSize="14px">
-              Pemantapan Pelayanan <span style={{ color: "red" }}>*</span>
-            </Text>
-            <Input
-              name="pemantapan"
-              fontSize="10pt"
-              placeholder="Deskripsi pemantapan pelayanan desa"
-              _placeholder={{ color: "gray.500" }}
-              _focus={{
-                outline: "none",
-                bg: "white",
-                border: "1px solid",
-                borderColor: "black",
-              }}
-              value={textInputValue.pemantapan}
-              onChange={onTextChange}
-            />
-            <Text fontWeight="400" fontSize="10px" mb="6px" color="#9CA3AF">
+              <Text fontWeight="400" fontSize="14px">
+                Pemantapan Pelayanan <span style={{ color: "red" }}>*</span>
+              </Text>
+              <Input
+                name="pemantapan"
+                fontSize="10pt"
+                placeholder="Deskripsi pemantapan pelayanan desa"
+                _placeholder={{ color: "gray.500" }}
+                _focus={{
+                  outline: "none",
+                  bg: "white",
+                  border: "1px solid",
+                  borderColor: "black",
+                }}
+                value={textInputValue.pemantapan}
+                onChange={onTextChange}
+              />
+              <Text fontWeight="400" fontSize="10px" mb="6px" color="#9CA3AF">
                 0/30 kata
               </Text>
             </Box>
 
             <Box>
-            <Text fontWeight="400" fontSize="14px">
-              Sosial dan Budaya <span style={{ color: "red" }}>*</span>
-            </Text>
-            <Input
-              name="sosial"
-              fontSize="10pt"
-              placeholder="Deskripsi sosial dan budaya desa"
-              _placeholder={{ color: "gray.500" }}
-              _focus={{
-                outline: "none",
-                bg: "white",
-                border: "1px solid",
-                borderColor: "black",
-              }}
-              value={textInputValue.sosial}
-              onChange={onTextChange}
-            />
-            <Text fontWeight="400" fontSize="10px" mb="6px" color="#9CA3AF">
+              <Text fontWeight="400" fontSize="14px">
+                Sosial dan Budaya <span style={{ color: "red" }}>*</span>
+              </Text>
+              <Input
+                name="sosial"
+                fontSize="10pt"
+                placeholder="Deskripsi sosial dan budaya desa"
+                _placeholder={{ color: "gray.500" }}
+                _focus={{
+                  outline: "none",
+                  bg: "white",
+                  border: "1px solid",
+                  borderColor: "black",
+                }}
+                value={textInputValue.sosial}
+                onChange={onTextChange}
+              />
+              <Text fontWeight="400" fontSize="10px" mb="6px" color="#9CA3AF">
                 0/30 kata
               </Text>
             </Box>
 
             <Box>
-            <Text fontWeight="400" fontSize="14px">
-              Sumber Daya Alam <span style={{ color: "red" }}>*</span>
-            </Text>
-            <Input
-              name="resource"
-              fontSize="10pt"
-              placeholder="Deskripsi sumber daya alam desa"
-              _placeholder={{ color: "gray.500" }}
-              _focus={{
-                outline: "none",
-                bg: "white",
-                border: "1px solid",
-                borderColor: "black",
-              }}
-              value={textInputValue.resource}
-              onChange={onTextChange}
-            />
-            <Text fontWeight="400" fontSize="10px" mb="6px" color="#9CA3AF">
+              <Text fontWeight="400" fontSize="14px">
+                Sumber Daya Alam <span style={{ color: "red" }}>*</span>
+              </Text>
+              <Input
+                name="resource"
+                fontSize="10pt"
+                placeholder="Deskripsi sumber daya alam desa"
+                _placeholder={{ color: "gray.500" }}
+                _focus={{
+                  outline: "none",
+                  bg: "white",
+                  border: "1px solid",
+                  borderColor: "black",
+                }}
+                value={textInputValue.resource}
+                onChange={onTextChange}
+              />
+              <Text fontWeight="400" fontSize="10px" mb="6px" color="#9CA3AF">
                 0/30 kata
               </Text>
             </Box>
