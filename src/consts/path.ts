@@ -17,5 +17,6 @@ export const paths = {
   EDIT_INNOVATION_PAGE: "/innovation/edit/:id",
   INNOVATOR_FORM : "/innovator/form",
   RESET_PASSWORD_PAGE : "/resetpswd",
-  NOTIFICATION_PAGE : "/notification"
+  NOTIFICATION_PAGE : "/notification",
+  VILLAGE_PROFILE_FILL_PAGE : "/village/profile_fill",
 };

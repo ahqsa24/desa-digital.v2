@@ -1,6 +1,8 @@
 import Hero from "./components/hero";
 import { useQuery } from "react-query";
 import { getUsers } from "Services/userServices";
+import React, { useEffect, useState } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
 import { useNavigate, generatePath } from "react-router-dom";
 import { GridContainer, 
           CardContent, 
@@ -10,38 +12,69 @@ import { GridContainer,
           Column1, 
           Column2} from "./_villageStyle";
 import CardVillage from "Components/card/village";
+import { auth } from "../../firebase/clientApp";
 import { paths } from "Consts/path";
 import {
-  Box,
-  Select, 
+  Box
 } from "@chakra-ui/react";
 import SearchBarVil from "./components/SearchBarVil";
 import Dropdown from "./components/Filter";
 
+import { getProvinces, getRegencies } from "../../services/locationServices";
 
+interface Location {
+  id: string;
+  name: string;
+}
 
-function Village() {
+const Village: React.FC = () => {
   const navigate = useNavigate();
+  const [user] = useAuthState(auth);
+
+  //TODO nah ini selected province blm kepake. kayanya harus kepake
+  const [provinces, setProvinces] = useState<Location[]>([]);
+  const [regencies, setRegencies] = useState<Location[]>([]);
+  const [selectedProvince, setSelectedProvince] = useState<string>("");
+  const [selectedRegency, setSelectedRegency] = useState<string>("");
+  
+  const handleFetchProvinces = async () => {
+    try {
+      const provincesData: Location[] = await getProvinces();
+      setProvinces(provincesData); // Simpan data apa adanya
+    } catch (error) {
+      console.error("Error fetching provinces:", error);
+    }
+  };
+
+  const handleFetchRegencies = async (provinceId: string) => {
+    try {
+      const regenciesData = await getRegencies(provinceId);
+      setRegencies(regenciesData);
+    } catch (error) {
+      console.error("Error fetching regencies:", error);
+    }
+  };
+  useEffect(() => {
+    handleFetchProvinces();
+  }, []);
+
+  const handleProvinceChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const provinceId = event.target.value;
+    const provinceName = event.target.options[event.target.selectedIndex].text;
+    setSelectedProvince(provinceName);
+    handleFetchRegencies(provinceId);
+    setRegencies([]);
+  };
+
+  const handleRegencyChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const regencyName = event.target.options[event.target.selectedIndex].text;
+    setSelectedRegency(regencyName);
+  };
+
   const { data: users, isFetched } = useQuery<any>("villages", getUsers);
   const villages = users?.filter((item: any) => item.role === "village");
-  const kabKotaOptions = [
-    { label: 'Semua Kab/Kota', value: 'all' },
-    { label: 'Kab Bogor', value: 'Kab bogor' },
-    { label: 'Kota Bogor', value: 'Kota bogor' },
-    { label: 'Kab Kuningan', value: 'Kab kuningan' },
-    { label: 'Kab Bandung', value: 'Kab bandung' },
-  ];
-  
-  const provinsiOptions = [
-    { label: 'Semua Provinsi', value: 'all' },
-    { label: 'Jawa Barat', value: 'jabar' },
-    { label: 'Jawa Timur', value: 'jatim' },
-    { label: 'Jawa Tengah', value: 'jateng' },
-    { label: 'Sumatera Barat', value: 'sumbar' },
-    { label: 'Sumatera Utara', value: 'sumut' },
-    { label: 'Sumatera Selatan', value: 'sumsel' },
-  ];
-
+ 
+  //TODO: onchange dropdown juga perlu diperbaiki
   return (
   <Box>
     <Hero />
@@ -52,18 +85,27 @@ function Village() {
               <Text>
                 Pilih Provinsi
               </Text>
-              <Dropdown placeholder="Pilih Provinsi" options={provinsiOptions}/> 
+              <Dropdown
+                placeholder="Pilih Provinsi"
+                options={provinces} // Data provinsi yang sudah diformat
+                onChange={handleProvinceChange}> 
+              </Dropdown> 
             </Column2>
             <Column2>
               <Text>
                 Pilih Kab/Kota
               </Text>
-              <Dropdown placeholder="Pilih Kab/Kota" options={kabKotaOptions}/>  
+              <Dropdown
+                placeholder="Pilih Kab/Kota"
+                options={regencies} // Data provinsi yang sudah diformat
+                onChange={handleRegencyChange}
+              >   
+              </Dropdown> 
             </Column2>
           </Column1>
-          <Column2> 
+          <Column1> 
                 <SearchBarVil/>
-          </Column2>
+          </Column1>
         </CardContent>
         <Text> Menampilkan 8 desa untuk <Texthighlight>"Semua Provinsi"</Texthighlight> </Text>
         <GridContainer>
@@ -109,6 +151,6 @@ function Village() {
     </Box>
     
   );
-}
+};
 
 export default Village;
