@@ -21,7 +21,8 @@ import InnovatorForm from "./pages/innovator/form";
 import EditInnovation from "./pages/innovation/edit";
 import AdminPage from "./pages/admin/AdminPage";
 import VerificationPage from "./pages/admin/verification/VerificationPage";
-import MakeAds from "./pages/admin/ads/make/MakeAds";import ResetPassword from "./pages/reset_password/ResetPassword";
+import MakeAds from "./pages/admin/ads/make/MakeAds";
+import ResetPassword from "./pages/reset_password/ResetPassword";
 import Notification from "./pages/notification/Notification"
 const queryClient = new QueryClient();
 
@@ -111,7 +112,7 @@ const routes = [
     path: paths.MAKE_ADS,
     element: <MakeAds />,
     exact: true,
-  }
+  },
   {
     path: paths.RESET_PASSWORD_PAGE,
     element: <ResetPassword />,
@@ -119,7 +120,7 @@ const routes = [
   },
   {
     path: paths.NOTIFICATION_PAGE,
-    element: <Notification/>,
+    element: <Notification title={""} description={""}/>,
     exact: true,
   }
 ];

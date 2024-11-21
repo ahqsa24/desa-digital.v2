@@ -15,9 +15,8 @@ import { paths } from "Consts/path";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-type AdsPageProps = {};
 
-const AdsPage: React.FC<AdsPageProps> = () => {
+const AdsPage: React.FC = () => {
   const navigate = useNavigate();
   return (
     <Container>
