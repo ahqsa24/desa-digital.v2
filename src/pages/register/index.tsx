@@ -48,7 +48,7 @@ const Register: React.FC = () => {
     if (regisForm.password.length < 6)
       return setError("Kata sandi minimal 6 karakter");
     if (regisForm.password !== confirmPassword)
-      return setError("Kata sandi dan konfirmasi kata sandi tidak cocok"); // Cek kesesuaian kata sandi
+      return setError("konfirmasi kata sandi tidak cocok"); // Cek kesesuaian kata sandi
     createUserWithEmailAndPassword(regisForm.email, regisForm.password);
   };
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -168,7 +168,7 @@ const Register: React.FC = () => {
           </CheckboxContainer>
 
           {(error || userError) && (
-            <Text textAlign="center" color="red" fontSize="10pt" mt={1} >
+            <Text textAlign="center" color="red" fontSize="10pt" mt={2} >
               {error ||
                 FIREBASE_ERRORS[
                   userError?.message as keyof typeof FIREBASE_ERRORS
@@ -177,7 +177,7 @@ const Register: React.FC = () => {
           )}
 
           <Button
-            mt={2}
+            mt={4}
             type="submit"
             alignItems="center"
             width="100%"

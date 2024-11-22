@@ -22,8 +22,6 @@ function Innovator() {
   }, [firestore]);
 
   return (
-    <Container>
-      <Title>Inovator Unggulan</Title>
       <CardContainer>
         <Horizontal>
           {innovators.map((item, idx) => (
@@ -45,7 +43,6 @@ function Innovator() {
           ))}
         </Horizontal>
       </CardContainer>
-    </Container>
   );
 }
 

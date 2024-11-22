@@ -62,7 +62,7 @@ const Login: React.FC = () => {
     <Background>
       <Container>
         <Title>Halo!</Title>
-        <Description>Silakan masukkan akun</Description>
+        <Description>Silahkan masukkan akun</Description>
 
         <form onSubmit={onSubmit}>
           <Text fontSize="10pt" mt="12px">
@@ -96,7 +96,7 @@ const Login: React.FC = () => {
             </InputRightElement>
           </InputGroup>
           {(error || userError) && (
-            <Text textAlign="center" color="red" fontSize="10pt">
+            <Text textAlign="center" color="red" fontSize="10pt" mt={2}>
               {error ||
                 FIREBASE_ERRORS[
                   userError?.message as keyof typeof FIREBASE_ERRORS
@@ -105,7 +105,7 @@ const Login: React.FC = () => {
           )}
 
           <Button
-            mt={8}
+            mt={4}
             type="submit"
             alignItems="center"
             width="100%"
@@ -117,7 +117,7 @@ const Login: React.FC = () => {
 
         <ActionContainer mt={24}>
           <Label>Lupa kata sandi</Label>
-          <Action onClick={() => navigate(paths.RESET_PASSWORD_PAGE)}>
+          <Action onClick={() => navigate(paths.EMAIL_RESET_PASSWORD_PAGE)}>
             Klik disini
           </Action>
         </ActionContainer> 
