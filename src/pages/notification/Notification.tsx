@@ -11,8 +11,8 @@ import TopBar from "Components/topBar";
 import { NotifContainer, Title, Description, Content, Date } from './_notifStyle'
 
 type NotifProps = {
-    title: string;
-    description: string;
+    title?: string;
+    description?: string;
 }
 
 function Notification(props: NotifProps) {
