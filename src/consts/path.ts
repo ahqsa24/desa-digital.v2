@@ -24,6 +24,5 @@ export const paths = {
   ADMIN_PAGE: "/admin",
   VERIFICATION_PAGE:"/admin/verification/:category",
   MAKE_ADS: "/admin/ads/make",
-  NEW_PASSWORD_PAGE: "/resetpassword/newpassword", 
   KLAIM_INOVASI_PAGE: "/village/klaimInovasi",
 };
