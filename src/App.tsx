@@ -15,7 +15,7 @@ import DetailVillage from "./pages/village/detail";
 import DetailInnovator from "./pages/innovator/detail";
 // import ProfileInnovator from "./pages/innovator/form
 import AddInnovation from "./pages/innovation/add";
-import ProfileVillage from "./pages/village/profile";
+import ProfileFormRegist from "./pages/village/form";
 import ProfileInnovator from "./pages/innovator/profile";
 import { ToastContainer } from "react-toastify";
 import InnovatorForm from "./pages/innovator/form";
@@ -24,6 +24,10 @@ import Notification from "./pages/notification/Notification"
 import ResetPassword from "./pages/resetpassword/ResetPassword";
 import EmailReset from "./pages/emailreset/EmailReset";
 import NewPassword from "./pages/resetpassword/newpassword/NewPassword";
+import ProfileVillage from "./pages/village/profile";
+import KlaimInovasi from "./pages/village/klaimInovasi";
+
+
 import AdminPage from "./pages/admin/AdminPage";
 import VerificationPage from "./pages/admin/verification/VerificationPage";
 import MakeAds from "./pages/admin/ads/make/MakeAds";
@@ -51,12 +55,12 @@ const routes = [
     exact: true,
   },
   {
-    path: paths.VILLAGE_PROFILE_PAGE,
-    element: <ProfileVillage />,
+    path: paths.VILLAGE_PROFILE_REGIST_PAGE,
+    element: <ProfileFormRegist />,
     exact: true,
   },
   {
-    path: paths.VILLAGE_PROFILE_PAGE,
+    path: paths.INNOVATOR_PROFILE_PAGE,
     element: <ProfileInnovator />,
     exact: true,
   },
@@ -113,16 +117,26 @@ const routes = [
   },
   {
     path: paths.NOTIFICATION_PAGE,
-    element: <Notification/>,
+    element: <Notification />,
     exact: true,
   },
   {
+    path: paths.VILLAGE_PROFILE_PAGE,
+    element: <ProfileVillage />,
+  },
+  {
     path: paths.EMAIL_RESET_PASSWORD_PAGE,
-    element: <EmailReset/>,
+    element: <EmailReset />,
     exact: true,
   },
   {
     path: paths.NEW_PASSWORD_PAGE,
+    element: <NewPassword />,
+    exact: true,
+  },
+  {
+    path: paths.KLAIM_INOVASI_PAGE,
+    element: <KlaimInovasi />,
     element: <NewPassword/>,
     path: paths.ADMIN_PAGE,
     element: <AdminPage />,

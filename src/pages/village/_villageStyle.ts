@@ -16,7 +16,7 @@ export const Containers = styled.div`
   flex-direction: column;
   gap: 16px;
   position: relative;
-  top: -60px;
+  top: -70px;
   margin: 16px;
   width: 100%;  
   padding: 16px;
@@ -32,7 +32,7 @@ export const CardContent = styled.div`
     width: 100%;
     max-width: 328px;
     width: 100%;
-    height: 135px;
+    height: 145px;
     padding: 16px;
     Padding-top: 12px;
     flex-direction: column;
@@ -64,14 +64,15 @@ align-items: flex-start;
 gap: 6px;
 width: 100%;
 flex-direction: row;
+
 `;
 
 export const Column2 = styled.div`
-display: flex;
-padding-top: px;
+display: block;
 justify-content: center;
 align-items: flex-start;
 gap: 6x;
+max-width: 140px;
 width: 100%;
 flex-direction: column;
 `;

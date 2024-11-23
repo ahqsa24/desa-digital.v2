@@ -3,7 +3,7 @@ export const paths = {
   LOGIN_PAGE: "/login",
   REGISTER_PAGE: "/register",
   VILLAGE_PAGE: "/village",
-  VILLAGE_PROFILE_PAGE: "/village/profile",
+  VILLAGE_PROFILE_REGIST_PAGE: "/village/form",
   DETAIL_VILLAGE_PAGE: "/village/detail/:id",
   INNOVATOR_PAGE: "/innovator",
   INNOVATOR_DETAIL: "/innovator/detail",
@@ -15,7 +15,8 @@ export const paths = {
   DETAIL_INNOVATION_PAGE: "/innovation/detail/:id",
   DETAIL_INNOVATION: "/innovation/detail",
   EDIT_INNOVATION_PAGE: "/innovation/edit/:id",
-
+  INNOVATOR_FORM : "/innovator/form",
+  VILLAGE_PROFILE_PAGE : "/village/profile",
   NOTIFICATION_PAGE : "/notification",
   RESET_PASSWORD_PAGE: "/resetpassword",
   EMAIL_RESET_PASSWORD_PAGE: "/emailreset",
@@ -23,4 +24,6 @@ export const paths = {
   ADMIN_PAGE: "/admin",
   VERIFICATION_PAGE:"/admin/verification/:category",
   MAKE_ADS: "/admin/ads/make",
+  NEW_PASSWORD_PAGE: "/resetpassword/newpassword", 
+  KLAIM_INOVASI_PAGE: "/village/klaimInovasi",
 };

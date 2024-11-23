@@ -12,7 +12,7 @@ type SearchBarProps = {};
 const SearchBarVil: React.FC<SearchBarProps> = () => {
   return (
     <Flex justify="center" maxW="474px" width="100%">
-        <InputGroup>
+        <InputGroup >
           <InputLeftElement
             pointerEvents="none"
             children={<SearchIcon color="gray.300" />}
@@ -32,7 +32,7 @@ const SearchBarVil: React.FC<SearchBarProps> = () => {
               borderColor: "#9CA3AF",
             }}
             borderRadius={100}
-            maxW="329px"
+            
             width="100%"
           />
         </InputGroup>

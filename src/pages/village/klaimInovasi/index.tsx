@@ -34,7 +34,7 @@ import {
     CardContainer,
     Horizontal,
     NavbarButton,
-} from "./_profileStyle";
+} from "../profile/_profileStyle";
 import {
     Accordion,
     AccordionItem,
@@ -52,7 +52,7 @@ import { DocumentData, collection, getDocs, query, where } from "firebase/firest
 import { generatePath, useNavigate } from "react-router-dom";
 
 
-export default function DetailVillage() {
+export default function KlaimInovasi() {
     const navigate = useNavigate();
     const innovationsRef = collection(firestore, "innovations");
     const [innovations, setInnovations] = useState<DocumentData[]>([]);
@@ -91,7 +91,7 @@ export default function DetailVillage() {
 
     return (
         <Box>
-            <TopBar title="Profil Desa" onBack={() => navigate(-1)} />
+            <TopBar title="Klaim Inovasi" onBack={() => navigate(-1)} />
             <div style={{ position: "relative", width: "100%" }} >
                 <Background src={header} alt="background" />
                 <Logo mx={16} my={-40} src="logo-desaalamendah" alt="logo" />

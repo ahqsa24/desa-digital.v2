@@ -21,20 +21,27 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     setSelectedFiles(newFiles);
   };
   return (
-    <Flex direction="column" width="100%" wrap="wrap">
+    <Flex direction="row" width="130" wrap="wrap" gap= "16px">
       {selectedFiles.map((file, index) => (
         <Flex
           key={index}
           direction="row"
           alignItems="center"
-          justifyContent="space-between"
+          position="relative"
+          align-items= "center" 
+          align-content= "center"
+          maxWidth="130px"
+          maxHeight="130px"
+          height="100%"
+          width="100%"
+          overflow="hidden"
         >
           <Image
             src={file}
-            maxWidth="178px"
-            maxHeight="178px"
             borderRadius="8px"
-          
+            height="130px"
+            width="130px"
+            objectFit="cover" 
           />
           <Button
             bg="red.500"
@@ -44,12 +51,15 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
             variant="solid"
             size="md"
             onClick={() => handleDelete(index)}
+            position="absolute"
+            bottom="8px" /* Atur posisi tombol */
+            right="8px"
           >
             <DeleteIcon />
           </Button>
         </Flex>
       ))}
-      {selectedFiles.length < 3 && (
+      {selectedFiles.length < 5 && (
         <Flex
           justify="center"
           align="center"
