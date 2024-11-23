@@ -15,9 +15,12 @@ export const paths = {
   DETAIL_INNOVATION_PAGE: "/innovation/detail/:id",
   DETAIL_INNOVATION: "/innovation/detail",
   EDIT_INNOVATION_PAGE: "/innovation/edit/:id",
-  INNOVATOR_FORM : "/innovator/form",
+
   NOTIFICATION_PAGE : "/notification",
   RESET_PASSWORD_PAGE: "/resetpassword",
   EMAIL_RESET_PASSWORD_PAGE: "/emailreset",
-  NEW_PASSWORD_PAGE: "/resetpassword/newpassword" 
+  NEW_PASSWORD_PAGE: "/resetpassword/newpassword", 
+  ADMIN_PAGE: "/admin",
+  VERIFICATION_PAGE:"/admin/verification/:category",
+  MAKE_ADS: "/admin/ads/make",
 };

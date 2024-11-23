@@ -1,18 +1,18 @@
 import { SearchIcon } from "@chakra-ui/icons";
 import {
-    Flex,
-    Input,
-    InputGroup,
-    InputLeftElement
+  Flex,
+  Input,
+  InputGroup,
+  InputLeftElement
 } from "@chakra-ui/react";
 import React from "react";
 
-type SearchBarProps = {};
+type SearchBarLinkProps = {};
 
-const SearchBar: React.FC<SearchBarProps> = () => {
+const SearchBarLink: React.FC<SearchBarLinkProps> = () => {
   return (
-    <Flex justify="center" mt={2} maxW="360px">
-      <Flex>
+    <Flex justify="center" maxW="360px" mb='16px'>
+      <Flex position='absolute' top='175px'>
         <InputGroup>
           <InputLeftElement
             pointerEvents="none"
@@ -21,6 +21,7 @@ const SearchBar: React.FC<SearchBarProps> = () => {
           <Input
             placeholder="Search"
             fontSize="10pt"
+            bg="white"
             _placeholder={{ color: "gray.500" }}
             _hover={{
               bg: "white",
@@ -40,4 +41,4 @@ const SearchBar: React.FC<SearchBarProps> = () => {
     </Flex>
   );
 };
-export default SearchBar;
+export default SearchBarLink;

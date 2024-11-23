@@ -108,7 +108,7 @@ function Home() {
   return (
     <Container page>
       <TopBar />
-      <Hero />
+      <Hero description='Inovasi Digital' text='Indonesia'/>
       <Menu />
       <Readiness />
       <Box padding='0 14px' mt={4}>

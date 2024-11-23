@@ -1,4 +1,9 @@
-import Hero from "./components/hero";
+import {
+  useDisclosure
+} from "@chakra-ui/react";
+import Container from "Components/container";
+import TopBar from "Components/topBar";
+import React from "react";
 import { useQuery } from "react-query";
 import { getUsers } from "Services/userServices";
 import { useNavigate, generatePath } from "react-router-dom";
@@ -28,6 +33,7 @@ const categories = [
   "Lembaga Swadaya Masyarakat (LSM)",
   "Akademisi",
 ];
+import Hero from "./components/hero";
 
 function Innovator() {
   const navigate = useNavigate();

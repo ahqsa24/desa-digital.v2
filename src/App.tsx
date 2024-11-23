@@ -18,13 +18,16 @@ import AddInnovation from "./pages/innovation/add";
 import ProfileVillage from "./pages/village/profile";
 import ProfileInnovator from "./pages/innovator/profile";
 import { ToastContainer } from "react-toastify";
-import InnovatorForm from "./pages/innovator/form"; 
+import InnovatorForm from "./pages/innovator/form";
 import EditInnovation from "./pages/innovation/edit";
 import Notification from "./pages/notification/Notification"
 import ResetPassword from "./pages/resetpassword/ResetPassword";
 import EmailReset from "./pages/emailreset/EmailReset";
 import NewPassword from "./pages/resetpassword/newpassword/NewPassword";
 
+import AdminPage from "./pages/admin/AdminPage";
+import VerificationPage from "./pages/admin/verification/VerificationPage";
+import MakeAds from "./pages/admin/ads/make/MakeAds";
 const queryClient = new QueryClient();
 
 const routes = [
@@ -104,26 +107,6 @@ const routes = [
     element: <InnovatorForm />,
     exact: true,
   },
-  {
-    path: paths.RESET_PASSWORD_PAGE,
-    element: <ResetPassword />,
-    exact: true,
-  },
-  {
-    path: paths.NOTIFICATION_PAGE,
-    element: <Notification/>,
-    exact: true,
-  },
-  {
-    path: paths.EMAIL_RESET_PASSWORD_PAGE,
-    element: <EmailReset/>,
-    exact: true,
-  },
-  {
-    path: paths.NEW_PASSWORD_PAGE,
-    element: <NewPassword/>,
-    exact: true,
-  }
 ];
 
 const App: React.FC = () => {
@@ -142,6 +125,6 @@ const App: React.FC = () => {
       <ToastContainer />
     </QueryClientProvider>
   );
-}
+};
 
 export default App;

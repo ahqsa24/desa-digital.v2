@@ -1,16 +1,22 @@
-import { Background, Container, Title, Description } from './_heroStyle'
+import { Background, Container, Title, Description } from "./_heroStyle";
 
-function Hero() {
+type HeroProps = {
+  description: string | undefined;
+  text: string | undefined;
+  isAdmin?: boolean;
+};
+
+const Hero: React.FC<HeroProps> = ({ description, text, isAdmin = false }) => {
   return (
-    <Background>
+    <Background isAdmin={isAdmin}>
       <Container>
         <Title>Selamat Datang di</Title>
         <Description>
-          Inovasi Desa Digital <br /> Indonesia
+          {description} <br /> {text}
         </Description>
       </Container>
     </Background>
-  )
-}
+  );
+};
 
-export default Hero
+export default Hero;
