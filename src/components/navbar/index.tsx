@@ -29,7 +29,9 @@ const menu = [
   },
 ]
 
-const hide = [paths.LOGIN_PAGE, paths.REGISTER_PAGE, paths.EMAIL_RESET_PASSWORD_PAGE, paths.NEW_PASSWORD_PAGE, paths.RESET_PASSWORD_PAGE, paths.DETAIL_VILLAGE_PAGE, paths.NOTIFICATION_PAGE, paths.VILLAGE_PROFILE_PAGE]
+const hide = [paths.LOGIN_PAGE, paths.REGISTER_PAGE, paths.EMAIL_RESET_PASSWORD_PAGE, paths.NEW_PASSWORD_PAGE, paths.RESET_PASSWORD_PAGE, paths.DETAIL_VILLAGE_PAGE, paths.NOTIFICATION_PAGE, paths.VILLAGE_PROFILE_PAGE,
+  paths.KLAIM_INOVASI_PAGE
+]
 
 const Navbar: React.FC = () => {
   const navigate = useNavigate()
