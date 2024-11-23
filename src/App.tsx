@@ -24,7 +24,6 @@ import Notification from "./pages/notification/Notification"
 import ResetPassword from "./pages/resetpassword/ResetPassword";
 import EmailReset from "./pages/emailreset/EmailReset";
 import NewPassword from "./pages/resetpassword/newpassword/NewPassword";
-
 import AdminPage from "./pages/admin/AdminPage";
 import VerificationPage from "./pages/admin/verification/VerificationPage";
 import MakeAds from "./pages/admin/ads/make/MakeAds";
@@ -107,6 +106,38 @@ const routes = [
     element: <InnovatorForm />,
     exact: true,
   },
+  {
+    path: paths.RESET_PASSWORD_PAGE,
+    element: <ResetPassword />,
+    exact: true,
+  },
+  {
+    path: paths.NOTIFICATION_PAGE,
+    element: <Notification/>,
+    exact: true,
+  },
+  {
+    path: paths.EMAIL_RESET_PASSWORD_PAGE,
+    element: <EmailReset/>,
+    exact: true,
+  },
+  {
+    path: paths.NEW_PASSWORD_PAGE,
+    element: <NewPassword/>,
+    path: paths.ADMIN_PAGE,
+    element: <AdminPage />,
+    exact: true,
+  },
+  {
+    path: paths.VERIFICATION_PAGE,
+    element: <VerificationPage />,
+    exact: true,
+  },
+  {
+    path: paths.MAKE_ADS,
+    element: <MakeAds />,
+    exact: true,
+  }
 ];
 
 const App: React.FC = () => {
