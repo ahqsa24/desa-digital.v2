@@ -805,7 +805,7 @@ const AddInnovation: React.FC = () => {
                         value={requirement}
                         onChange={(e) => {
                           const wordCount = e.target.value.split(/\s+/).filter((word) => word !== "").length;
-                          if (wordCount <= 3) { // Batas maksimal 3 kata
+                          if (wordCount <= 5) { // Batas maksimal 5 kata
                             const updatedRequirements = [...requirements];
                             updatedRequirements[index] = e.target.value;
                             setRequirements(updatedRequirements);
@@ -830,7 +830,7 @@ const AddInnovation: React.FC = () => {
                       color="gray.500"
                       mt="2px"
                     >
-                      {requirement.split(/\s+/).filter((word) => word !== "").length}/3 kata
+                      {requirement.split(/\s+/).filter((word) => word !== "").length}/5 kata
                     </Text>
                   </Flex>
                 ))}
@@ -851,7 +851,7 @@ const AddInnovation: React.FC = () => {
                     value={newRequirement}
                     onChange={(e) => {
                       const wordCount = e.target.value.split(/\s+/).filter((word) => word !== "").length;
-                      if (wordCount <= 3) { // Batas maksimal 3 kata
+                      if (wordCount <= 5) { // Batas maksimal 5 kata
                         setNewRequirement(e.target.value);
                       }
                     }}
@@ -869,7 +869,7 @@ const AddInnovation: React.FC = () => {
                     color="gray.500"
                     mt="2px"
                   >
-                    {newRequirement.split(/\s+/).filter((word) => word !== "").length}/3 kata
+                    {newRequirement.split(/\s+/).filter((word) => word !== "").length}/5 kata
                   </Text>
                   <Button
                     variant="outline"
