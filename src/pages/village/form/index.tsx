@@ -1,34 +1,32 @@
 import {
+  Alert,
+  Box,
   Button,
   Flex,
-  Input,
   Stack,
   Text,
-  Textarea,
-  useToast,
+  useToast
 } from "@chakra-ui/react";
 import Container from "Components/container";
+import LocationSelector from "Components/form/LocationSellector";
+import MultiSellect from "Components/form/MultiSellect";
 import TopBar from "Components/topBar";
+import { doc, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
+import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import React, { useEffect, useRef, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { Form, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import FormSection from "../../../components/form/FormSection";
 import HeaderUpload from "../../../components/form/HeaderUpload";
-import LogoUpload from "../../../components/form/LogoUpload";
 import ImageUpload from "../../../components/form/ImageUpload";
+import LogoUpload from "../../../components/form/LogoUpload";
 import { auth, firestore, storage } from "../../../firebase/clientApp";
-import Dropdown from "../components/Filter";
-import Select from "react-select";
 import {
+  getDistricts,
   getProvinces,
   getRegencies,
-  getDistricts,
   getVillages,
 } from "../../../services/locationServices";
-import { doc, setDoc, updateDoc } from "firebase/firestore";
-import { getDownloadURL, ref, uploadString } from "firebase/storage";
-import { Alert, Box } from "@chakra-ui/react";
-import LocationSelector from "Components/form/LocationSellector";
-import FormSection from "../../../components/form/FormSection";
 
 interface Location {
   id: string;
@@ -51,7 +49,6 @@ const AddVillage: React.FC = () => {
   const [textInputValue, setTextInputValue] = useState({
     name: "",
     description: "",
-    potensi: "",
     geografis: "",
     infrastruktur: "",
     kesiapan: "",
@@ -63,6 +60,13 @@ const AddVillage: React.FC = () => {
     instagram: "",
     website: "",
   });
+  const potensiDesa = [
+    { value: "pertanian", label: "Pertanian" },
+    { value: "perikanan", label: "Perikanan" },
+    { value: "peternakan", label: "Peternakan" },
+    { value: "pariwisata", label: "Pariwisata" },
+    { value: "industri", label: "Industri" },
+  ];
   const [provinces, setProvinces] = useState<Location[]>([]);
   const [regencies, setRegencies] = useState<Location[]>([]);
   const [districts, setDistricts] = useState<Location[]>([]);
@@ -76,6 +80,9 @@ const AddVillage: React.FC = () => {
     null
   );
   const [selectedVillage, setSelectedVillage] = useState<Location | null>(null);
+  const [selectedPotensi, setSelectedPotensi] = useState<
+    { value: string; label: string }[]
+  >([]);
 
   const fetchProvinces = async () => {
     try {
@@ -202,7 +209,6 @@ const AddVillage: React.FC = () => {
   }: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     if (
       textInputValue.name ||
-      textInputValue.potensi ||
       textInputValue.whatsapp ||
       textInputValue.instagram ||
       textInputValue.website
@@ -240,55 +246,53 @@ const AddVillage: React.FC = () => {
       const {
         name,
         description,
-        potensi,
         geografis,
         infrastruktur,
         kesiapan,
-        literasi,
-        pemantapan,
+        teknologi,
+        pelayanan,
         sosial,
         resource,
         whatsapp,
         instagram,
         website,
       } = textInputValue;
-      if (
-        !name ||
-        !description ||
-        !potensi ||
-        !geografis ||
-        !infrastruktur ||
-        !kesiapan ||
-        !literasi ||
-        !pemantapan ||
-        !sosial ||
-        !resource ||
-        !whatsapp ||
-        !instagram ||
-        !website
-        // !selectedProvince ||
-        // !selectedDistrict ||
-        // !selectedRegency ||
-        // !selectedVillage
-      ) {
-        setError("Semua kolom harus diisi");
-        setLoading(false);
-        return;
-      }
-      console.log(textInputValue);
+      // if (
+      //   !name ||
+      //   !description ||
+      //   !geografis ||
+      //   !infrastruktur ||
+      //   !kesiapan ||
+      //   !teknologi ||
+      //   !pelayanan ||
+      //   !sosial ||
+      //   !resource ||
+      //   !whatsapp ||
+      //   !instagram ||
+      //   !website ||
+      //   !selectedProvince ||
+      //   !selectedDistrict ||
+      //   !selectedRegency ||
+      //   !selectedVillage
+      // ) {
+      //   setError("Semua kolom harus diisi");
+      //   setLoading(false);
+      //   return;
+      // }
+      // console.log(textInputValue);
 
       const userId = user.uid;
       const docRef = doc(firestore, "villages", userId);
       await setDoc(docRef, {
         namaDesa: name,
-        id: userId,
+        userId: userId,
         deskripsi: description,
-        potensiDesa: potensi,
+        potensiDesa: selectedPotensi.map((potensi) => potensi.value),
         geografisDesa: geografis,
         infrastrukturDesa: infrastruktur,
-        kesiapanDesa: kesiapan,
-        literasiDesa: literasi,
-        pemantapanDesa: pemantapan,
+        kesiapanDigital: kesiapan,
+        kesiapanTeknologi: teknologi,
+        pemantapanPelayanan: pelayanan,
         sosialBudaya: sosial,
         sumberDaya: resource,
         whatsapp: whatsapp,
@@ -300,23 +304,26 @@ const AddVillage: React.FC = () => {
           kecamatan: selectedDistrict,
           desaKelurahan: selectedVillage,
         },
+        status: "pending",
+        createdAt: new Date().toISOString(),
+        editedAt: serverTimestamp(),
       });
       console.log("Document writen with ID: ", userId);
       // Upload logo
-      if (selectedLogo) {
-        const logoRef = ref(storage, `villages/${userId}/logo`);
-        await uploadString(logoRef, selectedLogo, "data_url").then(async () => {
-          const downloadURL = await getDownloadURL(logoRef);
-          await updateDoc(doc(firestore, "villages", userId), {
-            logo: downloadURL,
-          });
-          console.log("File available at", downloadURL);
-        });
-      } else {
-        setError("Logo harus diisi");
-        setLoading(false);
-        return;
-      }
+      // if (selectedLogo) {
+      //   const logoRef = ref(storage, `villages/${userId}/logo`);
+      //   await uploadString(logoRef, selectedLogo, "data_url").then(async () => {
+      //     const downloadURL = await getDownloadURL(logoRef);
+      //     await updateDoc(doc(firestore, "villages", userId), {
+      //       logo: downloadURL,
+      //     });
+      //     console.log("File available at", downloadURL);
+      //   });
+      // } else {
+      //   setError("Logo harus diisi");
+      //   setLoading(false);
+      //   return;
+      // }
 
       // Upload header if provided
       if (selectedHeader) {
@@ -339,6 +346,7 @@ const AddVillage: React.FC = () => {
         status: "success",
         duration: 5000,
         isClosable: true,
+        position: "top",
       });
     } catch (error) {
       console.error("Error adding document: ", error);
@@ -369,6 +377,7 @@ const AddVillage: React.FC = () => {
               >
                 Profil masih kosong. Silahkan isi data di bawah terlebih dahulu.
               </Alert>
+              
               <FormSection
                 title="Nama Desa"
                 name="name"
@@ -469,29 +478,15 @@ const AddVillage: React.FC = () => {
                 maxWords={100}
               />
 
-              <Box>
-                <Text fontWeight="400" fontSize="14px">
-                  Potensi Desa <span style={{ color: "red" }}>*</span>
-                </Text>
-                <Text fontWeight="400" fontSize="10px" mb="6px" color="#9CA3AF">
-                  Ditulis singkat dan dipisahkan dengan koma. Contoh: Perikanan,
-                  Pertanian
-                </Text>
-                <Input
-                  name="potensi"
-                  fontSize="10pt"
-                  placeholder="Masukkan potensi desa"
-                  _placeholder={{ color: "gray.500" }}
-                  _focus={{
-                    outline: "none",
-                    bg: "white",
-                    border: "1px solid",
-                    borderColor: "black",
-                  }}
-                  value={textInputValue.potensi}
-                  onChange={onTextChange}
-                />
-              </Box>
+              <MultiSellect
+                label="Potensi Desa"
+                placeholder="Pilih Potensi Desa"
+                isNoteRequired
+                note="Pilih opsi potensi desa atau tambahkan opsi lainnya"
+                options={potensiDesa}
+                value={selectedPotensi}
+                onChange={(selected) => setSelectedPotensi(selected)}
+              />
 
               <Box>
                 <Text fontWeight="700" fontSize="16px" mb="6px">
@@ -530,7 +525,7 @@ const AddVillage: React.FC = () => {
 
               <FormSection
                 title="Kemampuan Penggunaan Teknologi"
-                name="Teknologi"
+                name="teknologi"
                 placeholder="Deskripsi kemampuan digital desa"
                 value={textInputValue.teknologi}
                 onChange={onTextChange}
