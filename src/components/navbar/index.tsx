@@ -29,13 +29,13 @@ const menu = [
   },
 ]
 
-const hide = [paths.LOGIN_PAGE, paths.REGISTER_PAGE, paths.MAKE_ADS, paths.RESET_PASSWORD_PAGE, paths.DETAIL_VILLAGE_PAGE, paths.NOTIFICATION_PAGE]
+const show = [paths.LANDING_PAGE, paths.VILLAGE_PAGE, paths.INNOVATOR_PAGE, paths.ADMIN_PAGE]
 
 const Navbar: React.FC = () => {
   const navigate = useNavigate()
   const { pathname } = useLocation()
 
-  if (hide.includes(pathname)) return null
+  if (!show.includes(pathname)) return null
 
   return (
     <OuterContainer>
