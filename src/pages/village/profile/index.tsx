@@ -2,6 +2,7 @@ import React from "react";
 import TopBar from "Components/topBar";
 import { useParams } from "react-router";
 import Button from "Components/button";
+import Send from "Assets/icons/send.svg";
 import Location from "Assets/icons/location.svg";
 import Geography from "Assets/icons/geography.svg";
 import Infrastructure from "Assets/icons/infrastructure.svg";
@@ -50,6 +51,7 @@ import { firestore } from "../../../firebase/clientApp";
 import Container from "Components/container";
 import { DocumentData, collection, getDocs, query, where } from "firebase/firestore";
 import { generatePath, useNavigate } from "react-router-dom";
+import Home from "src/pages/home";
 
 
 export default function DetailVillage() {
@@ -98,7 +100,14 @@ export default function DetailVillage() {
             </div>
             <div>
                 <ContentContainer>
-                    <Title> {nameVillage} </Title>
+                    <Flex flexDirection="column" alignItems="flex-end" >
+                        <Button size="xs" //onClick={}
+                        >
+                            <Icon src={Send} alt="send"/>
+                            Pengajuan Klaim
+                        </Button>
+                    </Flex>
+                    <Title> Desa soge {nameVillage} </Title>
                     <ActionContainer>
                         <Icon src={Location} alt="loc" />
                         <Description>
@@ -111,7 +120,7 @@ export default function DetailVillage() {
                     </div>
                     <SubText>Kontak Desa</SubText>
                     <Flex flexDirection="column" alignItems="flex-start" gap="12px" >
-                        <Flex  width="100%" flexDirection="row" alignItems="flex-start" gap="16px" paddingBottom="12px">
+                        <Flex width="100%" flexDirection="row" alignItems="flex-start" gap="16px" paddingBottom="12px">
                             <Box color="#4B5563" fontSize="12px" minWidth="110px">Nomor WhatsApp</Box>
                             <Description>08126489023</Description>
                         </Flex>
@@ -281,9 +290,9 @@ export default function DetailVillage() {
                 </ContentContainer>
             </div >
             <NavbarButton>
-                    <Button size="m" fullWidth type="submit" onClick={onOpen}>
-                        Edit Profil
-                    </Button>{" "}
+                <Button size="m" fullWidth type="submit" onClick={onOpen}>
+                    Edit Profil
+                </Button>{" "}
             </NavbarButton>
         </Box >
     );

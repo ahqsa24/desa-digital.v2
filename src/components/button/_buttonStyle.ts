@@ -2,7 +2,7 @@ import { MarginProps, marginStyle } from "Consts/sizing";
 import styled, { css } from "styled-components";
 
 interface ButtonProps extends MarginProps {
-  size?: "s" | "m" | "l";
+  size?: "s" | "m" | "l"| "xs";
   fullWidth?: boolean;
 }
 
@@ -13,12 +13,23 @@ export const StyledButton = styled.button<ButtonProps>`
   font-weight: 700;
   border: none;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
 
   ${({ size }) => {
     if (size === "s") {
       return css`
         padding: 8px 16px;
         font-size: 14px;
+      `;
+    }
+    if (size === "xs") {
+      return css`
+        padding: 8px 12px;
+        font-size: 12px;
+        font-weight: 500;
       `;
     }
     if (size === "m") {

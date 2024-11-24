@@ -7,7 +7,6 @@ export const ContentContainer = styled.div`
   gap: 16px;
   margin: 16px;
   heigh: 100%;
-  
 `;
 
 export const CardContainer = styled.div`
@@ -39,7 +38,6 @@ export const Image = styled.div`
 export const Title = styled.p`
   font-size: 18px;
   font-weight: 700;
-  margin-top: 40px;
   position: relative;
   color: #1F2937;
 `;
@@ -98,8 +96,7 @@ export const ActionContainer = styled.div`
 
 export const Icon = styled.img`
   cursor: pointer;
-  position: flex;
-  justify-content: space-between;
+  justify-content: center;
   border-radius: 0px;
   ${marginStyle}
 `;
