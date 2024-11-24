@@ -31,6 +31,9 @@ import KlaimInovasi from "./pages/village/klaimInovasi";
 import AdminPage from "./pages/admin/AdminPage";
 import VerificationPage from "./pages/admin/verification/VerificationPage";
 import MakeAds from "./pages/admin/ads/make/MakeAds";
+=========
+import ProfileVillageFill from "./pages/village/profile_fill"
+>>>>>>>>> Temporary merge branch 2
 const queryClient = new QueryClient();
 
 const routes = [
@@ -150,6 +153,21 @@ const routes = [
   {
     path: paths.MAKE_ADS,
     element: <MakeAds />,
+    exact: true,
+  },
+  {
+    path: paths.RESET_PASSWORD_PAGE,
+    element: <ResetPassword />,
+    exact: true,
+  },
+  {
+    path: paths.NOTIFICATION_PAGE,
+    element: <Notification title={""} description={""}/>,
+    exact: true,
+  },
+  {
+    path: paths.VILLAGE_PROFILE_FILL_PAGE, 
+    element: <ProfileVillageFill />,
     exact: true,
   }
 ];

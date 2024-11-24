@@ -9,8 +9,10 @@ import React from "react";
 import Hero from "../home/components/hero";
 import Innovator from "../home/components/innovator";
 import Menu from "../home/components/menu";
+import { useNavigate } from "react-router-dom";
 
 const AdminPage: React.FC = () => {
+  const navigate = useNavigate();
   return (
     <Container page>
       <TopBar title="Desa Digital Indonesia" />
