@@ -20,20 +20,18 @@ import ProfileInnovator from "./pages/innovator/profile";
 import { ToastContainer } from "react-toastify";
 import InnovatorForm from "./pages/innovator/form";
 import EditInnovation from "./pages/innovation/edit";
-import Notification from "./pages/notification/Notification"
-import ResetPassword from "./pages/resetpassword/ResetPassword";
 import EmailReset from "./pages/emailreset/EmailReset";
 import NewPassword from "./pages/resetpassword/newpassword/NewPassword";
 import ProfileVillage from "./pages/village/profile";
 import KlaimInovasi from "./pages/village/klaimInovasi";
-
-
 import AdminPage from "./pages/admin/AdminPage";
 import VerificationPage from "./pages/admin/verification/VerificationPage";
 import MakeAds from "./pages/admin/ads/make/MakeAds";
-=========
-import ProfileVillageFill from "./pages/village/profile_fill"
->>>>>>>>> Temporary merge branch 2
+import ResetPassword from "./pages/reset_password/ResetPassword";
+import Notification from "./pages/notification/Notification";
+import InnovationListPage from "./pages/innovator/detail/ProdukInovasi/InnovationListPage";
+import PengajuanInovasi from "./pages/innovator/profile/pengajuanInovasi/PengajuanInovasi";
+
 const queryClient = new QueryClient();
 
 const routes = [
@@ -119,11 +117,6 @@ const routes = [
     exact: true,
   },
   {
-    path: paths.NOTIFICATION_PAGE,
-    element: <Notification />,
-    exact: true,
-  },
-  {
     path: paths.VILLAGE_PROFILE_PAGE,
     element: <ProfileVillage />,
   },
@@ -156,20 +149,21 @@ const routes = [
     exact: true,
   },
   {
-    path: paths.RESET_PASSWORD_PAGE,
-    element: <ResetPassword />,
-    exact: true,
-  },
-  {
     path: paths.NOTIFICATION_PAGE,
     element: <Notification title={""} description={""}/>,
     exact: true,
   },
   {
-    path: paths.VILLAGE_PROFILE_FILL_PAGE, 
-    element: <ProfileVillageFill />,
+    path: paths.PRODUK_INOVASI_PAGE,
+    element: <InnovationListPage />, // Pastikan komponen ini sesuai
+    exact: true,
+  },
+  {
+    path: paths.PENGAJUAN_INOVASI_PAGE,
+    element: <PengajuanInovasi />, 
     exact: true,
   }
+  
 ];
 
 const App: React.FC = () => {
