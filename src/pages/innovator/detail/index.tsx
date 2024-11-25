@@ -26,6 +26,7 @@ import {
 import { ChevronRightIcon } from "@chakra-ui/icons"; 
 import { FaWhatsapp, FaInstagram, FaGlobe } from "react-icons/fa";
 import InnovationPreview from "../components/hero/innovations";
+import ButtonPengajuan from "../components/hero/ButtonPengajuan"; // Impor tombol
 
 const DetailInnovator: React.FC = () => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -132,9 +133,20 @@ const DetailInnovator: React.FC = () => {
       <Flex position="relative">
         <Background src={innovatorData.header} alt="header" />
         <Logo src={innovatorData.logo} alt="logo" mx={16} my={-40} />
+        <Box
+          position="absolute"
+          top="130%"
+          right="16px"
+          transform="translateY(-50%)"
+        >
+          <ButtonPengajuan
+            label="Pengajuan Inovasi" // Teks tombol
+            to="/innovator/profile/pengajuanInovasi"
+          />
+        </Box>
       </Flex>
       <ContentContainer>
-        <Stack gap={3}>
+        <Stack gap={3} mt={4} >
           <Title>{innovatorData.namaInovator}</Title>
           <Label>{innovatorData.kategori}</Label>
           <Flex direction="row" gap={3} mt={0} alignItems="center">
@@ -154,21 +166,58 @@ const DetailInnovator: React.FC = () => {
             <Text fontSize="16px" fontWeight="700">
               Tentang
             </Text>
-            <Flex flexDirection="column" alignItems="flex-start" gap="12px" >
-              <Flex  width="100%" flexDirection="row" alignItems="flex-start" gap="16px" paddingBottom="12px">
+            <Flex direction="column" alignItems="flex-start">
+              <Flex
+                width="100%"
+                flexDirection="row"
+                alignItems="flex-start"
+                paddingBottom="12px"
+              >
                 <Box color="#4B5563" fontSize="12px" minWidth="110px">Nomor WhatsApp</Box>
-                <Description>08126489023</Description>
+                <Text
+                  maxW="200px"
+                  whiteSpace="normal"
+                  overflowWrap="break-word"
+                  fontSize="12px"
+                >
+                  08126489023
+                </Text>
               </Flex>
-              <Flex width="100%" flexDirection="row" alignItems="flex-start" gap="16px" paddingBottom="12px">
+              <Flex
+                width="100%"
+                flexDirection="row"
+                alignItems="flex-start"
+                paddingBottom="12px"
+              >
                 <Box color="#4B5563" fontSize="12px" minWidth="110px">Link Instagram</Box>
-                <Description>https://www.instagram.com /desasoge/</Description>
+                <Text
+                  maxW="222px"
+                  whiteSpace="normal"
+                  overflowWrap="break-word"
+                  fontSize="12px"
+                >
+                  https://www.instagram.com/desasoge/
+                </Text>
               </Flex>
-              <Flex width="100%" flexDirection="row" alignItems="flex-start" gap="16px" paddingBottom="12px">
+              <Flex
+                width="100%"
+                flexDirection="row"
+                alignItems="flex-start"
+                paddingBottom="12px"
+              >
                 <Box color="#4B5563" fontSize="12px" minWidth="110px">Link Website</Box>
-                <Description>https://www.instagram.com/desasoge/</Description>
+                <Text
+                  maxW="222px"
+                  whiteSpace="normal"
+                  overflowWrap="break-word"
+                  fontSize="12px"
+                >
+                  https://www.instagram.com/desasoge/
+                </Text>
               </Flex>
             </Flex>
-            <Flex direction="row" alignItems="center">
+
+            <Flex direction="row" alignItems="center" >
               <Text
                 fontSize="12px"
                 fontWeight="700"
