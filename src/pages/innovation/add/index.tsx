@@ -11,6 +11,7 @@ import {
   CheckboxGroup,
   InputGroup,
   InputLeftElement,
+  Box,
 } from "@chakra-ui/react";
 import Container from "Components/container";
 import TopBar from "Components/topBar";
@@ -187,7 +188,7 @@ const AddInnovation: React.FC = () => {
 
   const onAddRequirement = () => {
     const wordCount = newRequirement.split(/\s+/).filter((word) => word !== "").length;
-    if (newRequirement.trim() !== "" && wordCount <= 3) {
+    if (newRequirement.trim() !== "" && wordCount <= 5) {
       setRequirements((prev) => [...prev, newRequirement]);
       setNewRequirement("");
     }
@@ -380,9 +381,10 @@ const AddInnovation: React.FC = () => {
   };
 
   return (
-    <Container page px={16}>
+    <Container page >
       <TopBar title="Tambahkan Inovasi" onBack={() => navigate(-1)} />
       <form onSubmit={onAddInnovation}>
+        <Box p='0 16px'>
         <Flex direction="column" marginTop="24px">
           <Stack spacing={3} width="100%">
             <Text fontWeight="400" fontSize="14px" mb="-2">
@@ -893,6 +895,7 @@ const AddInnovation: React.FC = () => {
         <Button type="submit" mt="20px" width="100%" isLoading={loading}>
           Tambah Inovasi
         </Button>
+        </Box>
       </form>
     </Container>
   );
