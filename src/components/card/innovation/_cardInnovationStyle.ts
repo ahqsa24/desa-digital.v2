@@ -30,6 +30,8 @@ export const Category = styled.p`
   font-weight: 400;
   color: #374151;
   margin: 4px 0;
+  white-space: nowrap;
+  overflow: hidden;
 `
 
 export const Description = styled.p`
@@ -64,7 +66,7 @@ export const Applied = styled.p`
 export const CompanyContainer = styled.div`
   display: flex;
   align-items: center;
-  margin-top: 32px;
+  margin-top: 10px;
   margin-bottom: 4px;
   gap: 8px;
 `
