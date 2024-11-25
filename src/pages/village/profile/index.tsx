@@ -54,7 +54,7 @@ import { generatePath, useNavigate } from "react-router-dom";
 import Home from "src/pages/home";
 
 
-export default function DetailVillage() {
+export default function ProfileVillage() {
     const navigate = useNavigate();
     const innovationsRef = collection(firestore, "innovations");
     const [innovations, setInnovations] = useState<DocumentData[]>([]);
