@@ -43,6 +43,7 @@ function TopBar(props: TopBarProps) {
             fontSize="14pt"
             cursor="pointer"
             onClick={onBack}
+            mt="2px"
           />
         )}
         <Text
@@ -50,6 +51,8 @@ function TopBar(props: TopBarProps) {
           fontWeight="700"
           color="white"
           ml={isUserMenuVisible ? `0` : `24px`}
+          mt="2px"
+          lineHeight="56px"
         >
           {title}
         </Text>
@@ -63,6 +66,7 @@ function TopBar(props: TopBarProps) {
                 cursor="pointer"
                 onClick={() => navigate(paths.LOGIN_PAGE)}
                 variant="link"
+                mt="2px"
               >
                 Login
               </Button>
