@@ -44,7 +44,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ user }) => {
     if (!user) return;
 
     if (profileExists) {
-      navigate(`${paths.INNOVATOR_DETAIL}/${user.uid}`);
+      navigate(`${paths.DETAIL_INNOVATOR_PAGE}/${user.uid}`);
     } else {
       navigate(paths.INNOVATOR_FORM);
     }
@@ -60,18 +60,22 @@ const UserMenu: React.FC<UserMenuProps> = ({ user }) => {
   };
 
   return (
-    <Flex justify="center" align="center">
+    <Flex justify="center" align="center" height="56px">
       <Menu>
         <Button
           padding={1}
           as={IconButton}
           aria-label="Options"
           icon={<img src={notification} alt="Bell" width="24" height="24" />}
+          height="40px"
+          alignSelf="center"
         />
         <MenuButton
           as={IconButton}
           aria-label="Options"
           icon={<img src={profileIcon} alt="Profile" width="24" height="24" />}
+          height="40px"
+          alignSelf="center"
         />
 
         <MenuList>
@@ -84,7 +88,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ user }) => {
             </>
           ) : (
             <>
-              <MenuItem onClick={() => navigate(paths.LOGIN_PAGE)}>
+              <MenuItem onClick={() => navigate(paths.LOGIN_PAGE)} >
                 Login
               </MenuItem>
             </>
