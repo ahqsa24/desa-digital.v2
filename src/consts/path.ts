@@ -15,9 +15,16 @@ export const paths = {
   DETAIL_INNOVATION_PAGE: "/innovation/detail/:id",
   DETAIL_INNOVATION: "/innovation/detail",
   EDIT_INNOVATION_PAGE: "/innovation/edit/:id",
-<<<<<<< HEAD
+  INNOVATOR_FORM : "/innovator/form",
+  VILLAGE_PROFILE_PAGE : "/village/profile",
+  NOTIFICATION_PAGE : "/notification",
+  RESET_PASSWORD_PAGE: "/resetpassword",
+  EMAIL_RESET_PASSWORD_PAGE: "/emailreset",
+  NEW_PASSWORD_PAGE: "/resetpassword/newpassword", 
+  ADMIN_PAGE: "/admin",
+  VERIFICATION_PAGE:"/admin/verification/:category",
+  MAKE_ADS: "/admin/ads/make",
   KLAIM_INOVASI_PAGE: "/village/klaimInovasi",
-=======
-  VILLAGE_PROFILE_FILL_PAGE : "/village/profile_fill",
->>>>>>> d068ba460c1bf55d8e45a1684c42cd6c293aed25
+  PRODUK_INOVASI_PAGE: "/innovator/detail/ProdukInovasi",
+  PENGAJUAN_INOVASI_PAGE: "/innovator/profile/pengajuanInovasi"
 };
