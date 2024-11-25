@@ -21,6 +21,7 @@ import CardNotification from 'Components/card/notification/CardNotification';
 import TopBar from 'Components/topBar';
 import Container from 'Components/container';
 import SearchBarInnov from '../../components/hero/SearchBarInnov';
+import CardPengajuanInovasi from '../../components/hero/CardPengajuanInovasi';
 
 const PengajuanInovasi: React.FC = () => {
     const navigate = useNavigate();
@@ -96,7 +97,7 @@ const PengajuanInovasi: React.FC = () => {
             </Flex>
 
             {/* Daftar Notifikasi */}
-            <CardNotification/>
+            <CardPengajuanInovasi/>
         </Container>
     );
 };
