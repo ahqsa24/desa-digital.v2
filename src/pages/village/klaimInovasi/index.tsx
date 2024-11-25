@@ -10,6 +10,10 @@ import { auth, firestore, storage } from "../../../firebase/clientApp";
 import { useAuthState } from "react-firebase-hooks/auth";
 import TopBar from "Components/topBar";
 import Button from "Components/button";
+import ConfModal from "../../../components/confirmModal/confModal";
+import SecConfModal from "../../../components/confirmModal/secConfModal";
+
+
 import {
     Container,
     CheckboxGroup,
@@ -25,6 +29,16 @@ import {
     Box,
     Flex
 } from '@chakra-ui/react'
+import {
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalFooter,
+    ModalBody,
+    ModalCloseButton,
+} from '@chakra-ui/react'
+
 import { useDisclosure } from "@chakra-ui/react";
 const KlaimInovasi: React.FC = () => {
     const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
@@ -34,11 +48,12 @@ const KlaimInovasi: React.FC = () => {
     const selectedFileRef = useRef<HTMLInputElement>(null);
     const selectedVidRef = useRef<HTMLInputElement>(null);
     const selectedDocRef = useRef<HTMLInputElement>(null);
-    const { isOpen, onToggle } = useDisclosure();
+    const { isOpen, onToggle, onOpen, onClose } = useDisclosure();
     const [user] = useAuthState(auth);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
-    const {onOpen} = useDisclosure()
+    const modalBody1 = "Apakah Anda yakin ingin mengajukan klaim?"; // Konten Modal
+    const modalBody2 = "Inovasi sudah ditambahkan. Admin sedang memverifikasi pengajuan klaim inovasi. Silahkan cek pada halaman pengajuan klaim"; // Konten Modal
 
 
     const handleCheckboxChange = (checkbox: string) => {
@@ -114,11 +129,32 @@ const KlaimInovasi: React.FC = () => {
 
     }
 
+    const [isModal1Open, setIsModal1Open] = useState(false);
+    const [isModal2Open, setIsModal2Open] = useState(false);
+    const closeModal = () => {
+        setIsModal1Open(false);
+        setIsModal2Open(false);
+    };
+
+    const handleModal1Yes = () => {
+        setIsModal2Open(true);
+        setIsModal1Open(false); // Tutup modal pertama
+        // Di sini tidak membuka modal kedua
+    };
+
+    useEffect(() => {
+        // Jika salah satu modal terbuka, sembunyikan scrollbar
+        if (isModal1Open || isModal2Open) {
+          document.body.style.overflow = 'hidden';
+        } else {
+          document.body.style.overflow = ''; // Kembalikan scrollbar jika kedua modal tertutup
+        }
+      }, [isModal1Open, isModal2Open]);
+
     return (
         <Box>
-            <TopBar title="Klaim Inovasi" onBack={() => navigate(-1)} 
+            <TopBar title="Klaim Inovasi" onBack={() => navigate(-1)}
             />
-            <Container2>
                 <Container>
                     <Flex flexDirection="column" gap="2px">
                         <Label>
@@ -131,9 +167,8 @@ const KlaimInovasi: React.FC = () => {
                             <input
                                 style={{
                                     transform: "scale(1.3)", // Memperbesar checkbox
-                                    marginRight: "4px", // Memberi jarak ke teks
+                                    marginRight: "8px", // Memberi jarak ke teks
                                 }}
-                                onClick={onToggle}
                                 type="checkbox"
                                 onChange={() => handleCheckboxChange("foto")}
                                 checked={selectedCheckboxes.includes("foto")}
@@ -146,7 +181,6 @@ const KlaimInovasi: React.FC = () => {
                                     transform: "scale(1.3)", // Memperbesar checkbox
                                     marginRight: "8px", // Memberi jarak ke teks
                                 }}
-                                onClick={onToggle}
                                 type="checkbox"
                                 onChange={() => handleCheckboxChange("video")}
                                 checked={selectedCheckboxes.includes("video")}
@@ -173,7 +207,7 @@ const KlaimInovasi: React.FC = () => {
                                 <Text1>Foto Inovasi
                                     <span style={{ color: "red" }}>*</span>
                                 </Text1>
-                                <Text2> Maks 5 foto. format: png, jpg </Text2>
+                                <Text2> Maks 2 foto. format: png, jpg </Text2>
                                 <ImageUpload
                                     selectedFiles={selectedFiles}
                                     setSelectedFiles={setSelectedFiles}
@@ -217,12 +251,25 @@ const KlaimInovasi: React.FC = () => {
                         </Field>
                     </Collapse>
                 </Container>
-            </Container2>
-            <NavbarButton>
-                <Button size="m" fullWidth type="submit" onClick={onOpen}>
-                    Ajukan Klaim
-                </Button>
-            </NavbarButton>
+            <div>
+                <NavbarButton>
+                    <Button size="m" fullWidth type="submit" onClick={() => setIsModal1Open(true)}>
+                        Ajukan Klaim
+                    </Button>
+                </NavbarButton>
+                <ConfModal
+                    isOpen={isModal1Open}
+                    onClose={closeModal}
+                    modalTitle=""
+                    modalBody1={modalBody1}     // Mengirimkan teks konten modal
+                    onYes={handleModal1Yes}
+                />
+                <SecConfModal 
+                isOpen={isModal2Open} 
+                onClose={closeModal} 
+                modalBody2={modalBody2}     // Mengirimkan teks konten modal
+                    />
+            </div>
         </Box >
     );
 };

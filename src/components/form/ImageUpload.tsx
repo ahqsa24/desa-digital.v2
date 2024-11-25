@@ -59,7 +59,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
           </Button>
         </Flex>
       ))}
-      {selectedFiles.length < 5 && (
+      {selectedFiles.length < 2 && (
         <Flex
           justify="center"
           align="center"

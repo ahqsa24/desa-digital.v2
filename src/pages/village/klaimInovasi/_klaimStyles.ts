@@ -2,19 +2,18 @@ import styled from "styled-components";
 import { marginStyle } from "Consts/sizing";
 
 export const Container = styled.div`
-  padding: 16px;
+  padding: 72px 16px 0px;
   display: flex;
   flex-direction: column;
   gap: 16px;
-  margin-top: 56px;
-  height: 100%;
+  min-height: 90vh;
+  height:100%;
 `;
 
 export const Container2 = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
-  margin-bottom:515px;
 `;
 
 export const CheckboxGroup = styled.div`

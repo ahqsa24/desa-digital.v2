@@ -23,7 +23,6 @@ const VidUpload: React.FC<VidUploadProps> = ({
                 <>
                     <Flex
                         direction="row"
-                        alignItems="center"
                         justifyContent="space-between"
                         maxWidth="270px"
                         maxHeight="32px"
@@ -36,7 +35,7 @@ const VidUpload: React.FC<VidUploadProps> = ({
                         paddingLeft={2}
                         gap={4}
                         position="relative"
-                        overflow="hidden"
+
                     >
                         {/* Menampilkan nama file */}
                         <Text
