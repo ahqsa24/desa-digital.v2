@@ -6,7 +6,7 @@ type CardNotificationProps = {};
 
 const CardNotification: React.FC<CardNotificationProps> = () => {
   return (
-    <Stack padding="0 16px" gap={2}>
+    <Stack padding="20px" gap={2}>
       <Flex
         padding="12px"
         borderRadius="8px"
