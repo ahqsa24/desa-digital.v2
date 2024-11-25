@@ -18,14 +18,17 @@ import {
 import {
   Background,
   ContentContainer,
+  Description,
   Label,
   Logo,
   Title
 } from "./_detailStyle";
 import { ChevronRightIcon } from "@chakra-ui/icons"; 
 import { FaWhatsapp, FaInstagram, FaGlobe } from "react-icons/fa";
+import InnovationPreview from "../components/hero/innovations";
 
 const DetailInnovator: React.FC = () => {
+  const [isExpanded, setIsExpanded] = useState(false);
   const navigate = useNavigate();
   const { id } = useParams(); // Ensure TypeScript knows id is a string
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -113,10 +116,17 @@ const DetailInnovator: React.FC = () => {
     return <div>No data available</div>;
   }
 
+  const truncateText = (text: string, wordLimit: number) => {
+    const words = text.split(" ");
+    return words.length > wordLimit
+      ? words.slice(0, wordLimit).join(" ") + "..."
+      : text;
+  };
+  
   return (
     <Container page>
       <TopBar 
-        title="Detail Innovator"  
+        title="Profil Innovator"  
         onBack={() => navigate(-1)} 
         />
       <Flex position="relative">
@@ -144,6 +154,20 @@ const DetailInnovator: React.FC = () => {
             <Text fontSize="16px" fontWeight="700">
               Tentang
             </Text>
+            <Flex flexDirection="column" alignItems="flex-start" gap="12px" >
+              <Flex  width="100%" flexDirection="row" alignItems="flex-start" gap="16px" paddingBottom="12px">
+                <Box color="#4B5563" fontSize="12px" minWidth="110px">Nomor WhatsApp</Box>
+                <Description>08126489023</Description>
+              </Flex>
+              <Flex width="100%" flexDirection="row" alignItems="flex-start" gap="16px" paddingBottom="12px">
+                <Box color="#4B5563" fontSize="12px" minWidth="110px">Link Instagram</Box>
+                <Description>https://www.instagram.com /desasoge/</Description>
+              </Flex>
+              <Flex width="100%" flexDirection="row" alignItems="flex-start" gap="16px" paddingBottom="12px">
+                <Box color="#4B5563" fontSize="12px" minWidth="110px">Link Website</Box>
+                <Description>https://www.instagram.com/desasoge/</Description>
+              </Flex>
+            </Flex>
             <Flex direction="row" alignItems="center">
               <Text
                 fontSize="12px"
@@ -163,34 +187,51 @@ const DetailInnovator: React.FC = () => {
               </Text>
             </Flex>
 
-            <Text fontSize="12px" fontWeight="400" color="#4B5563">
-              {innovatorData.deskripsi}
-            </Text>
+            <Box fontSize="12px" fontWeight="400" color="#4B5563" >
+              {isExpanded ? (
+                // Tampilkan teks lengkap jika `isExpanded` true
+                <>
+                  {innovatorData.deskripsi}
+                  {innovatorData.deskripsi.split(" ").length > 20 && ( // Tampilkan "Lebih Sedikit" jika lebih dari 20 kata
+                    <Text
+                      as="span"
+                      fontSize="12px"
+                      fontWeight="700"
+                      color="#347357"
+                      cursor="pointer"
+                      textDecoration="underline"
+                      onClick={() => setIsExpanded(!isExpanded)} // Toggle state
+                    >
+                      Lebih Sedikit
+                    </Text>
+                  )}
+                </>
+              ) : (
+                // Tampilkan teks terpotong jika `isExpanded` false
+                <>
+                  {truncateText(innovatorData.deskripsi, 20)}
+                  {innovatorData.deskripsi.split(" ").length > 20 && ( // Tampilkan "Selengkapnya" jika lebih dari 20 kata
+                    <Text
+                      as="span"
+                      fontSize="12px"
+                      fontWeight="700"
+                      color="#347357"
+                      cursor="pointer"
+                      textDecoration="underline"
+                      onClick={() => setIsExpanded(!isExpanded)} // Toggle state
+                    >
+                      {" "}
+                      Selengkapnya
+                    </Text>
+                  )}
+                </>
+              )}
+            </Box>
           </Stack>
         </Flex>
         <Flex direction="column">
-          <Text fontSize="16px" fontWeight="700">
-            Produk Inovasi
-          </Text>
-          <CardContainer>
-            <Horizontal>
-              {innovations.map((innovation, idx) => (
-                <CardInnovation
-                  key={idx}
-                  images={innovation.images}
-                  namaInovasi={innovation.namaInovasi}
-                  kategori={innovation.kategori}
-                  deskripsi={innovation.deskripsi}
-                  tahunDibuat={innovation.tahunDibuat}
-                  innovatorLogo={innovation.innovatorImgURL}
-                  innovatorName={innovation.namaInnovator}
-                  onClick={() =>
-                    navigate(generatePath(paths.DETAIL_INNOVATION_PAGE, { id: innovation.id }))
-                  }
-                />
-              ))}
-            </Horizontal>
-          </CardContainer>
+          {/* Komponen Produk Inovasi */}
+          <InnovationPreview innovations={innovations} innovatorId={id} />
         </Flex>
         <Flex direction="column">
           <Text fontSize="16px" fontWeight="700" mb={3}>
@@ -249,59 +290,102 @@ const DetailInnovator: React.FC = () => {
         <Button mt={-3} size="m" fullWidth type="submit" onClick={onOpen}>
           Kontak Innovator
         </Button>
-      </ContentContainer>
-        <Drawer 
+        </ContentContainer>
+        <Drawer
           isOpen={isOpen}
-          placement='bottom'
+          placement="bottom"
           onClose={onClose}
-          variant="purple"
         >
           <DrawerOverlay />
           <DrawerContent
             sx={{
-              borderTopRadius: "16px", // Radius atas untuk gaya drawer seperti aplikasi mobile
-              width: "100%",           // Pastikan drawer memenuhi lebar layar
-              maxWidth: "480px",       // Batasi lebar maksimum untuk pengalaman mobile yang baik
-              margin: "0 auto",        // Pusatkan drawer pada layar
-              bg: "white",             // Warna latar belakang yang bersih
+              borderTopRadius: "16px", // Radius untuk tampilan yang smooth
+              width: "100%", // Lebar drawer penuh
+              maxWidth: "480px", // Batas maksimal untuk mobile
+              margin: "0 auto", // Pusatkan drawer
+              bg: "white", // Warna latar belakang putih
             }}
-            >
-            <DrawerHeader 
+          >
+            <DrawerHeader
               sx={{
-              display: "flex",
-              justifyContent: "center",
-              color: "#1F2937",
-              fontSize: "16px"
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                fontSize: "16px",
+                fontWeight: "700",
+                color: "#1F2937",
+                padding: "16px",
               }}
-              >Kontak Innovator
+            >
+              Kontak Innovator
             </DrawerHeader>
-            <DrawerCloseButton mt={1} />
+            <DrawerCloseButton mt={2} />
             <DrawerBody padding="16px">
-              <Text mb={4} textAlign="center">
+              <Text fontSize="12px" fontWeight="400" color="#4B5563" mb={4} textAlign="center">
                 Terapkan produk inovasi desa digital dengan cara menghubungi innovator melalui saluran di bawah ini:
               </Text>
               <Stack spacing={4}>
-                <Flex alignItems="center" p={3} borderWidth="1px" borderRadius="md" cursor="pointer">
+                {/* WhatsApp */}
+                <Flex
+                  alignItems="center"
+                  padding="12px"
+                  borderWidth="1px"
+                  borderRadius="8px"
+                  cursor="pointer"
+                  transition="all 0.3s ease"
+                  _hover={{
+                    bg: "green.50", // Warna saat hover
+                  }}
+                >
                   <Icon as={FaWhatsapp} boxSize={6} color="green.500" mr={4} />
-                  <Text flex="1">WhatsApp</Text>
-                  <ChevronRightIcon />
+                  <Text fontSize="14px" fontWeight="500" flex="1" color="#1F2937">
+                    WhatsApp
+                  </Text>
+                  <ChevronRightIcon color="#1F2937" />
                 </Flex>
-                <Flex alignItems="center" p={3} borderWidth="1px" borderRadius="md" cursor="pointer">
-                  <Icon as={FaInstagram} boxSize={6} color="green.500" mr={4} />
-                  <Text flex="1">Instagram</Text>
-                  <ChevronRightIcon />
+
+                {/* Instagram */}
+                <Flex
+                  alignItems="center"
+                  padding="12px"
+                  borderWidth="1px"
+                  borderRadius="8px"
+                  cursor="pointer"
+                  transition="all 0.3s ease"
+                  _hover={{
+                    bg: "blue.50", // Warna saat hover
+                  }}
+                >
+                  <Icon as={FaInstagram} boxSize={6} color="blue.500" mr={4} />
+                  <Text fontSize="14px" fontWeight="500" flex="1" color="#1F2937">
+                    Instagram
+                  </Text>
+                  <ChevronRightIcon color="#1F2937" />
                 </Flex>
-                <Flex alignItems="center" p={3} borderWidth="1px" borderRadius="md" cursor="pointer">
-                  <Icon as={FaGlobe} boxSize={6} color="green.500" mr={4} />
-                  <Text flex="1">Website</Text>
-                  <ChevronRightIcon />
+
+                {/* Website */}
+                <Flex
+                  alignItems="center"
+                  padding="12px"
+                  borderWidth="1px"
+                  borderRadius="8px"
+                  cursor="pointer"
+                  transition="all 0.3s ease"
+                  _hover={{
+                    bg: "teal.50", // Warna saat hover
+                  }}
+                >
+                  <Icon as={FaGlobe} boxSize={6} color="teal.500" mr={4} />
+                  <Text fontSize="14px" fontWeight="500" flex="1" color="#1F2937">
+                    Website
+                  </Text>
+                  <ChevronRightIcon color="#1F2937" />
                 </Flex>
               </Stack>
             </DrawerBody>
-            <DrawerFooter justifyContent="center">
-            </DrawerFooter>
           </DrawerContent>
         </Drawer>
+
     </Container>
   );
 };
