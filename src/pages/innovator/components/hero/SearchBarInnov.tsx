@@ -7,7 +7,11 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 
-const SearchBarinnov: React.FC = () => {
+type SearchBarInnovProps = {
+  placeholder?: string; // Tambahkan tipe placeholder sebagai props
+};
+
+const SearchBarinnov: React.FC<SearchBarInnovProps> = ({ placeholder }) => {
   return (
     <Flex justify="center" maxW="360px" width="100%">
         <InputGroup>
@@ -16,7 +20,8 @@ const SearchBarinnov: React.FC = () => {
             children={<SearchIcon color="gray.300" />}
           />
           <Input
-            placeholder="Search"
+            type="text"
+            placeholder={placeholder}
             fontSize="10pt"
             _placeholder={{ color: "gray.500" }}
             _hover={{
