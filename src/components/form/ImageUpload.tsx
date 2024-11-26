@@ -21,7 +21,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     setSelectedFiles(newFiles);
   };
   return (
-    <Flex direction="row" width="130" wrap="wrap" gap= "16px">
+    <Flex direction="row" width="130" wrap="wrap" gap= "10px">
       {selectedFiles.map((file, index) => (
         <Flex
           key={index}
@@ -59,7 +59,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
           </Button>
         </Flex>
       ))}
-      {selectedFiles.length < 5 && (
+      {selectedFiles.length < 2 && (
         <Flex
           justify="center"
           align="center"

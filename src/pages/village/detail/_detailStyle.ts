@@ -10,6 +10,32 @@ export const ContentContainer = styled.div`
   
 `;
 
+export const CardContainer = styled.div`
+  overflow: auto;
+  width: 100%;
+  white-space: nowrap;
+`
+
+export const Horizontal = styled.div`
+  display: flex;
+  gap: 16px;
+`
+
+
+export const Title2 = styled.p`
+  font-size: 16px;
+  font-weight: 700;
+  color: black;
+  margin: 24px 0 16px 0;
+`
+
+export const Image = styled.div`    
+  borderRadius: "8px";
+  height: "130px";
+  width: "130px";
+  objectFit: "cover";       
+`
+
 export const Title = styled.p`
   font-size: 18px;
   font-weight: 700;
@@ -71,13 +97,30 @@ export const Icon = styled.img`
   ${marginStyle}
 `;
 
-export const Text = styled.p`
+export const SubText = styled.p`
   position: flex;
   justify-content: space-between;
   font-weight: 700;
   font-size: 16px;
   margin-bottom: 8px;
   color: #1F2937;
+`;
+
+export const Text2 = styled.p`
+  color: var(--Primary, #347357);
+  /* xs/Medium */
+  font-family: Inter;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 140%; /* 16.8px */
+  text-decoration-line: underline;
+  text-decoration-style: solid;
+  text-decoration-skip-ink: none;
+  text-decoration-thickness: auto;
+  text-underline-offset: auto;
+  text-underline-position: from-font;
+  padding-bottom: 12px;
 `;
 
 export const Background = styled.img`

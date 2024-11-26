@@ -42,6 +42,18 @@ const Register: React.FC = () => {
 
   const onShowPassword = () => setShow(!show);
 
+  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (error) setError("");
+    if (!regisForm.email.includes("@")) return setError("Email tidak valid");
+    if (regisForm.email === "" || regisForm.password === "")
+      return setError("Email dan kata sandi harus diisi");
+    if (regisForm.password.length < 6)
+      return setError("Kata sandi minimal 6 karakter");
+    if (regisForm.password !== confirmPassword)
+      return setError("konfirmasi kata sandi tidak cocok"); // Cek kesesuaian kata sandi
+    createUserWithEmailAndPassword(regisForm.email, regisForm.password);
+  };
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setRegisForm((prev) => ({ ...prev, [name]: value }));
@@ -180,6 +192,7 @@ const Register: React.FC = () => {
 
           {(error || userError) && (
             <Text textAlign="center" color="red" fontSize="10pt" mt={1}>
+            <Text textAlign="center" color="red" fontSize="10pt" mt={2} >
               {error ||
                 FIREBASE_ERRORS[
                   userError?.message as keyof typeof FIREBASE_ERRORS
@@ -188,7 +201,7 @@ const Register: React.FC = () => {
           )}
 
           <Button
-            mt={2}
+            mt={4}
             type="submit"
             alignItems="center"
             width="100%"

@@ -3,7 +3,7 @@ import { MarginProps } from 'Consts/sizing'
 
 interface ButtonProps extends MarginProps {
   children: React.ReactNode
-  size?: 's' | 'm' | 'l'
+  size?: 's' | 'm' | 'l'| 'xs'
   onClick?: () => void
   fullWidth?: boolean
   type?: any
