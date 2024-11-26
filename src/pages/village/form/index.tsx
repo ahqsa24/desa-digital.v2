@@ -5,13 +5,21 @@ import {
   Flex,
   Stack,
   Text,
-  useToast
+  useToast,
 } from "@chakra-ui/react";
 import Container from "Components/container";
 import LocationSelector from "Components/form/LocationSellector";
 import MultiSellect from "Components/form/MultiSellect";
 import TopBar from "Components/topBar";
-import { doc, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  serverTimestamp,
+  setDoc,
+  updateDoc,
+} from "firebase/firestore";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import React, { useEffect, useRef, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -45,6 +53,8 @@ const AddVillage: React.FC = () => {
   const selectedFileRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [status, setStatus] = useState("");
+  const [isEditable, setIsEditable] = useState(true);
   const toast = useToast();
   const [textInputValue, setTextInputValue] = useState({
     name: "",
@@ -83,6 +93,13 @@ const AddVillage: React.FC = () => {
   const [selectedPotensi, setSelectedPotensi] = useState<
     { value: string; label: string }[]
   >([]);
+  const [alertStatus, setAlertStatus] = useState<"info" | "warning" | "error">(
+    "warning"
+  );
+  const [alertMessage, setAlertMessage] = useState(
+    "Profil masih kosong. Silahkan isi data di bawah terlebih dahulu."
+  );
+  const [noteAdmin, setNoteAdmin] = useState<string | null>(null); // Catatan dari admin (untuk error)
 
   const fetchProvinces = async () => {
     try {
@@ -304,11 +321,20 @@ const AddVillage: React.FC = () => {
           kecamatan: selectedDistrict,
           desaKelurahan: selectedVillage,
         },
-        status: "pending",
-        createdAt: new Date().toISOString(),
+        status: "Menunggu",
+        createdAt: serverTimestamp(),
         editedAt: serverTimestamp(),
       });
       console.log("Document writen with ID: ", userId);
+      setStatus("Menunggu");
+      const notificationRef = collection(firestore, "notifications");
+      await addDoc(notificationRef, {
+        userId: userId,
+        message: "Profil desa berhasil didaftarkan",
+        status: "unread",
+        createdAt: serverTimestamp(),
+      });
+
       // Upload logo
       // if (selectedLogo) {
       //   const logoRef = ref(storage, `villages/${userId}/logo`);
@@ -362,6 +388,62 @@ const AddVillage: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!user) {
+        setError("User is not logged in.");
+        return;
+      }
+      const docRef = doc(firestore, "villages", user.uid);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+
+        // Set nilai form dengan data yang diambil dari Firestore
+        setTextInputValue({
+          name: data.namaDesa || "",
+          description: data.deskripsi || "",
+          geografis: data.geografisDesa || "",
+          infrastruktur: data.infrastrukturDesa || "",
+          kesiapan: data.kesiapanDigital || "",
+          teknologi: data.kesiapanTeknologi || "",
+          pelayanan: data.pemantapanPelayanan || "",
+          sosial: data.sosialBudaya || "",
+          resource: data.sumberDaya || "",
+          whatsapp: data.whatsapp || "",
+          instagram: data.instagram || "",
+          website: data.website || "",
+        });
+
+        setSelectedPotensi(
+          data.potensiDesa.map((potensi: string) => ({
+            value: potensi,
+            label: potensi.charAt(0).toUpperCase() + potensi.slice(1),
+          }))
+        );
+
+        setSelectedProvince(data.lokasi?.provinsi);
+        setSelectedRegency(data.lokasi?.kabupatenKota);
+        setSelectedDistrict(data.lokasi?.kecamatan);
+        setSelectedVillage(data.lokasi?.desaKelurahan);
+
+        // Tentukan apakah form bisa diedit berdasarkan status
+        if (data.status === "Menunggu") {
+          setIsEditable(false); // Jika status "pending", form tidak bisa diedit
+          setStatus("Menunggu");
+        } else if (data.status === "Ditolak") {
+          setIsEditable(true); // Jika diverifikasi atau ditolak, form bisa diedit
+          setStatus("Ditolak");
+          setAlertStatus("error");
+        }
+        setAlertStatus("info");
+        setAlertMessage(`Profil sudah didaftakan. Menunggu verifikasi admin.`);
+      }
+    };
+
+    fetchData();
+  }, [user?.uid]);
   return (
     <Container page>
       <TopBar title="Registrasi Profil Desa" onBack={() => navigate(-1)} />
@@ -370,20 +452,21 @@ const AddVillage: React.FC = () => {
           <Flex direction="column" marginTop="24px">
             <Stack spacing="12px" width="100%">
               <Alert
-                status="warning"
+                status={alertStatus}
                 fontSize={12}
                 borderRadius={4}
                 padding="8px"
               >
-                Profil masih kosong. Silahkan isi data di bawah terlebih dahulu.
+                {alertMessage}
               </Alert>
-              
+
               <FormSection
                 title="Nama Desa"
                 name="name"
                 placeholder="Nama Desa"
                 value={textInputValue.name}
                 onChange={onTextChange}
+                disabled={!isEditable}
               />
               <LocationSelector
                 label="Provinsi"
@@ -392,6 +475,7 @@ const AddVillage: React.FC = () => {
                 value={selectedProvince}
                 onChange={handleProvinceChange}
                 isRequired
+                disabled={!isEditable}
               />
 
               <LocationSelector
@@ -402,6 +486,7 @@ const AddVillage: React.FC = () => {
                 onChange={handleRegencyChange}
                 isDisabled={!selectedProvince}
                 isRequired
+                disabled={!isEditable}
               />
               <LocationSelector
                 label="Kecamatan"
@@ -411,6 +496,7 @@ const AddVillage: React.FC = () => {
                 onChange={handleDistrictChange}
                 isDisabled={!selectedRegency}
                 isRequired
+                disabled={!isEditable}
               />
               <LocationSelector
                 label="Desa/Kelurahan"
@@ -420,6 +506,7 @@ const AddVillage: React.FC = () => {
                 onChange={handleVillageChange}
                 isDisabled={!selectedDistrict}
                 isRequired
+                disabled={!isEditable}
               />
 
               <Box>
@@ -473,6 +560,7 @@ const AddVillage: React.FC = () => {
                 placeholder="Masukkan deskripsi inovasi yang ada di desa"
                 value={textInputValue.description}
                 onChange={onTextChange}
+                disabled={!isEditable}
                 isTextArea
                 wordCount={currentWordCount(textInputValue.description)}
                 maxWords={100}
@@ -486,6 +574,7 @@ const AddVillage: React.FC = () => {
                 options={potensiDesa}
                 value={selectedPotensi}
                 onChange={(selected) => setSelectedPotensi(selected)}
+                disabled={!isEditable}
               />
 
               <Box>
@@ -497,6 +586,7 @@ const AddVillage: React.FC = () => {
                   name="geografis"
                   placeholder="Deskripsi geografis desa"
                   value={textInputValue.geografis}
+                  disabled={!isEditable}
                   onChange={onTextChange}
                   wordCount={currentWordCount(textInputValue.geografis)}
                   maxWords={30}
@@ -508,6 +598,7 @@ const AddVillage: React.FC = () => {
                 name="infrastruktur"
                 placeholder="Deskripsi infrastruktur desa"
                 value={textInputValue.infrastruktur}
+                disabled={!isEditable}
                 onChange={onTextChange}
                 wordCount={currentWordCount(textInputValue.infrastruktur)}
                 maxWords={30}
@@ -518,6 +609,7 @@ const AddVillage: React.FC = () => {
                 name="kesiapan"
                 placeholder="Deskripsi kesiapan digital desa"
                 value={textInputValue.kesiapan}
+                disabled={!isEditable}
                 onChange={onTextChange}
                 wordCount={currentWordCount(textInputValue.kesiapan)}
                 maxWords={30}
@@ -528,6 +620,7 @@ const AddVillage: React.FC = () => {
                 name="teknologi"
                 placeholder="Deskripsi kemampuan digital desa"
                 value={textInputValue.teknologi}
+                disabled={!isEditable}
                 onChange={onTextChange}
                 wordCount={currentWordCount(textInputValue.teknologi)}
                 maxWords={30}
@@ -538,6 +631,7 @@ const AddVillage: React.FC = () => {
                 name="pelayanan"
                 placeholder="Deskripsi pemantapan pelayanan desa"
                 value={textInputValue.pelayanan}
+                disabled={!isEditable}
                 onChange={onTextChange}
                 wordCount={currentWordCount(textInputValue.pelayanan)}
                 maxWords={30}
@@ -548,6 +642,7 @@ const AddVillage: React.FC = () => {
                 name="sosial"
                 placeholder="Deskripsi sosial dan budaya desa"
                 value={textInputValue.sosial}
+                disabled={!isEditable}
                 onChange={onTextChange}
                 wordCount={currentWordCount(textInputValue.sosial)}
                 maxWords={30}
@@ -558,6 +653,7 @@ const AddVillage: React.FC = () => {
                 name="resource"
                 placeholder="Deskripsi sumber daya alam desa"
                 value={textInputValue.resource}
+                disabled={!isEditable}
                 onChange={onTextChange}
                 wordCount={currentWordCount(textInputValue.resource)}
                 maxWords={30}
@@ -572,6 +668,7 @@ const AddVillage: React.FC = () => {
                 placeholder="628123456789"
                 type="number"
                 value={textInputValue.whatsapp}
+                disabled={!isEditable}
                 onChange={onTextChange}
               />
 
@@ -581,6 +678,7 @@ const AddVillage: React.FC = () => {
                 placeholder="https://instagram.com/desa"
                 type="url"
                 value={textInputValue.instagram}
+                disabled={!isEditable}
                 onChange={onTextChange}
               />
               <FormSection
@@ -589,6 +687,7 @@ const AddVillage: React.FC = () => {
                 placeholder="https://desa.com"
                 type="url"
                 value={textInputValue.website}
+                disabled={!isEditable}
                 onChange={onTextChange}
               />
             </Stack>
@@ -598,16 +697,18 @@ const AddVillage: React.FC = () => {
               {error}
             </Text>
           )}
-          <Button
-            type="submit"
-            fontSize={14}
-            mt="20px"
-            width="100%"
-            height="44px"
-            isLoading={loading}
-          >
-            Daftarkan Profil
-          </Button>
+          {status !== "Menunggu" && (
+            <Button
+              type="submit"
+              fontSize={14}
+              mt="20px"
+              width="100%"
+              height="44px"
+              isLoading={loading}
+            >
+              {status === "Ditolak" ? "Kirim Ulang" : "Kirim"}
+            </Button>
+          )}
         </form>
       </Box>
     </Container>
