@@ -15,7 +15,7 @@ import DetailVillage from "./pages/village/detail";
 import DetailInnovator from "./pages/innovator/detail";
 // import ProfileInnovator from "./pages/innovator/form
 import AddInnovation from "./pages/innovation/add";
-import ProfileVillage from "./pages/village/profile";
+import ProfileVillage from "./pages/village/form";
 import { ToastContainer } from "react-toastify";
 import InnovatorForm from "./pages/innovator/form";
 import EditInnovation from "./pages/innovation/edit";
@@ -24,7 +24,8 @@ import VerificationPage from "./pages/admin/verification/VerificationPage";
 import MakeAds from "./pages/admin/ads/make/MakeAds";
 import ResetPassword from "./pages/reset_password/ResetPassword";
 import Notification from "./pages/notification/Notification"
-import ProfileVillageFill from "./pages/village/profile_fill"
+import ProfileVillageFill from "./pages/village/profile"
+import AddVillage from "./pages/village/form";
 const queryClient = new QueryClient();
 
 const routes = [
@@ -92,6 +93,11 @@ const routes = [
   {
     path: paths.EDIT_INNOVATION_PAGE,
     element: <EditInnovation />,
+    exact: true,
+  },
+  {
+    path: paths.VILLAGE_FORM,
+    element: <AddVillage />,
     exact: true,
   },
   {

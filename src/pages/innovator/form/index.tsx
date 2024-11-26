@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   Flex,
   Input,
@@ -10,21 +11,19 @@ import {
 } from "@chakra-ui/react";
 import Container from "Components/container";
 import TopBar from "Components/topBar";
-import React, { useRef, useState } from "react";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { useNavigate } from "react-router-dom";
-import { auth, firestore, storage } from "../../../firebase/clientApp";
-import HeaderUpload from "../../../components/form/HeaderUpload";
-import LogoUpload from "../../../components/form/LogoUpload";
 import {
-  DocumentData,
-  DocumentReference,
   doc,
   serverTimestamp,
   setDoc,
-  updateDoc,
+  updateDoc
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
+import React, { useRef, useState } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useNavigate } from "react-router-dom";
+import HeaderUpload from "../../../components/form/HeaderUpload";
+import LogoUpload from "../../../components/form/LogoUpload";
+import { auth, firestore, storage } from "../../../firebase/clientApp";
 
 const categories = [
   "Agribisnis",
@@ -105,7 +104,9 @@ const InnovatorForm: React.FC = () => {
     setCategory(event.target.value);
   };
 
-  const onSelectModelBusiness = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const onSelectModelBusiness = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     setModelBusiness(event.target.value);
   };
 
@@ -216,7 +217,7 @@ const InnovatorForm: React.FC = () => {
         duration: 5000,
         isClosable: true,
       });
-      navigate("/")
+      navigate("/");
     } catch (error) {
       console.error("Error adding document: ", error);
       setLoading(false);
@@ -232,183 +233,185 @@ const InnovatorForm: React.FC = () => {
   };
 
   return (
-    <Container page px={16}>
+    <Container page>
       <TopBar title="Register Inovator" onBack={() => navigate(-1)} />
-      <form onSubmit={onSubmitForm}>
-        <Flex direction="column" marginTop="24px">
-          <Stack spacing={3} width="100%">
-            <Text fontWeight="400" fontSize="14px">
-              Nama Inovator <span style={{ color: "red" }}>*</span>
+      <Box px="16px">
+        <form onSubmit={onSubmitForm}>
+          <Flex direction="column" marginTop="24px">
+            <Stack spacing={3} width="100%">
+              <Text fontWeight="400" fontSize="14px">
+                Nama Inovator <span style={{ color: "red" }}>*</span>
+              </Text>
+              <Input
+                name="name"
+                fontSize="10pt"
+                placeholder="Nama Inovator"
+                _placeholder={{ color: "gray.500" }}
+                _focus={{
+                  outline: "none",
+                  bg: "white",
+                  border: "1px solid",
+                  borderColor: "black",
+                }}
+                value={textInputsValue.name}
+                onChange={onTextChange}
+              />
+              <Text fontWeight="400" fontSize="14px">
+                Kategori Inovator <span style={{ color: "red" }}>*</span>
+              </Text>
+              <Select
+                placeholder="Pilih Kategori"
+                name="category"
+                fontSize="10pt"
+                variant="outline"
+                cursor="pointer"
+                color={"gray.500"}
+                _focus={{
+                  outline: "none",
+                  bg: "white",
+                  border: "1px solid",
+                  borderColor: "black",
+                }}
+                _placeholder={{ color: "gray.500" }}
+                value={category}
+                onChange={onSelectCategory}
+              >
+                {categories.map((category) => (
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
+                ))}
+              </Select>
+              <Text fontWeight="400" fontSize="14px">
+                Model Bisnis Digital <span style={{ color: "red" }}>*</span>
+              </Text>
+              <Select
+                placeholder="Pilih Model Bisnis"
+                name="modelBusiness"
+                fontSize="10pt"
+                variant="outline"
+                cursor="pointer"
+                color={"gray.500"}
+                _focus={{
+                  outline: "none",
+                  bg: "white",
+                  border: "1px solid",
+                  borderColor: "black",
+                }}
+                _placeholder={{ color: "gray.500" }}
+                value={modelBusiness}
+                onChange={onSelectModelBusiness}
+              >
+                {businessModels.map((model) => (
+                  <option key={model} value={model}>
+                    {model}
+                  </option>
+                ))}
+              </Select>
+              <Text fontWeight="400" fontSize="14px">
+                Deskripsi Inovator <span style={{ color: "red" }}>*</span>
+              </Text>
+              <Textarea
+                name="description"
+                fontSize="10pt"
+                placeholder="Masukkan deskripsi singkat tentang inovator"
+                _placeholder={{ color: "gray.500" }}
+                _focus={{
+                  outline: "none",
+                  bg: "white",
+                  borderColor: "black",
+                }}
+                height="100px"
+                value={textInputsValue.description}
+                onChange={onTextChange}
+              />
+              <Text fontWeight="400" fontSize="14px">
+                Logo Inovator <span style={{ color: "red" }}>*</span>
+              </Text>
+              <LogoUpload
+                selectedLogo={selectedLogo}
+                setSelectedLogo={setSelectedLogo}
+                selectFileRef={selectLogoRef}
+                onSelectLogo={onSelectLogo}
+              />
+              <Text fontWeight="400" fontSize="14px">
+                Header Inovator
+              </Text>
+              <HeaderUpload
+                selectedHeader={selectedHeader}
+                setSelectedHeader={setSelectedHeader}
+                selectFileRef={selectHeaderRef}
+                onSelectHeader={onSelectHeader}
+              />
+              <Text fontWeight="700" fontSize="16px">
+                Kontak Inovator
+              </Text>
+              <Text fontWeight="400" fontSize="14px">
+                Nomor WhatsApp <span style={{ color: "red" }}>*</span>
+              </Text>
+              <Input
+                name="whatsapp"
+                fontSize="10pt"
+                placeholder="Contoh: 08xxxxxx"
+                _placeholder={{ color: "gray.500" }}
+                _focus={{
+                  outline: "none",
+                  bg: "white",
+                  border: "1px solid",
+                  borderColor: "black",
+                }}
+                value={textInputsValue.whatsapp}
+                onChange={onTextChange}
+              />
+              <Text fontWeight="400" fontSize="14px">
+                Instagram <span style={{ color: "red" }}>*</span>
+              </Text>
+              <Input
+                name="instagram"
+                type="url" // Correctly specify the input type as URL
+                fontSize="10pt"
+                placeholder="Link instagram"
+                _placeholder={{ color: "gray.500" }}
+                _focus={{
+                  outline: "none",
+                  bg: "white",
+                  border: "1px solid",
+                  borderColor: "black",
+                }}
+                value={textInputsValue.instagram} // Ensure the state value corresponds to 'instagram'
+                onChange={onTextChange} // Use the correct change handler
+              />
+              <Text fontWeight="400" fontSize="14px">
+                Website <span style={{ color: "red" }}>*</span>
+              </Text>
+              <Input
+                name="website"
+                type="url" // Correctly specify the input type as URL
+                fontSize="10pt"
+                placeholder="Link website"
+                _placeholder={{ color: "gray.500" }}
+                _focus={{
+                  outline: "none",
+                  bg: "white",
+                  border: "1px solid",
+                  borderColor: "black",
+                }}
+                value={textInputsValue.website} // Ensure the state value corresponds to 'website'
+                onChange={onTextChange} // Use the correct change handler
+              />
+            </Stack>
+          </Flex>
+          {error && (
+            <Text color="red" fontSize="10pt" textAlign="center" mt={2}>
+              {error}
             </Text>
-            <Input
-              name="name"
-              fontSize="10pt"
-              placeholder="Nama Inovator"
-              _placeholder={{ color: "gray.500" }}
-              _focus={{
-                outline: "none",
-                bg: "white",
-                border: "1px solid",
-                borderColor: "black",
-              }}
-              value={textInputsValue.name}
-              onChange={onTextChange}
-            />
-            <Text fontWeight="400" fontSize="14px">
-              Kategori Inovator <span style={{ color: "red" }}>*</span>
-            </Text>
-            <Select
-              placeholder="Pilih Kategori"
-              name="category"
-              fontSize="10pt"
-              variant="outline"
-              cursor="pointer"
-              color={"gray.500"}
-              _focus={{
-                outline: "none",
-                bg: "white",
-                border: "1px solid",
-                borderColor: "black",
-              }}
-              _placeholder={{ color: "gray.500" }}
-              value={category}
-              onChange={onSelectCategory}
-            >
-              {categories.map((category) => (
-                <option key={category} value={category}>
-                  {category}
-                </option>
-              ))}
-            </Select>
-            <Text fontWeight="400" fontSize="14px">
-              Model Bisnis Digital <span style={{ color: "red" }}>*</span>
-            </Text>
-            <Select
-              placeholder="Pilih Model Bisnis"
-              name="modelBusiness"
-              fontSize="10pt"
-              variant="outline"
-              cursor="pointer"
-              color={"gray.500"}
-              _focus={{
-                outline: "none",
-                bg: "white",
-                border: "1px solid",
-                borderColor: "black",
-              }}
-              _placeholder={{ color: "gray.500" }}
-              value={modelBusiness}
-              onChange={onSelectModelBusiness}
-            >
-              {businessModels.map((model) => (
-                <option key={model} value={model}>
-                  {model}
-                </option>
-              ))}
-            </Select>
-            <Text fontWeight="400" fontSize="14px">
-              Deskripsi Inovator <span style={{ color: "red" }}>*</span>
-            </Text>
-            <Textarea
-              name="description"
-              fontSize="10pt"
-              placeholder="Masukkan deskripsi singkat tentang inovator"
-              _placeholder={{ color: "gray.500" }}
-              _focus={{
-                outline: "none",
-                bg: "white",
-                borderColor: "black",
-              }}
-              height="100px"
-              value={textInputsValue.description}
-              onChange={onTextChange}
-            />
-            <Text fontWeight="400" fontSize="14px">
-              Logo Inovator <span style={{ color: "red" }}>*</span>
-            </Text>
-            <LogoUpload
-              selectedLogo={selectedLogo}
-              setSelectedLogo={setSelectedLogo}
-              selectFileRef={selectLogoRef}
-              onSelectLogo={onSelectLogo}
-            />
-            <Text fontWeight="400" fontSize="14px">
-              Header Inovator
-            </Text>
-            <HeaderUpload
-              selectedHeader={selectedHeader}
-              setSelectedHeader={setSelectedHeader}
-              selectFileRef={selectHeaderRef}
-              onSelectHeader={onSelectHeader}
-            />
-            <Text fontWeight="700" fontSize="16px">
-              Kontak Inovator
-            </Text>
-            <Text fontWeight="400" fontSize="14px">
-              Nomor WhatsApp <span style={{ color: "red" }}>*</span>
-            </Text>
-            <Input
-              name="whatsapp"
-              fontSize="10pt"
-              placeholder="Contoh: 08xxxxxx"
-              _placeholder={{ color: "gray.500" }}
-              _focus={{
-                outline: "none",
-                bg: "white",
-                border: "1px solid",
-                borderColor: "black",
-              }}
-              value={textInputsValue.whatsapp}
-              onChange={onTextChange}
-            />
-            <Text fontWeight="400" fontSize="14px">
-              Instagram <span style={{ color: "red" }}>*</span>
-            </Text>
-            <Input
-              name="instagram"
-              type="url" // Correctly specify the input type as URL
-              fontSize="10pt"
-              placeholder="Link instagram"
-              _placeholder={{ color: "gray.500" }}
-              _focus={{
-                outline: "none",
-                bg: "white",
-                border: "1px solid",
-                borderColor: "black",
-              }}
-              value={textInputsValue.instagram} // Ensure the state value corresponds to 'instagram'
-              onChange={onTextChange} // Use the correct change handler
-            />
-            <Text fontWeight="400" fontSize="14px">
-              Website <span style={{ color: "red" }}>*</span>
-            </Text>
-            <Input
-              name="website"
-              type="url" // Correctly specify the input type as URL
-              fontSize="10pt"
-              placeholder="Link website"
-              _placeholder={{ color: "gray.500" }}
-              _focus={{
-                outline: "none",
-                bg: "white",
-                border: "1px solid",
-                borderColor: "black",
-              }}
-              value={textInputsValue.website} // Ensure the state value corresponds to 'website'
-              onChange={onTextChange} // Use the correct change handler
-            />
-          </Stack>
-        </Flex>
-        {error && (
-          <Text color="red" fontSize="10pt" textAlign="center" mt={2}>
-            {error}
-          </Text>
-        )}
+          )}
 
-        <Button type="submit" mt="20px" width="100%" isLoading={loading}>
-          Daftarkan Akun
-        </Button>
-      </form>
+          <Button type="submit" mt="20px" width="100%" isLoading={loading}>
+            Daftarkan Akun
+          </Button>
+        </form>
+      </Box>
     </Container>
   );
 };

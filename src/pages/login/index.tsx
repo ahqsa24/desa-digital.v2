@@ -61,8 +61,9 @@ const Login: React.FC = () => {
           const userRole = userDoc.data()?.role;
           if (userRole === "admin") {
             navigate(paths.ADMIN_PAGE);
+            console.log("user snap admin", userDoc.data().role);
           } else {
-            console.log("User bukan admin")
+            console.log("User  snap bukan admin: ", userDoc.data().role);
             navigate(paths.LANDING_PAGE);
           }
         } else {
