@@ -85,7 +85,7 @@ const VidUpload: React.FC<VidUploadProps> = ({
                         id="file-upload"
                         type="file"
                         hidden
-                        accept="mp4"
+                        accept="video/mp4"
                         ref={selectVidRef}
                         onChange={onSelectVid}
                     />

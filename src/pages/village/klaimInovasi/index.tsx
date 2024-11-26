@@ -224,6 +224,8 @@ const KlaimInovasi: React.FC = () => {
                                 <Text1>Video inovasi
                                     <span style={{ color: "red" }}>*</span>
                                 </Text1>
+                                <Text2> Maks 100 mb. Format: mp4 </Text2>
+
                             </Flex>
                             <VidUpload
                                 selectedVid={selectedVid}
