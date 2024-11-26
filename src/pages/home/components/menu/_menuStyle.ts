@@ -18,6 +18,7 @@ export const GridItem = styled.div`
   flex-direction: column;
   align-items: center;
   cursor: pointer;
+  text-align: center;
 `
 
 export const Text = styled.p`

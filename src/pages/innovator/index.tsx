@@ -1,6 +1,4 @@
 import Hero from "./components/hero";
-import { useQuery } from "react-query";
-import { getUsers } from "Services/userServices";
 import { useNavigate, generatePath } from "react-router-dom";
 import { GridContainer, 
         CardContent, 
@@ -76,7 +74,7 @@ function Innovator() {
                   </option>
             ))}
           </Select>
-          <SearchBarInnov/>
+          <SearchBarInnov placeholder="Search"/>
         </Column>
       </CardContent>
       <Text> Menampilkan 2 innovator untuk <Texthighlight> "Semua Kategori" </Texthighlight> </Text>

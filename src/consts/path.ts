@@ -21,5 +21,10 @@ export const paths = {
   RESET_PASSWORD_PAGE: "/resetpassword",
   EMAIL_RESET_PASSWORD_PAGE: "/emailreset",
   NEW_PASSWORD_PAGE: "/resetpassword/newpassword", 
+  ADMIN_PAGE: "/admin",
+  VERIFICATION_PAGE:"/admin/verification/:category",
+  MAKE_ADS: "/admin/ads/make",
   KLAIM_INOVASI_PAGE: "/village/klaimInovasi",
+  PRODUK_INOVASI_PAGE: "/innovator/detail/ProdukInovasi",
+  PENGAJUAN_INOVASI_PAGE: "/innovator/profile/pengajuanInovasi"
 };

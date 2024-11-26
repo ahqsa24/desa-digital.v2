@@ -27,5 +27,15 @@ export const Button: ComponentStyleConfig = {
                 color: "white",
             },
         },
+        inverted: {
+            bg: "white",
+            color: "brand.100",
+            border: "1px solid",
+            borderColor: "brand.100",
+            _hover: {
+                bg: "brand.100",
+                color: "white",
+            },
+        },
     },
 }

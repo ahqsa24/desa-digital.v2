@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { generatePath, useNavigate } from "react-router-dom";
 import { firestore } from "../../../../firebase/clientApp";
 import { CardContainer, Horizontal, Title } from "./_innovatorStyle";
+import { Box } from "@chakra-ui/react";
 
 function Innovator() {
   const navigate = useNavigate();
@@ -22,6 +23,8 @@ function Innovator() {
   }, [firestore]);
 
   return (
+    <Box padding="0 14px">
+      <Title>Inovator Unggulan</Title>
       <CardContainer>
         <Horizontal>
           {innovators.map((item, idx) => (
@@ -43,6 +46,7 @@ function Innovator() {
           ))}
         </Horizontal>
       </CardContainer>
+    </Box>
   );
 }
 

@@ -1,7 +1,6 @@
 import { useToast } from '@chakra-ui/toast';
 import Add from "Assets/icons/add.svg";
 import Container from "Components/container";
-import TopBar from "Components/topBar/TopBar";
 import { paths } from "Consts/path";
 import { getAuth, onAuthStateChanged } from "firebase/auth"; // import firebase auth
 import {
@@ -21,6 +20,7 @@ import Menu from "./components/menu";
 import Readiness from "./components/readiness";
 import { Box, Button, Flex, IconButton, Text, Tooltip, } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
+import TopBar from 'Components/topBar';
 
 function Home() {
   const navigate = useNavigate();
@@ -107,8 +107,8 @@ function Home() {
 
   return (
     <Container page>
-      <TopBar />
-      <Hero />
+      <TopBar title="Desa Digital Indonesia" />
+      <Hero description='Inovasi Digital' text='Indonesia'/>
       <Menu />
       <Readiness />
       <Box padding='0 14px' mt={4}>

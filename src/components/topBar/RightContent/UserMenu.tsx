@@ -5,7 +5,8 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
-  Button
+  Button,
+  Flex,
 } from "@chakra-ui/react";
 import { paths } from "Consts/path";
 import { User, signOut } from "firebase/auth";
@@ -43,40 +44,58 @@ const UserMenu: React.FC<UserMenuProps> = ({ user }) => {
     if (!user) return;
 
     if (profileExists) {
-      navigate(`${paths.INNOVATOR_DETAIL}/${user.uid}`);
+      navigate(`${paths.DETAIL_INNOVATOR_PAGE}/${user.uid}`);
     } else {
       navigate(paths.INNOVATOR_FORM);
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      navigate("/"); 
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
+  };
+
   return (
-    <Menu>
-      <Button padding={1}
-        as={IconButton}
-        aria-label="Options"
-        icon={<img src={notification} alt="Bell" width="24" height="24" />}
-      />
-      <MenuButton
-        as={IconButton}
-        aria-label="Options"
-        icon={<img src={profileIcon} alt="Profile" width="24" height="24" />}
-      />
-      
-      <MenuList>
-        {user ? (
-          <>
-            <MenuItem onClick={handleProfileClick}>
-              {profileExists ? "Profile" : "Isi Profile"}
-            </MenuItem>
-            <MenuItem onClick={() => signOut(auth)}>Logout</MenuItem>
-          </>
-        ) : (
-          <>
-            <MenuItem onClick={() => navigate(paths.LOGIN_PAGE)}>Login</MenuItem>
-          </>
-        )}
-      </MenuList>
-    </Menu>
+    <Flex justify="center" align="center" height="56px">
+      <Menu>
+        <Button
+          padding={1}
+          as={IconButton}
+          aria-label="Options"
+          icon={<img src={notification} alt="Bell" width="24" height="24" />}
+          height="40px"
+          alignSelf="center"
+        />
+        <MenuButton
+          as={IconButton}
+          aria-label="Options"
+          icon={<img src={profileIcon} alt="Profile" width="24" height="24" />}
+          height="40px"
+          alignSelf="center"
+        />
+
+        <MenuList>
+          {user ? (
+            <>
+              <MenuItem onClick={handleProfileClick}>
+                {profileExists ? "Profile" : "Isi Profile"}
+              </MenuItem>
+              <MenuItem onClick={handleLogout}>Logout</MenuItem>
+            </>
+          ) : (
+            <>
+              <MenuItem onClick={() => navigate(paths.LOGIN_PAGE)} >
+                Login
+              </MenuItem>
+            </>
+          )}
+        </MenuList>
+      </Menu>
+    </Flex>
   );
 };
 
