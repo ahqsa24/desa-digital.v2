@@ -51,7 +51,7 @@ import { firestore } from "../../../firebase/clientApp";
 import Container from "Components/container";
 import { DocumentData, collection, getDocs, query, where } from "firebase/firestore";
 import { generatePath, useNavigate } from "react-router-dom";
-import Home from "src/pages/home";
+import PengajuanKlaim from "../pengajuanKlaim";
 
 
 export default function ProfileVillage() {
@@ -101,7 +101,8 @@ export default function ProfileVillage() {
             <div>
                 <ContentContainer>
                     <Flex flexDirection="column" alignItems="flex-end" >
-                        <Button size="xs" //onClick={}
+                        <Button size="xs" 
+                        onClick={() => navigate("/PengajuanKlaim")}
                         >
                             <Icon src={Send} alt="send"/>
                             Pengajuan Klaim
