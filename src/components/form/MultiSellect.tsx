@@ -9,6 +9,7 @@ type MultiSellectProps = {
   options: { value: string; label: string }[];
   value: { value: string; label: string }[];
   isNoteRequired?: boolean;
+  disabled?: boolean;
   onChange: (selected: any) => void;
 };
 
@@ -18,6 +19,7 @@ const MultiSellect: React.FC<MultiSellectProps> = ({
   placeholder,
   options,
   value,
+  disabled,
   isNoteRequired = false,
   onChange,
 }) => {
@@ -75,6 +77,7 @@ const MultiSellect: React.FC<MultiSellectProps> = ({
         styles={customStyles}
         value={value}
         onChange={onChange}
+        isDisabled={disabled}
       />
     </Box>
   );
