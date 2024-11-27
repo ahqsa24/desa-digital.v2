@@ -32,13 +32,7 @@ import { auth } from "../../../firebase/clientApp";
 function DetailInnovation() {
   const navigate = useNavigate();
   const { id } = useParams();
-  const { data: innovation } = useQuery<any>(
-    "innovationById",
-    () => getInnovationById(id),
-    {
-      enabled: !!id,
-    }
-  );
+
 
   const [user] = useAuthState(auth); // Get the current logged-in user
   const [data, setData] = useState<DocumentData>({});
