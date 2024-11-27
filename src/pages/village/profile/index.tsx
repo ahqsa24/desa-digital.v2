@@ -1,57 +1,53 @@
-import React from "react";
-import TopBar from "Components/topBar";
-import { useParams } from "react-router";
-import Button from "Components/button";
-import Send from "Assets/icons/send.svg";
-import Location from "Assets/icons/location.svg";
-import Geography from "Assets/icons/geography.svg";
-import Infrastructure from "Assets/icons/infrastructure.svg";
-import DigitalRead from "Assets/icons/digital-readiness.svg";
 import DigitalLit from "Assets/icons/digital-literacy.svg";
+import DigitalRead from "Assets/icons/digital-readiness.svg";
+import Geography from "Assets/icons/geography.svg";
 import GoodService from "Assets/icons/good-service.svg";
-import SocCul from "Assets/icons/socio-cultural.svg";
+import Infrastructure from "Assets/icons/infrastructure.svg";
+import Location from "Assets/icons/location.svg";
 import Resource from "Assets/icons/resource-village.svg";
+import Send from "Assets/icons/send.svg";
+import SocCul from "Assets/icons/socio-cultural.svg";
 import Efishery from "Assets/images/efishery.jpg";
-import EnlargedImage from "../components/Image";
+import Button from "Components/button";
 import CardInnovation from "Components/card/innovation";
-import { useEffect, useState } from "react";
+import TopBar from "Components/topBar";
 import { paths } from "Consts/path";
 import { getUserById } from "Services/userServices";
+import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
+import { useParams } from "react-router";
+import EnlargedImage from "../components/Image";
 
 import {
-    Title,
-    ActionContainer,
-    Icon,
-    SubText,
-    Logo,
-    Label,
-    Description,
-    ContentContainer,
-    ChipContainer,
-    Background,
-    ContPotensiDesa,
-    ButtonKontak,
-    CardContainer,
-    Horizontal,
-    NavbarButton,
-} from "./_profileStyle";
-import {
     Accordion,
-    AccordionItem,
     AccordionButton,
-    AccordionPanel,
     AccordionIcon,
+    AccordionItem,
+    AccordionPanel,
+    Box,
     Flex,
     Text,
     useDisclosure,
-    Box,
-} from '@chakra-ui/react'
-import { firestore } from "../../../firebase/clientApp";
-import Container from "Components/container";
-import { DocumentData, collection, getDocs, query, where } from "firebase/firestore";
+} from '@chakra-ui/react';
+import { DocumentData, collection, getDocs } from "firebase/firestore";
 import { generatePath, useNavigate } from "react-router-dom";
-import Home from "src/pages/home";
+import { firestore } from "../../../firebase/clientApp";
+import {
+    ActionContainer,
+    Background,
+    CardContainer,
+    ChipContainer,
+    ContPotensiDesa,
+    ContentContainer,
+    Description,
+    Horizontal,
+    Icon,
+    Label,
+    Logo,
+    NavbarButton,
+    SubText,
+    Title
+} from "./_profileStyle";
 
 
 export default function ProfileVillage() {

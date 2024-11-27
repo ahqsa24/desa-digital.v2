@@ -15,7 +15,7 @@ import DetailVillage from "./pages/village/detail";
 import DetailInnovator from "./pages/innovator/detail";
 // import ProfileInnovator from "./pages/innovator/form
 import AddInnovation from "./pages/innovation/add";
-import ProfileFormRegist from "./pages/village/form";
+import AddVillage from "./pages/village/form";
 import ProfileInnovator from "./pages/innovator/profile";
 import { ToastContainer } from "react-toastify";
 import InnovatorForm from "./pages/innovator/form";
@@ -53,11 +53,6 @@ const routes = [
   {
     path: paths.VILLAGE_PAGE,
     element: <Village />,
-    exact: true,
-  },
-  {
-    path: paths.VILLAGE_PROFILE_REGIST_PAGE,
-    element: <ProfileFormRegist />,
     exact: true,
   },
   {
@@ -138,7 +133,14 @@ const routes = [
   {
     path: paths.KLAIM_INOVASI_PAGE,
     element: <KlaimInovasi />,
-    element: <NewPassword/>,
+    exact: true,
+  },
+  {
+    path: paths.NEW_PASSWORD_PAGE,
+    element: <NewPassword />,
+    exact: true,
+  },
+  {
     path: paths.ADMIN_PAGE,
     element: <AdminPage />,
     exact: true,
@@ -155,7 +157,7 @@ const routes = [
   },
   {
     path: paths.NOTIFICATION_PAGE,
-    element: <Notification title={""} description={""}/>,
+    element: <Notification title={""} description={""} />,
     exact: true,
   },
   {
@@ -165,10 +167,9 @@ const routes = [
   },
   {
     path: paths.PENGAJUAN_INOVASI_PAGE,
-    element: <PengajuanInovasi />, 
+    element: <PengajuanInovasi />,
     exact: true,
-  }
-  
+  },
 ];
 
 const App: React.FC = () => {

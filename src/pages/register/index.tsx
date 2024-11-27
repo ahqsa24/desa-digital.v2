@@ -75,15 +75,15 @@ const Register: React.FC = () => {
     return "";
   };
 
-  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setError("");
+  // const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  //   event.preventDefault();
+  //   setError("");
 
-    const validationError = validateForm();
-    if (validationError) return setError(validationError);
+  //   const validationError = validateForm();
+  //   if (validationError) return setError(validationError);
 
-    await createUserWithEmailAndPassword(regisForm.email, regisForm.password);
-  };
+  //   await createUserWithEmailAndPassword(regisForm.email, regisForm.password);
+  // };
 
   const createUserDocument = async (user: User) => {
     try {
@@ -191,8 +191,7 @@ const Register: React.FC = () => {
           </CheckboxContainer>
 
           {(error || userError) && (
-            <Text textAlign="center" color="red" fontSize="10pt" mt={1}>
-            <Text textAlign="center" color="red" fontSize="10pt" mt={2} >
+            <Text textAlign="center" color="red" fontSize="10pt" mt={2}>
               {error ||
                 FIREBASE_ERRORS[
                   userError?.message as keyof typeof FIREBASE_ERRORS
