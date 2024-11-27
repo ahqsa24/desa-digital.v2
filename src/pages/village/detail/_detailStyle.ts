@@ -5,8 +5,10 @@ export const ContentContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
-  margin: 16px;
+  padding: 0 16px;
   heigh: 100%;
+  width: 100%;
+  max-width: 360px;
   
 `;
 
@@ -128,6 +130,7 @@ export const Background = styled.img`
   max-width: 360px;
   height: 150px;
   margin-top: 56px;
+  object-fit: cover;
 `;
 
 export const Logo = styled.img`
