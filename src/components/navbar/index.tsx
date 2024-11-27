@@ -24,7 +24,7 @@ const menu = [
   {
     icon: User,
     active: UserActive,
-    label: 'Innovator',
+    label: 'Inovator',
     path: paths.INNOVATOR_PAGE,
   },
 ]
