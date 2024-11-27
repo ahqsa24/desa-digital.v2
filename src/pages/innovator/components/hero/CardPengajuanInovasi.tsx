@@ -49,7 +49,7 @@ const CardPengajuanInovasi: React.FC<CardPengajuanInovasi> = () => {
           margin="4px 0 4px 0"
         >
             Pakan otomatis cerdas berukuran besar yang dapat dikontrol melalui telepon dan dapat disesuaikan dengan kebutuhan Petani.        </Text>
-        <Text fontSize="10px" fontWeight="400" color="gray.300">
+        <Text fontSize="10px" fontWeight="400" color="#9CA3AF">
           24/10/24
         </Text>
       </Flex>
@@ -96,7 +96,7 @@ const CardPengajuanInovasi: React.FC<CardPengajuanInovasi> = () => {
         >
           Pakan otomatis cerdas berukuran sedang yang dapat dikontrol melalui telepon dan dapat disesuaikan dengan kebutuhan Petani.
         </Text>
-        <Text fontSize="10px" fontWeight="400" color="gray.300">
+        <Text fontSize="10px" fontWeight="400" color="#9CA3AF">
           24/10/24
         </Text>
       </Flex>
@@ -143,7 +143,7 @@ const CardPengajuanInovasi: React.FC<CardPengajuanInovasi> = () => {
         >
           Pakan otomatis cerdas yang dapat dikontrol melalui telepon dan dapat disesuaikan dengan kebutuhan Petani.
         </Text>
-        <Text fontSize="10px" fontWeight="400" color="gray.300">
+        <Text fontSize="10px" fontWeight="400" color="#9CA3AF">
           24/10/24
         </Text>
       </Flex>
