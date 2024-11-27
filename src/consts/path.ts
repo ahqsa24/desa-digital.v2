@@ -27,5 +27,7 @@ export const paths = {
   MAKE_ADS: "/admin/ads/make",
   KLAIM_INOVASI_PAGE: "/village/klaimInovasi",
   PRODUK_INOVASI_PAGE: "/innovator/detail/ProdukInovasi",
-  PENGAJUAN_INOVASI_PAGE: "/innovator/profile/pengajuanInovasi"
+  PENGAJUAN_INOVASI_PAGE: "/innovator/profile/pengajuanInovasi",
+  PENGAJUAN_KLAIM_PAGE: "/village/pengajuanKlaim",
+
 };

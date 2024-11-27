@@ -97,7 +97,8 @@ export default function ProfileVillage() {
             <div>
                 <ContentContainer>
                     <Flex flexDirection="column" alignItems="flex-end" >
-                        <Button size="xs" //onClick={}
+                        <Button size="xs" 
+                        onClick={() => navigate("/PengajuanKlaim")}
                         >
                             <Icon src={Send} alt="send"/>
                             Pengajuan Klaim

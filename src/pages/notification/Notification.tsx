@@ -19,7 +19,7 @@ function Notification(props: NotifProps) {
     const { title, description } = props;
 
     return (
-        <Container page px={16}>
+        <Container page>
             <TopBar title="Notifikasi" onBack={() => navigate(-1)} />
             <Tabs variant='soft-rounded' colorScheme='green' mt={7} align="center" >
                 <TabList style={{ gap: "8px", display: "flex", flexDirection: "row" }}>
@@ -27,7 +27,7 @@ function Notification(props: NotifProps) {
                     <Tab height="32px" width="160px" borderColor="#BBF7D0" backgroundColor="#F0FDF4" borderWidth={1} fontWeight="medium" fontSize="14px">Pengajuan anda</Tab>
                 </TabList>
                 <TabPanels>
-                    <TabPanel padding="16px 0px" gap="8px" display="flex" flexDirection="column" >
+                    <TabPanel padding="16px 16px" gap="8px" display="flex" flexDirection="column" >
                         <NotifContainer>
                             <Content>
                                 <Title>Aruna Hadir Disini!</Title>
@@ -64,7 +64,7 @@ function Notification(props: NotifProps) {
                             </Content>
                         </NotifContainer>
                     </TabPanel>
-                    <TabPanel padding="16px 0px" gap="8px" display="flex" flexDirection="column" >
+                    <TabPanel padding="16px 16px" gap="8px" display="flex" flexDirection="column" >
                         <NotifContainer>
                             <Content>
                                 <Title>Pengajuan Klaim Penerapan Inovasi Ditolak</Title>

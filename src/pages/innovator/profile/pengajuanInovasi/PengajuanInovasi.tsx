@@ -17,18 +17,18 @@ import {
     Icon,
 } from '@chakra-ui/react';
 import { ChevronDownIcon } from '@chakra-ui/icons';
-import CardNotification from 'Components/card/notification/CardNotification';
 import TopBar from 'Components/topBar';
 import Container from 'Components/container';
 import SearchBarInnov from '../../components/hero/SearchBarInnov';
 import CardPengajuanInovasi from '../../components/hero/CardPengajuanInovasi';
+import CardKlaim from 'Components/card/cardklaim';
 
 const PengajuanInovasi: React.FC = () => {
     const navigate = useNavigate();
     const { category } = useParams();
 
     return (
-        <Container page>
+        <Box>
             {/* Top Bar */}
             <TopBar title="Pengajuan Inovasi" onBack={() => navigate(-1)} />
 
@@ -38,7 +38,7 @@ const PengajuanInovasi: React.FC = () => {
                 justifyContent="flex-end"
                 alignItems="center"
                 gap={2}
-                mt="12px"
+                mt="52px"
                 mb="-20px"
             >
                 {/* Search Bar */}
@@ -57,32 +57,35 @@ const PengajuanInovasi: React.FC = () => {
                             fontWeight="200"
                             fontSize="12px"
                             color="gray.600"
-                            rightIcon={<ChevronDownIcon color="green.600" />}
+                            rightIcon={<ChevronDownIcon color="green.600" boxSize={4} />}
                         >
                             Filter
                         </Button>
                     </PopoverTrigger>
                     <PopoverContent
-                        maxWidth="300px" // Membatasi lebar maksimal Popover
-                        width="90%"      // Popover akan responsif, 90% dari lebar layar
-                        minWidth="200px" // Menentukan lebar minimal Popover
-                        borderRadius="8px"
-                        boxShadow="lg"
+                        sx={{
+                            display: "flex",
+                            width: "100%",
+                            right: "40px",
+                            borderRadius: "8px",
+                            boxShadow: "lg",
+                        }}
+
                     >
                         <PopoverArrow />
                         <PopoverCloseButton />
-                        <PopoverHeader fontSize="12px" fontFamily="Inter" fontStyle="normal">
+                        <PopoverHeader width="150px" fontSize="14px" fontFamily="Inter" fontStyle="normal">
                             Filter Pilihan </PopoverHeader>
-                        <PopoverBody fontSize="12px" fontFamily="Inter" fontStyle="normal">
-                            <VStack align="start" spacing={2}>
-                                <Checkbox size="sm" fontSize="12px">Status: Menunggu</Checkbox>
-                                <Checkbox size="sm" fontSize="12px">Status: Ditolak</Checkbox>
-                                <Checkbox size="sm" fontSize="12px">Status: Terverifikasi</Checkbox>
+                        <PopoverBody fontFamily="Inter" fontStyle="normal">
+                            <VStack align="start" spacing={1}>
+                                <Checkbox size="sm" sx={{ "& span": { fontSize: "13px" } }}>Menunggu</Checkbox>
+                                <Checkbox size="sm" sx={{ "& span": { fontSize: "13px" } }}>Ditolak</Checkbox>
+                                <Checkbox size="sm" sx={{ "& span": { fontSize: "13px" } }}>Terverifikasi</Checkbox>
                             </VStack>
                         </PopoverBody>
-                        <PopoverFooter>
+                        <PopoverFooter display={'flex'} justifyContent={'end'}>
                             <Button
-                                size="sm" // Ukuran tombol
+                                size="s" // Ukuran tombol
                                 colorScheme="teal"
                                 fontSize="12px" // Ukuran font tombol
                                 fontWeight="500" // Ketebalan font
@@ -97,8 +100,9 @@ const PengajuanInovasi: React.FC = () => {
             </Flex>
 
             {/* Daftar Notifikasi */}
-            <CardPengajuanInovasi/>
-        </Container>
+            <CardPengajuanInovasi />
+
+        </Box>
     );
 };
 

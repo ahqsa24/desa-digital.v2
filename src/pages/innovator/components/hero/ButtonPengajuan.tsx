@@ -1,7 +1,9 @@
 import React from "react";
-import { Button, Icon } from "@chakra-ui/react";
+import Button from "Components/button";
 import { FaPaperPlane } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import Send from "Assets/icons/send.svg";
+import {Icon} from "../../../village/profile/_profileStyle"
 
 interface ButtonPengajuanProps {
   label: string; // Label untuk teks tombol
@@ -24,19 +26,10 @@ const ButtonPengajuan: React.FC<ButtonPengajuanProps> = ({ label, to, onClick, i
     
     return (
     <Button
-      backgroundColor="#347357"
-      color="white"
-      _hover={{
-        backgroundColor: "#285e45",
-      }}
-      width="140px" // Lebar tombol
-      height="30px" // Tinggi tombol
-      fontSize="12px" // Ukuran teks
-      borderRadius="4px" // Sudut membulat
-      fontFamily="Inter, sans-serif" // Font-family tombol
-      leftIcon={<Icon as={icon} />} // Ikon dinamis, default ke FaPaperPlane
+      size={'xs'}
       onClick={handleClick}
     >
+       <Icon src={Send} alt="send"/>
       {label} {/* Teks tombol */}
     </Button>
   );

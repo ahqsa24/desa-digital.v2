@@ -31,6 +31,7 @@ import ResetPassword from "./pages/reset_password/ResetPassword";
 import Notification from "./pages/notification/Notification";
 import InnovationListPage from "./pages/innovator/detail/ProdukInovasi/InnovationListPage";
 import PengajuanInovasi from "./pages/innovator/profile/pengajuanInovasi/PengajuanInovasi";
+import PengajuanKlaim from "./pages/village/pengajuanKlaim";
 
 const queryClient = new QueryClient();
 
@@ -168,6 +169,11 @@ const routes = [
   {
     path: paths.PENGAJUAN_INOVASI_PAGE,
     element: <PengajuanInovasi />,
+    exact: true,
+  },
+  {
+    path: paths.PENGAJUAN_KLAIM_PAGE,
+    element: <PengajuanKlaim />, 
     exact: true,
   },
 ];
