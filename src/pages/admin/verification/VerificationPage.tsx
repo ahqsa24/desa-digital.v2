@@ -8,6 +8,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { useNavigate, useParams } from "react-router-dom";
 import { auth, firestore } from "../../../firebase/clientApp";
 import AdsPage from "../ads/AdsPage";
+import { paths } from "Consts/path";
 
 const VerificationPage: React.FC = () => {
   const navigate = useNavigate();
@@ -36,31 +37,49 @@ const VerificationPage: React.FC = () => {
     return `KECAMATAN ${kecamatan}, ${kabupaten}, ${provinsi}`;
   };
 
+  const categoryToPathMap: Record<string, string> = {
+    "Verifikasi Desa": paths.DETAIL_VILLAGE_PAGE,
+    "Verifikasi Inovator": paths.DETAIL_INNOVATOR_PAGE,
+    "Verifikasi Tambah Inovasi": paths.DETAIL_INNOVATION_PAGE,
+  };
 
+  const handleCardClick = (id: string) => {
+    const pathTemplate = categoryToPathMap[category || ""];
+    if (pathTemplate) {
+      const path = pathTemplate.replace(":id", id);
+      navigate(path);
+    } else {
+      console.error("Unknown category or path mapping missing");
+    }
+  };
 
   const fetchCategoryData = async (collectionName: string) => {
     const docRef = collection(firestore, collectionName);
     const docSnap = await getDocs(docRef);
-    return docSnap.docs.map((doc) => doc.data());
+    return docSnap.docs.map((doc) => ({
+      id: doc.id, // Include ID for path generation
+      ...doc.data(),
+    }));
   };
 
   const fetchData = async () => {
-    switch (category) {
-      case "Verifikasi Desa":
-        return await fetchCategoryData("villages");
-      case "Verifikasi Innovator":
-        return await fetchCategoryData("innovators");
-      case "Verifikasi Tambah Innovasi":
-        return await fetchCategoryData("innovations");
-      default:
-        return [];
+    const categoryToCollectionMap: Record<string, string> = {
+      "Verifikasi Desa": "villages",
+      "Verifikasi Inovator": "innovators",
+      "Verifikasi Tambah Inovasi": "innovations",
+    };
+
+    const collectionName = categoryToCollectionMap[category || ""];
+    if (collectionName) {
+      return await fetchCategoryData(collectionName);
     }
+    return [];
   };
 
+  // Memuat data ketika kategori berubah
   useEffect(() => {
     const loadData = async () => {
       const data = await fetchData();
-      console.log(data);
       setVerifData(data || []);
     };
     loadData();
@@ -91,6 +110,7 @@ const VerificationPage: React.FC = () => {
                 status={data.status || "Unknown"}
                 date={formatTimestamp(data.createdAt)}
                 description={description}
+                onClick={() => handleCardClick(data.id)}
               />
             );
           })

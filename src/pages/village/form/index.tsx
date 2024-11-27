@@ -35,6 +35,7 @@ import {
   getRegencies,
   getVillages,
 } from "../../../services/locationServices";
+import { set } from "react-hook-form";
 
 interface Location {
   id: string;
@@ -179,7 +180,10 @@ const AddVillage: React.FC = () => {
   ): { value: string; label: string }[] =>
     locations.map((loc) => ({ value: loc.id, label: loc.name }));
 
-  const onSelectImage = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const onSelectImage = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    maxFiles: number
+  ) => {
     const files = event.target.files;
     if (files) {
       const imagesArray: string[] = [];
@@ -188,8 +192,16 @@ const AddVillage: React.FC = () => {
         reader.onload = (readerEvent) => {
           if (readerEvent.target?.result) {
             imagesArray.push(readerEvent.target.result as string);
+
             if (imagesArray.length === files.length) {
-              setSelectedFiles((prev) => [...prev, ...imagesArray]);
+              setSelectedFiles((prev) => {
+                // Cegah lebih dari maxFiles
+                if (prev.length + imagesArray.length > maxFiles) {
+                  const availableSlots = maxFiles - prev.length;
+                  return [...prev, ...imagesArray.slice(0, availableSlots)];
+                }
+                return [...prev, ...imagesArray];
+              });
             }
           }
         };
@@ -198,15 +210,43 @@ const AddVillage: React.FC = () => {
     }
   };
   const onSelectLogo = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const reader = new FileReader();
-    if (event.target.files?.[0]) {
-      reader.readAsDataURL(event.target.files[0]);
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          const size = Math.min(img.width, img.height); // Ambil sisi terkecil untuk menjadikannya persegi
+          canvas.width = size;
+          canvas.height = size;
+
+          const ctx = canvas.getContext("2d");
+          if (ctx) {
+            ctx.drawImage(
+              img,
+              (img.width - size) / 2,
+              (img.height - size) / 2,
+              size,
+              size,
+              0,
+              0,
+              size,
+              size
+            );
+
+            const dataURL = canvas.toDataURL("image/jpeg"); // Ubah ke data URL
+            setSelectedLogo(dataURL); // Set hasil gambar yang diproses ke state
+          }
+        };
+
+        if (reader.result) {
+          img.src = reader.result.toString(); // Set source gambar ke hasil pembacaan FileReader
+        }
+      };
+
+      reader.readAsDataURL(file); // Membaca file sebagai Data URL
     }
-    reader.onload = (readerEvent) => {
-      if (readerEvent.target?.result) {
-        setSelectedLogo(readerEvent.target?.result as string);
-      }
-    };
   };
 
   const onSelectHeader = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -322,34 +362,37 @@ const AddVillage: React.FC = () => {
           desaKelurahan: selectedVillage,
         },
         status: "Menunggu",
+        catatanAdmin: "",
         createdAt: serverTimestamp(),
         editedAt: serverTimestamp(),
       });
       console.log("Document writen with ID: ", userId);
       setStatus("Menunggu");
-      const notificationRef = collection(firestore, "notifications");
-      await addDoc(notificationRef, {
-        userId: userId,
-        message: "Profil desa berhasil didaftarkan",
-        status: "unread",
-        createdAt: serverTimestamp(),
-      });
+
+      // TODO: Kirim notifikasi ke user dan admin
+      // const notificationRef = collection(firestore, "notifications");
+      // await addDoc(notificationRef, {
+      //   userId: userId,
+      //   message: "Profil desa berhasil didaftarkan",
+      //   status: "unread",
+      //   createdAt: serverTimestamp(),
+      // });
 
       // Upload logo
-      // if (selectedLogo) {
-      //   const logoRef = ref(storage, `villages/${userId}/logo`);
-      //   await uploadString(logoRef, selectedLogo, "data_url").then(async () => {
-      //     const downloadURL = await getDownloadURL(logoRef);
-      //     await updateDoc(doc(firestore, "villages", userId), {
-      //       logo: downloadURL,
-      //     });
-      //     console.log("File available at", downloadURL);
-      //   });
-      // } else {
-      //   setError("Logo harus diisi");
-      //   setLoading(false);
-      //   return;
-      // }
+      if (selectedLogo) {
+        const logoRef = ref(storage, `villages/${userId}/logo`);
+        await uploadString(logoRef, selectedLogo, "data_url").then(async () => {
+          const downloadURL = await getDownloadURL(logoRef);
+          await updateDoc(doc(firestore, "villages", userId), {
+            logo: downloadURL,
+          });
+          console.log("File available at", downloadURL);
+        });
+      } else {
+        setError("Logo harus diisi");
+        setLoading(false);
+        return;
+      }
 
       // Upload header if provided
       if (selectedHeader) {
@@ -364,8 +407,26 @@ const AddVillage: React.FC = () => {
           }
         );
       }
+      if (selectedFiles.length > 0) {
+        const imagesRef = ref(storage, `villages/${userId}/images`);
+        const downloadURLs: string[] = [];
 
-      setLoading(false);
+        for (let i = 0; i < selectedFiles.length; i++) {
+          const imageRef = ref(imagesRef, `${i}`);
+          await uploadString(imageRef, selectedFiles[i], "data_url").then(
+            async () => {
+              const downloadURL = await getDownloadURL(imageRef);
+              downloadURLs.push(downloadURL); // Tambahkan URL ke array
+              console.log("File available at", downloadURL);
+            }
+          );
+        }
+
+        // Simpan seluruh array URL ke Firestore
+        await updateDoc(doc(firestore, "villages", userId), {
+          images: downloadURLs,
+        });
+      }
 
       toast({
         title: "Profile berhasil dibuat",
@@ -386,6 +447,9 @@ const AddVillage: React.FC = () => {
         isClosable: true,
       });
     }
+    setLoading(false);
+    setIsEditable(false);
+    setAlertStatus("info");
   };
 
   useEffect(() => {
@@ -422,6 +486,9 @@ const AddVillage: React.FC = () => {
             label: potensi.charAt(0).toUpperCase() + potensi.slice(1),
           }))
         );
+        setSelectedLogo(data.logo);
+        setSelectedHeader(data.header);
+        setSelectedFiles(Object.values(data.images || {}));
 
         setSelectedProvince(data.lokasi?.provinsi);
         setSelectedRegency(data.lokasi?.kabupatenKota);
@@ -444,6 +511,7 @@ const AddVillage: React.FC = () => {
 
     fetchData();
   }, [user?.uid]);
+
   return (
     <Container page>
       <TopBar title="Registrasi Profil Desa" onBack={() => navigate(-1)} />
@@ -521,6 +589,7 @@ const AddVillage: React.FC = () => {
                   setSelectedLogo={setSelectedLogo}
                   selectFileRef={selectedLogoRef}
                   onSelectLogo={onSelectLogo}
+                  disabled={!isEditable}
                 />
               </Box>
 
@@ -536,6 +605,7 @@ const AddVillage: React.FC = () => {
                   setSelectedHeader={setSelectedHeader}
                   selectFileRef={selectedHeaderRef}
                   onSelectHeader={onSelectHeader}
+                  disabled={!isEditable}
                 />
               </Box>
 
@@ -550,7 +620,9 @@ const AddVillage: React.FC = () => {
                   selectedFiles={selectedFiles}
                   setSelectedFiles={setSelectedFiles}
                   selectFileRef={selectedFileRef}
-                  onSelectImage={onSelectImage}
+                  onSelectImage={(e) => onSelectImage(e, 5)}
+                  disabled={!isEditable}
+                  maxFiles={5}
                 />
               </Box>
 
