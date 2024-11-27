@@ -233,7 +233,7 @@ const InnovatorForm: React.FC = () => {
 
   return (
     <Container page px={16}>
-      <TopBar title="Register Inovator" onBack={() => navigate(-1)} />
+      <TopBar title="Register Inovator" onBack={() => navigate(-1)}/>
       <form onSubmit={onSubmitForm}>
         <Flex direction="column" marginTop="24px">
           <Stack spacing={3} width="100%">
