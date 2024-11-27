@@ -25,7 +25,7 @@ const InnovationPreview = ({ innovations, innovatorId }: any) => {
             textDecoration="underline"
             onClick={() => navigate(`/innovator/${innovatorId}/all-innovations`)}
           >
-            Lainnya
+            Lihat Semua
           </Text>
         )}
       </Flex>
@@ -46,7 +46,7 @@ const InnovationPreview = ({ innovations, innovatorId }: any) => {
               namaInovasi={innovation.namaInovasi}
               kategori={innovation.kategori}
               deskripsi={innovation.deskripsi}
-              tahunDibuat={innovation.tahunDibuat}
+              jumlahDiterapkan={innovation.jumlahDiterapkan}
               innovatorLogo={innovation.innovatorImgURL}
               innovatorName={innovation.namaInnovator}
             />

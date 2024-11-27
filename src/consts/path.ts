@@ -28,5 +28,5 @@ export const paths = {
   PRODUK_INOVASI_PAGE: "/innovator/detail/ProdukInovasi",
   PENGAJUAN_INOVASI_PAGE: "/innovator/profile/pengajuanInovasi",
   PENGAJUAN_KLAIM_PAGE: "/village/pengajuanKlaim",
-
+  SEMUA_INOVASI_DITERAPKAN_PAGE: "/village/semuaInovasiDiterapkan",
 };

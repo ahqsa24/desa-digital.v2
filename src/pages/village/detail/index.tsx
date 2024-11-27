@@ -37,6 +37,7 @@ import {
   ButtonKontak,
   CardContainer,
   Horizontal,
+  GridContainer,
 } from "./_detailStyle";
 import {
   Accordion,
@@ -248,7 +249,7 @@ export default function DetailVillage() {
             <Flex justifyContent="space-between" alignItems="flex-end" align-self="stretch">
               <SubText>Inovasi yang Diterapkan</SubText>
               <Text
-                onClick={() => navigate("/target-page")} // Ganti "/target-page" dengan rute yang sesuai
+                onClick={() => navigate("/village/semuaInovasiDiterapkan")} // Ganti "/target-page" dengan rute yang sesuai
                 cursor="pointer"
                 color="var(--Primary, #347357)"
                 fontSize="12px"
@@ -257,16 +258,16 @@ export default function DetailVillage() {
                 paddingBottom="12px"
               > Lihat Semua </Text>
             </Flex>
-            <CardContainer>
-              <Horizontal>
-                {innovations.map((innovation, idx) => (
+
+            <GridContainer>
+                {innovations.slice(0, 2).map((innovation, idx) => (
                   <CardInnovation
                     key={idx}
                     images={innovation.images}
                     namaInovasi={innovation.namaInovasi}
                     kategori={innovation.kategori}
                     deskripsi={innovation.deskripsi}
-                    tahunDibuat={innovation.tahunDibuat}
+                    jumlahDiterapkan={innovation.jumlahDiterapkan}
                     innovatorLogo={innovation.innovatorImgURL}
                     innovatorName={innovation.namaInnovator}
                     onClick={() =>
@@ -274,8 +275,7 @@ export default function DetailVillage() {
                     }
                   />
                 ))}
-              </Horizontal>
-            </CardContainer>
+            </GridContainer>
           </div>
 
           <Button size="m" fullWidth mb={70} type="submit" onClick={onOpen}>

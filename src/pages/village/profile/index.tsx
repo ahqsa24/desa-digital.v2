@@ -48,10 +48,8 @@ import {
     Box,
 } from '@chakra-ui/react'
 import { firestore } from "../../../firebase/clientApp";
-import Container from "Components/container";
-import { DocumentData, collection, getDocs, query, where } from "firebase/firestore";
+import { DocumentData, collection, getDocs } from "firebase/firestore";
 import { generatePath, useNavigate } from "react-router-dom";
-import PengajuanKlaim from "../pengajuanKlaim";
 
 
 export default function ProfileVillage() {
@@ -102,7 +100,7 @@ export default function ProfileVillage() {
                 <ContentContainer>
                     <Flex flexDirection="column" alignItems="flex-end" >
                         <Button size="xs" 
-                        onClick={() => navigate("/PengajuanKlaim")}
+                        onClick={() => navigate("/village/pengajuanKlaim")}
                         >
                             <Icon src={Send} alt="send"/>
                             Pengajuan Klaim
@@ -259,7 +257,7 @@ export default function ProfileVillage() {
                         <Flex justifyContent="space-between" alignItems="flex-end" alignSelf="stretch">
                             <SubText>Inovasi yang Diterapkan</SubText>
                             <Text
-                                onClick={() => navigate("/target-page")} // Ganti "/target-page" dengan rute yang sesuai
+                                onClick={() => navigate("/village/semuaInovasiDiterapkan")} // Ganti "/target-page" dengan rute yang sesuai
                                 cursor="pointer"
                                 color="var(--Primary, #347357)"
                                 fontSize="12px"
@@ -271,13 +269,13 @@ export default function ProfileVillage() {
                         <CardContainer>
                             <Horizontal>
                                 {innovations.map((innovation, idx) => (
-                                    <CardInnovation
+                                    <CardInnovation 
                                         key={idx}
                                         images={innovation.images}
                                         namaInovasi={innovation.namaInovasi}
                                         kategori={innovation.kategori}
                                         deskripsi={innovation.deskripsi}
-                                        tahunDibuat={innovation.tahunDibuat}
+                                        jumlahDiterapkan={innovation.jumlahDiterapkan}
                                         innovatorLogo={innovation.innovatorImgURL}
                                         innovatorName={innovation.namaInnovator}
                                         onClick={() =>
