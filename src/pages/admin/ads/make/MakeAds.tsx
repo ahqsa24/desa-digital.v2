@@ -47,7 +47,9 @@ const MakeAds: React.FC = () => {
     setError("");
     try {
       const docRef = doc(firestore, "ads");
-    } catch (error) {}
+    } catch (error) {
+      console.error("Error adding document: ", error);
+    }
   };
   return (
     <Container page>

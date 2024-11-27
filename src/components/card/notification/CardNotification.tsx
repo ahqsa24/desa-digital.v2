@@ -6,6 +6,7 @@ type CardNotificationProps = {
   status: string;
   date: string;
   description: string;
+  onClick?: () => void;
 };
 // TODO: Buat agar card ini bisa di klik dan arahkan ke halaman detail
 
@@ -14,6 +15,7 @@ const CardNotification: React.FC<CardNotificationProps> = ({
   description,
   status,
   date,
+  onClick,
 }) => {
 
   const [isExpanded, setIsExpanded] = useState(false);
@@ -33,6 +35,7 @@ const CardNotification: React.FC<CardNotificationProps> = ({
       direction="column"
       boxShadow="0px 1px 2px 0px rgba(0, 0, 0, 0.06), 0px 1px 3px 0px rgba(0, 0, 0, 0.10);"
       cursor="pointer"
+      onClick={onClick}
     >
       <Flex justifyContent="space-between">
         <Text fontSize="14px" fontWeight="700" lineHeight="140%" width="221px">
