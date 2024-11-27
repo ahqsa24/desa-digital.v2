@@ -127,7 +127,7 @@ const DetailInnovator: React.FC = () => {
   return (
     <Container page>
       <TopBar 
-        title="Profil Innovator"  
+        title="Profil Inovator"  
         onBack={() => navigate(-1)} 
         />
       <Flex position="relative">
