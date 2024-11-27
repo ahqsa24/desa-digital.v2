@@ -17,7 +17,8 @@ export const KlaimContainer = styled.div`
 export const Title = styled.p`
   font-size: 14px;
   font-weight: 700;
-  max-width:205px;
+  max-width:200px;
+  min-width:10px;
   width: 100%;
   display: block;
   color: #1f2937;

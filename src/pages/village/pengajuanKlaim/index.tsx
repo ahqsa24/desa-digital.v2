@@ -20,6 +20,7 @@ import { ChevronDownIcon } from '@chakra-ui/icons';
 import TopBar from 'Components/topBar';
 import SearchBarVil from '../components/SearchBarVil';
 import CardKlaim from 'Components/card/cardklaim';
+import { KlaimContainer, Text, ButtonKlaim, TextButton } from './_pengajuanKlaim';
 
 interface CardKlaimProps {
     title: string;
@@ -30,13 +31,21 @@ interface CardKlaimProps {
 const PengajuanKlaim: React.FC = () => {
     const navigate = useNavigate();
     const { category } = useParams();
+    
 
     return (
-        <Box>
-            {/* Top Bar */}
-            <TopBar title="Pengajuan Klaim" onBack={() => navigate(-1)} />
-            <Stack padding="16px" gap="16px" paddingTop="55px">
+        <Box marginTop="56px">
 
+            <KlaimContainer>
+                <Text>Inovasi belum terdaftar pada sistem ?</Text>
+                <ButtonKlaim onClick={()=>navigate("/village/KlaimManual")}>
+                    <TextButton>
+                        Klaim manual di sini
+                    </TextButton>
+                </ButtonKlaim>
+            </KlaimContainer>
+            <TopBar title="Pengajuan Klaim" onBack={() => navigate(-1)} />
+            <Stack padding="16px" gap="16px" paddingTop="0px">
                 {/* Search Bar dan Filter */}
                 <Flex
                     padding="16px 0px"
@@ -115,7 +124,7 @@ const PengajuanKlaim: React.FC = () => {
                     date={111}
                     klaimbadge={'ditolak'}
                 />
-                
+
             </Stack>
         </Box>
     );

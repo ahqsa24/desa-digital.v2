@@ -175,6 +175,11 @@ const routes = [
     path: paths.SEMUA_INOVASI_DITERAPKAN_PAGE,
     element: <SemuaInovasiDiterapkan />, 
     exact: true,
+  },
+  {
+    path: paths.KLAIM_INOVASI_MANUAL_PAGE,
+    element: <KlaimManual />, 
+    exact: true,
   }
   
 ];

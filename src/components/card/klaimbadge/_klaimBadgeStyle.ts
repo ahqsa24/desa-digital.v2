@@ -9,7 +9,7 @@ export const StyledKlaimBadge = styled.div<KlaimBadgeProps>`
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 79px;
+    min-width: 79px;
     height: 18px;
     border-radius: 12px;
     border: 0.5px solid;
@@ -22,7 +22,7 @@ export const StyledKlaimBadge = styled.div<KlaimBadgeProps>`
             return css`
         color: #DC2626;
         border-color: #DC2626;
-        background-color: #FEE2E2;
+        background-color: #FEE2E2
       `;
         }
         if (condition === "terverifikasi") {
