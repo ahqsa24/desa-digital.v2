@@ -52,10 +52,10 @@ function Innovator() {
       <CardContent>
         <Column>
         <Text>
-            Pilih Innovator
+            Pilih Inovator
           </Text>
           <Select
-            placeholder= "Pilih Kategori Innovator"
+            placeholder= "Pilih Kategori Inovator"
             name="category"
             fontSize="10pt"
             variant="outline"
@@ -77,7 +77,7 @@ function Innovator() {
           <SearchBarInnov placeholder="Search"/>
         </Column>
       </CardContent>
-      <Text> Menampilkan 2 innovator untuk <Texthighlight> "Semua Kategori" </Texthighlight> </Text>
+      <Text> Menampilkan 2 inovator untuk <Texthighlight> "Semua Kategori" </Texthighlight> </Text>
       <GridContainer >
         {
           innovators?.map((item: any, idx: number) => (
