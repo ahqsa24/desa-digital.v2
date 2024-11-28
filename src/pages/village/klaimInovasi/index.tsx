@@ -28,15 +28,7 @@ import {
     Box,
     Flex
 } from '@chakra-ui/react'
-import {
-    Modal,
-    ModalOverlay,
-    ModalContent,
-    ModalHeader,
-    ModalFooter,
-    ModalBody,
-    ModalCloseButton,
-} from '@chakra-ui/react'
+
 
 import { useDisclosure } from "@chakra-ui/react";
 const KlaimInovasi: React.FC = () => {
@@ -152,7 +144,7 @@ const KlaimInovasi: React.FC = () => {
 
     return (
         <Box>
-            <TopBar title="Klaim Inovasi" onBack={() => navigate(-1)}
+            <TopBar title="Klaim Penerapan Inovasi" onBack={() => navigate(-1)}
             />
                 <Container>
                     <Flex flexDirection="column" gap="2px">

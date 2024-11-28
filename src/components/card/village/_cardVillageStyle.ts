@@ -6,11 +6,10 @@ export const Container = styled.div`
   border-radius: 8px;
   display: flex;
   width: 100%;
-
+  min-height: 189px;
   flex-direction: column;
   overflow: hidden;
   cursor: pointer;
-  
 `
 
 export const Background = styled.img`

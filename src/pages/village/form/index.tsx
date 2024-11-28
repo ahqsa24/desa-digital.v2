@@ -62,6 +62,8 @@ const AddVillage: React.FC = () => {
     whatsapp: "",
     instagram: "",
     website: "",
+    literasi: "",
+    pemantapan: "",
   });
   const [provinces, setProvinces] = useState<Location[]>([]);
   const [regencies, setRegencies] = useState<Location[]>([]);

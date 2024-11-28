@@ -35,10 +35,9 @@ const PengajuanKlaim: React.FC = () => {
 
     return (
         <Box marginTop="56px">
-
             <KlaimContainer>
                 <Text>Inovasi belum terdaftar pada sistem ?</Text>
-                <ButtonKlaim onClick={()=>navigate("/village/KlaimManual")}>
+                <ButtonKlaim onClick={()=>navigate("/village/klaimInovasiManual")}>
                     <TextButton>
                         Klaim manual di sini
                     </TextButton>

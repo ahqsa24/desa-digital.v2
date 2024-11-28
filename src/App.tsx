@@ -33,6 +33,7 @@ import InnovationListPage from "./pages/innovator/detail/ProdukInovasi/Innovatio
 import PengajuanInovasi from "./pages/innovator/profile/pengajuanInovasi/PengajuanInovasi";
 import PengajuanKlaim from "./pages/village/pengajuanKlaim";
 import SemuaInovasiDiterapkan from "./pages/village/semuaInovasiDiterapkan";
+import KlaimManual from "./pages/village/klaimInovasiManual";
 
 
 const queryClient = new QueryClient();
