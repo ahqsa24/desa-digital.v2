@@ -280,8 +280,8 @@ const KlaimManual: React.FC = () => {
                 </Flex>
                 <Flex direction={'column'} gap={1}>
                     <SubText>Bukti Klaim</SubText>
-                    <Text fontWeight="400" fontSize="12px" mb="6px" color="#9CA3AF">
-                        Silahkan masukkan informasi inovator dan inovasi yang akan anda klaim penerapannya
+                    <Text fontWeight="400" fontSize="12px" color="#9CA3AF">
+                        Silahkan masukkan bukti klaim penerapan inovasi
                     </Text>
                 </Flex>
                 
