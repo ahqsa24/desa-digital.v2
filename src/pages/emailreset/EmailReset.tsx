@@ -1,92 +1,102 @@
 import React, { useEffect, useState } from "react";
-import { Input, Button, Text } from "@chakra-ui/react";
+import { Input, Button, Text, Flex } from "@chakra-ui/react";
 import { Background, Container, Title, Description } from "./_EmailResetStyle";
 import { useNavigate } from "react-router-dom";
-import { paths } from "Consts/path"; 
+import { paths } from "Consts/path";
 import { auth } from "../../firebase/clientApp";
-import { useAuthState } from "react-firebase-hooks/auth";
+import {
+  useAuthState,
+  useSendPasswordResetEmail,
+} from "react-firebase-hooks/auth";
 import { useForm } from "react-hook-form";
+import { ArrowBackIcon } from "@chakra-ui/icons";
 
 // Definisikan tipe untuk data formulir
-type EmailResetFormData = {
-  email: string;
-};
 
 const EmailReset: React.FC = () => {
-    const [error, setError] = useState("");
-    const [user, loading] = useAuthState(auth);
-    const navigate = useNavigate();
+  // const [error, setError] = useState("");
+  const [user, loading] = useAuthState(auth);
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [sendPasswordResetEmail, sending, error] =
+    useSendPasswordResetEmail(auth);
+  const [success, setSuccess] = useState(false);
 
-    // Tentukan tipe data form menggunakan generics
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-    } = useForm<EmailResetFormData>();
+  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    try {
+      await sendPasswordResetEmail(email);
+      setSuccess(true);
+      console.log("Email berhasil dikirim", email);
+      //   navigate(paths.LOGIN_PAGE);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-    const onSubmit = (data: EmailResetFormData) => {
-        if (!data.email) return setError("Email tidak boleh kosong");
-        if (!/\S+@\S+\.\S+/.test(data.email)) return setError("Format email tidak valid");
+  useEffect(() => {
+    if (user) {
+      console.log("User sudah login:", user);
+    }
+  }, [user]);
 
-        // Tambahkan logika pengiriman email di sini
-        console.log("Mengirim kode ke email:", data.email);
-
-        // Setelah berhasil, arahkan ke halaman reset password
-        navigate(paths.RESET_PASSWORD_PAGE);
-    };
-
-    useEffect(() => {
-        if (user) {
-            console.log("User sudah login:", user);
-        }
-    }, [user]);
-
-    return (
-        <Background>
-            <Container>
-                <Title>Lupa Kata Sandi</Title>
-                <Description>
-                    Masukkan email yang akan kami kirimkan kode untuk reset password.
-                </Description>
-
-                <form onSubmit={handleSubmit(onSubmit)}>
-                    <Text fontSize="10pt" mt="12px">
-                        Email
-                    </Text>
-                    <Input
-                        {...register("email", {
-                            required: "Email wajib diisi",
-                            pattern: {
-                                value: /\S+@\S+\.\S+/,
-                                message: "Format email tidak valid",
-                            },
-                        })}
-                        type="email"
-                        placeholder="Email"
-                        mt="4px"
-                    />
-
-                    {/* Error dari react-hook-form */}
-                    {errors.email && (
-                        <Text textAlign="left" color="red" fontSize="10pt" mt="4px">
-                            {errors.email.message}
-                        </Text>
-                    )}
-
-                    {/* Error tambahan */}
-                    {error && (
-                        <Text textAlign="left" color="red" fontSize="10pt" mt="4px">
-                            {error}
-                        </Text>
-                    )}
-
-                    <Button mt={3} type="submit" width="100%" isLoading={loading}>
-                        Kirim Email
-                    </Button>
-                </form>
-            </Container>
-        </Background>
-    );
+  return (
+    <Background>
+      <Container>
+        {/* <ArrowBackIcon /> */}
+        <Title>Lupa Kata Sandi</Title>
+        <Description>
+          Masukkan email yang akan kami kirimkan kode untuk reset password.
+        </Description>
+        {success ? (
+          <Text textAlign="center" color="green" fontSize="10pt" mt="4px">
+            Email berhasil dikirim
+          </Text>
+        ) : (
+          <>
+            <form onSubmit={onSubmit}>
+              <Text fontSize="10pt" mt="12px">
+                Email
+              </Text>
+              <Input
+                type="email"
+                placeholder="Email"
+                mt="4px"
+                onChange={(event) => setEmail(event.target.value)}
+              />
+              {/* Error tambahan */}
+              {error && (
+                <Text textAlign="left" color="red" fontSize="10pt" mt="4px">
+                  {error?.message}
+                </Text>
+              )}
+              <Flex direction="column" gap={1}>
+                <Button mt={3} type="submit" width="100%" isLoading={loading}>
+                  Kirim Email
+                </Button>
+                <Text
+                  textAlign="center"
+                  fontSize="14px"
+                  fontWeight="700"
+                  color="gray.500"
+                >
+                  Atau
+                </Text>
+                <Button
+                  variant="link"
+                  color="brand.100"
+                  fontWeight="400"
+                  onClick={() => navigate(paths.LOGIN_PAGE)}
+                >
+                  Kembali ke login
+                </Button>
+              </Flex>
+            </form>
+          </>
+        )}
+      </Container>
+    </Background>
+  );
 };
 
 export default EmailReset;
