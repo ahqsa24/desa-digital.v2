@@ -104,7 +104,8 @@ const Village: React.FC = () => {
             </Column2>
           </Column1>
           <Column1> 
-                <SearchBarVil/>
+                <SearchBarVil
+                placeholder={"Cari di sini"}/>
           </Column1>
         </CardContent>
         <Text> Menampilkan 8 desa untuk <Texthighlight>"Semua Provinsi"</Texthighlight> </Text>

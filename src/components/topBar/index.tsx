@@ -50,7 +50,7 @@ function TopBar(props: TopBarProps) {
           fontSize="16px"
           fontWeight="700"
           color="white"
-          ml={isUserMenuVisible ? `0` : `24px`}
+          ml={isUserMenuVisible ? `0` : `16px`}
           mt="2px"
           lineHeight="56px"
         >

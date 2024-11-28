@@ -137,8 +137,9 @@ const routes = [
   {
     path: paths.KLAIM_INOVASI_PAGE,
     element: <KlaimInovasi />,
-    element: <NewPassword/>,
-    path: paths.ADMIN_PAGE,
+    exact: true,
+  },
+  { path: paths.ADMIN_PAGE,
     element: <AdminPage />,
     exact: true,
   },
