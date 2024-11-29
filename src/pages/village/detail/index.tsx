@@ -34,7 +34,7 @@ import {
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
-import RejectionModal from "Components/confirmModal/RejectionModal";
+import StatusCard from "Components/card/status/StatusCard";
 import {
   DocumentData,
   collection,
@@ -62,9 +62,7 @@ import {
   SubText,
   Title,
 } from "./_detailStyle";
-import { set } from "react-hook-form";
-import { CheckIcon, CloseIcon } from "@chakra-ui/icons";
-import StatusCard from "Components/card/status/StatusCard";
+import RejectionModal from "Components/confirmModal/RejectionModal";
 
 export default function DetailVillage() {
   const navigate = useNavigate();
@@ -79,7 +77,6 @@ export default function DetailVillage() {
   const [owner, setOwner] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [status, setStatus] = useState("Menunggu");
   const [openModal, setOpenModal] = useState(false);
   const [modalInput, setModalInput] = useState(""); // Catatan admin
 
@@ -136,7 +133,6 @@ export default function DetailVillage() {
     }
     setLoading(false);
     setOpenModal(false); // Tutup modal setelah menyimpan
-    
   };
 
   useEffect(() => {
@@ -457,35 +453,37 @@ export default function DetailVillage() {
               </Horizontal>
             </CardContainer>
           </div>
-            <Box>
-              {village?.status === "Terverifikasi" ||
+          <Box>
+            {/* Logika untuk Admin */}
+            {admin ? (
+              village?.status === "Terverifikasi" ||
               village?.status === "Ditolak" ? (
+                // Tampilkan StatusCard jika status Terverifikasi atau Ditolak
                 <StatusCard
                   message={village?.catatanAdmin}
                   status={village?.status}
                 />
               ) : (
-                <>
-                  <RejectionModal
-                    isOpen={openModal}
-                    onClose={() => setOpenModal(false)}
-                    onConfirm={handleReject}
-                    message={modalInput}
-                    setMessage={setModalInput}
-                    loading={loading}
-                  />
-                  <Button
-                    width="100%"
-                    fontSize="14px"
-                    mb={8}
-                    type="submit"
-                    onClick={onOpen}
-                  >
-                    {admin ? "Verifikasi Permohonan Akun" : "Kontak Desa"}
-                  </Button>
-                </>
-              )}
-            </Box>
+                // Tampilkan tombol Verifikasi jika status belum Terverifikasi/Ditolak
+                <Button width="100%" fontSize="14px" mb={8} onClick={onOpen}>
+                  Verifikasi Permohonan Akun
+                </Button>
+              )
+            ) : (
+              // Logika untuk Non-Admin
+              <Button width="100%" fontSize="14px" mb={8} onClick={onOpen}>
+                Kontak Desa
+              </Button>
+            )}
+          </Box>
+          <RejectionModal
+            isOpen={openModal}
+            onClose={() => setOpenModal(false)}
+            onConfirm={handleReject}
+            message={modalInput}
+            setMessage={setModalInput}
+            loading={loading}
+          />
         </ContentContainer>
       </div>
       <Drawer
