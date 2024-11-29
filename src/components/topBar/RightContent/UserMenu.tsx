@@ -1,20 +1,30 @@
-import React, { useEffect, useState } from "react";
 import {
+  Button,
+  Flex,
   IconButton,
   Menu,
   MenuButton,
   MenuItem,
   MenuList,
-  Button,
-  Flex,
 } from "@chakra-ui/react";
+import notification from "Assets/icons/bell.svg";
+import profileIcon from "Assets/icons/profile.svg";
 import { paths } from "Consts/path";
 import { User, onAuthStateChanged, signOut } from "firebase/auth";
+import {
+  collection,
+  doc,
+  DocumentData,
+  getDoc,
+  getFirestore,
+  onSnapshot,
+  query,
+  where,
+} from "firebase/firestore";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { auth, firestore } from "../../../firebase/clientApp";
-import profileIcon from "Assets/icons/profile.svg";
-import notification from "Assets/icons/bell.svg";
-import { collection, doc, getDoc, getFirestore, onSnapshot, query, where } from "firebase/firestore";
+import { useAuthState } from "react-firebase-hooks/auth";
 
 type UserMenuProps = {
   user?: User | null;
@@ -22,9 +32,12 @@ type UserMenuProps = {
 
 const UserMenu: React.FC<UserMenuProps> = ({ user }) => {
   const navigate = useNavigate();
+  const [userLogin] = useAuthState(auth);
+  const [userData, setUserData] = useState<DocumentData | undefined>();
   const [profileExists, setProfileExists] = useState<boolean | null>(null);
   const [userRole, setUserRole] = useState<string | null>(null);
- 
+  const [status, setStatus] = useState<string | null>(null);
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -38,7 +51,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ user }) => {
           if (!snapshot.empty) {
             const userData = snapshot.docs[0].data();
             setUserRole(userData.role); // Set state userRole
-            console.log("User role: ", userData.role);
+            // console.log("User ", userData);
             // Cek koleksi berdasarkan role pengguna
             if (userData.role === "village") {
               const villagesRef = collection(db, "villages");
@@ -49,6 +62,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ user }) => {
               onSnapshot(villageQuery, (villageSnapshot) => {
                 setProfileExists(!villageSnapshot.empty);
               });
+              console.log("Profile Exists: ", profileExists);
             } else if (userData.role === "innovator") {
               const innovatorsRef = collection(db, "innovators");
               const innovatorQuery = query(
@@ -76,20 +90,49 @@ const UserMenu: React.FC<UserMenuProps> = ({ user }) => {
     return () => unsubscribe(); // Bersihkan listener
   }, []);
 
+  useEffect(() => {
+    const fetchUser = async () => {
+      if (userLogin?.uid) {
+        const userRef = doc(firestore, "users", userLogin.uid);
+        const userSnap = await getDoc(userRef);
+        if (userSnap.exists()) {
+          setUserData(userSnap.data());
+          setProfileExists(true);
+        }
+      }
+    };
+    fetchUser(); 
+  });
 
+  useEffect(() => {
+    const fetchVillage = async () => {
+      if (user) {
+        const villageRef = doc(firestore, "villages", user.uid);
+        const villageSnap = await getDoc(villageRef);
+        if (villageSnap.exists()) {
+          const villageData = villageSnap.data();
+          setStatus(villageData?.status);
+          console.log("Status: ", villageData?.status);
+        }
+      }
+    };
+    fetchVillage();
+  });
 
   const handleProfileClick = () => {
     if (!user) return;
 
     if (userRole === "village") {
-      if (profileExists) {
-        navigate(`${paths.DETAIL_VILLAGE_PAGE}/${user.uid}`);
+      if (status === "Terverifikasi") {
+        const path = paths.VILLAGE_PROFILE_PAGE.replace(":id", user.uid);
+        navigate(path);
       } else {
         navigate(paths.VILLAGE_FORM);
       }
     } else if (userRole === "innovator") {
-      if (profileExists) {
-        navigate(`${paths.INNOVATOR_DETAIL}/${user.uid}`);
+      if (status === "Terverifikasi") {
+        const path = paths.INNOVATOR_PROFILE_PAGE.replace(":id", user.uid);
+        navigate(path);
       } else {
         navigate(paths.INNOVATOR_FORM);
       }
@@ -134,7 +177,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ user }) => {
             </>
           ) : (
             <>
-              <MenuItem onClick={() => navigate(paths.LOGIN_PAGE)} >
+              <MenuItem onClick={() => navigate(paths.LOGIN_PAGE)}>
                 Login
               </MenuItem>
             </>

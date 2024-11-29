@@ -5,6 +5,9 @@ import { paths } from "Consts/path";
 import { getAuth, onAuthStateChanged } from "firebase/auth"; // import firebase auth
 import {
   collection,
+  doc,
+  DocumentData,
+  getDoc,
   getFirestore,
   onSnapshot,
   query,
@@ -21,6 +24,8 @@ import Readiness from "./components/readiness";
 import { Box, Button, Flex, IconButton, Text, Tooltip, } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
 import TopBar from 'Components/topBar';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { firestore } from "../../firebase/clientApp";
 
 function Home() {
   const navigate = useNavigate();
@@ -28,6 +33,9 @@ function Home() {
   const [isInnovator, setIsInnovator] = useState(false); // State untuk mengecek apakah pengguna ada di koleksi innovators
   const [hasLoggedIn, setHasLoggedIn] = useState(false);
   const auth = getAuth(); // Dapatkan instance auth dari Firebase
+  const [userLogin] = useAuthState(auth);
+  const [userData, setUserData] = useState<DocumentData | undefined>();
+  const [inovator, setInovator] = useState<DocumentData | undefined>();
 
   const toast = useToast();
   useEffect(() => {
@@ -89,10 +97,38 @@ function Home() {
   
     return () => unsubscribe();
   }, [auth, toast]);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      if (userLogin?.uid) {
+        const userRef = doc(firestore, "users", userLogin.uid);
+        const userSnap = await getDoc(userRef);
+        if (userSnap.exists()) {
+          setUserData(userSnap.data());
+          if(userSnap.data()?.role === 'innovator') {
+            setIsInnovator(true);
+          }
+        }
+      }
+    };
+    fetchUser();
+  })
   
+  useEffect(() => {
+    const fetchInnovator = async () => {
+      if (userLogin?.uid) {
+        const innovatorRef = doc(firestore, "innovators", userLogin.uid);
+        const innovatorSnap = await getDoc(innovatorRef);
+        if (innovatorSnap.exists()) {
+          setInovator(innovatorSnap.data());
+        }
+      }
+    };
+    fetchInnovator();
+  })
 
   const handleAddInnovationClick = () => {
-    if (isInnovator) {
+    if (isInnovator && inovator?.status === "Terverifikasi") {
       navigate(paths.ADD_INNOVATION);
     } else {
       toast({
