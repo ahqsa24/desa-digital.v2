@@ -7,14 +7,10 @@ import Location from "Assets/icons/location.svg";
 import Resource from "Assets/icons/resource-village.svg";
 import Send from "Assets/icons/send.svg";
 import SocCul from "Assets/icons/socio-cultural.svg";
-import Efishery from "Assets/images/efishery.jpg";
-import Button from "Components/button";
 import CardInnovation from "Components/card/innovation";
 import TopBar from "Components/topBar";
 import { paths } from "Consts/path";
-import { getUserById } from "Services/userServices";
 import { useEffect, useState } from "react";
-import { useQuery } from "react-query";
 import { useParams } from "react-router";
 import EnlargedImage from "../components/Image";
 
@@ -27,6 +23,7 @@ import {
   Box,
   Flex,
   Text,
+  Button,
   useDisclosure,
 } from "@chakra-ui/react";
 import {
@@ -35,7 +32,9 @@ import {
   doc,
   getDoc,
   getDocs,
+  updateDoc,
 } from "firebase/firestore";
+import { useAuthState } from "react-firebase-hooks/auth";
 import { generatePath, useNavigate } from "react-router-dom";
 import { auth, firestore } from "../../../firebase/clientApp";
 import {
@@ -54,7 +53,9 @@ import {
   SubText,
   Title,
 } from "./_profileStyle";
-import { useAuthState } from "react-firebase-hooks/auth";
+import StatusCard from "Components/card/status/StatusCard";
+import RejectionModal from "Components/confirmModal/RejectionModal";
+import ActionDrawer from "Components/drawer/ActionDrawer";
 
 export default function ProfileVillage() {
   const navigate = useNavigate();
@@ -63,8 +64,12 @@ export default function ProfileVillage() {
   const [innovations, setInnovations] = useState<DocumentData[]>([]);
   const [village, setVillage] = useState<DocumentData | undefined>(undefined);
   const [owner, setOwner] = useState(false);
+  const [admin, setAdmin] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { id } = useParams();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [openModal, setOpenModal] = useState(false);
+  const [modalInput, setModalInput] = useState("");
 
   const formatLocation = (lokasi: any) => {
     if (!lokasi) return "No Location";
@@ -74,20 +79,81 @@ export default function ProfileVillage() {
 
     return `KECAMATAN ${kecamatan}, ${kabupaten}, ${provinsi}`;
   };
+
+  const handleVerify = async () => {
+    setLoading(true);
+    try {
+      if (id) {
+        const docRef = doc(firestore, "villages", id);
+        await updateDoc(docRef, {
+          status: "Terverifikasi",
+        });
+        setVillage((prev) => ({
+          ...prev,
+          status: "Terverifikasi",
+        }));
+      } else {
+        throw new Error("Village ID is undefined");
+      }
+    } catch (error) {
+      // setError(error.message);
+    }
+    setLoading(false);
+    onClose();
+  };
+
+  const handleReject = async () => {
+    setLoading(true);
+    try {
+      if (id) {
+        const docRef = doc(firestore, "villages", id);
+        await updateDoc(docRef, {
+          status: "Ditolak",
+          catatanAdmin: modalInput, // Simpan alasan penolakan ke Firestore
+        });
+        setVillage((prev) => ({
+          ...prev,
+          status: "Ditolak",
+          catatanAdmin: modalInput,
+        }));
+      } else {
+        throw new Error("Village ID is undefined");
+      }
+    } catch (error) {
+      console.error("Error during rejection:", error);
+    }
+    setLoading(false);
+    setOpenModal(false); // Tutup modal setelah menyimpan
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchUser = async () => {
       if (userLogin?.uid) {
-        const docRef = doc(firestore, "villages", userLogin.uid);
+        const userRef = doc(firestore, "users", userLogin.uid);
+        const userDoc = await getDoc(userRef);
+        if (userDoc.exists()) {
+          const user = userDoc.data();
+          setAdmin(user?.role === "admin");
+        }
+      }
+    };
+    fetchUser();
+  });
+
+  useEffect(() => {
+    const fetchVillageData = async () => {
+      if (id) {
+        const docRef = doc(firestore, "villages", id);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           setVillage(docSnap.data());
-          if (docSnap.data()?.id === userLogin.uid) {
+          if (docSnap.data()?.userId === userLogin?.uid) {
             setOwner(true);
           }
         }
       }
     };
-    fetchData();
+    fetchVillageData();
   });
 
   useEffect(() => {
@@ -97,7 +163,7 @@ export default function ProfileVillage() {
       setInnovations(innovationsData);
     };
     fetchInnovations();
-  }, [firestore]);
+  }, [innovationsRef]);
 
   return (
     <Box>
@@ -108,12 +174,15 @@ export default function ProfileVillage() {
       </div>
       <div>
         <ContentContainer>
-          <Flex flexDirection="column" alignItems="flex-end">
-            <Button size="xs" onClick={() => navigate("/PengajuanKlaim")}>
-              <Icon src={Send} alt="send" />
-              Pengajuan Klaim
-            </Button>
+          <Flex flexDirection="column" alignItems="flex-end" mb={owner ? 0 : 4}>
+            {owner && (
+              <Button size="xs" onClick={() => navigate("/PengajuanKlaim")}>
+                <Icon src={Send} alt="send" />
+                Pengajuan Klaim
+              </Button>
+            )}
           </Flex>
+
           <Title> {village?.namaDesa} </Title>
           <ActionContainer>
             <Icon src={Location} alt="loc" />
@@ -413,11 +482,46 @@ export default function ProfileVillage() {
           </div>
         </ContentContainer>
       </div>
-      <NavbarButton>
-        <Button size="m" fullWidth type="submit" onClick={onOpen}>
-          Edit Profil
-        </Button>{" "}
-      </NavbarButton>
+      <Box>
+        {admin ? (
+          village?.status === "Terverifikasi" ||
+          village?.status === "Ditolak" ? (
+            <StatusCard
+              status={village?.status}
+              message={village?.catatanAdmin}
+            />
+          ) : (
+            <NavbarButton>
+              <Button width="100%" fontSize="14px" onClick={onOpen}>
+                Verifikasi Permohonan Akun
+              </Button>
+            </NavbarButton>
+          )
+        ) : (
+          <NavbarButton>
+            <Button width="100%" onClick={onOpen}>
+              Edit Profil
+            </Button>{" "}
+          </NavbarButton>
+        )}
+        <RejectionModal
+          isOpen={openModal}
+          onClose={() => setOpenModal(false)}
+          onConfirm={handleReject}
+          loading={loading}
+          setMessage={setModalInput}
+          message={modalInput}
+        />
+        <ActionDrawer
+          isOpen={isOpen}
+          onClose={onClose}
+          onVerify={handleVerify}
+          isAdmin={admin}
+          role="Desa"
+          loading={loading}
+          setOpenModal={setOpenModal}
+        />
+      </Box>
     </Box>
   );
 }

@@ -103,7 +103,6 @@ const AddVillage: React.FC = () => {
   const [alertMessage, setAlertMessage] = useState(
     "Profil masih kosong. Silahkan isi data di bawah terlebih dahulu."
   );
-  const [noteAdmin, setNoteAdmin] = useState<string | null>(null); // Catatan dari admin (untuk error)
 
   const fetchProvinces = async () => {
     try {
@@ -291,13 +290,11 @@ const AddVillage: React.FC = () => {
 
       const userId = user.uid;
       const docRef = doc(firestore, "villages", userId);
+      // Cek dan hapus foto lama jika ada yang dihapus
       const docSnap = await getDoc(docRef);
-
+      const existingData = docSnap.data();
+      
       if (status === "Ditolak") {
-        // Cek dan hapus foto lama jika ada yang dihapus
-        const docSnap = await getDoc(docRef);
-        const existingData = docSnap.data();
-
         // Jika logo baru dipilih dan berbeda dengan logo yang ada
         if (selectedLogo && selectedLogo !== existingData?.logo) {
           if (existingData?.logo) {
@@ -411,6 +408,7 @@ const AddVillage: React.FC = () => {
           editedAt: serverTimestamp(), // Tandai waktu edit
         });
         console.log("Document updated with ID: ", userId);
+        setStatus("Menunggu");
       } else {
         // Jika statusnya bukan "Ditolak", buat dokumen baru seperti biasa
         await setDoc(docRef, {
@@ -491,8 +489,8 @@ const AddVillage: React.FC = () => {
           });
         }
         console.log("Document written with ID: ", userId);
+        setStatus("Menunggu");
       }
-      setStatus("Menunggu");
 
       // TODO: Kirim notifikasi ke user dan admin
       // const notificationRef = collection(firestore, "notifications");
@@ -556,6 +554,7 @@ const AddVillage: React.FC = () => {
           website: data.website || "",
         });
 
+        // console.log(data.logo)
         setSelectedPotensi(
           data.potensiDesa.map((potensi: string) => ({
             value: potensi,
@@ -591,7 +590,7 @@ const AddVillage: React.FC = () => {
     };
 
     fetchData();
-  }, [user?.uid]);
+  }, [user]);
 
   return (
     <Container page>

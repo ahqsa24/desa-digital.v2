@@ -141,7 +141,6 @@ export default function DetailVillage() {
         const userRef = doc(firestore, "users", userLogin.uid);
         const userSnap = await getDoc(userRef);
         if (userSnap.exists()) {
-          setUser(userSnap.data());
           setAdmin(userSnap.data()?.role === "admin");
           if (userSnap.data()?.id === id) {
             setOwner(true);
