@@ -38,8 +38,8 @@ const VerificationPage: React.FC = () => {
   };
 
   const categoryToPathMap: Record<string, string> = {
-    "Verifikasi Desa": paths.DETAIL_VILLAGE_PAGE,
-    "Verifikasi Inovator": paths.DETAIL_INNOVATOR_PAGE,
+    "Verifikasi Desa": paths.VILLAGE_PROFILE_PAGE,
+    "Verifikasi Inovator": paths.INNOVATOR_PROFILE_PAGE,
     "Verifikasi Tambah Inovasi": paths.DETAIL_INNOVATION_PAGE,
   };
 
