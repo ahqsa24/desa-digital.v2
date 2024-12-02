@@ -127,7 +127,7 @@ const DetailInnovator: React.FC = () => {
   return (
     <Container page>
       <TopBar 
-        title="Profil Innovator"  
+        title="Profil Inovator"  
         onBack={() => navigate(-1)} 
         />
       <Flex position="relative">
@@ -337,7 +337,7 @@ const DetailInnovator: React.FC = () => {
           ))}
         </Flex>
         <Button mt={-3} size="m" fullWidth type="submit" onClick={onOpen}>
-          Kontak Innovator
+          Kontak Inovator
         </Button>
         </ContentContainer>
         <Drawer
@@ -366,7 +366,7 @@ const DetailInnovator: React.FC = () => {
                 padding: "16px",
               }}
             >
-              Kontak Innovator
+              Kontak Inovator
             </DrawerHeader>
             <DrawerCloseButton mt={2} />
             <DrawerBody padding="16px">

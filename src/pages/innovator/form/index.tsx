@@ -3,11 +3,12 @@ import {
   Button,
   Flex,
   Input,
-  Select,
+  Select as ChakraSelect,
   Stack,
   Text,
   Textarea,
   useToast,
+  Box,
 } from "@chakra-ui/react";
 import Container from "Components/container";
 import TopBar from "Components/topBar";
@@ -24,6 +25,8 @@ import { useNavigate } from "react-router-dom";
 import HeaderUpload from "../../../components/form/HeaderUpload";
 import LogoUpload from "../../../components/form/LogoUpload";
 import { auth, firestore, storage } from "../../../firebase/clientApp";
+import AlertBox from "../components/hero/alert";
+import  ReactSelect  from 'react-select'; 
 
 const categories = [
   "Agribisnis",
@@ -47,6 +50,7 @@ const InnovatorForm: React.FC = () => {
   const navigate = useNavigate();
   const [user] = useAuthState(auth);
 
+  const [selectedCategory, setSelectedCategory] = useState<{ label: string; value: string } | null>(null);
   const [selectedLogo, setSelectedLogo] = useState<string>("");
   const [selectedHeader, setSelectedHeader] = useState<string>("");
   const selectLogoRef = useRef<HTMLInputElement>(null);
@@ -65,7 +69,13 @@ const InnovatorForm: React.FC = () => {
   const [category, setCategory] = useState("");
   const [modelBusiness, setModelBusiness] = useState("");
 
+
   const toast = useToast();
+
+  const categoryOptions = categories.map((category) => ({
+    label: category, // Label yang ditampilkan pada dropdown
+    value: category.toLowerCase().replace(/\s+/g, '-'), // Menggunakan format value yang lebih aman
+  }));
 
   const onSelectLogo = (event: React.ChangeEvent<HTMLInputElement>) => {
     const reader = new FileReader();
@@ -94,14 +104,32 @@ const InnovatorForm: React.FC = () => {
   const onTextChange = ({
     target: { name, value },
   }: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setTextInputsValue((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    if (name === "description"){
+      const wordCount = value.split(/\s+/).filter((word) => word !== "").length;
+      if (wordCount <= 80) {
+        setTextInputsValue((prev) => ({
+          ...prev,
+          [name]: value,
+        }));
+      }
+    } else {
+      setTextInputsValue((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
+  };
+
+  const getDescriptionWordCount = () => {
+    return textInputsValue.description.split(/\s+/).filter((word) => word !== "").length;
   };
 
   const onSelectCategory = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setCategory(event.target.value);
+  };
+
+  const handleCategoryChange = (selectedOption: { label: string; value: string } | null) => {
+    setSelectedCategory(selectedOption);
   };
 
   const onSelectModelBusiness = (
@@ -230,6 +258,38 @@ const InnovatorForm: React.FC = () => {
         isClosable: true,
       });
     }
+  };
+
+  const customStyles = {
+    control: (styles: any) => ({
+      ...styles,
+      fontSize: "14px",
+      borderColor: "#none",
+      boxShadow: "none",
+      ":hover": {
+        borderColor: "#3367D1",
+      },
+    }),
+    menu: (base: any) => ({
+      ...base,
+      marginTop: 0,
+      zIndex: 10,
+    }),
+    option: (base: any, state: { isFocused: any; }) => ({
+      ...base,
+      fontSize: "14px",
+      padding: "2px 10px",
+      backgroundColor: state.isFocused ? "#E5E7EB" : "white",
+      color: "black",
+      cursor: "pointer",
+      ":active": {
+        backgroundColor: "#D1D5DB",
+      },
+    }),
+    placeholder: (base: any) => ({
+      ...base,
+      color: "#9CA3AF",
+    }),
   };
 
   return (
