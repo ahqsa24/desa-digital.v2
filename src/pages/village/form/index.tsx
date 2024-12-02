@@ -612,6 +612,7 @@ const AddVillage: React.FC = () => {
             width="100%"
             height="44px"
             isLoading={loading}
+            
           >
             Daftarkan Profil
           </Button>
