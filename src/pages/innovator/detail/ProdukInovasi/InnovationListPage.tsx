@@ -16,7 +16,7 @@ const InnovationListPage = ({ innovations }: any) => {
             namaInovasi={innovation.namaInovasi}
             kategori={innovation.kategori}
             deskripsi={innovation.deskripsi}
-            tahunDibuat={innovation.tahunDibuat}
+            jumlahDiterapkan={innovation.jumlahDiterapkan}
             innovatorLogo={innovation.innovatorImgURL}
             innovatorName={innovation.namaInnovator}
           />

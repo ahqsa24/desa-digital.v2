@@ -6,12 +6,10 @@ export const Container = styled.div`
   border-radius: 8px;
   display: flex;
   width: 100%;
-  height: 189px;
+  min-height: 189px;
   flex-direction: column;
-  align-items: flex-start;
   overflow: hidden;
   cursor: pointer;
-  
 `
 
 export const Background = styled.img`
@@ -28,7 +26,7 @@ export const Logo = styled.img`
   top: -25px;
 `
 export const CardContent = styled.div`
-  padding: 8px 8px 8px 8px;
+  padding: 8px;
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -52,6 +50,14 @@ export const Title = styled.p`
   font-weight: 700;
   color: 1F2937;
   line-height: 140%;
+
+  white-space: wrap;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  align-self: stretch;
+  text-overflow: ellipsis;
   
 `
 export const Description = styled.p`
@@ -64,4 +70,5 @@ export const Location = styled.p`
   align-items: center;
   gap: 4px;
   margin-top: auto;
+  
 `

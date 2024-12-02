@@ -92,6 +92,7 @@ const Login: React.FC = () => {
             required
             placeholder="Email"
             mt="4px"
+            fontSize="10pt"
           />
           <Text fontSize="10pt" mt="12px">
             Kata sandi

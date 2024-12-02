@@ -108,12 +108,12 @@ function Home() {
   return (
     <Container page>
       <TopBar title="Desa Digital Indonesia" />
-      <Hero description='Inovasi Digital' text='Indonesia'/>
+      <Hero description='Inovasi Desa Digital' text='Indonesia'/>
       <Menu />
       <Readiness />
       <Box padding='0 14px' mt={4}>
         <Text fontSize='16px' fontWeight='700' mb={2}>
-          Innovator Unggulan
+          Inovator Unggulan
         </Text>
         <Innovator />
       </Box>

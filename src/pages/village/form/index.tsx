@@ -62,6 +62,8 @@ const AddVillage: React.FC = () => {
     whatsapp: "",
     instagram: "",
     website: "",
+    literasi: "",
+    pemantapan: "",
   });
   const [provinces, setProvinces] = useState<Location[]>([]);
   const [regencies, setRegencies] = useState<Location[]>([]);
@@ -610,6 +612,7 @@ const AddVillage: React.FC = () => {
             width="100%"
             height="44px"
             isLoading={loading}
+            
           >
             Daftarkan Profil
           </Button>

@@ -1,20 +1,23 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import TopBar from 'Components/topBar';
+import { Box, Text, Flex } from '@chakra-ui/react';
+import { useNavigate } from "react-router-dom"; // Pastikan ini diimpor jika Anda menggunakan React Router
+import FormSection from "../../../components/form/FormSection";
+import { useAuthState } from "react-firebase-hooks/auth"; // Jika tidak digunakan, Anda dapat menghapusnya
+import { Container, SubText } from "../klaimInovasiManual/_klaimManualStyle";
+import LogoUpload from "../../../components/form/LogoUpload";
+import HeaderUpload from "../../../components/form/HeaderUpload";
+import ConfModal from "../../../components/confirmModal/confModal";
+import SecConfModal from "../../../components/confirmModal/secConfModal";
+import { auth, firestore, storage } from "../../../firebase/clientApp";
+import { Collapse } from '@chakra-ui/react'
 import ImageUpload from "../../../components/form/ImageUpload";
 import DocUpload from "../../../components/form/DocUpload";
 import VidUpload from "../../../components/form/VideoUpload";
-import { Collapse } from '@chakra-ui/react'
-import { doc, setDoc, updateDoc } from "firebase/firestore";
-import { getDownloadURL, ref, uploadString } from "firebase/storage";
-import { auth, firestore, storage } from "../../../firebase/clientApp";
-import { useAuthState } from "react-firebase-hooks/auth";
-import TopBar from "Components/topBar";
 import Button from "Components/button";
-import ConfModal from "../../../components/confirmModal/confModal";
-import SecConfModal from "../../../components/confirmModal/secConfModal";
 
 
 import {
-    Container,
     CheckboxGroup,
     Field,
     Label,
@@ -23,15 +26,15 @@ import {
     JenisKlaim,
     NavbarButton,
     Container2,
-} from "./_klaimStyles";
-import {
-    Box,
-    Flex
-} from '@chakra-ui/react'
+} from "../klaimInovasi/_klaimStyles";
 
 
-import { useDisclosure } from "@chakra-ui/react";
-const KlaimInovasi: React.FC = () => {
+const KlaimManual: React.FC = () => {
+    const [selectedLogo, setSelectedLogo] = useState<string>("");
+    const navigate = useNavigate();
+    const selectedLogoRef = useRef<HTMLInputElement>(null);
+    const [selectedHeader, setSelectedHeader] = useState<string>("");
+    const selectedHeaderRef = useRef<HTMLInputElement>(null);
     const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
     const [selectedDoc, setSelectedDoc] = useState<string[]>([]);
     const [selectedVid, setSelectedVid] = useState<string>("");
@@ -39,13 +42,9 @@ const KlaimInovasi: React.FC = () => {
     const selectedFileRef = useRef<HTMLInputElement>(null);
     const selectedVidRef = useRef<HTMLInputElement>(null);
     const selectedDocRef = useRef<HTMLInputElement>(null);
-    const { isOpen, onToggle, onOpen, onClose } = useDisclosure();
-    const [user] = useAuthState(auth);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState("");
     const modalBody1 = "Apakah Anda yakin ingin mengajukan klaim?"; // Konten Modal
     const modalBody2 = "Inovasi sudah ditambahkan. Admin sedang memverifikasi pengajuan klaim inovasi. Silahkan cek pada halaman pengajuan klaim"; // Konten Modal
-
+    const [user] = useAuthState(auth);
 
     const handleCheckboxChange = (checkbox: string) => {
         if (selectedCheckboxes.includes(checkbox)) {
@@ -142,11 +141,150 @@ const KlaimInovasi: React.FC = () => {
         }
       }, [isModal1Open, isModal2Open]);
 
+
+
+    const [textInputValue, setTextInputValue] = useState({
+        innovname: "",
+        description: "",
+        innovation: "",
+    });
+    const currentWordCount = (text: string) => {
+        return text.split(/\s+/).filter((word) => word !== "").length;
+    };
+
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
+
+    const onSelectLogo = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const reader = new FileReader();
+        if (event.target.files?.[0]) {
+            reader.readAsDataURL(event.target.files[0]);
+        }
+        reader.onload = (readerEvent) => {
+            if (readerEvent.target?.result) {
+                setSelectedLogo(readerEvent.target?.result as string);
+            }
+        };
+    };
+    const onSelectHeader = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const reader = new FileReader();
+        if (event.target.files?.[0]) {
+            reader.readAsDataURL(event.target.files[0]);
+        }
+        reader.onload = (readerEvent) => {
+            if (readerEvent.target?.result) {
+                setSelectedHeader(readerEvent.target?.result as string);
+            }
+        };
+    };
+
+    const onTextChange = ({
+        target: { name, value },
+    }: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        if (textInputValue.innovname || textInputValue.innovation) {
+            setTextInputValue((prev) => ({ ...prev, [name]: value }));
+        } else if (textInputValue.description) {
+            const wordCount = value.split(/\s+/).filter((word) => word !== "").length;
+            if (wordCount <= 50) {
+                setTextInputValue((prev) => ({ ...prev, [name]: value }));
+            }
+        } else {
+            const wordCount = value.split(/\s+/).filter((word) => word !== "").length;
+            if (wordCount <= 30) {
+                setTextInputValue((prev) => ({ ...prev, [name]: value }));
+            }
+        }
+    };
+
+    const handleSubmit = () => {
+        try {
+            const { innovname, description, innovation } = textInputValue;
+
+            if (!innovname || !description || !innovation) {
+                setError("Semua kolom harus diisi.");
+                setLoading(false);
+                return;
+            }
+
+            console.log(textInputValue); // Simpan atau kirim data sesuai kebutuhan
+        } catch (error) {
+            console.error(error);
+            setError("Terjadi kesalahan. Coba lagi.");
+        }
+    };
+
     return (
-        <Box>
-            <TopBar title="Klaim Penerapan Inovasi" onBack={() => navigate(-1)}
-            />
-                <Container>
+        <Box paddingTop="56px">
+            <TopBar title="Klaim Penerapan Inovasi" onBack={() => navigate(-1)} />
+            <Container>
+                <Flex gap={3} paddingBottom={4} direction={'column'} borderBottom={'1px'} borderBottomColor={'#E5E7EB'}>
+                    <Flex direction={'column'} gap={1}>
+                        <SubText>Informasi Inovasi</SubText>
+                        <Text fontWeight="400" fontSize="12px" color="#9CA3AF">
+                            Silahkan masukkan informasi inovator dan inovasi yang akan anda klaim penerapannya
+                        </Text>
+                    </Flex>
+                    <FormSection
+                        title="Nama Inovator"
+                        name="innovname"
+                        placeholder="Nama Inovator"
+                        value={textInputValue.innovname}
+                        onChange={onTextChange}
+                    />
+                    <FormSection
+                        title="Nama Inovasi"
+                        name="innovation"
+                        placeholder="Nama Inovasi"
+                        value={textInputValue.innovation}
+                        onChange={onTextChange}
+                    />
+                    <FormSection
+                        title="Deskripsi Inovasi"
+                        name="description"
+                        placeholder="Masukkan deskripsi inovasi yang ada di desa"
+                        value={textInputValue.description}
+                        onChange={onTextChange}
+                        isTextArea
+                        wordCount={currentWordCount(textInputValue.description)}
+                        maxWords={80}
+                    />
+                    <Box marginTop="-4px">
+                        <Text fontWeight="400" fontSize="14px">
+                            Logo Inovator
+                        </Text>
+                        <Text fontWeight="400" fontSize="10px" mb="6px" color="#9CA3AF">
+                            Maks 1 foto. format: png, jpg.
+                        </Text>
+                        <LogoUpload
+                            selectedLogo={selectedLogo}
+                            setSelectedLogo={setSelectedLogo}
+                            selectFileRef={selectedLogoRef}
+                            onSelectLogo={onSelectLogo}
+                        />
+                    </Box>
+
+                    <Box marginTop="-4px">
+                        <Text fontWeight="400" fontSize="14px">
+                            Foto Inovasi
+                        </Text>
+                        <Text fontWeight="400" fontSize="10px" mb="6px" color="#9CA3AF">
+                            Maks 1 foto. format: png, jpg.
+                        </Text>
+                        <HeaderUpload
+                            selectedHeader={selectedHeader}
+                            setSelectedHeader={setSelectedHeader}
+                            selectFileRef={selectedHeaderRef}
+                            onSelectHeader={onSelectHeader}
+                        />
+                    </Box>
+                </Flex>
+                <Flex direction={'column'} gap={1}>
+                    <SubText>Bukti Klaim</SubText>
+                    <Text fontWeight="400" fontSize="12px" color="#9CA3AF">
+                        Silahkan masukkan bukti klaim penerapan inovasi
+                    </Text>
+                </Flex>
+                
                     <Flex flexDirection="column" gap="2px">
                         <Label>
                             Jenis Dokumen Bukti Klaim  <span style={{ color: "red" }}>*</span>
@@ -244,7 +382,7 @@ const KlaimInovasi: React.FC = () => {
                         </Field>
                     </Collapse>
                 </Container>
-            <div>
+                <div>
                 <NavbarButton>
                     <Button size="m" fullWidth type="submit" onClick={() => setIsModal1Open(true)}>
                         Ajukan Klaim
@@ -263,7 +401,10 @@ const KlaimInovasi: React.FC = () => {
                 modalBody2={modalBody2}     // Mengirimkan teks konten modal
                     />
             </div>
-        </Box >
+            
+
+        </Box>
     );
 };
-export default KlaimInovasi;
+
+export default KlaimManual;

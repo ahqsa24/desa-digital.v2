@@ -24,17 +24,12 @@ type CardVillageProps = {
   onClick: () => void;
 };
 
+//TODO : jumlah desa diterapkan dibuat dinamis
 function CardVillage(props: CardVillageProps) {
   const {
-    province,
     district,
-    subdistrict,
-    village,
-    description,
     logo,
     header,
-    benefit,
-    nomorWhatsApp,
     nameVillage,
     onClick,
   } = props;

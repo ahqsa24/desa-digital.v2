@@ -23,8 +23,8 @@ function Innovator() {
   }, [firestore]);
 
   return (
-    <Box padding="0 14px">
-      <Title>Inovator Unggulan</Title>
+    <Box padding="0">
+ 
       <CardContainer>
         <Horizontal>
           {innovators.map((item, idx) => (

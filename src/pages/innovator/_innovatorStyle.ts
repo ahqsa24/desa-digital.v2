@@ -42,8 +42,8 @@ export const CardContent = styled.div`
     position: relative;
     background: #FFF;
     top: 0px;
-
 `;
+
 export const Text = styled.p`
   font-size: 12px;
   font-weight: 400;

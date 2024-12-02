@@ -32,6 +32,9 @@ import Notification from "./pages/notification/Notification";
 import InnovationListPage from "./pages/innovator/detail/ProdukInovasi/InnovationListPage";
 import PengajuanInovasi from "./pages/innovator/profile/pengajuanInovasi/PengajuanInovasi";
 import PengajuanKlaim from "./pages/village/pengajuanKlaim";
+import SemuaInovasiDiterapkan from "./pages/village/semuaInovasiDiterapkan";
+import KlaimManual from "./pages/village/klaimInovasiManual";
+
 
 const queryClient = new QueryClient();
 
@@ -134,8 +137,9 @@ const routes = [
   {
     path: paths.KLAIM_INOVASI_PAGE,
     element: <KlaimInovasi />,
-    element: <NewPassword/>,
-    path: paths.ADMIN_PAGE,
+    exact: true,
+  },
+  { path: paths.ADMIN_PAGE,
     element: <AdminPage />,
     exact: true,
   },
@@ -167,6 +171,16 @@ const routes = [
   {
     path: paths.PENGAJUAN_KLAIM_PAGE,
     element: <PengajuanKlaim />, 
+    exact: true,
+  },
+  {
+    path: paths.SEMUA_INOVASI_DITERAPKAN_PAGE,
+    element: <SemuaInovasiDiterapkan />, 
+    exact: true,
+  },
+  {
+    path: paths.KLAIM_INOVASI_MANUAL_PAGE,
+    element: <KlaimManual />, 
     exact: true,
   }
   

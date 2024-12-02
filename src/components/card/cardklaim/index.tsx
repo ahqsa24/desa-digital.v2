@@ -26,7 +26,7 @@ function CardKlaim(props: CardKlaimProps) {
       } = props;
       return (
         <KlaimContainer onClick={onClick}>
-            <Flex direction={'row'} justify={'space-between'}>
+            <Flex direction={'row'} gap={2} width="100%">
             <Title>{title}</Title>
             <KlaimBadge condition={klaimbadge}></KlaimBadge>
             </Flex>

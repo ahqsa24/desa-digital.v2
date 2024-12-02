@@ -14,11 +14,15 @@ export const CardContainer = styled.div`
   overflow: auto;
   width: 100%;
   white-space: nowrap;
+  display:flex;
+  justify-content:space-between;
 `
 
 export const Horizontal = styled.div`
   display: flex;
   gap: 16px;
+  width: 100%;
+  flex-grow: 0;
 `
 
 
@@ -176,4 +180,15 @@ border-radius: 10px;
 border: 1px solid var(--Gray-40, #D1D5DB);
 background: var(--Monochrome-White, #FFF);
 box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.06), 0px 1px 3px 0px rgba(0, 0, 0, 0.10);
+`;
+
+export const GridContainer = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-content: center;
+  align-items: left;
+  gap: 16px;
+  padding: px;
+  position: relative;
+  width: 100%;
 `;
