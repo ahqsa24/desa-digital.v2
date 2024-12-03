@@ -4,6 +4,7 @@ import React from "react";
 
 type HeaderUploadProps = {
   selectedHeader: string;
+  disabled?: boolean;
   setSelectedHeader: (value: string) => void;
   selectFileRef: React.RefObject<HTMLInputElement>;
   onSelectHeader: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -14,6 +15,7 @@ const HeaderUpload: React.FC<HeaderUploadProps> = ({
   setSelectedHeader,
   selectFileRef,
   onSelectHeader,
+  disabled,
 }) => {
   return (
     <Flex direction="column" width="100%" wrap="wrap">
@@ -44,6 +46,7 @@ const HeaderUpload: React.FC<HeaderUploadProps> = ({
               height="32px"
               variant="solid"
               size="md"
+              disabled={disabled}
               onClick={() => setSelectedHeader("")}
             >
               <DeleteIcon />
@@ -73,7 +76,7 @@ const HeaderUpload: React.FC<HeaderUploadProps> = ({
             id="file-upload"
             type="file"
             hidden
-            accept="image/x-png,image/gif,image/jpeg"
+            accept="image/png,image/jpeg,image/jpg"
             ref={selectFileRef}
             onChange={onSelectHeader}
           />

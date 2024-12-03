@@ -1,6 +1,10 @@
 import { Box, Fade, Flex, Image, Text } from "@chakra-ui/react";
-import Container from "Components/container";
 import React, { useEffect, useState } from "react";
+
+import first from "../../assets/icons/first.svg";
+import seccond from "../../assets/icons/seccond.svg";
+import third from "../../assets/icons/third.svg";
+import banner from "../../assets/images/banner-unggulan.svg";
 
 type BestBannerProps = {};
 
@@ -24,7 +28,7 @@ const BestBanner: React.FC<BestBannerProps> = () => {
         <Flex position="relative">
           <Fade in={visibleBox === 0}>
             <Box
-              backgroundImage="src/assets/images/banner-unggulan.svg"
+              backgroundImage={banner}
               width="329px"
               height="135px"
               padding="23px 23px 13px 23px"
@@ -32,7 +36,7 @@ const BestBanner: React.FC<BestBannerProps> = () => {
             >
               <Flex justifyContent="space-between">
                 <Box justifyItems="center" mt="21px">
-                  <Image src="src/assets/icons/seccond.svg" />
+                  <Image src={seccond} />
                   <Text
                     fontSize="12px"
                     fontWeight="600"
@@ -45,7 +49,7 @@ const BestBanner: React.FC<BestBannerProps> = () => {
                   </Text>
                 </Box>
                 <Box justifyItems="center">
-                  <Image src="src/assets/icons/first.svg" />
+                  <Image src={first} />
                   <Text
                     fontSize="12px"
                     fontWeight="600"
@@ -58,7 +62,7 @@ const BestBanner: React.FC<BestBannerProps> = () => {
                   </Text>
                 </Box>
                 <Box justifyItems="center" mt="21px">
-                  <Image src="src/assets/icons/third.svg" />
+                  <Image src={third} />
                   <Text
                     fontSize="12px"
                     fontWeight="600"
@@ -76,7 +80,7 @@ const BestBanner: React.FC<BestBannerProps> = () => {
 
           <Fade in={visibleBox === 1}>
             <Box
-              backgroundImage="src/assets/images/banner-unggulan.svg"
+              backgroundImage={banner}
               width="329px"
               height="135px"
               padding="23px 23px 13px 23px"
@@ -84,7 +88,7 @@ const BestBanner: React.FC<BestBannerProps> = () => {
             >
               <Flex justifyContent="space-between">
                 <Box justifyItems="center" mt="21px">
-                  <Image src="src/assets/icons/seccond.svg" />
+                  <Image src={seccond} />
                   <Text
                     fontSize="12px"
                     fontWeight="600"
@@ -97,7 +101,7 @@ const BestBanner: React.FC<BestBannerProps> = () => {
                   </Text>
                 </Box>
                 <Box justifyItems="center">
-                  <Image src="src/assets/icons/first.svg" />
+                  <Image src={first} />
                   <Text
                     fontSize="12px"
                     fontWeight="600"
@@ -110,7 +114,7 @@ const BestBanner: React.FC<BestBannerProps> = () => {
                   </Text>
                 </Box>
                 <Box justifyItems="center" mt="21px">
-                  <Image src="src/assets/icons/third.svg" />
+                  <Image src={third} />
                   <Text
                     fontSize="12px"
                     fontWeight="600"

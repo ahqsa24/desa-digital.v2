@@ -204,6 +204,7 @@ const KlaimInovasi: React.FC = () => {
                                     setSelectedFiles={setSelectedFiles}
                                     selectFileRef={selectedFileRef}
                                     onSelectImage={onSelectImage}
+                                    maxFiles={2}
                                 />
                             </Flex>
                         </Field>

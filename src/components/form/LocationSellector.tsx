@@ -10,6 +10,7 @@ interface LocationSelectorProps {
   onChange: (selected: any) => void;
   isDisabled?: boolean;
   isRequired?: boolean;
+  disabled?: boolean;
 }
 
 const LocationSelector: React.FC<LocationSelectorProps> = ({
@@ -18,6 +19,7 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
   options,
   value,
   onChange,
+  disabled,
   isDisabled = false,
   isRequired = false,
 }) => {
@@ -59,7 +61,7 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
         placeholder={placeholder}
         options={options}
         value={value}
-        isDisabled={isDisabled}
+        isDisabled={isDisabled || disabled}
         isClearable
         onChange={onChange}
         styles={customStyles}

@@ -9,6 +9,7 @@ interface FormSectionProps {
   onChange: (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
+  disabled?: boolean;
   isTextArea?: boolean;
   wordCount?: number;
   maxWords?: number;
@@ -24,6 +25,7 @@ const FormSection: React.FC<FormSectionProps> = ({
   isTextArea = false,
   wordCount,
   maxWords,
+  disabled,
   type,
 }) => {
   return (
@@ -46,6 +48,7 @@ const FormSection: React.FC<FormSectionProps> = ({
           height="100px"
           value={value}
           onChange={onChange}
+          disabled={disabled}
         />
       ) : (
         <Input
@@ -62,6 +65,7 @@ const FormSection: React.FC<FormSectionProps> = ({
           value={value}
           onChange={onChange}
           type={type}
+          disabled={disabled}
         />
       )}
       {wordCount !== undefined && maxWords !== undefined && (
