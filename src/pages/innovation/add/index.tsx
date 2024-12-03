@@ -34,6 +34,8 @@ import ImageUpload from "../../../components/form/ImageUpload";
 import { paths } from "Consts/path";
 import { HStack, Radio, RadioGroup } from "@chakra-ui/react"
 import Select from 'react-select';
+import ConfModal from "../../../components/confirmModal/confModal";
+import SecConfModal from "../../../components/confirmModal/secConfModal";
 
 type OptionType = {
   value: string;
@@ -102,7 +104,9 @@ const AddInnovation: React.FC = () => {
   const [selectedTargetUser, setSelectedTargetUser] = useState<OptionType | null>(null);
   const [customTargetUser, setCustomTargetUser] = useState<string>("");
   const [benefit, setBenefit] = useState([{ benefit: "", description: "" }]);
-
+  const modalBody1 = "Apakah Anda yakin ingin menambah inovasi?"; // Konten Modal
+  const modalBody2 = "Inovasi sudah ditambahkan. Admin sedang memverifikasi pengajuan tambah inovasi.";
+  
   const toast = useToast();
   const onSelectImage = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -342,6 +346,19 @@ const AddInnovation: React.FC = () => {
       });
     }
   };
+
+  const [isModal1Open, setIsModal1Open] = useState(false);
+    const [isModal2Open, setIsModal2Open] = useState(false);
+    const closeModal = () => {
+        setIsModal1Open(false);
+        setIsModal2Open(false);
+    };
+
+    const handleModal1Yes = () => {
+        setIsModal2Open(true);
+        setIsModal1Open(false); // Tutup modal pertama
+        // Di sini tidak membuka modal kedua
+    };
 
   const options = [
     { value: "1", label: "Masih diproduksi" },
@@ -892,9 +909,23 @@ const AddInnovation: React.FC = () => {
             {error}
           </Text>
         )}
-        <Button type="submit" mt="20px" width="100%" isLoading={loading}>
-          Tambah Inovasi
-        </Button>
+        <div>
+          <Button type="submit" mt="20px" width="100%" isLoading={loading}>
+            Tambah Inovasi
+          </Button>
+          <ConfModal
+            isOpen={isModal1Open}
+            onClose={closeModal}
+            modalTitle=""
+            modalBody1={modalBody1}     // Mengirimkan teks konten modal
+            onYes={handleModal1Yes}
+          />
+          <SecConfModal 
+            isOpen={isModal2Open} 
+            onClose={closeModal} 
+            modalBody2={modalBody2}     // Mengirimkan teks konten modal
+          />
+        </div>
         </Box>
       </form>
     </Container>
