@@ -96,7 +96,7 @@ function Home() {
     });
   
     return () => unsubscribe();
-  }, [auth, toast]);
+  }, [auth]);
 
   useEffect(() => {
     const fetchUser = async () => {
