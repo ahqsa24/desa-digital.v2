@@ -47,7 +47,7 @@ const EmailReset: React.FC = () => {
           Masukkan email yang akan kami kirimkan kode untuk reset password.
         </Description>
         {success ? (
-          <Text textAlign="center" color="green" fontSize="10pt" mt="4px">
+          <Text textAlign="center" color="#347357" fontSize="14px" mt="4px">
             Email berhasil dikirim
           </Text>
         ) : (
@@ -64,7 +64,7 @@ const EmailReset: React.FC = () => {
               />
               {/* Error tambahan */}
               {error && (
-                <Text textAlign="left" color="red" fontSize="10pt" mt="4px">
+                <Text textAlign="left" color="red" fontSize="14px" mt="4px">
                   {error?.message}
                 </Text>
               )}
