@@ -67,6 +67,7 @@ const InnovatorForm: React.FC = () => {
   const [error, setError] = useState("");
   const [textInputsValue, setTextInputsValue] = useState({
     name: "",
+    year:"",
     description: "",
     instagram: "",
     website: "",
@@ -309,6 +310,7 @@ const InnovatorForm: React.FC = () => {
           const data = docSnap.data();
           setTextInputsValue({
             name: data.namaInovator || "",
+            year: data.year || "",
             description: data.deskripsi || "",
             instagram: data.instagram || "",
             website: data.website || "",
@@ -400,6 +402,16 @@ const InnovatorForm: React.FC = () => {
                 onChange={onTextChange}
                 disabled={!isEditable}
               />
+
+              <FormSection
+                title="Tahun Dibuat"
+                name="year"
+                placeholder="Tahun Dibuat"
+                type="number"
+                value={textInputsValue.year}
+                onChange={onTextChange}
+                disabled={!isEditable}
+              />
               <Text fontWeight="400" fontSize="14px" mb="-2">
                 Kategori Inovator <span style={{ color: "red" }}>*</span>
               </Text>
@@ -463,7 +475,6 @@ const InnovatorForm: React.FC = () => {
                   fontStyle="normal"
                   fontSize="10px"
                   color="#9CA3AF"
-                  mb="-2"
                 >
                   Maks 1 foto, format: png, jpg.
                 </Text>
