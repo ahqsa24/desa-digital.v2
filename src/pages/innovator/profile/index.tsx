@@ -41,7 +41,6 @@ import Send from "Assets/icons/send.svg";
 import { Icon, NavbarButton } from "../../village/profile/_profileStyle";
 import StatusCard from "Components/card/status/StatusCard";
 import RejectionModal from "Components/confirmModal/RejectionModal";
-import ActionDrawer from "Components/drawer/ActionDrawer";
 
 const ProfileInnovator: React.FC = () => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -206,7 +205,7 @@ const ProfileInnovator: React.FC = () => {
 
   return (
     <Box>
-      <TopBar title="Profil Inovator" onBack={() => navigate(-1)} />
+      <TopBar title="Profil Saya" onBack={() => navigate(-1)} />
       <Flex position="relative">
         <Background src={innovatorData.header} alt="header" />
         <Logo src={innovatorData.logo} alt="logo" mx={16} my={-40} />
@@ -215,16 +214,22 @@ const ProfileInnovator: React.FC = () => {
         <Stack gap={2}>
           <Flex direction="column" align="flex-end" mb={owner ? 0 : 6}>
             {owner && (
-              <Button size="xs" onClick={() => alert("Button clicked!")}>
+              <Button 
+              height="29px"
+              width="136px"
+              onClick={() => navigate(paths.PENGAJUAN_INOVASI_PAGE)}>
                 <Icon src={Send} />
                 <Text fontSize="12px" fontWeight="500" ml="4px">
-                  Pengajuan Klaim
+                  Pengajuan Inovasi
                 </Text>
               </Button>
             )}
           </Flex>
           <Title>{innovatorData.namaInovator}</Title>
-          <Label>{innovatorData.kategori}</Label>
+          <Flex gap="10px">
+            <Label>{innovatorData.kategori}</Label>
+            <Label>{innovatorData.tahun}</Label>
+          </Flex>
           <Flex direction="row" gap={3} mt={0} alignItems="center">
             <Icon as={FaWandMagicSparkles} color="#4B5563" />
             <Text fontSize="12px" fontWeight="400" color="#4B5563">
@@ -238,17 +243,16 @@ const ProfileInnovator: React.FC = () => {
           </Flex>
         </Stack>
         <Flex>
-          <Stack direction="column">
-            <Text fontSize="16px" fontWeight="700">
+          <Stack direction="column" gap="16px">
+            <Text fontSize="16px" fontWeight="700" >
               Tentang
             </Text>
-            <Flex flexDirection="column" alignItems="flex-start" gap="12px">
+            <Flex flexDirection="column" alignItems="flex-start" gap="16px">
               <Flex
                 width="100%"
                 flexDirection="row"
                 alignItems="flex-start"
                 gap="16px"
-                paddingBottom="12px"
               >
                 <Box color="#4B5563" fontSize="12px" minWidth="110px">
                   Nomor WhatsApp
@@ -260,7 +264,6 @@ const ProfileInnovator: React.FC = () => {
                 flexDirection="row"
                 alignItems="flex-start"
                 gap="16px"
-                paddingBottom="12px"
               >
                 <Box color="#4B5563" fontSize="12px" minWidth="110px">
                   Link Instagram
@@ -280,16 +283,17 @@ const ProfileInnovator: React.FC = () => {
                 <Description>{innovatorData.website}</Description>
               </Flex>
             </Flex>
-            <Flex direction="row" alignItems="center">
-              <Text fontSize="12px" fontWeight="700" color="#4B5563" mr={2}>
+
+            <Flex direction="row" alignItems="center" mt="-10px" >
+              <Text fontSize="12px" fontWeight="700" color="#4B5563" mr={2} paddingBottom="12px">
                 Model bisnis digital:
               </Text>
-              <Text fontSize="12px" fontWeight="400" color="#4B5563" flex="1">
+              <Text fontSize="12px" fontWeight="400" color="#4B5563" flex="1" paddingBottom="12px">
                 {innovatorData.modelBisnis}
               </Text>
             </Flex>
 
-            <Box fontSize="12px" fontWeight="400" color="#4B5563">
+            <Box fontSize="12px" fontWeight="400" color="#4B5563" mt="-10px" >
               {isExpanded ? (
                 // Tampilkan teks lengkap jika `isExpanded` true
                 <>
@@ -331,7 +335,7 @@ const ProfileInnovator: React.FC = () => {
             </Box>
           </Stack>
         </Flex>
-        <Flex direction="column">
+        <Flex direction="column" gap="16px">
           {/* Komponen Produk Inovasi */}
           <InnovationPreview innovations={innovations} innovatorId={id} />
         </Flex>
@@ -422,15 +426,6 @@ const ProfileInnovator: React.FC = () => {
         setMessage={setModalInput}
         message={modalInput}
         loading={loading}
-      />
-      <ActionDrawer
-        isOpen={isOpen}
-        onClose={onClose}
-        onVerify={handleVerify}
-        isAdmin={admin}
-        role="Inovator"
-        loading={loading}
-        setOpenModal={setOpenModal}
       />
     </Box>
   );
