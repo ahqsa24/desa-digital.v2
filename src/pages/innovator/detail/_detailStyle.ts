@@ -84,10 +84,7 @@ export const Background = styled.img`
   width: 100%;
   max-width: 360px;
   height: 150px;
-  margin-top: 0px;
-  margin: 0; /* Hapus margin */
-  padding: 0; /* Pastikan tidak ada padding */
-  object-fit: cover; /* Menjamin gambar menempel */
+  margin-top: 56px;
 `;
 
 export const Logo = styled.img`
