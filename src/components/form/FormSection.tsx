@@ -36,13 +36,14 @@ const FormSection: React.FC<FormSectionProps> = ({
       {isTextArea ? (
         <Textarea
           name={name}
-          fontSize="10pt"
+          fontWeight="400" 
+          fontSize="14px"
           placeholder={placeholder}
-          _placeholder={{ color: "gray.500" }}
+          _placeholder={{ color: "#9CA3AF" }}
           _focus={{
             outline: "none",
             bg: "white",
-            border: "1px solid",
+            border: "none",
             borderColor: "black",
           }}
           height="100px"
@@ -53,13 +54,14 @@ const FormSection: React.FC<FormSectionProps> = ({
       ) : (
         <Input
           name={name}
-          fontSize="10pt"
+          fontWeight="400" 
+          fontSize="14px"
           placeholder={placeholder}
-          _placeholder={{ color: "gray.500" }}
+          _placeholder={{ color: "#9CA3AF" }}
           _focus={{
             outline: "none",
             bg: "white",
-            border: "1px solid",
+            border: "none",
             borderColor: "black",
           }}
           value={value}
