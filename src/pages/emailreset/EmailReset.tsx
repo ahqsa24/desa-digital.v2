@@ -64,6 +64,7 @@ const EmailReset: React.FC = () => {
                         type="email"
                         placeholder="Email"
                         mt="4px"
+                        fontSize="10pt"
                     />
 
                     {/* Error dari react-hook-form */}

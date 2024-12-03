@@ -24,7 +24,6 @@ function Innovator() {
 
   return (
     <Box padding="0">
- 
       <CardContainer>
         <Horizontal>
           {innovators.map((item, idx) => (

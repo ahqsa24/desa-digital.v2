@@ -74,7 +74,7 @@ function Innovator() {
                   </option>
             ))}
           </Select>
-          <SearchBarInnov placeholder="Search"/>
+          <SearchBarInnov placeholder="Cari di sini"/>
         </Column>
       </CardContent>
       <Text> Menampilkan 2 innovator untuk <Texthighlight> "Semua Kategori" </Texthighlight> </Text>

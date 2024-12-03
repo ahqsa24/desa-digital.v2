@@ -101,6 +101,7 @@ const Register: React.FC = () => {
             required
             placeholder="Email"
             mt="4px"
+            fontSize="10pt"
           />
           <Text fontSize="10pt" mt="12px">
             Kata sandi
@@ -113,11 +114,12 @@ const Register: React.FC = () => {
               onChange={onChange}
               required
               placeholder="Kata sandi"
+              fontSize="10pt"
             />
             <InputRightElement
               onClick={onShowPassword}
               cursor="pointer"
-              mt="4px"
+             
             >
               {show ? <FaEyeSlash /> : <FaEye />}
             </InputRightElement>
@@ -134,18 +136,19 @@ const Register: React.FC = () => {
               onChange={onConfirmPasswordChange} // Gunakan onConfirmPasswordChange
               required
               placeholder="Konfirmasi kata sandi"
+              fontSize="10pt"
             />
             <InputRightElement
               onClick={onShowPassword}
               cursor="pointer"
-              mt="4px"
+            
             >
               {show ? <FaEyeSlash /> : <FaEye />}
             </InputRightElement>
           </InputGroup>
 
           <Label mt={12}>Daftar sebagai:</Label>
-          <CheckboxContainer mt={12}>
+          <CheckboxContainer mt={2}>
             <input
               name="role"
               type="radio"
@@ -156,7 +159,7 @@ const Register: React.FC = () => {
             <Label>Inovator</Label>
           </CheckboxContainer>
 
-          <CheckboxContainer mt={12}>
+          <CheckboxContainer mt={2}>
             <input
               name="role"
               type="radio"
@@ -187,7 +190,7 @@ const Register: React.FC = () => {
           </Button>
         </form>
 
-        <ActionContainer mt={24}>
+        <ActionContainer mt={12}>
           <Label>Sudah memiliki akun?</Label>
           <Action onClick={() => navigate(paths.LOGIN_PAGE)}>Login</Action>
         </ActionContainer>

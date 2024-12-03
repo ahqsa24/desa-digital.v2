@@ -23,7 +23,7 @@ import {
   Logo,
   Title
 } from "./_detailStyle";
-import { ChevronRightIcon } from "@chakra-ui/icons"; 
+import { ChevronRightIcon } from "@chakra-ui/icons";
 import { FaWhatsapp, FaInstagram, FaGlobe } from "react-icons/fa";
 import InnovationPreview from "../components/hero/innovations";
 import ButtonPengajuan from "../components/hero/ButtonPengajuan"; // Impor tombol
@@ -123,13 +123,13 @@ const DetailInnovator: React.FC = () => {
       ? words.slice(0, wordLimit).join(" ") + "..."
       : text;
   };
-  
+
   return (
     <Container page>
-      <TopBar 
-        title="Profil Innovator"  
-        onBack={() => navigate(-1)} 
-        />
+      <TopBar
+        title="Profil Innovator"
+        onBack={() => navigate(-1)}
+      />
       <Flex position="relative">
         <Background src={innovatorData.header} alt="header" />
         <Logo src={innovatorData.logo} alt="logo" mx={16} my={-40} />
@@ -310,28 +310,31 @@ const DetailInnovator: React.FC = () => {
                   mr={4}
                 />
                 <Text fontSize="12px" fontWeight="600">{village.namaDesa}</Text>
-                <ChevronRightIcon color="gray.500" ml="auto"/>
+                <ChevronRightIcon color="gray.500" ml="auto" />
               </Flex>
               {/* Menambahkan Border Pembatas Di Atas "Inovasi Diterapkan" */}
               <Box borderTop="1px" borderColor="gray.300" pt={3} mt={3}></Box>
               <Text fontSize="12px" fontWeight="400" mb={2} color="#9CA3AF">
                 Inovasi diterapkan
               </Text>
-              <Flex direction="row" gap={2} flexWrap="wrap">
+              <Flex direction="row" gap={1} flexWrap="wrap">
                 {Array.isArray(village.inovasiDiterapkan) &&
                   village.inovasiDiterapkan.map((inovasi, index) => (
                     <Box
                       key={index}
-                      px={0}
-                      py={0}
+                      px={2}
+                      py={1}
                       backgroundColor="gray.100"
                       borderRadius="full"
-                      fontSize="12px"
+                      fontSize="10px"
                       display="inline-flex"
                     >
                       {inovasi}
                     </Box>
                   ))}
+                <Text fontSize="10px" fontWeight="400" color="#9CA3AF" alignContent={'center'}>
+                  4+
+                </Text>
               </Flex>
             </Box>
           ))}
@@ -339,101 +342,101 @@ const DetailInnovator: React.FC = () => {
         <Button mt={-3} size="m" fullWidth type="submit" onClick={onOpen}>
           Kontak Innovator
         </Button>
-        </ContentContainer>
-        <Drawer
-          isOpen={isOpen}
-          placement="bottom"
-          onClose={onClose}
+      </ContentContainer>
+      <Drawer
+        isOpen={isOpen}
+        placement="bottom"
+        onClose={onClose}
+      >
+        <DrawerOverlay />
+        <DrawerContent
+          sx={{
+            borderTopRadius: "16px", // Radius untuk tampilan yang smooth
+            width: "100%", // Lebar drawer penuh
+            maxWidth: "480px", // Batas maksimal untuk mobile
+            margin: "0 auto", // Pusatkan drawer
+            bg: "white", // Warna latar belakang putih
+          }}
         >
-          <DrawerOverlay />
-          <DrawerContent
+          <DrawerHeader
             sx={{
-              borderTopRadius: "16px", // Radius untuk tampilan yang smooth
-              width: "100%", // Lebar drawer penuh
-              maxWidth: "480px", // Batas maksimal untuk mobile
-              margin: "0 auto", // Pusatkan drawer
-              bg: "white", // Warna latar belakang putih
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              fontSize: "16px",
+              fontWeight: "700",
+              color: "#1F2937",
+              padding: "16px",
             }}
           >
-            <DrawerHeader
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                fontSize: "16px",
-                fontWeight: "700",
-                color: "#1F2937",
-                padding: "16px",
-              }}
-            >
-              Kontak Innovator
-            </DrawerHeader>
-            <DrawerCloseButton mt={2} />
-            <DrawerBody padding="16px">
-              <Text fontSize="12px" fontWeight="400" color="#4B5563" mb={4} textAlign="center">
-                Terapkan produk inovasi desa digital dengan cara menghubungi innovator melalui saluran di bawah ini:
-              </Text>
-              <Stack spacing={4}>
-                {/* WhatsApp */}
-                <Flex
-                  alignItems="center"
-                  padding="12px"
-                  borderWidth="1px"
-                  borderRadius="8px"
-                  cursor="pointer"
-                  transition="all 0.3s ease"
-                  _hover={{
-                    bg: "green.50", // Warna saat hover
-                  }}
-                >
-                  <Icon as={FaWhatsapp} boxSize={6} color="green.500" mr={4} />
-                  <Text fontSize="14px" fontWeight="500" flex="1" color="#1F2937">
-                    WhatsApp
-                  </Text>
-                  <ChevronRightIcon color="#1F2937" />
-                </Flex>
+            Kontak Innovator
+          </DrawerHeader>
+          <DrawerCloseButton mt={2} />
+          <DrawerBody padding="16px">
+            <Text fontSize="12px" fontWeight="400" color="#4B5563" mb={4} textAlign="center">
+              Terapkan produk inovasi desa digital dengan cara menghubungi innovator melalui saluran di bawah ini:
+            </Text>
+            <Stack spacing={4}>
+              {/* WhatsApp */}
+              <Flex
+                alignItems="center"
+                padding="12px"
+                borderWidth="1px"
+                borderRadius="8px"
+                cursor="pointer"
+                transition="all 0.3s ease"
+                _hover={{
+                  bg: "green.50", // Warna saat hover
+                }}
+              >
+                <Icon as={FaWhatsapp} boxSize={6} color="green.500" mr={4} />
+                <Text fontSize="14px" fontWeight="500" flex="1" color="#1F2937">
+                  WhatsApp
+                </Text>
+                <ChevronRightIcon color="#1F2937" />
+              </Flex>
 
-                {/* Instagram */}
-                <Flex
-                  alignItems="center"
-                  padding="12px"
-                  borderWidth="1px"
-                  borderRadius="8px"
-                  cursor="pointer"
-                  transition="all 0.3s ease"
-                  _hover={{
-                    bg: "blue.50", // Warna saat hover
-                  }}
-                >
-                  <Icon as={FaInstagram} boxSize={6} color="blue.500" mr={4} />
-                  <Text fontSize="14px" fontWeight="500" flex="1" color="#1F2937">
-                    Instagram
-                  </Text>
-                  <ChevronRightIcon color="#1F2937" />
-                </Flex>
+              {/* Instagram */}
+              <Flex
+                alignItems="center"
+                padding="12px"
+                borderWidth="1px"
+                borderRadius="8px"
+                cursor="pointer"
+                transition="all 0.3s ease"
+                _hover={{
+                  bg: "blue.50", // Warna saat hover
+                }}
+              >
+                <Icon as={FaInstagram} boxSize={6} color="blue.500" mr={4} />
+                <Text fontSize="14px" fontWeight="500" flex="1" color="#1F2937">
+                  Instagram
+                </Text>
+                <ChevronRightIcon color="#1F2937" />
+              </Flex>
 
-                {/* Website */}
-                <Flex
-                  alignItems="center"
-                  padding="12px"
-                  borderWidth="1px"
-                  borderRadius="8px"
-                  cursor="pointer"
-                  transition="all 0.3s ease"
-                  _hover={{
-                    bg: "teal.50", // Warna saat hover
-                  }}
-                >
-                  <Icon as={FaGlobe} boxSize={6} color="teal.500" mr={4} />
-                  <Text fontSize="14px" fontWeight="500" flex="1" color="#1F2937">
-                    Website
-                  </Text>
-                  <ChevronRightIcon color="#1F2937" />
-                </Flex>
-              </Stack>
-            </DrawerBody>
-          </DrawerContent>
-        </Drawer>
+              {/* Website */}
+              <Flex
+                alignItems="center"
+                padding="12px"
+                borderWidth="1px"
+                borderRadius="8px"
+                cursor="pointer"
+                transition="all 0.3s ease"
+                _hover={{
+                  bg: "teal.50", // Warna saat hover
+                }}
+              >
+                <Icon as={FaGlobe} boxSize={6} color="teal.500" mr={4} />
+                <Text fontSize="14px" fontWeight="500" flex="1" color="#1F2937">
+                  Website
+                </Text>
+                <ChevronRightIcon color="#1F2937" />
+              </Flex>
+            </Stack>
+          </DrawerBody>
+        </DrawerContent>
+      </Drawer>
 
     </Container>
   );

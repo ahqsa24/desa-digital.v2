@@ -54,7 +54,7 @@ const Login: React.FC = () => {
     try {
       await signInWithEmailAndPassword(loginForm.email, loginForm.password);
 
-      if(auth.currentUser) {
+      if (auth.currentUser) {
         const userRef = doc(firestore, "users", auth.currentUser.uid);
         const userDoc = await getDoc(userRef);
         if (userDoc.exists()) {
@@ -71,7 +71,7 @@ const Login: React.FC = () => {
       }
     } catch (error) {
       console.log("Error getting user role:", error);
-      
+
     }
   };
 
@@ -100,6 +100,7 @@ const Login: React.FC = () => {
 
           <InputGroup mt="4px" alignItems="center">
             <Input
+              fontSize="10pt"
               name="password"
               type={show ? "text" : "password"}
               onChange={onChange}
@@ -114,7 +115,7 @@ const Login: React.FC = () => {
             <Text textAlign="center" color="red" fontSize="10pt" mt={2}>
               {error ||
                 FIREBASE_ERRORS[
-                  userError?.message as keyof typeof FIREBASE_ERRORS
+                userError?.message as keyof typeof FIREBASE_ERRORS
                 ]}
             </Text>
           )}
@@ -130,7 +131,7 @@ const Login: React.FC = () => {
           </Button>
         </form>
 
-        <ActionContainer mt={24}>
+        <ActionContainer mt={12}>
           <Label>Lupa kata sandi</Label>
           <Action onClick={() => navigate(paths.EMAIL_RESET_PASSWORD_PAGE)}>
             Klik disini
