@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Input, Button, Text, Flex } from "@chakra-ui/react";
-import { Background, Container, Title, Description } from "./_EmailResetStyle";
+import { Background, Container, Title, Description, Label, ActionContainer, Action } from "./_EmailResetStyle";
 import { useNavigate } from "react-router-dom";
 import { paths } from "Consts/path";
 import { auth } from "../../firebase/clientApp";
@@ -8,8 +8,6 @@ import {
   useAuthState,
   useSendPasswordResetEmail,
 } from "react-firebase-hooks/auth";
-import { useForm } from "react-hook-form";
-import { ArrowBackIcon } from "@chakra-ui/icons";
 
 // Definisikan tipe untuk data formulir
 
@@ -77,19 +75,18 @@ const EmailReset: React.FC = () => {
                 <Text
                   textAlign="center"
                   fontSize="14px"
-                  fontWeight="700"
-                  color="gray.500"
+                  fontWeight="400"
+                  color="#4b5563"
                 >
                   Atau
                 </Text>
-                <Button
-                  variant="link"
-                  color="brand.100"
-                  fontWeight="400"
-                  onClick={() => navigate(paths.LOGIN_PAGE)}
-                >
-                  Kembali ke login
-                </Button>
+
+                <ActionContainer>
+                  <Label>Kembali ke</Label>
+                  <Action onClick={() => navigate(paths.LOGIN_PAGE)}>
+                    login
+                  </Action>
+                </ActionContainer>
               </Flex>
             </form>
           </>
