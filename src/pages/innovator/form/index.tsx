@@ -4,7 +4,6 @@ import {
   Button,
   Select as ChakraSelect,
   Flex,
-
   Stack,
   Text,
   useToast,
@@ -379,7 +378,7 @@ const InnovatorForm: React.FC = () => {
   };
 
   return (
-    <Container page>
+    <Container page >
       <TopBar title="Register Inovator" onBack={() => navigate(-1)} />
       <Box p="0 16px">
         <form onSubmit={onSubmitForm}>
@@ -432,10 +431,10 @@ const InnovatorForm: React.FC = () => {
               <ChakraSelect
                 placeholder="Pilih Model Bisnis"
                 name="modelBusiness"
-                fontSize="10pt"
+                fontSize="14px"
                 variant="outline"
                 cursor="pointer"
-                color={"black"}
+                color="black"
                 disabled={!isEditable}
                 _focus={{
                   outline: "none",
@@ -443,7 +442,9 @@ const InnovatorForm: React.FC = () => {
                   border: "none",
                   borderColor: "black",
                 }}
-                _placeholder={{ color: "gray.500" }}
+                _placeholder={{
+                  color: "#9CA3AF",  // Warna placeholder yang diinginkan
+                }}
                 value={modelBusiness}
                 onChange={onSelectModelBusiness}
               >
@@ -507,7 +508,7 @@ const InnovatorForm: React.FC = () => {
                 />
               </Flex>
 
-              <Text fontWeight="700" fontSize="16px">
+              <Text fontWeight="700" fontSize="16px" mt={3}>
                 Kontak Inovator
               </Text>
               <FormSection
