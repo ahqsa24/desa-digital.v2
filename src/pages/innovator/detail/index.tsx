@@ -6,10 +6,9 @@ import {
   Image,
   Stack,
   Text,
+  Button,
   useDisclosure
 } from "@chakra-ui/react";
-import Button from "Components/button";
-import RejectionModal from "Components/confirmModal/RejectionModal";
 import Container from "Components/container";
 import ActionDrawer from "Components/drawer/ActionDrawer";
 import TopBar from "Components/topBar/index";
@@ -31,8 +30,8 @@ import { LuDot } from "react-icons/lu";
 import { TbPlant2 } from "react-icons/tb";
 import { generatePath, useNavigate, useParams } from "react-router-dom";
 import { auth, firestore } from "../../../firebase/clientApp";
-import ButtonPengajuan from "../components/hero/ButtonPengajuan"; // Impor tombol
 import InnovationPreview from "../components/hero/innovations";
+import { NavbarButton } from "../../village/profile/_profileStyle";
 import {
   Background,
   ContentContainer,
@@ -203,27 +202,19 @@ const DetailInnovator: React.FC = () => {
   };
 
   return (
-    <Container page>
+    <Box>
       <TopBar title="Profil Inovator" onBack={() => navigate(-1)} />
       <Flex position="relative">
         <Background src={innovatorData.header} alt="header" />
         <Logo src={innovatorData.logo} alt="logo" mx={16} my={-40} />
-        <Box
-          position="absolute"
-          top="130%"
-          right="16px"
-          transform="translateY(-50%)"
-        >
-          <ButtonPengajuan
-            label="Pengajuan Inovasi" // Teks tombol
-            to="/innovator/profile/pengajuanInovasi"
-          />
-        </Box>
       </Flex>
       <ContentContainer>
-        <Stack gap={3} mt={4}>
+        <Stack gap={3} mt={2}>
           <Title>{innovatorData.namaInovator}</Title>
-          <Label>{innovatorData.kategori}</Label>
+          <Flex gap="10px">
+            <Label>{innovatorData.kategori}</Label>
+            <Label>{innovatorData.tahun}</Label>
+          </Flex>
           <Flex direction="row" gap={3} mt={0} alignItems="center">
             <Icon as={FaWandMagicSparkles} color="#4B5563" />
             <Text fontSize="12px" fontWeight="400" color="#4B5563">
@@ -241,62 +232,6 @@ const DetailInnovator: React.FC = () => {
             <Text fontSize="16px" fontWeight="700">
               Tentang
             </Text>
-            <Flex direction="column" alignItems="flex-start">
-              <Flex
-                width="100%"
-                flexDirection="row"
-                alignItems="flex-start"
-                paddingBottom="12px"
-              >
-                <Box color="#4B5563" fontSize="12px" minWidth="110px">
-                  Nomor WhatsApp
-                </Box>
-                <Text
-                  maxW="200px"
-                  whiteSpace="normal"
-                  overflowWrap="break-word"
-                  fontSize="12px"
-                >
-                  08126489023
-                </Text>
-              </Flex>
-              <Flex
-                width="100%"
-                flexDirection="row"
-                alignItems="flex-start"
-                paddingBottom="12px"
-              >
-                <Box color="#4B5563" fontSize="12px" minWidth="110px">
-                  Link Instagram
-                </Box>
-                <Text
-                  maxW="222px"
-                  whiteSpace="normal"
-                  overflowWrap="break-word"
-                  fontSize="12px"
-                >
-                  https://www.instagram.com/desasoge/
-                </Text>
-              </Flex>
-              <Flex
-                width="100%"
-                flexDirection="row"
-                alignItems="flex-start"
-                paddingBottom="12px"
-              >
-                <Box color="#4B5563" fontSize="12px" minWidth="110px">
-                  Link Website
-                </Box>
-                <Text
-                  maxW="222px"
-                  whiteSpace="normal"
-                  overflowWrap="break-word"
-                  fontSize="12px"
-                >
-                  https://www.instagram.com/desasoge/
-                </Text>
-              </Flex>
-            </Flex>
 
             <Flex direction="row" alignItems="center">
               <Text fontSize="12px" fontWeight="700" color="#4B5563" mr={2}>
@@ -411,18 +346,13 @@ const DetailInnovator: React.FC = () => {
             </Box>
           ))}
         </Flex>
-        <Button mt={-3} size="m" fullWidth type="submit" onClick={onOpen}>
+      </ContentContainer>
+        
+      <NavbarButton>
+        <Button width="100%" onClick={onOpen}>
           Kontak Inovator
         </Button>
-        <RejectionModal
-          isOpen={openModal}
-          onClose={() => setOpenModal(false)}
-          onConfirm={handleReject}
-          message={modalInput}
-          setMessage={setModalInput}
-          loading={loading}
-        />
-      </ContentContainer>
+      </NavbarButton>
       <ActionDrawer
         isOpen={isOpen}
         onClose={onClose}
@@ -432,7 +362,7 @@ const DetailInnovator: React.FC = () => {
         loading={loading}
         role="inovator"
       />
-    </Container>
+    </Box>
   );
 };
 
