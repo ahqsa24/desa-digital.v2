@@ -1,21 +1,24 @@
 import { AddIcon, DeleteIcon, MinusIcon } from "@chakra-ui/icons";
 import {
+  Box,
   Button,
+  Checkbox,
+  CheckboxGroup,
   Flex,
+  HStack,
   Input,
+  InputGroup,
+  InputLeftElement,
+  Radio,
+  RadioGroup,
   Stack,
   Text,
   Textarea,
   useToast,
-  Checkbox,
-  CheckboxGroup,
-  InputGroup,
-  InputLeftElement,
-  Box,
 } from "@chakra-ui/react";
 import Container from "Components/container";
 import TopBar from "Components/topBar";
-import { User } from "firebase/auth";
+import { paths } from "Consts/path";
 import {
   addDoc,
   collection,
@@ -29,11 +32,9 @@ import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import React, { useRef, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { generatePath, useNavigate } from "react-router-dom";
-import { auth, firestore, storage } from "../../../firebase/clientApp";
+import Select from "react-select";
 import ImageUpload from "../../../components/form/ImageUpload";
-import { paths } from "Consts/path";
-import { HStack, Radio, RadioGroup } from "@chakra-ui/react"
-import Select from 'react-select';
+import { auth, firestore, storage } from "../../../firebase/clientApp";
 import ConfModal from "../../../components/confirmModal/confModal";
 import SecConfModal from "../../../components/confirmModal/secConfModal";
 
@@ -43,15 +44,21 @@ type OptionType = {
 };
 
 const categoryOptions = [
-  { value: 'E-Government', label: 'E-Government' },
-  { value: 'E-Tourism', label: 'E-Tourism' },
-  { value: 'Layanan Keuangan', label: 'Layanan Keuangan' },
-  { value: 'Layanan Sosial', label: 'Layanan Sosial' },
-  { value: 'Pemasaran Agri-Food dan E-Commerce', label: 'Pemasaran Agri-Food dan E-Commerce' },
-  { value: 'Pengembangan Masyarakat dan Ekonomi', label: 'Pengembangan Masyarakat dan Ekonomi' },
-  { value: 'Pengelolaan Sumber Daya', label: 'Pengelolaan Sumber Daya' },
-  { value: 'Pertanian Cerdas', label: 'Pertanian Cerdas' },
-  { value: 'Sistem Informasi', label: 'Sistem Informasi' },
+  { value: "E-Government", label: "E-Government" },
+  { value: "E-Tourism", label: "E-Tourism" },
+  { value: "Layanan Keuangan", label: "Layanan Keuangan" },
+  { value: "Layanan Sosial", label: "Layanan Sosial" },
+  {
+    value: "Pemasaran Agri-Food dan E-Commerce",
+    label: "Pemasaran Agri-Food dan E-Commerce",
+  },
+  {
+    value: "Pengembangan Masyarakat dan Ekonomi",
+    label: "Pengembangan Masyarakat dan Ekonomi",
+  },
+  { value: "Pengelolaan Sumber Daya", label: "Pengelolaan Sumber Daya" },
+  { value: "Pertanian Cerdas", label: "Pertanian Cerdas" },
+  { value: "Sistem Informasi", label: "Sistem Informasi" },
 ];
 
 const targetUsersOptions = [
@@ -97,17 +104,26 @@ const AddInnovation: React.FC = () => {
   const [category, setCategory] = useState("");
   const [requirements, setRequirements] = useState<string[]>([]);
   const [newRequirement, setNewRequirement] = useState("");
-  const [newBenefit, setNewBenefit] = useState("");
-  const [selectedModels, setSelectedModels] = useState([]);
+  const [selectedModels, setSelectedModels] = useState<(string | number)[]>([]);
   const [otherBusinessModel, setOtherBusinessModel] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState(null);
-  const [selectedTargetUser, setSelectedTargetUser] = useState<OptionType | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<OptionType | null>(null);
+  const [selectedTargetUser, setSelectedTargetUser] =
+    useState<OptionType | null>(null);
   const [customTargetUser, setCustomTargetUser] = useState<string>("");
   const [benefit, setBenefit] = useState([{ benefit: "", description: "" }]);
   const modalBody1 = "Apakah Anda yakin ingin menambah inovasi?"; // Konten Modal
   const modalBody2 = "Inovasi sudah ditambahkan. Admin sedang memverifikasi pengajuan tambah inovasi.";
-  
+    const [alertStatus, setAlertStatus] = useState<"info" | "warning" | "error">(
+    "warning"
+  );
+  const [alertMessage, setAlertMessage] = useState(
+    "Profil masih kosong. Silahkan isi data di bawah terlebih dahulu."
+  );
+  const [selectedStatus, setSelectedStatus] = useState("Masih diproduksi");
+  const [status, setStatus] = useState("")
+
   const toast = useToast();
+
   const onSelectImage = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (files) {
@@ -116,7 +132,7 @@ const AddInnovation: React.FC = () => {
         alert("Maksimal 5 foto yang bisa diunggah.");
         return; // Batalkan proses jika melebihi batas
       }
-      
+
       for (let i = 0; i < files.length; i++) {
         const reader = new FileReader();
         reader.onload = (readerEvent) => {
@@ -149,7 +165,7 @@ const AddInnovation: React.FC = () => {
           ...prev,
           [name]: value,
         }));
-      } 
+      }
     } else if (name === "description") {
       const wordCount = value.split(/\s+/).filter((word) => word !== "").length;
       if (wordCount <= 80) {
@@ -158,40 +174,45 @@ const AddInnovation: React.FC = () => {
           [name]: value,
         }));
       }
-    } else if (name === "desa"){
+    } else if (name === "desa") {
       const wordCount = value.split(/\s+/).filter((word) => word !== "").length;
-      if (wordCount <= 20){
+      if (wordCount <= 20) {
         setTextInputsValue((prev) => ({
-        ...prev,
-        [name]: value
+          ...prev,
+          [name]: value,
         }));
       }
-    }  else if (name === "otherBusinessModel"){
+    } else if (name === "otherBusinessModel") {
       const wordCount = value.split(/\s+/).filter((word) => word !== "").length;
-      if (wordCount <= 5){
+      if (wordCount <= 5) {
         setTextInputsValue((prev) => ({
-        ...prev,
-        [name]: value
+          ...prev,
+          [name]: value,
         }));
       }
-    }else {
+    } else {
       setTextInputsValue((prev) => ({
-      ...prev,
-      [name]: value
-      })); 
+        ...prev,
+        [name]: value,
+      }));
     }
   };
 
   const getDescriptionWordCount = () => {
-    return textInputsValue.description.split(/\s+/).filter((word) => word !== "").length;
+    return textInputsValue.description
+      .split(/\s+/)
+      .filter((word) => word !== "").length;
   };
 
   const getVillagesWordCount = () => {
-    return textInputsValue.villages.split(/\s+/).filter((word) => word !== "").length;
+    return textInputsValue.villages.split(/\s+/).filter((word) => word !== "")
+      .length;
   };
 
   const onAddRequirement = () => {
-    const wordCount = newRequirement.split(/\s+/).filter((word) => word !== "").length;
+    const wordCount = newRequirement
+      .split(/\s+/)
+      .filter((word) => word !== "").length;
     if (newRequirement.trim() !== "" && wordCount <= 5) {
       setRequirements((prev) => [...prev, newRequirement]);
       setNewRequirement("");
@@ -246,23 +267,35 @@ const AddInnovation: React.FC = () => {
     return Promise.all(promises);
   };
 
-  const onAddInnovation = async (event: React.FormEvent) => {
+  const onSubmitForm = async (event: React.FormEvent) => {
     event.preventDefault();
+    setLoading(true);
+    setError("");
     if (selectedModels.length === 0) {
       setError("Pilih setidaknya satu model bisnis digital.");
       return;
     }
-
-    setLoading(true);
-    const { name, year, description, villages, benefit, benefitDescription, priceMax, priceMin, otherBusinessModel } = textInputsValue;
-    if (!status || !name || !year || !description || !categoryOptions || !targetUsersOptions || !villages || !benefit || !benefitDescription || !priceMin) {
-      setError("Semua kolom harus diisi");
+    if (!user?.uid) {
+      setError("User ID is not defined. Please make sure you are logged in.");
       setLoading(false);
       return;
     }
 
+    const {
+      name,
+      year,
+      description,
+      villages,
+      benefit,
+      benefitDescription,
+      priceMax,
+      priceMin,
+      otherBusinessModel,
+    } = textInputsValue;
+
     // Fetch innovator data
-    const innovatorDocRef = doc(firestore, "innovators", user?.uid as string);
+    const userId = user.uid;
+    const innovatorDocRef = doc(firestore, "innovators", userId);
     const innovatorDocSnap = await getDoc(innovatorDocRef);
 
     if (!innovatorDocSnap.exists()) {
@@ -270,10 +303,11 @@ const AddInnovation: React.FC = () => {
       setError("Gagal menambahkan inovasi");
       setLoading(false);
       toast({
-        title: "Gagal menambahkan inovasi",
+        title: "Innovator document not found",
         status: "error",
         duration: 3000,
         isClosable: true,
+        position: "top",
       });
       return;
     }
@@ -281,10 +315,14 @@ const AddInnovation: React.FC = () => {
     const innovatorData = innovatorDocSnap.data();
 
     try {
+      const userId = user.uid;
+      const docRef = doc(firestore, "innovations")
+
+      
       const innovationDocRef = await addDoc(
         collection(firestore, "innovations"),
         {
-          statusInovasi: status,
+          statusInovasi: selectedStatus,
           namaInovasi: name,
           kategori: categoryOptions,
           targetPengguna: targetUsersOptions,
@@ -292,11 +330,11 @@ const AddInnovation: React.FC = () => {
           deskripsi: description,
           desaMenerapkan: villages,
           hargaMinimal: priceMin,
-          hargaMaksimal: priceMax, 
+          hargaMaksimal: priceMax,
           manfaat: benefit,
           deskripsiManfaat: benefitDescription,
           kebutuhan: requirements,
-          lainLain: otherBusinessModel, 
+          lainLain: otherBusinessModel,
           innovatorId: user?.uid,
           createdAt: serverTimestamp(),
           editedAt: serverTimestamp(),
@@ -316,7 +354,7 @@ const AddInnovation: React.FC = () => {
       }
 
       setLoading(false);
-      
+
       // Update jumlahInovasi in innovators collection
       const innovatorDocRef = doc(firestore, "innovators", user?.uid as string);
       await updateDoc(innovatorDocRef, {
@@ -324,7 +362,8 @@ const AddInnovation: React.FC = () => {
       });
 
       toast({
-        title: "Pengajuan sedang diverifikasi admin. Pengajuan ini akan disimpan pada halaman Pengajuan inovasi.",
+        title:
+          "Pengajuan sedang diverifikasi admin. Pengajuan ini akan disimpan pada halaman Pengajuan inovasi.",
         status: "success",
         duration: 3000,
         isClosable: true,
@@ -380,7 +419,7 @@ const AddInnovation: React.FC = () => {
       marginTop: 0,
       zIndex: 10,
     }),
-    option: (base: any, state: { isFocused: any; }) => ({
+    option: (base: any, state: { isFocused: any }) => ({
       ...base,
       fontSize: "14px",
       padding: "2px 10px",
@@ -398,319 +437,388 @@ const AddInnovation: React.FC = () => {
   };
 
   return (
-    <Container page >
+    <Container page>
       <TopBar title="Tambahkan Inovasi" onBack={() => navigate(-1)} />
-      <form onSubmit={onAddInnovation}>
-        <Box p='0 16px'>
-        <Flex direction="column" marginTop="24px">
-          <Stack spacing={3} width="100%">
-            <Text fontWeight="400" fontSize="14px" mb="-2">
-              Status Inovasi <span style={{ color: "red" }}>*</span>
-            </Text>
-            <RadioGroup 
-              defaultValue="1"
-              name ="status"
+      <form onSubmit={onSubmitForm}>
+        <Box p="0 16px">
+          <Flex direction="column" marginTop="24px">
+            <Stack spacing={3} width="100%">
+              <Text fontWeight="400" fontSize="14px" mb="-2">
+                Status Inovasi <span style={{ color: "red" }}>*</span>
+              </Text>
+              <RadioGroup
+                defaultValue="Masih diproduksi"
+                name="status"
+                onChange={(value) => setSelectedStatus(value)}
               >
-              <HStack spacing={4}>
-                {options.map((option) => (
-                  <Radio 
-                    key={option.value}
-                    value={option.value}
-                    size="md"
-                    colorScheme="green"
-                    sx={{
-                      "& .chakra-radio__control": {
-                        borderColor: "#9CA3AF !important", // Warna border
-                        borderWidth: "1px !important", // Ketebalan garis
-                      },
-                    }}
-                  >
-                    <Text fontSize="14px">{option.label}</Text>
-                  </Radio>
-                ))}
-              </HStack>
-            </RadioGroup>
-            
-            <Text fontWeight="400" fontSize="14px" mb="-2">
-              Nama Inovasi <span style={{ color: "red" }}>*</span>
-            </Text>
-            <Input
-              name="name"
-              fontSize="14px"
-              placeholder="Nama Inovasi"
-              _placeholder={{ color: "#9CA3AF" }}
-              _focus={{
-                outline: "none",
-                bg: "white",
-                border: "none",
-              }}
-              value={textInputsValue.name}
-              onChange={onTextChange}
-            />
-            
-            <Text fontWeight="400" fontSize="14px" mb="-2">
-              Kategori Inovasi <span style={{ color: "red" }}>*</span>
-            </Text>
-            <Select
-              placeholder="Pilih kategori"
-              options={categoryOptions}
-              value={selectedCategory}
-              onChange={(selectedOption) => setSelectedCategory(selectedOption)}
-              styles={customStyles} // Terapkan gaya khusus
-              isClearable
-            >
+                <HStack spacing={4}>
+                  {options.map((option) => (
+                    <Radio
+                      key={option.value}
+                      value={option.label}
+                      size="md"
+                      colorScheme="green"
+                      sx={{
+                        "& .chakra-radio__control": {
+                          borderColor: "#9CA3AF !important", // Warna border
+                          borderWidth: "1px !important", // Ketebalan garis
+                        },
+                      }}
+                    >
+                      <Text fontSize="14px">{option.label}</Text>
+                    </Radio>
+                  ))}
+                </HStack>
+              </RadioGroup>
 
-            </Select>
-            
-            <Text fontWeight="400" fontSize="14px" mb="-2">
-              Target Pengguna <span style={{ color: "red" }}>*</span>
-            </Text>
-            <Select
-              placeholder="Pilih target pengguna"
-              options={targetUsersOptions}
-              value={selectedTargetUser}
-              onChange={handleTargetUserChange}
-              styles={customStyles} // Terapkan gaya yang sama
-              isClearable
-            />
-            {selectedTargetUser?.value === "Lainnya" && (
+              <Text fontWeight="400" fontSize="14px" mb="-2">
+                Nama Inovasi <span style={{ color: "red" }}>*</span>
+              </Text>
               <Input
-                name="customTargetUser"
+                name="name"
                 fontSize="14px"
-                placeholder="Masukkan target pengguna"
-                _placeholder={{ color: "#9CA3AF" }}
-                _focus={{ outline: "none", bg: "white", borderColor: "black" }}
-                value={customTargetUser}
-                onChange={(e) => setCustomTargetUser(e.target.value)}
-                mt="2"
-              />
-            )}
-            
-            <Text fontWeight="400" fontSize="14px" mb="-2">
-              Tahun dibuat inovasi <span style={{ color: "red" }}>*</span>
-            </Text>
-            <Input
-              name="year"
-              fontSize="14px"
-              placeholder="Ketik tahun"
-              _placeholder={{ color: "#9CA3AF" }}
-              _focus={{
-                outline: "none",
-                bg: "white",
-                border: "none",
-              }}
-              value={textInputsValue.year}
-              onChange={onTextChange}
-            />
-            
-            <Text fontWeight="400" fontSize="14px" mb="-2">
-              Deskripsi <span style={{ color: "red" }}>*</span>
-            </Text>
-            <Flex direction="column" alignItems="flex-start">
-              <Textarea
-                name="description"
-                fontSize="14px"
-                placeholder="Masukkan deskripsi singkat tentang inovasi"
+                placeholder="Nama Inovasi"
                 _placeholder={{ color: "#9CA3AF" }}
                 _focus={{
                   outline: "none",
                   bg: "white",
                   border: "none",
                 }}
-                height="100px"
-                value={textInputsValue.description}
+                value={textInputsValue.name}
                 onChange={onTextChange}
               />
-              <Text fontWeight="400" fontStyle= "normal" fontSize="10px" color="gray.500">
-                {getDescriptionWordCount()}/80 kata
-              </Text>
-            </Flex>
 
-            <Text fontWeight="400" fontSize="14px" mb="-2">
-              Model Bisnis Digital <span style={{ color: "red" }}>*</span>
-            </Text>
-            <CheckboxGroup
-              colorScheme= "green"
-              value={selectedModels} 
-              onChange={(values) => setSelectedModels(values)}
-            >
-              <Text fontWeight="400" fontStyle= "normal" fontSize="10px" color="#9CA3AF" mb="-2">
-              Dapat lebih dari 1</Text>
-              <Flex gap={4} >
-                {/* Kolom Pertama */}
-                <Flex direction="column" gap={1}>
-                  {[
-                    "Gratis",
-                    "Layanan Berbayar",
-                    "Subsidi Parsial",
-                    "Pusat Multi-Layanan",
-                    "Koperasi",
-                    "Lain-lain",
-                  ].map((model, index) => (
-                    <Checkbox key={index} value={model} 
-                    sx={{
-                      "& .chakra-checkbox__control": {
-                        borderColor: "#9CA3AF", // Warna border
-                        borderWidth: "1px", // Ketebalan garis
-                      },
-                      ".chakra-checkbox__label": {
-                      fontSize: "12px",
-                      fontStyle: "normal",
-                      }
-                    }}>
-                      {model}
-                    </Checkbox>
-                  ))}
-                </Flex>
-                {/* Kolom Kedua */}
-                <Flex direction="column" gap={1}>
-                  {[
-                    "Model Kemitraan",
-                    "Menciptakan Pasar",
-                    "Pengumpulan Data",
-                    "Pelatihan/Pendidikan",
-                    "Perusahaan Sosial",
-                  ].map((model, index) => (
-                    <Checkbox key={index} value={model}
-                    sx={{
-                      "& .chakra-checkbox__control": {
-                        borderColor: "#9CA3AF", // Warna border
-                        borderWidth: "1px", // Ketebalan garis
-                      },
-                      ".chakra-checkbox__label": {
-                      fontSize: "12px",
-                      fontStyle: "normal",
-                      }
-                    }}>
-                      {model}
-                    </Checkbox>
-                  ))}
-                </Flex>
-              </Flex>
-            </CheckboxGroup>
-            {selectedModels.includes("Lain-lain") && (
-              <Flex direction="column" alignItems="flex-start">
+              <Text fontWeight="400" fontSize="14px" mb="-2">
+                Kategori Inovasi <span style={{ color: "red" }}>*</span>
+              </Text>
+              <Select
+                placeholder="Pilih kategori"
+                options={categoryOptions}
+                value={selectedCategory}
+                onChange={(selectedOption) =>
+                  setSelectedCategory(selectedOption)
+                }
+                styles={customStyles} // Terapkan gaya khusus
+                isClearable
+              ></Select>
+
+              <Text fontWeight="400" fontSize="14px" mb="-2">
+                Target Pengguna <span style={{ color: "red" }}>*</span>
+              </Text>
+              <Select
+                placeholder="Pilih target pengguna"
+                options={targetUsersOptions}
+                value={selectedTargetUser}
+                onChange={handleTargetUserChange}
+                styles={customStyles} // Terapkan gaya yang sama
+                isClearable
+              />
+              {selectedTargetUser?.value === "Lainnya" && (
                 <Input
-                  name="otherBusinessModel"
-                  placeholder="Silahkan tulis model bisnis lainnya"
-                  value={otherBusinessModel}
-                  onChange={(e) => {
-                    const wordCount = e.target.value.split(/\s+/).filter((word) => word !== "").length;
-                    if (wordCount <= 5) {
-                      setOtherBusinessModel(e.target.value)}}}
+                  name="customTargetUser"
                   fontSize="14px"
-                  fontStyle="normal"
-                  mt={-2} // Margin atas agar ada jarak dari checkbox
+                  placeholder="Masukkan target pengguna"
                   _placeholder={{ color: "#9CA3AF" }}
                   _focus={{
                     outline: "none",
-                    boxShadow: "0 0px 0 0 blue",
+                    bg: "white",
+                    borderColor: "black",
                   }}
-                  border="none"
-                  borderBottom="1px solid #9CA3AF"
-                  borderRadius="0" 
+                  value={customTargetUser}
+                  onChange={(e) => setCustomTargetUser(e.target.value)}
+                  mt="2"
                 />
-                <Text fontWeight="400" fontStyle= "normal" fontSize="10px" color="#9CA3AF">
-                {otherBusinessModel.split(/\s+/).filter((word) => word !== "").length}/5 kata
+              )}
+
+              <Text fontWeight="400" fontSize="14px" mb="-2">
+                Tahun dibuat inovasi <span style={{ color: "red" }}>*</span>
+              </Text>
+              <Input
+                name="year"
+                fontSize="14px"
+                placeholder="Ketik tahun"
+                _placeholder={{ color: "#9CA3AF" }}
+                _focus={{
+                  outline: "none",
+                  bg: "white",
+                  border: "none",
+                }}
+                value={textInputsValue.year}
+                onChange={onTextChange}
+              />
+
+              <Text fontWeight="400" fontSize="14px" mb="-2">
+                Deskripsi <span style={{ color: "red" }}>*</span>
+              </Text>
+              <Flex direction="column" alignItems="flex-start">
+                <Textarea
+                  name="description"
+                  fontSize="14px"
+                  placeholder="Masukkan deskripsi singkat tentang inovasi"
+                  _placeholder={{ color: "#9CA3AF" }}
+                  _focus={{
+                    outline: "none",
+                    bg: "white",
+                    border: "none",
+                  }}
+                  height="100px"
+                  value={textInputsValue.description}
+                  onChange={onTextChange}
+                />
+                <Text
+                  fontWeight="400"
+                  fontStyle="normal"
+                  fontSize="10px"
+                  color="gray.500"
+                >
+                  {getDescriptionWordCount()}/80 kata
                 </Text>
               </Flex>
-            )}
 
-
-            <Text fontWeight="400" fontSize="14px" mb="-2">
-              Desa yang menerapkan <span style={{ color: "red" }}>*</span>
-            </Text>
-            <Flex direction="column" alignItems="flex-start">
-              <Text fontWeight="400" fontStyle= "normal" fontSize="10px" color="#9CA3AF">
-                Contoh: Desa A, Desa B, Desa C, dan 50 desa lainnya</Text>
-              <Textarea
-                name="villages"
-                fontSize="14px"
-                placeholder="Masukkan beberapa desa yang menerapkan"
-                _placeholder={{ color: "#9CA3AF" }}
-                _focus={{
-                  outline: "none",
-                  bg: "white",
-                  border: "none",
-                }}
-                height="100px"
-                value={textInputsValue.villages}
-                onChange={onTextChange}
-              />
-              <Text fontWeight="400" fontStyle= "normal" fontSize="10px" color="gray.500">
-                {getVillagesWordCount()}/20 kata
+              <Text fontWeight="400" fontSize="14px" mb="-2">
+                Model Bisnis Digital <span style={{ color: "red" }}>*</span>
               </Text>
-            </Flex>
-
-            <Text fontWeight="400" fontSize="14px" mb="-2">
-              Kisaran harga <span style={{ color: "red" }}>*</span>
-            </Text>
-            <Flex direction="column" alignItems="flex-start">
-              <Text fontWeight="400" fontStyle= "normal" fontSize="10px" color="#9CA3AF">
-                Contoh: Rp.1.000.000 - Rp. 2.000.000
-              </Text>
-              <Flex direction='row' justifyContent='center'>
-                <InputGroup>
-                  <InputLeftElement pointerEvents='none' color='gray.300' fontSize='12px'>
-                  Rp.
-                  </InputLeftElement>
+              <CheckboxGroup
+                colorScheme="green"
+                value={selectedModels}
+                onChange={(values) => setSelectedModels(values)}
+              >
+                <Text
+                  fontWeight="400"
+                  fontStyle="normal"
+                  fontSize="10px"
+                  color="#9CA3AF"
+                  mb="-2"
+                >
+                  Dapat lebih dari 1
+                </Text>
+                <Flex gap={4}>
+                  {/* Kolom Pertama */}
+                  <Flex direction="column" gap={1}>
+                    {[
+                      "Gratis",
+                      "Layanan Berbayar",
+                      "Subsidi Parsial",
+                      "Pusat Multi-Layanan",
+                      "Koperasi",
+                      "Lain-lain",
+                    ].map((model, index) => (
+                      <Checkbox
+                        key={index}
+                        value={model}
+                        sx={{
+                          "& .chakra-checkbox__control": {
+                            borderColor: "#9CA3AF", // Warna border
+                            borderWidth: "1px", // Ketebalan garis
+                          },
+                          ".chakra-checkbox__label": {
+                            fontSize: "12px",
+                            fontStyle: "normal",
+                          },
+                        }}
+                      >
+                        {model}
+                      </Checkbox>
+                    ))}
+                  </Flex>
+                  {/* Kolom Kedua */}
+                  <Flex direction="column" gap={1}>
+                    {[
+                      "Model Kemitraan",
+                      "Menciptakan Pasar",
+                      "Pengumpulan Data",
+                      "Pelatihan/Pendidikan",
+                      "Perusahaan Sosial",
+                    ].map((model, index) => (
+                      <Checkbox
+                        key={index}
+                        value={model}
+                        sx={{
+                          "& .chakra-checkbox__control": {
+                            borderColor: "#9CA3AF", // Warna border
+                            borderWidth: "1px", // Ketebalan garis
+                          },
+                          ".chakra-checkbox__label": {
+                            fontSize: "12px",
+                            fontStyle: "normal",
+                          },
+                        }}
+                      >
+                        {model}
+                      </Checkbox>
+                    ))}
+                  </Flex>
+                </Flex>
+              </CheckboxGroup>
+              {selectedModels.includes("Lain-lain") && (
+                <Flex direction="column" alignItems="flex-start">
                   <Input
-                  name="priceMin"
-                  fontSize="12px"
-                  placeholder="Harga minimal"
+                    name="otherBusinessModel"
+                    placeholder="Silahkan tulis model bisnis lainnya"
+                    value={otherBusinessModel}
+                    onChange={(e) => {
+                      const wordCount = e.target.value
+                        .split(/\s+/)
+                        .filter((word) => word !== "").length;
+                      if (wordCount <= 5) {
+                        setOtherBusinessModel(e.target.value);
+                      }
+                    }}
+                    fontSize="14px"
+                    fontStyle="normal"
+                    mt={-2} // Margin atas agar ada jarak dari checkbox
+                    _placeholder={{ color: "#9CA3AF" }}
+                    _focus={{
+                      outline: "none",
+                      boxShadow: "0 0px 0 0 blue",
+                    }}
+                    border="none"
+                    borderBottom="1px solid #9CA3AF"
+                    borderRadius="0"
+                  />
+                  <Text
+                    fontWeight="400"
+                    fontStyle="normal"
+                    fontSize="10px"
+                    color="#9CA3AF"
+                  >
+                    {
+                      otherBusinessModel
+                        .split(/\s+/)
+                        .filter((word) => word !== "").length
+                    }
+                    /5 kata
+                  </Text>
+                </Flex>
+              )}
+
+              <Text fontWeight="400" fontSize="14px" mb="-2">
+                Desa yang menerapkan <span style={{ color: "red" }}>*</span>
+              </Text>
+              <Flex direction="column" alignItems="flex-start">
+                <Text
+                  fontWeight="400"
+                  fontStyle="normal"
+                  fontSize="10px"
+                  color="#9CA3AF"
+                >
+                  Contoh: Desa A, Desa B, Desa C, dan 50 desa lainnya
+                </Text>
+                <Textarea
+                  name="villages"
+                  fontSize="14px"
+                  placeholder="Masukkan beberapa desa yang menerapkan"
                   _placeholder={{ color: "#9CA3AF" }}
                   _focus={{
                     outline: "none",
                     bg: "white",
                     border: "none",
                   }}
-                  value={textInputsValue.priceMin}
+                  height="100px"
+                  value={textInputsValue.villages}
                   onChange={onTextChange}
                 />
-
-                </InputGroup>
-                <MinusIcon mx="2" color="#9CA3AF" mt="3"/>
-                <InputGroup>
-                  <InputLeftElement pointerEvents='none' color='gray.300' fontSize='12px'>
-                  Rp.
-                  </InputLeftElement>
-                  <Input
-                  name="priceMax"
-                  fontSize="12px"
-                  placeholder="Harga maksimal"
-                  _placeholder={{ color: "#9CA3AF" }}
-                  _focus={{
-                    outline: "none",
-                    bg: "white",
-                    border: "none",
-                  }}
-                  value={textInputsValue.priceMax}
-                  onChange={onTextChange}
-                />
-
-                </InputGroup>
+                <Text
+                  fontWeight="400"
+                  fontStyle="normal"
+                  fontSize="10px"
+                  color="gray.500"
+                >
+                  {getVillagesWordCount()}/20 kata
+                </Text>
               </Flex>
 
-            </Flex>
+              <Text fontWeight="400" fontSize="14px" mb="-2">
+                Kisaran harga <span style={{ color: "red" }}>*</span>
+              </Text>
+              <Flex direction="column" alignItems="flex-start">
+                <Text
+                  fontWeight="400"
+                  fontStyle="normal"
+                  fontSize="10px"
+                  color="#9CA3AF"
+                >
+                  Contoh: Rp.1.000.000 - Rp. 2.000.000
+                </Text>
+                <Flex direction="row" justifyContent="center">
+                  <InputGroup>
+                    <InputLeftElement
+                      pointerEvents="none"
+                      color="gray.300"
+                      fontSize="12px"
+                    >
+                      Rp.
+                    </InputLeftElement>
+                    <Input
+                      name="priceMin"
+                      fontSize="12px"
+                      placeholder="Harga minimal"
+                      _placeholder={{ color: "#9CA3AF" }}
+                      _focus={{
+                        outline: "none",
+                        bg: "white",
+                        border: "none",
+                      }}
+                      value={textInputsValue.priceMin}
+                      onChange={onTextChange}
+                    />
+                  </InputGroup>
+                  <MinusIcon mx="2" color="#9CA3AF" mt="3" />
+                  <InputGroup>
+                    <InputLeftElement
+                      pointerEvents="none"
+                      color="gray.300"
+                      fontSize="12px"
+                    >
+                      Rp.
+                    </InputLeftElement>
+                    <Input
+                      name="priceMax"
+                      fontSize="12px"
+                      placeholder="Harga maksimal"
+                      _placeholder={{ color: "#9CA3AF" }}
+                      _focus={{
+                        outline: "none",
+                        bg: "white",
+                        border: "none",
+                      }}
+                      value={textInputsValue.priceMax}
+                      onChange={onTextChange}
+                    />
+                  </InputGroup>
+                </Flex>
+              </Flex>
 
-            <Text fontWeight="400" fontSize="14px" mb="-2">
-              Foto inovasi <span style={{ color: "red" }}>*</span>
-            </Text>
-              <Flex direction="column" alignItems="flex-start" >
-                <Text fontWeight="400" fontStyle= "normal" fontSize="10px" color="#9CA3AF" mb="0">
+              <Text fontWeight="400" fontSize="14px" mb="-2">
+                Foto inovasi <span style={{ color: "red" }}>*</span>
+              </Text>
+              <Flex direction="column" alignItems="flex-start">
+                <Text
+                  fontWeight="400"
+                  fontStyle="normal"
+                  fontSize="10px"
+                  color="#9CA3AF"
+                  mb="0"
+                >
                   Maks 5 foto, format: png, jpg.
                 </Text>
-              <ImageUpload 
-                selectedFiles={selectedFiles}
-                setSelectedFiles={setSelectedFiles}
-                selectFileRef={selectFileRef}
-                onSelectImage={onSelectImage}
-              />
+                <ImageUpload
+                  selectedFiles={selectedFiles}
+                  setSelectedFiles={setSelectedFiles}
+                  selectFileRef={selectFileRef}
+                  onSelectImage={onSelectImage}
+                  maxFiles={5}
+                  // disabled={!}
+                />
               </Flex>
 
               <Text fontWeight="700" fontSize="16px" mb="-2" mt="2">
-                Manfaat Inovasi{" "} 
-                <span style={{ color: "red", fontSize: "14px", fontWeight: "400" }}>*</span>
+                Manfaat Inovasi{" "}
+                <span
+                  style={{ color: "red", fontSize: "14px", fontWeight: "400" }}
+                >
+                  *
+                </span>
               </Text>
 
               {/* Map untuk manfaat */}
@@ -727,8 +835,10 @@ const AddInnovation: React.FC = () => {
                       _focus={{ outline: "none", bg: "white", border: "none" }}
                       value={item.benefit}
                       onChange={(e) => {
-                        const wordCount = e.target.value.split(/\s+/).filter((word) => word !== "").length;
-                        if (wordCount <= 5) { 
+                        const wordCount = e.target.value
+                          .split(/\s+/)
+                          .filter((word) => word !== "").length;
+                        if (wordCount <= 5) {
                           const updatedBenefits = [...benefit];
                           updatedBenefits[index].benefit = e.target.value;
                           setBenefit(updatedBenefits);
@@ -740,7 +850,9 @@ const AddInnovation: React.FC = () => {
                         cursor="pointer"
                         color="red.500"
                         onClick={() => {
-                          setBenefit((prev) => prev.filter((_, i) => i !== index));
+                          setBenefit((prev) =>
+                            prev.filter((_, i) => i !== index)
+                          );
                         }}
                       />
                     )}
@@ -751,7 +863,11 @@ const AddInnovation: React.FC = () => {
                     color="#9CA3AF"
                     mt="2px"
                   >
-                    {item.benefit.split(/\s+/).filter((word) => word !== "").length}/5 kata
+                    {
+                      item.benefit.split(/\s+/).filter((word) => word !== "")
+                        .length
+                    }
+                    /5 kata
                   </Text>
 
                   <Text fontWeight="400" fontSize="14px" mt={2}>
@@ -765,8 +881,11 @@ const AddInnovation: React.FC = () => {
                       _focus={{ outline: "none", bg: "white", border: "none" }}
                       value={item.description}
                       onChange={(e) => {
-                        const wordCount = e.target.value.split(/\s+/).filter((word) => word !== "").length;
-                        if (wordCount <= 10) { // Batas 10 kata
+                        const wordCount = e.target.value
+                          .split(/\s+/)
+                          .filter((word) => word !== "").length;
+                        if (wordCount <= 10) {
+                          // Batas 10 kata
                           const updatedBenefits = [...benefit];
                           updatedBenefits[index].description = e.target.value;
                           setBenefit(updatedBenefits);
@@ -779,7 +898,12 @@ const AddInnovation: React.FC = () => {
                       color="#9CA3AF"
                       mt="2px"
                     >
-                      {item.description.split(/\s+/).filter((word) => word !== "").length}/10 kata
+                      {
+                        item.description
+                          .split(/\s+/)
+                          .filter((word) => word !== "").length
+                      }
+                      /10 kata
                     </Text>
                   </Flex>
                 </Flex>
@@ -794,7 +918,9 @@ const AddInnovation: React.FC = () => {
                   // Validasi input terakhir sebelum menambahkan manfaat baru
                   const lastBenefit = benefit[benefit.length - 1];
                   if (!lastBenefit?.benefit || !lastBenefit?.description) {
-                    alert("Silakan isi manfaat dan deskripsi sebelum menambahkan manfaat baru.");
+                    alert(
+                      "Silakan isi manfaat dan deskripsi sebelum menambahkan manfaat baru."
+                    );
                     return;
                   }
                   // Tambahkan manfaat baru
@@ -807,7 +933,11 @@ const AddInnovation: React.FC = () => {
 
               <Text fontWeight="700" fontSize="16px" mb="-2" mt="2">
                 Persiapan Infrastruktur{" "}
-                <span style={{ color: "red", fontSize: "14px", fontWeight: "400" }}>*</span>
+                <span
+                  style={{ color: "red", fontSize: "14px", fontWeight: "400" }}
+                >
+                  *
+                </span>
               </Text>
 
               <Flex direction="column" mt={0}>
@@ -818,13 +948,22 @@ const AddInnovation: React.FC = () => {
                     <Flex alignItems="center" position="relative" gap={2}>
                       <Input
                         fontSize="14px"
-                        placeholder={index === 0 ? "Masukkan persiapan infrastruktur" : ""}
+                        placeholder={
+                          index === 0 ? "Masukkan persiapan infrastruktur" : ""
+                        }
                         _placeholder={{ color: "#9CA3AF" }}
-                        _focus={{ outline: "none", bg: "white", border: "none" }}
+                        _focus={{
+                          outline: "none",
+                          bg: "white",
+                          border: "none",
+                        }}
                         value={requirement}
                         onChange={(e) => {
-                          const wordCount = e.target.value.split(/\s+/).filter((word) => word !== "").length;
-                          if (wordCount <= 5) { // Batas maksimal 5 kata
+                          const wordCount = e.target.value
+                            .split(/\s+/)
+                            .filter((word) => word !== "").length;
+                          if (wordCount <= 5) {
+                            // Batas maksimal 5 kata
                             const updatedRequirements = [...requirements];
                             updatedRequirements[index] = e.target.value;
                             setRequirements(updatedRequirements);
@@ -837,7 +976,9 @@ const AddInnovation: React.FC = () => {
                           cursor="pointer"
                           color="red.500"
                           onClick={() => {
-                            setRequirements((prev) => prev.filter((_, i) => i !== index));
+                            setRequirements((prev) =>
+                              prev.filter((_, i) => i !== index)
+                            );
                           }}
                         />
                       )}
@@ -849,13 +990,22 @@ const AddInnovation: React.FC = () => {
                       color="gray.500"
                       mt="2px"
                     >
-                      {requirement.split(/\s+/).filter((word) => word !== "").length}/5 kata
+                      {
+                        requirement.split(/\s+/).filter((word) => word !== "")
+                          .length
+                      }
+                      /5 kata
                     </Text>
                   </Flex>
                 ))}
 
                 {/* Contoh */}
-                <Text fontWeight="400" fontStyle="normal" fontSize="10px" color="#9CA3AF">
+                <Text
+                  fontWeight="400"
+                  fontStyle="normal"
+                  fontSize="10px"
+                  color="#9CA3AF"
+                >
                   Contoh: Mempunyai listrik
                 </Text>
 
@@ -869,8 +1019,11 @@ const AddInnovation: React.FC = () => {
                     _focus={{ outline: "none", bg: "white", border: "none" }}
                     value={newRequirement}
                     onChange={(e) => {
-                      const wordCount = e.target.value.split(/\s+/).filter((word) => word !== "").length;
-                      if (wordCount <= 5) { // Batas maksimal 5 kata
+                      const wordCount = e.target.value
+                        .split(/\s+/)
+                        .filter((word) => word !== "").length;
+                      if (wordCount <= 5) {
+                        // Batas maksimal 5 kata
                         setNewRequirement(e.target.value);
                       }
                     }}
@@ -888,7 +1041,11 @@ const AddInnovation: React.FC = () => {
                     color="gray.500"
                     mt="2px"
                   >
-                    {newRequirement.split(/\s+/).filter((word) => word !== "").length}/5 kata
+                    {
+                      newRequirement.split(/\s+/).filter((word) => word !== "")
+                        .length
+                    }
+                    /5 kata
                   </Text>
                   <Button
                     variant="outline"
@@ -901,18 +1058,17 @@ const AddInnovation: React.FC = () => {
                   </Button>
                 </Flex>
               </Flex>
-
-          </Stack>
-        </Flex>
-        {error && (
-          <Text color="red.500" fontSize="12px" mt="4px">
-            {error}
-          </Text>
-        )}
+            </Stack>
+          </Flex>
+          {error && (
+            <Text color="red.500" fontSize="12px" mt="4px">
+              {error}
+            </Text>
+          )}
         <div>
-          <Button type="submit" mt="20px" width="100%" isLoading={loading}>
-            Tambah Inovasi
-          </Button>
+            <Button type="submit" mt="20px" width="100%" isLoading={loading}>
+              Tambah Inovasi
+            </Button>
           <ConfModal
             isOpen={isModal1Open}
             onClose={closeModal}

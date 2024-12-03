@@ -102,7 +102,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ user }) => {
       }
     };
     fetchUser(); 
-  });
+  }, [userLogin]);
 
   useEffect(() => {
     const fetchVillage = async () => {
@@ -117,7 +117,22 @@ const UserMenu: React.FC<UserMenuProps> = ({ user }) => {
       }
     };
     fetchVillage();
-  });
+  }, [user]);
+
+  useEffect(() => {
+    const fetchInnovator = async () => {
+      if (user) {
+        const innovatorRef = doc(firestore, "innovators", user.uid);
+        const innovatorSnap = await getDoc(innovatorRef);
+        if (innovatorSnap.exists()) {
+          const innovatorData = innovatorSnap.data();
+          setStatus(innovatorData?.status);
+          console.log("Status: ", innovatorData?.status);
+        }
+      }
+    };
+    fetchInnovator();
+  }, [user]);
 
   const handleProfileClick = () => {
     if (!user) return;
