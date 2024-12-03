@@ -851,19 +851,6 @@ const AddVillage: React.FC = () => {
               {error}
             </Text>
           )}
-<<<<<<< HEAD
-          <Button
-            type="submit"
-            fontSize={14}
-            mt="20px"
-            width="100%"
-            height="44px"
-            isLoading={loading}
-            
-          >
-            Daftarkan Profil
-          </Button>
-=======
           {status !== "Menunggu" && (
             <Button
               type="submit"
@@ -876,7 +863,6 @@ const AddVillage: React.FC = () => {
               {status === "Ditolak" ? "Kirim Ulang" : "Kirim"}
             </Button>
           )}
->>>>>>> 2b81ecdfff661a4857e9a6ffabb9223cc6fbfb62
         </form>
       </Box>
     </Container>
