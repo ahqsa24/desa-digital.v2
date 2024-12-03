@@ -35,6 +35,7 @@ import {
     CardContainer,
     Horizontal,
     NavbarButton,
+    GridContainer,
 } from "./_profileStyle";
 import {
     Accordion,
@@ -266,9 +267,9 @@ export default function ProfileVillage() {
                                 paddingBottom="12px"
                             > Lihat Semua </Text>
                         </Flex>
-                        <CardContainer>
-                            <Horizontal>
-                                {innovations.map((innovation, idx) => (
+                        
+                        <GridContainer>
+                                {innovations.slice(0, 2).map((innovation, idx) => (
                                     <CardInnovation 
                                         key={idx}
                                         images={innovation.images}
@@ -283,8 +284,7 @@ export default function ProfileVillage() {
                                         }
                                     />
                                 ))}
-                            </Horizontal>
-                        </CardContainer>
+                        </GridContainer>
                     </div>
                 </ContentContainer>
             </div >
