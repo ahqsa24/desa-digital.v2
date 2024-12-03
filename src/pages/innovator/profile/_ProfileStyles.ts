@@ -39,7 +39,6 @@ export const Image = styled.div`
 export const Title = styled.p`
   font-size: 18px;
   font-weight: 700;
-  margin-top: 40px;
   position: relative;
   color: #1F2937;
 `;

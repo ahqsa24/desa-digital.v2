@@ -15,7 +15,7 @@ import DetailVillage from "./pages/village/detail";
 import DetailInnovator from "./pages/innovator/detail";
 // import ProfileInnovator from "./pages/innovator/form
 import AddInnovation from "./pages/innovation/add";
-import ProfileFormRegist from "./pages/village/form";
+import AddVillage from "./pages/village/form";
 import ProfileInnovator from "./pages/innovator/profile";
 import { ToastContainer } from "react-toastify";
 import InnovatorForm from "./pages/innovator/form";
@@ -57,11 +57,6 @@ const routes = [
   {
     path: paths.VILLAGE_PAGE,
     element: <Village />,
-    exact: true,
-  },
-  {
-    path: paths.VILLAGE_PROFILE_REGIST_PAGE,
-    element: <ProfileFormRegist />,
     exact: true,
   },
   {
@@ -111,6 +106,11 @@ const routes = [
     exact: true,
   },
   {
+    path: paths.VILLAGE_FORM,
+    element: <AddVillage />,
+    exact: true,
+  },
+  {
     path: paths.INNOVATOR_FORM,
     element: <InnovatorForm />,
     exact: true,
@@ -139,7 +139,13 @@ const routes = [
     element: <KlaimInovasi />,
     exact: true,
   },
-  { path: paths.ADMIN_PAGE,
+  {
+    path: paths.NEW_PASSWORD_PAGE,
+    element: <NewPassword />,
+    exact: true,
+  },
+  {
+    path: paths.ADMIN_PAGE,
     element: <AdminPage />,
     exact: true,
   },
@@ -155,7 +161,7 @@ const routes = [
   },
   {
     path: paths.NOTIFICATION_PAGE,
-    element: <Notification title={""} description={""}/>,
+    element: <Notification title={""} description={""} />,
     exact: true,
   },
   {
@@ -165,7 +171,7 @@ const routes = [
   },
   {
     path: paths.PENGAJUAN_INOVASI_PAGE,
-    element: <PengajuanInovasi />, 
+    element: <PengajuanInovasi />,
     exact: true,
   },
   {
@@ -173,17 +179,6 @@ const routes = [
     element: <PengajuanKlaim />, 
     exact: true,
   },
-  {
-    path: paths.SEMUA_INOVASI_DITERAPKAN_PAGE,
-    element: <SemuaInovasiDiterapkan />, 
-    exact: true,
-  },
-  {
-    path: paths.KLAIM_INOVASI_MANUAL_PAGE,
-    element: <KlaimManual />, 
-    exact: true,
-  }
-  
 ];
 
 const App: React.FC = () => {

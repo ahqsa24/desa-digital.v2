@@ -1,34 +1,44 @@
 import {
+  Alert,
+  Box,
   Button,
   Flex,
-  Input,
   Stack,
   Text,
-  Textarea,
   useToast,
 } from "@chakra-ui/react";
 import Container from "Components/container";
+import LocationSelector from "Components/form/LocationSellector";
+import MultiSellect from "Components/form/MultiSellect";
 import TopBar from "Components/topBar";
+import {
+  deleteField,
+  doc,
+  getDoc,
+  serverTimestamp,
+  setDoc,
+  updateDoc,
+} from "firebase/firestore";
+import {
+  deleteObject,
+  getDownloadURL,
+  ref,
+  uploadString,
+} from "firebase/storage";
 import React, { useEffect, useRef, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { Form, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import FormSection from "../../../components/form/FormSection";
 import HeaderUpload from "../../../components/form/HeaderUpload";
-import LogoUpload from "../../../components/form/LogoUpload";
 import ImageUpload from "../../../components/form/ImageUpload";
+import LogoUpload from "../../../components/form/LogoUpload";
 import { auth, firestore, storage } from "../../../firebase/clientApp";
-import Dropdown from "../components/Filter";
-import Select from "react-select";
 import {
+  getDistricts,
   getProvinces,
   getRegencies,
-  getDistricts,
   getVillages,
 } from "../../../services/locationServices";
-import { doc, setDoc, updateDoc } from "firebase/firestore";
-import { getDownloadURL, ref, uploadString } from "firebase/storage";
-import { Alert, Box } from "@chakra-ui/react";
-import LocationSelector from "Components/form/LocationSellector";
-import FormSection from "../../../components/form/FormSection";
 
 interface Location {
   id: string;
@@ -47,11 +57,12 @@ const AddVillage: React.FC = () => {
   const selectedFileRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [status, setStatus] = useState("");
+  const [isEditable, setIsEditable] = useState(true);
   const toast = useToast();
   const [textInputValue, setTextInputValue] = useState({
     name: "",
     description: "",
-    potensi: "",
     geografis: "",
     infrastruktur: "",
     kesiapan: "",
@@ -62,9 +73,14 @@ const AddVillage: React.FC = () => {
     whatsapp: "",
     instagram: "",
     website: "",
-    literasi: "",
-    pemantapan: "",
   });
+  const potensiDesa = [
+    { value: "pertanian", label: "Pertanian" },
+    { value: "perikanan", label: "Perikanan" },
+    { value: "peternakan", label: "Peternakan" },
+    { value: "pariwisata", label: "Pariwisata" },
+    { value: "industri", label: "Industri" },
+  ];
   const [provinces, setProvinces] = useState<Location[]>([]);
   const [regencies, setRegencies] = useState<Location[]>([]);
   const [districts, setDistricts] = useState<Location[]>([]);
@@ -78,6 +94,15 @@ const AddVillage: React.FC = () => {
     null
   );
   const [selectedVillage, setSelectedVillage] = useState<Location | null>(null);
+  const [selectedPotensi, setSelectedPotensi] = useState<
+    { value: string; label: string }[]
+  >([]);
+  const [alertStatus, setAlertStatus] = useState<"info" | "warning" | "error">(
+    "warning"
+  );
+  const [alertMessage, setAlertMessage] = useState(
+    "Profil masih kosong. Silahkan isi data di bawah terlebih dahulu."
+  );
 
   const fetchProvinces = async () => {
     try {
@@ -157,7 +182,10 @@ const AddVillage: React.FC = () => {
   ): { value: string; label: string }[] =>
     locations.map((loc) => ({ value: loc.id, label: loc.name }));
 
-  const onSelectImage = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const onSelectImage = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    maxFiles: number
+  ) => {
     const files = event.target.files;
     if (files) {
       const imagesArray: string[] = [];
@@ -166,8 +194,16 @@ const AddVillage: React.FC = () => {
         reader.onload = (readerEvent) => {
           if (readerEvent.target?.result) {
             imagesArray.push(readerEvent.target.result as string);
+
             if (imagesArray.length === files.length) {
-              setSelectedFiles((prev) => [...prev, ...imagesArray]);
+              setSelectedFiles((prev) => {
+                // Cegah lebih dari maxFiles
+                if (prev.length + imagesArray.length > maxFiles) {
+                  const availableSlots = maxFiles - prev.length;
+                  return [...prev, ...imagesArray.slice(0, availableSlots)];
+                }
+                return [...prev, ...imagesArray];
+              });
             }
           }
         };
@@ -176,15 +212,14 @@ const AddVillage: React.FC = () => {
     }
   };
   const onSelectLogo = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const reader = new FileReader();
-    if (event.target.files?.[0]) {
-      reader.readAsDataURL(event.target.files[0]);
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setSelectedLogo(reader.result as string); // menyimpan data URL ke state
+      };
+      reader.readAsDataURL(file); // Membaca file sebagai data URL
     }
-    reader.onload = (readerEvent) => {
-      if (readerEvent.target?.result) {
-        setSelectedLogo(readerEvent.target?.result as string);
-      }
-    };
   };
 
   const onSelectHeader = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -204,7 +239,6 @@ const AddVillage: React.FC = () => {
   }: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     if (
       textInputValue.name ||
-      textInputValue.potensi ||
       textInputValue.whatsapp ||
       textInputValue.instagram ||
       textInputValue.website
@@ -242,105 +276,237 @@ const AddVillage: React.FC = () => {
       const {
         name,
         description,
-        potensi,
         geografis,
         infrastruktur,
         kesiapan,
-        literasi,
-        pemantapan,
+        teknologi,
+        pelayanan,
         sosial,
         resource,
         whatsapp,
         instagram,
         website,
       } = textInputValue;
-      if (
-        !name ||
-        !description ||
-        !potensi ||
-        !geografis ||
-        !infrastruktur ||
-        !kesiapan ||
-        !literasi ||
-        !pemantapan ||
-        !sosial ||
-        !resource ||
-        !whatsapp ||
-        !instagram ||
-        !website
-        // !selectedProvince ||
-        // !selectedDistrict ||
-        // !selectedRegency ||
-        // !selectedVillage
-      ) {
-        setError("Semua kolom harus diisi");
-        setLoading(false);
-        return;
-      }
-      console.log(textInputValue);
 
       const userId = user.uid;
       const docRef = doc(firestore, "villages", userId);
-      await setDoc(docRef, {
-        namaDesa: name,
-        id: userId,
-        deskripsi: description,
-        potensiDesa: potensi,
-        geografisDesa: geografis,
-        infrastrukturDesa: infrastruktur,
-        kesiapanDesa: kesiapan,
-        literasiDesa: literasi,
-        pemantapanDesa: pemantapan,
-        sosialBudaya: sosial,
-        sumberDaya: resource,
-        whatsapp: whatsapp,
-        instagram: instagram,
-        website: website,
-        lokasi: {
-          provinsi: selectedProvince,
-          kabupatenKota: selectedRegency,
-          kecamatan: selectedDistrict,
-          desaKelurahan: selectedVillage,
-        },
-      });
-      console.log("Document writen with ID: ", userId);
-      // Upload logo
-      if (selectedLogo) {
-        const logoRef = ref(storage, `villages/${userId}/logo`);
-        await uploadString(logoRef, selectedLogo, "data_url").then(async () => {
-          const downloadURL = await getDownloadURL(logoRef);
-          await updateDoc(doc(firestore, "villages", userId), {
-            logo: downloadURL,
-          });
-          console.log("File available at", downloadURL);
-        });
-      } else {
-        setError("Logo harus diisi");
-        setLoading(false);
-        return;
-      }
-
-      // Upload header if provided
-      if (selectedHeader) {
-        const headerRef = ref(storage, `villages/${userId}/header`);
-        await uploadString(headerRef, selectedHeader, "data_url").then(
-          async () => {
-            const downloadURL = await getDownloadURL(headerRef);
-            await updateDoc(doc(firestore, "villages", userId), {
-              header: downloadURL,
-            });
-            console.log("File available at", downloadURL);
+      // Cek dan hapus foto lama jika ada yang dihapus
+      const docSnap = await getDoc(docRef);
+      const existingData = docSnap.data();
+      
+      if (status === "Ditolak") {
+        // Jika logo baru dipilih dan berbeda dengan logo yang ada
+        if (selectedLogo && selectedLogo !== existingData?.logo) {
+          if (existingData?.logo) {
+            // Hapus logo lama dari Firebase Storage
+            const logoRef = ref(storage, existingData.logo);
+            await deleteObject(logoRef);
+            console.log("Logo deleted from storage");
           }
+
+          // Upload logo baru ke Firebase Storage
+          const logoRef = ref(storage, `villages/${userId}/logo`);
+          await uploadString(logoRef, selectedLogo, "data_url").then(
+            async () => {
+              const downloadURL = await getDownloadURL(logoRef);
+              // Perbarui URL logo di Firestore
+              await updateDoc(docRef, {
+                logo: downloadURL,
+              });
+              console.log("Logo updated in Firestore");
+            }
+          );
+        }
+
+        // Jika header baru dipilih dan berbeda dengan header yang ada
+        if (selectedHeader && selectedHeader !== existingData?.header) {
+          if (existingData?.header) {
+            // Hapus header lama dari Firebase Storage
+            const headerRef = ref(storage, existingData.header);
+            await deleteObject(headerRef);
+            console.log("Header deleted from storage");
+          }
+
+          // Upload header baru
+          const headerRef = ref(storage, `villages/${userId}/header`);
+          await uploadString(headerRef, selectedHeader, "data_url").then(
+            async () => {
+              const downloadURL = await getDownloadURL(headerRef);
+              // Update header URL di Firestore
+              await updateDoc(docRef, {
+                header: downloadURL,
+              });
+              console.log("Header updated in Firestore");
+            }
+          );
+        }
+        const existingImages = existingData?.images || [];
+
+        const imagesToDelete = existingImages.filter(
+          (img: string) => !selectedFiles.includes(img)
         );
+
+        // Hapus gambar yang tidak ada dalam selectedFiles
+        if (imagesToDelete) {
+          for (const image of imagesToDelete) {
+            const imageRef = ref(storage, image);
+            await deleteObject(imageRef).catch((error) => {
+              console.error("Error deleting image:", error);
+            });
+          }
+        }
+
+        // Upload gambar baru yang ada dalam selectedFiles
+        const imagesRef = ref(storage, `villages/${userId}/images`);
+        const downloadURLs: string[] = [];
+
+        for (let i = 0; i < selectedFiles.length; i++) {
+          const file = selectedFiles[i];
+
+          // Cek apakah file merupakan data URL (base64)
+          if (file.startsWith("data:")) {
+            // Jika file adalah data URL, upload ke Firebase Storage
+            const imageRef = ref(imagesRef, `${i}`);
+            await uploadString(imageRef, file, "data_url").then(async () => {
+              const downloadURL = await getDownloadURL(imageRef);
+              downloadURLs.push(downloadURL); // Tambahkan URL ke array
+              console.log("File available at", downloadURL);
+            });
+          } else {
+            // Jika file sudah berupa URL, langsung tambahkan ke array downloadURLs
+            downloadURLs.push(file);
+            console.log("Existing image URL added:", file);
+          }
+        }
+
+        // Update images URL di Firestore
+        await updateDoc(docRef, {
+          images: downloadURLs,
+        });
+
+        await updateDoc(docRef, {
+          namaDesa: name,
+          deskripsi: description,
+          potensiDesa: selectedPotensi.map((potensi) => potensi.value),
+          geografisDesa: geografis,
+          infrastrukturDesa: infrastruktur,
+          kesiapanDigital: kesiapan,
+          kesiapanTeknologi: teknologi,
+          pemantapanPelayanan: pelayanan,
+          sosialBudaya: sosial,
+          sumberDaya: resource,
+          whatsapp: whatsapp,
+          instagram: instagram,
+          website: website,
+          lokasi: {
+            provinsi: selectedProvince,
+            kabupatenKota: selectedRegency,
+            kecamatan: selectedDistrict,
+            desaKelurahan: selectedVillage,
+          },
+          status: "Menunggu", // Set status menjadi "Menunggu" setelah dikirim ulang
+          editedAt: serverTimestamp(), // Tandai waktu edit
+        });
+        console.log("Document updated with ID: ", userId);
+        setStatus("Menunggu");
+      } else {
+        // Jika statusnya bukan "Ditolak", buat dokumen baru seperti biasa
+        await setDoc(docRef, {
+          namaDesa: name,
+          userId: userId,
+          deskripsi: description,
+          potensiDesa: selectedPotensi.map((potensi) => potensi.value),
+          geografisDesa: geografis,
+          infrastrukturDesa: infrastruktur,
+          kesiapanDigital: kesiapan,
+          kesiapanTeknologi: teknologi,
+          pemantapanPelayanan: pelayanan,
+          sosialBudaya: sosial,
+          sumberDaya: resource,
+          whatsapp: whatsapp,
+          instagram: instagram,
+          website: website,
+          jumlahInovasiDiterapkan: 0,
+          lokasi: {
+            provinsi: selectedProvince,
+            kabupatenKota: selectedRegency,
+            kecamatan: selectedDistrict,
+            desaKelurahan: selectedVillage,
+          },
+          status: "Menunggu", // Status pertama kali dikirim adalah "Menunggu"
+          catatanAdmin: "",
+          createdAt: serverTimestamp(),
+          editedAt: serverTimestamp(),
+        });
+        if (selectedLogo) {
+          const logoRef = ref(storage, `villages/${userId}/logo`);
+          await uploadString(logoRef, selectedLogo, "data_url").then(
+            async () => {
+              const downloadURL = await getDownloadURL(logoRef);
+              await updateDoc(doc(firestore, "villages", userId), {
+                logo: downloadURL,
+              });
+              console.log("File available at", downloadURL);
+            }
+          );
+        } else {
+          setError("Logo harus diisi");
+          setLoading(false);
+          return;
+        }
+
+        // Upload header if provided
+        if (selectedHeader) {
+          const headerRef = ref(storage, `villages/${userId}/header`);
+          await uploadString(headerRef, selectedHeader, "data_url").then(
+            async () => {
+              const downloadURL = await getDownloadURL(headerRef);
+              await updateDoc(doc(firestore, "villages", userId), {
+                header: downloadURL,
+              });
+              console.log("File available at", downloadURL);
+            }
+          );
+        }
+        if (selectedFiles.length > 0) {
+          const imagesRef = ref(storage, `villages/${userId}/images`);
+          const downloadURLs: string[] = [];
+
+          for (let i = 0; i < selectedFiles.length; i++) {
+            const imageRef = ref(imagesRef, `${i}`);
+            await uploadString(imageRef, selectedFiles[i], "data_url").then(
+              async () => {
+                const downloadURL = await getDownloadURL(imageRef);
+                downloadURLs.push(downloadURL); // Tambahkan URL ke array
+                console.log("File available at", downloadURL);
+              }
+            );
+          }
+
+          // Simpan seluruh array URL ke Firestore
+          await updateDoc(doc(firestore, "villages", userId), {
+            images: downloadURLs,
+          });
+        }
+        console.log("Document written with ID: ", userId);
+        setStatus("Menunggu");
       }
 
-      setLoading(false);
+      // TODO: Kirim notifikasi ke user dan admin
+      // const notificationRef = collection(firestore, "notifications");
+      // await addDoc(notificationRef, {
+      //   userId: userId,
+      //   message: "Profil desa berhasil didaftarkan",
+      //   status: "unread",
+      //   createdAt: serverTimestamp(),
+      // });
 
       toast({
         title: "Profile berhasil dibuat",
         status: "success",
         duration: 5000,
         isClosable: true,
+        position: "top",
       });
     } catch (error) {
       console.error("Error adding document: ", error);
@@ -352,9 +518,79 @@ const AddVillage: React.FC = () => {
         status: "error",
         duration: 5000,
         isClosable: true,
+        position: "top",
       });
     }
+    setLoading(false);
+    setIsEditable(false);
+    setAlertStatus("info");
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!user) {
+        setError("User is not logged in.");
+        return;
+      }
+      const docRef = doc(firestore, "villages", user.uid);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+
+        // Set nilai form dengan data yang diambil dari Firestore
+        setTextInputValue({
+          name: data.namaDesa || "",
+          description: data.deskripsi || "",
+          geografis: data.geografisDesa || "",
+          infrastruktur: data.infrastrukturDesa || "",
+          kesiapan: data.kesiapanDigital || "",
+          teknologi: data.kesiapanTeknologi || "",
+          pelayanan: data.pemantapanPelayanan || "",
+          sosial: data.sosialBudaya || "",
+          resource: data.sumberDaya || "",
+          whatsapp: data.whatsapp || "",
+          instagram: data.instagram || "",
+          website: data.website || "",
+        });
+
+        // console.log(data.logo)
+        setSelectedPotensi(
+          data.potensiDesa.map((potensi: string) => ({
+            value: potensi,
+            label: potensi.charAt(0).toUpperCase() + potensi.slice(1),
+          }))
+        );
+        setSelectedLogo(data.logo);
+        setSelectedHeader(data.header);
+        setSelectedFiles(Object.values(data.images || {}));
+
+        setSelectedProvince(data.lokasi?.provinsi);
+        setSelectedRegency(data.lokasi?.kabupatenKota);
+        setSelectedDistrict(data.lokasi?.kecamatan);
+        setSelectedVillage(data.lokasi?.desaKelurahan);
+
+        // Tentukan apakah form bisa diedit berdasarkan status
+        if (data.status === "Menunggu") {
+          setIsEditable(false); // Jika status "pending", form tidak bisa diedit
+          setStatus("Menunggu");
+          setAlertStatus("info");
+          setAlertMessage(
+            `Profil sudah didaftakan. Menunggu verifikasi admin.`
+          );
+        } else if (data.status === "Ditolak") {
+          setIsEditable(true); // Jika diverifikasi atau ditolak, form bisa diedit
+          setStatus("Ditolak");
+          setAlertStatus("error");
+          setAlertMessage(
+            `Pengajuan ditolak dengan catatan: ${data.catatanAdmin || ""}`
+          );
+        }
+      }
+    };
+
+    fetchData();
+  }, [user]);
 
   return (
     <Container page>
@@ -364,19 +600,21 @@ const AddVillage: React.FC = () => {
           <Flex direction="column" marginTop="24px">
             <Stack spacing="12px" width="100%">
               <Alert
-                status="warning"
+                status={alertStatus}
                 fontSize={12}
                 borderRadius={4}
                 padding="8px"
               >
-                Profil masih kosong. Silahkan isi data di bawah terlebih dahulu.
+                {alertMessage}
               </Alert>
+
               <FormSection
                 title="Nama Desa"
                 name="name"
                 placeholder="Nama Desa"
                 value={textInputValue.name}
                 onChange={onTextChange}
+                disabled={!isEditable}
               />
               <LocationSelector
                 label="Provinsi"
@@ -385,6 +623,7 @@ const AddVillage: React.FC = () => {
                 value={selectedProvince}
                 onChange={handleProvinceChange}
                 isRequired
+                disabled={!isEditable}
               />
 
               <LocationSelector
@@ -395,6 +634,7 @@ const AddVillage: React.FC = () => {
                 onChange={handleRegencyChange}
                 isDisabled={!selectedProvince}
                 isRequired
+                disabled={!isEditable}
               />
               <LocationSelector
                 label="Kecamatan"
@@ -404,6 +644,7 @@ const AddVillage: React.FC = () => {
                 onChange={handleDistrictChange}
                 isDisabled={!selectedRegency}
                 isRequired
+                disabled={!isEditable}
               />
               <LocationSelector
                 label="Desa/Kelurahan"
@@ -413,6 +654,7 @@ const AddVillage: React.FC = () => {
                 onChange={handleVillageChange}
                 isDisabled={!selectedDistrict}
                 isRequired
+                disabled={!isEditable}
               />
 
               <Box>
@@ -427,6 +669,7 @@ const AddVillage: React.FC = () => {
                   setSelectedLogo={setSelectedLogo}
                   selectFileRef={selectedLogoRef}
                   onSelectLogo={onSelectLogo}
+                  disabled={!isEditable}
                 />
               </Box>
 
@@ -442,6 +685,7 @@ const AddVillage: React.FC = () => {
                   setSelectedHeader={setSelectedHeader}
                   selectFileRef={selectedHeaderRef}
                   onSelectHeader={onSelectHeader}
+                  disabled={!isEditable}
                 />
               </Box>
 
@@ -456,7 +700,9 @@ const AddVillage: React.FC = () => {
                   selectedFiles={selectedFiles}
                   setSelectedFiles={setSelectedFiles}
                   selectFileRef={selectedFileRef}
-                  onSelectImage={onSelectImage}
+                  onSelectImage={(e) => onSelectImage(e, 5)}
+                  disabled={!isEditable}
+                  maxFiles={5}
                 />
               </Box>
 
@@ -466,34 +712,22 @@ const AddVillage: React.FC = () => {
                 placeholder="Masukkan deskripsi inovasi yang ada di desa"
                 value={textInputValue.description}
                 onChange={onTextChange}
+                disabled={!isEditable}
                 isTextArea
                 wordCount={currentWordCount(textInputValue.description)}
                 maxWords={100}
               />
 
-              <Box>
-                <Text fontWeight="400" fontSize="14px">
-                  Potensi Desa <span style={{ color: "red" }}>*</span>
-                </Text>
-                <Text fontWeight="400" fontSize="10px" mb="6px" color="#9CA3AF">
-                  Ditulis singkat dan dipisahkan dengan koma. Contoh: Perikanan,
-                  Pertanian
-                </Text>
-                <Input
-                  name="potensi"
-                  fontSize="10pt"
-                  placeholder="Masukkan potensi desa"
-                  _placeholder={{ color: "gray.500" }}
-                  _focus={{
-                    outline: "none",
-                    bg: "white",
-                    border: "1px solid",
-                    borderColor: "black",
-                  }}
-                  value={textInputValue.potensi}
-                  onChange={onTextChange}
-                />
-              </Box>
+              <MultiSellect
+                label="Potensi Desa"
+                placeholder="Pilih Potensi Desa"
+                isNoteRequired
+                note="Pilih opsi potensi desa atau tambahkan opsi lainnya"
+                options={potensiDesa}
+                value={selectedPotensi}
+                onChange={(selected) => setSelectedPotensi(selected)}
+                disabled={!isEditable}
+              />
 
               <Box>
                 <Text fontWeight="700" fontSize="16px" mb="6px">
@@ -504,6 +738,7 @@ const AddVillage: React.FC = () => {
                   name="geografis"
                   placeholder="Deskripsi geografis desa"
                   value={textInputValue.geografis}
+                  disabled={!isEditable}
                   onChange={onTextChange}
                   wordCount={currentWordCount(textInputValue.geografis)}
                   maxWords={30}
@@ -515,6 +750,7 @@ const AddVillage: React.FC = () => {
                 name="infrastruktur"
                 placeholder="Deskripsi infrastruktur desa"
                 value={textInputValue.infrastruktur}
+                disabled={!isEditable}
                 onChange={onTextChange}
                 wordCount={currentWordCount(textInputValue.infrastruktur)}
                 maxWords={30}
@@ -525,6 +761,7 @@ const AddVillage: React.FC = () => {
                 name="kesiapan"
                 placeholder="Deskripsi kesiapan digital desa"
                 value={textInputValue.kesiapan}
+                disabled={!isEditable}
                 onChange={onTextChange}
                 wordCount={currentWordCount(textInputValue.kesiapan)}
                 maxWords={30}
@@ -532,9 +769,10 @@ const AddVillage: React.FC = () => {
 
               <FormSection
                 title="Kemampuan Penggunaan Teknologi"
-                name="Teknologi"
+                name="teknologi"
                 placeholder="Deskripsi kemampuan digital desa"
                 value={textInputValue.teknologi}
+                disabled={!isEditable}
                 onChange={onTextChange}
                 wordCount={currentWordCount(textInputValue.teknologi)}
                 maxWords={30}
@@ -545,6 +783,7 @@ const AddVillage: React.FC = () => {
                 name="pelayanan"
                 placeholder="Deskripsi pemantapan pelayanan desa"
                 value={textInputValue.pelayanan}
+                disabled={!isEditable}
                 onChange={onTextChange}
                 wordCount={currentWordCount(textInputValue.pelayanan)}
                 maxWords={30}
@@ -555,6 +794,7 @@ const AddVillage: React.FC = () => {
                 name="sosial"
                 placeholder="Deskripsi sosial dan budaya desa"
                 value={textInputValue.sosial}
+                disabled={!isEditable}
                 onChange={onTextChange}
                 wordCount={currentWordCount(textInputValue.sosial)}
                 maxWords={30}
@@ -565,6 +805,7 @@ const AddVillage: React.FC = () => {
                 name="resource"
                 placeholder="Deskripsi sumber daya alam desa"
                 value={textInputValue.resource}
+                disabled={!isEditable}
                 onChange={onTextChange}
                 wordCount={currentWordCount(textInputValue.resource)}
                 maxWords={30}
@@ -579,6 +820,7 @@ const AddVillage: React.FC = () => {
                 placeholder="628123456789"
                 type="number"
                 value={textInputValue.whatsapp}
+                disabled={!isEditable}
                 onChange={onTextChange}
               />
 
@@ -588,6 +830,7 @@ const AddVillage: React.FC = () => {
                 placeholder="https://instagram.com/desa"
                 type="url"
                 value={textInputValue.instagram}
+                disabled={!isEditable}
                 onChange={onTextChange}
               />
               <FormSection
@@ -596,6 +839,7 @@ const AddVillage: React.FC = () => {
                 placeholder="https://desa.com"
                 type="url"
                 value={textInputValue.website}
+                disabled={!isEditable}
                 onChange={onTextChange}
               />
             </Stack>
@@ -605,17 +849,18 @@ const AddVillage: React.FC = () => {
               {error}
             </Text>
           )}
-          <Button
-            type="submit"
-            fontSize={14}
-            mt="20px"
-            width="100%"
-            height="44px"
-            isLoading={loading}
-            
-          >
-            Daftarkan Profil
-          </Button>
+          {status !== "Menunggu" && (
+            <Button
+              type="submit"
+              fontSize={14}
+              mt="20px"
+              width="100%"
+              height="44px"
+              isLoading={loading}
+            >
+              {status === "Ditolak" ? "Kirim Ulang" : "Kirim"}
+            </Button>
+          )}
         </form>
       </Box>
     </Container>

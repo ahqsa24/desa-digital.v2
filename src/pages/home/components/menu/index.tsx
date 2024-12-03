@@ -41,7 +41,7 @@ const Menu: React.FC<MenuProps> = ({ isAdmin = false }) => {
     },
     {
       icon: "./src/assets/icons/menu-all.svg",
-      title: "Semua Kategori Innovasi",
+      title: "Semua Kategori Inovasi",
     },
   ];
 
@@ -52,15 +52,15 @@ const Menu: React.FC<MenuProps> = ({ isAdmin = false }) => {
     },
     {
       icon: "./src/assets/icons/verifikasi-innovator.svg",
-      title: "Verifikasi Innovator",
+      title: "Verifikasi Inovator",
     },
     {
       icon: "./src/assets/icons/verifikasi-klaim.svg",
-      title: "Verifikasi Klaim Innovasi",
+      title: "Verifikasi Klaim Inovasi",
     },
     {
       icon: "./src/assets/icons/verifikasi-tambah-innovasi.svg",
-      title: "Verifikasi Tambah Innovasi",
+      title: "Verifikasi Tambah Inovasi",
     },
     {
       icon: "./src/assets/icons/pembuatan-innovasi.svg",
@@ -68,7 +68,7 @@ const Menu: React.FC<MenuProps> = ({ isAdmin = false }) => {
     },
     {
       icon: "./src/assets/icons/menu-all.svg",
-      title: "Semua Kategori Innovasi",
+      title: "Semua Kategori Inovasi",
     },
   ];
 
@@ -76,13 +76,12 @@ const Menu: React.FC<MenuProps> = ({ isAdmin = false }) => {
   const menuItems = isAdmin ? adminMenu : predefinedCategories;
 
   const onClick = (category: string) => {
-    if (category === "Semua Kategori Innovasi") {
+    if (category === "Semua Kategori Inovasi") {
       navigate(paths.INNOVATION_PAGE);
       return;
     }
     const isAdminCategory = adminMenu.some((item) => item.title === category);
     
-    // TODO: Buat jika menu admin, maka navbar tidak muncul
 
     if (isAdmin && isAdminCategory) {
       const path = generatePath(paths.VERIFICATION_PAGE, {
