@@ -147,6 +147,7 @@ export const Background = styled.img`
   max-width: 360px;
   height: 150px;
   margin-top: 56px;
+  object-fit: cover;
 `;
 
 export const Logo = styled.img`
@@ -158,7 +159,6 @@ export const Logo = styled.img`
   position: absolute;
   bottom: 0;
   left: 0;
-  border: 1px solid;
   align-content: center;
 `;
 

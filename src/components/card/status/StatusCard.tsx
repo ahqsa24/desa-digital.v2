@@ -34,13 +34,18 @@ const StatusCard: React.FC<StatusCardProps> = ({ message, status }) => {
           </Flex>
         ) : status === "Ditolak" ? (
           <Box>
-            <Flex align="center">
+            <Flex align="center" justify='center'>
               <CloseIcon fontSize="12px" color="#EF4444" mr="8px" />
               <Text fontSize="14px" fontWeight="700" color="#EF4444">
                 Permohonan Akun Ditolak
               </Text>
             </Flex>
-            <Text fontSize="10px" fontWeight="500" color="#EF4444">
+            <Text
+              fontSize="10px"
+              fontWeight="500"
+              color="#EF4444"
+              textAlign="center"
+            >
               Catatan: {message}
             </Text>
           </Box>
