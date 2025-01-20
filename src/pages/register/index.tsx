@@ -128,6 +128,15 @@ const Register: React.FC = () => {
           <Text fontSize="10pt" mt="12px">
             Kata sandi
           </Text>
+            <Text
+              fontWeight="400"
+              fontStyle="normal"
+              fontSize="10px"
+              color="#9CA3AF"
+              >
+              Kata sandi minimal 6 karakter 
+            </Text>
+          
 
           <InputGroup mt="4px" alignItems="center">
             <Input
