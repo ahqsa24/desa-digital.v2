@@ -1,5 +1,12 @@
 import { AddIcon, DeleteIcon } from "@chakra-ui/icons";
 import {
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogOverlay,
+  Box,
   Button,
   Flex,
   Input,
@@ -8,29 +15,22 @@ import {
   Text,
   Textarea,
   useToast,
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogContent,
-  AlertDialogOverlay,
 } from "@chakra-ui/react";
 import Container from "Components/container";
 import TopBar from "Components/topBar";
-import { User } from "firebase/auth";
 import {
+  deleteDoc,
   doc,
   getDoc,
-  updateDoc,
-  deleteDoc,
   serverTimestamp,
+  updateDoc,
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import React, { useEffect, useRef, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useNavigate, useParams } from "react-router-dom";
-import { auth, firestore, storage } from "../../../firebase/clientApp";
 import ImageUpload from "../../../components/form/ImageUpload";
+import { auth, firestore, storage } from "../../../firebase/clientApp";
 
 const categories = [
   "Pertanian Cerdas",
@@ -48,7 +48,6 @@ const EditInnovation: React.FC = () => {
   const navigate = useNavigate();
   const toast = useToast();
   const { id } = useParams<{ id: string }>(); // Assuming the route contains the innovation ID as a parameter
-  const [user] = useAuthState(auth);
 
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
   const selectFileRef = useRef<HTMLInputElement>(null);
@@ -192,7 +191,7 @@ const EditInnovation: React.FC = () => {
     event.preventDefault();
     setLoading(true);
     const { name, year, description } = textInputsValue;
-  
+
     if (!name || !year || !description || !category) {
       setError("Semua kolom harus diisi");
       setLoading(false);
@@ -200,7 +199,7 @@ const EditInnovation: React.FC = () => {
     }
     try {
       const innovationDocRef = doc(firestore, "innovations", id!);
-  
+
       await updateDoc(innovationDocRef, {
         namaInovasi: name,
         tahunDibuat: year,
@@ -210,12 +209,15 @@ const EditInnovation: React.FC = () => {
         editedAt: serverTimestamp(),
         images: selectedFiles, // assume previously uploaded images are part of selectedFiles
       });
-  
+
       console.log("Document updated with ID: ", innovationDocRef.id);
-  
+
       if (selectedFiles.length > 0) {
         try {
-          const imageUrls = await uploadFiles(selectedFiles, innovationDocRef.id);
+          const imageUrls = await uploadFiles(
+            selectedFiles,
+            innovationDocRef.id
+          );
           await updateDoc(innovationDocRef, {
             images: imageUrls,
           });
@@ -225,7 +227,7 @@ const EditInnovation: React.FC = () => {
           setError("Gagal mengupload gambar");
         }
       }
-  
+
       setLoading(false);
       setIsSuccessOpen(true); // Open the success alert dialog
     } catch (error) {
@@ -234,7 +236,6 @@ const EditInnovation: React.FC = () => {
       setLoading(false);
     }
   };
-  
 
   const onDeleteInnovation = async () => {
     setLoading(true);
@@ -280,180 +281,185 @@ const EditInnovation: React.FC = () => {
   }
 
   return (
-    <Container page px={16}>
+    <Container page>
       <TopBar title="Edit Inovasi" onBack={() => navigate(-1)} />
-      <form onSubmit={onUpdateInnovation}>
-        <Flex direction="column" marginTop="24px">
-          <Stack spacing={3} width="100%">
-            <Text fontWeight="400" fontSize="14px">
-              Nama Inovasi <span style={{ color: "red" }}>*</span>
-            </Text>
-            <Input
-              name="name"
-              fontSize="10pt"
-              placeholder="Nama Inovasi"
-              _placeholder={{ color: "gray.500" }}
-              _focus={{
-                outline: "none",
-                bg: "white",
-                border: "1px solid",
-                borderColor: "black",
-              }}
-              value={textInputsValue.name}
-              onChange={onTextChange}
-            />
-            <Text fontWeight="400" fontSize="14px">
-              Kategori Inovasi <span style={{ color: "red" }}>*</span>
-            </Text>
-            <Select
-              placeholder="Pilih kategori"
-              name="category"
-              fontSize="10pt"
-              variant="outline"
-              cursor="pointer"
-              color={"gray.500"}
-              _focus={{
-                outline: "none",
-                bg: "white",
-                border: "1px solid",
-                borderColor: "black",
-              }}
-              _placeholder={{ color: "gray.500" }}
-              value={category}
-              onChange={onSelectCategory}
-            >
-              {categories.map((category) => (
-                <option key={category} value={category}>
-                  {category}
-                </option>
-              ))}
-            </Select>
-            <Text fontWeight="400" fontSize="14px">
-              Tahun dibuat inovasi <span style={{ color: "red" }}>*</span>
-            </Text>
-            <Input
-              name="year"
-              fontSize="10pt"
-              placeholder="Ketik tahun"
-              _placeholder={{ color: "gray.500" }}
-              _focus={{
-                outline: "none",
-                bg: "white",
-                border: "1px solid",
-                borderColor: "black",
-              }}
-              value={textInputsValue.year}
-              onChange={onTextChange}
-            />
-            <Text fontWeight="400" fontSize="14px">
-              Deskripsi <span style={{ color: "red" }}>*</span>
-            </Text>
-            <Textarea
-              name="description"
-              fontSize="10pt"
-              placeholder="Ketik deskripsi inovasi"
-              _placeholder={{ color: "gray.500" }}
-              _focus={{
-                outline: "none",
-                bg: "white",
-                border: "1px solid",
-                borderColor: "black",
-              }}
-              height="100px"
-              value={textInputsValue.description}
-              onChange={onTextChange}
-            />
-            <Text fontWeight="400" fontSize="14px">
-              Foto inovasi <span style={{ color: "red" }}>*</span>
-            </Text>
-            <ImageUpload
-              selectedFiles={selectedFiles}
-              setSelectedFiles={setSelectedFiles}
-              selectFileRef={selectFileRef}
-              onSelectImage={onSelectImage}
-            />
-            <Text fontWeight="700" fontSize="16px">
-              Perlu disiapkan{" "}
-              <span
-                style={{ color: "red", fontSize: "14px", fontWeight: "400" }}
+      <Box p="0 16px">
+        <form onSubmit={onUpdateInnovation}>
+          <Flex direction="column" marginTop="24px">
+            <Stack spacing={3} width="100%">
+              <Text fontWeight="400" fontSize="14px">
+                Nama Inovasi <span style={{ color: "red" }}>*</span>
+              </Text>
+              <Input
+                name="name"
+                fontSize="10pt"
+                placeholder="Nama Inovasi"
+                _placeholder={{ color: "gray.500" }}
+                _focus={{
+                  outline: "none",
+                  bg: "white",
+                  border: "1px solid",
+                  borderColor: "black",
+                }}
+                value={textInputsValue.name}
+                onChange={onTextChange}
+              />
+              <Text fontWeight="400" fontSize="14px">
+                Kategori Inovasi <span style={{ color: "red" }}>*</span>
+              </Text>
+              <Select
+                placeholder="Pilih kategori"
+                name="category"
+                fontSize="10pt"
+                variant="outline"
+                cursor="pointer"
+                color={"gray.500"}
+                _focus={{
+                  outline: "none",
+                  bg: "white",
+                  border: "1px solid",
+                  borderColor: "black",
+                }}
+                _placeholder={{ color: "gray.500" }}
+                value={category}
+                onChange={onSelectCategory}
               >
-                *
-              </span>
-            </Text>
-            {requirements.map((requirement, index) => (
-              <Flex
-                key={index}
-                justifyContent="space-between"
-                alignItems="center"
-              >
-                <Text fontWeight="400" fontSize="14px">
-                  {requirement}
-                </Text>
-                <Button
-                  bg="red.500"
-                  _hover={{ bg: "red.600" }}
-                  width="32px"
-                  height="32px"
-                  variant="solid"
-                  size="md"
-                  onClick={() => {
-                    setRequirements(requirements.filter((_, i) => i !== index));
-                  }}
+                {categories.map((category) => (
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
+                ))}
+              </Select>
+              <Text fontWeight="400" fontSize="14px">
+                Tahun dibuat inovasi <span style={{ color: "red" }}>*</span>
+              </Text>
+              <Input
+                name="year"
+                fontSize="10pt"
+                placeholder="Ketik tahun"
+                _placeholder={{ color: "gray.500" }}
+                _focus={{
+                  outline: "none",
+                  bg: "white",
+                  border: "1px solid",
+                  borderColor: "black",
+                }}
+                value={textInputsValue.year}
+                onChange={onTextChange}
+              />
+              <Text fontWeight="400" fontSize="14px">
+                Deskripsi <span style={{ color: "red" }}>*</span>
+              </Text>
+              <Textarea
+                name="description"
+                fontSize="10pt"
+                placeholder="Ketik deskripsi inovasi"
+                _placeholder={{ color: "gray.500" }}
+                _focus={{
+                  outline: "none",
+                  bg: "white",
+                  border: "1px solid",
+                  borderColor: "black",
+                }}
+                height="100px"
+                value={textInputsValue.description}
+                onChange={onTextChange}
+              />
+              <Text fontWeight="400" fontSize="14px">
+                Foto inovasi <span style={{ color: "red" }}>*</span>
+              </Text>
+              <ImageUpload
+                selectedFiles={selectedFiles}
+                setSelectedFiles={setSelectedFiles}
+                selectFileRef={selectFileRef}
+                onSelectImage={onSelectImage}
+                maxFiles={5}
+              />
+              <Text fontWeight="700" fontSize="16px">
+                Perlu disiapkan{" "}
+                <span
+                  style={{ color: "red", fontSize: "14px", fontWeight: "400" }}
                 >
-                  <DeleteIcon />
-                </Button>
-              </Flex>
-            ))}
-            <Input
-              name="requirement"
-              fontSize="10pt"
-              placeholder="Contoh: Memerlukan listrik, Memiliki air"
-              _placeholder={{ color: "gray.500" }}
-              _focus={{
-                outline: "none",
-                bg: "white",
-                border: "1px solid",
-                borderColor: "black",
-              }}
-              value={newRequirement}
-              onChange={(e) => setNewRequirement(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  onAddRequirement();
-                }
-              }}
-            />
-            <Button
-              variant="outline"
-              onClick={onAddRequirement}
-              _hover={{ bg: "none" }}
-              leftIcon={<AddIcon />}
-            >
-              Tambah persyaratan lain
-            </Button>
-          </Stack>
-        </Flex>
-        {error && (
-          <Text color="red.500" fontSize="12px" mt="4px">
-            {error}
-          </Text>
-        )}
-        <Button type="submit" mt="20px" width="100%" isLoading={loading}>
-          Update Inovasi
-        </Button>
-        <Button
-          type="button"
-          mt="4"
-          width="100%"
-          bg="red.500"
-          color="white"
-          _hover={{ bg: "red.600" }}
-          onClick={handleDeleteClick}
-        >
-          Delete Inovasi
-        </Button>
-      </form>
+                  *
+                </span>
+              </Text>
+              {requirements.map((requirement, index) => (
+                <Flex
+                  key={index}
+                  justifyContent="space-between"
+                  alignItems="center"
+                >
+                  <Text fontWeight="400" fontSize="14px">
+                    {requirement}
+                  </Text>
+                  <Button
+                    bg="red.500"
+                    _hover={{ bg: "red.600" }}
+                    width="32px"
+                    height="32px"
+                    variant="solid"
+                    size="md"
+                    onClick={() => {
+                      setRequirements(
+                        requirements.filter((_, i) => i !== index)
+                      );
+                    }}
+                  >
+                    <DeleteIcon />
+                  </Button>
+                </Flex>
+              ))}
+              <Input
+                name="requirement"
+                fontSize="10pt"
+                placeholder="Contoh: Memerlukan listrik, Memiliki air"
+                _placeholder={{ color: "gray.500" }}
+                _focus={{
+                  outline: "none",
+                  bg: "white",
+                  border: "1px solid",
+                  borderColor: "black",
+                }}
+                value={newRequirement}
+                onChange={(e) => setNewRequirement(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    onAddRequirement();
+                  }
+                }}
+              />
+              <Button
+                variant="outline"
+                onClick={onAddRequirement}
+                _hover={{ bg: "none" }}
+                leftIcon={<AddIcon />}
+              >
+                Tambah persyaratan lain
+              </Button>
+            </Stack>
+          </Flex>
+          {error && (
+            <Text color="red.500" fontSize="12px" mt="4px">
+              {error}
+            </Text>
+          )}
+          <Button type="submit" mt="20px" width="100%" isLoading={loading}>
+            Update Inovasi
+          </Button>
+          <Button
+            type="button"
+            mt="4"
+            width="100%"
+            bg="red.500"
+            color="white"
+            _hover={{ bg: "red.600" }}
+            onClick={handleDeleteClick}
+          >
+            Delete Inovasi
+          </Button>
+        </form>
+      </Box>
       <AlertDialog
         isOpen={isOpen}
         leastDestructiveRef={cancelRef}

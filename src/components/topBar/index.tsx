@@ -1,95 +1,100 @@
-import Back from "Assets/icons/back.svg";
-import Profile from "Assets/icons/profile.svg";
-import Logout from "Assets/icons/logout.svg";
-import useAuthLS from "Hooks/useAuthLS";
-import { useNavigate } from "react-router";
+import { ArrowBackIcon } from "@chakra-ui/icons";
+import { Box, Button, Flex, Text } from "@chakra-ui/react";
 import { paths } from "Consts/path";
-import {
-  Container,
-  Icon,
-  Content,
-  Title,
-  Login,
-  AuthContainer,
-} from "./_topBarStyle";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useLocation, useNavigate, useParams } from "react-router";
+import { auth } from "../../firebase/clientApp";
+import UserMenu from "./RightContent/UserMenu";
 
 type TopBarProps = {
   title: string | undefined;
-  position?:
-    | "flex-start"
-    | "flex-end"
-    | "center"
-    | "space-between"
-    | "space-around"
-    | "space-evenly"
-    | "initial"
-    | "inherit";
-  includeLogin?: boolean;
   onBack?: () => void;
-  onLogin?: () => void;
 };
 
 function TopBar(props: TopBarProps) {
-  const {
-    title,
-    position = "flex-start",
-    includeLogin,
-    onBack,
-    onLogin,
-  } = props;
+  const { title, onBack } = props;
   const navigate = useNavigate();
+  const location = useLocation();
+  const { id } = useParams<{ id: string }>();
+  const [user] = useAuthState(auth);
 
-  const { auth, removeAuth } = useAuthLS();
-  const isEmpty = Object.keys(auth || {}).length === 0;
+  const allowedPaths = [paths.LANDING_PAGE, paths.ADMIN_PAGE];
+  const isUserMenuVisible = allowedPaths.includes(location.pathname);
 
-  const onProfileClick = () => {
-    if (isEmpty) return;
-
-    const { role } = auth || {};
-    if (role === "innovator") navigate(paths.INNOVATOR_PROFILE_PAGE);
-    if (role === "village") navigate(paths.VILLAGE_PROFILE_PAGE);
-  };
-
-  const onLogout = () => {
-    removeAuth();
-    navigate(0);
-  };
+  const isClaimButtonVisible =
+    location.pathname.includes("/innovation/detail/") && id;
 
   return (
-    <Container>
-      <Content position={position}>
+    <Box
+      padding="0 16px"
+      backgroundColor="#347357"
+      position="fixed"
+      top="0"
+      maxW="360px"
+      width="100%"
+      height="56px"
+      zIndex="999"
+      alignContent="center"
+    >
+      <Flex
+        justify={
+          isClaimButtonVisible || isUserMenuVisible
+            ? "space-between"
+            : "flex-start"
+        }
+        align="center"
+      >
         {!!onBack && (
-          <Icon
-            src={Back}
-            alt="back icon"
-            width={16}
-            height={16}
+          <ArrowBackIcon
+            color="white"
+            fontSize="14pt"
+            cursor="pointer"
             onClick={onBack}
+            mt="2px"
           />
         )}
-        <Title>{title}</Title>
-        {!!includeLogin && isEmpty && <Login onClick={onLogin}>Login</Login>}
-
-        {!!includeLogin && !isEmpty && (
-          <AuthContainer>
-            <Icon
-              src={Profile}
-              alt="profile icon"
-              width={18}
-              height={18}
-              onClick={onProfileClick}
-            />
-            <Icon
-              src={Logout}
-              alt="logout icon"
-              width={18}
-              height={18}
-              onClick={onLogout}
-            />
-          </AuthContainer>
+        <Text
+          fontSize="16px"
+          fontWeight="700"
+          color="white"
+          ml={onBack ? "8px" : "0"}
+          lineHeight="56px"
+          flex={1}
+          textAlign='left'
+        >
+          {title}
+        </Text>
+        {isClaimButtonVisible && (
+          <Button
+            fontSize="12px"
+            fontWeight="500"
+            variant="inverted"
+            height="32px"
+            _hover={{ bg: "gray.200" }}
+            onClick={() => navigate(`/village/klaimInovasi/${id}`)}
+          >
+            Klaim Inovasi
+          </Button>
         )}
-      </Content>
-    </Container>
+        {!isClaimButtonVisible &&
+          isUserMenuVisible &&
+          (user ? (
+            <UserMenu user={user} />
+          ) : (
+            <Button
+              fontSize="14px"
+              fontWeight="700"
+              color="white"
+              cursor="pointer"
+              onClick={() => navigate(paths.LOGIN_PAGE)}
+              variant="link"
+              mt="2px"
+            >
+              Login
+            </Button>
+          ))}
+      </Flex>
+    </Box>
   );
 }
 

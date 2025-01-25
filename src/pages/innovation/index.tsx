@@ -31,6 +31,7 @@ function Detail() {
       })
       .catch((error) => {
         // Handle error here
+        console.error("Error fetching innovation details:", error);
       });
   }, []);
 
@@ -103,7 +104,7 @@ function List(props: ListProps) {
 
   useEffect(() => {
     if (isFetched) {
-      const temp = [...data?.slice(0, data?.length - 1)];
+      const temp = [...(data?.slice(0, data?.length - 1) || [])];
       setMenu(temp);
     }
   }, [isFetched]);

@@ -4,6 +4,7 @@ import React from "react";
 
 type HeaderUploadProps = {
   selectedHeader: string;
+  disabled?: boolean;
   setSelectedHeader: (value: string) => void;
   selectFileRef: React.RefObject<HTMLInputElement>;
   onSelectHeader: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -14,6 +15,7 @@ const HeaderUpload: React.FC<HeaderUploadProps> = ({
   setSelectedHeader,
   selectFileRef,
   onSelectHeader,
+  disabled,
 }) => {
   return (
     <Flex direction="column" width="100%" wrap="wrap">
@@ -23,15 +25,19 @@ const HeaderUpload: React.FC<HeaderUploadProps> = ({
             direction="row"
             alignItems="center"
             justifyContent="space-between"
+            height="100%"
+            width="100%"
+            
           >
             <Image
               src={selectedHeader}
-              width='272px'
-              height="86px"
+              width='360px'
+              height="100px"
               maxWidth="272px"
               maxHeight="86px"
               borderRadius="8px"
-              mt={4}
+              objectFit="cover"
+
             />
             <Button
               bg="red.500"
@@ -40,6 +46,7 @@ const HeaderUpload: React.FC<HeaderUploadProps> = ({
               height="32px"
               variant="solid"
               size="md"
+              disabled={disabled}
               onClick={() => setSelectedHeader("")}
             >
               <DeleteIcon />
@@ -59,7 +66,7 @@ const HeaderUpload: React.FC<HeaderUploadProps> = ({
           height="128px"
           borderColor="gray.500"
           onClick={() => selectFileRef.current?.click()}
-          mt={4}
+
         >
           <Icon as={AddIcon} color="gray.300" fontSize="16px" />
           <Text fontSize="10pt" color="gray.500" mt={2}>
@@ -69,7 +76,7 @@ const HeaderUpload: React.FC<HeaderUploadProps> = ({
             id="file-upload"
             type="file"
             hidden
-            accept="image/x-png,image/gif,image/jpeg"
+            accept="image/png,image/jpeg,image/jpg"
             ref={selectFileRef}
             onChange={onSelectHeader}
           />

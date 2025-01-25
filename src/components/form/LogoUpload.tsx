@@ -4,6 +4,7 @@ import React from "react";
 
 type LogoUploadProps = {
   selectedLogo: string;
+  disabled?: boolean;
   setSelectedLogo: (value: string) => void;
   selectFileRef: React.RefObject<HTMLInputElement>;
   onSelectLogo: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -13,6 +14,7 @@ const LogoUpload: React.FC<LogoUploadProps> = ({
   selectedLogo,
   setSelectedLogo,
   selectFileRef,
+  disabled,
   onSelectLogo,
 }) => {
   return (
@@ -31,7 +33,8 @@ const LogoUpload: React.FC<LogoUploadProps> = ({
               maxWidth="128px"
               maxHeight="128px"
               borderRadius="8px"
-              mt={4}
+              _disabled={{ cursor: "not-allowed" }}
+              mt={2}
             />
             <Button
               bg="red.500"
@@ -40,6 +43,7 @@ const LogoUpload: React.FC<LogoUploadProps> = ({
               height="32px"
               variant="solid"
               size="md"
+              disabled={disabled}
               onClick={() => setSelectedLogo("")}
             >
               <DeleteIcon />
@@ -59,7 +63,7 @@ const LogoUpload: React.FC<LogoUploadProps> = ({
           height="128px"
           borderColor="gray.500"
           onClick={() => selectFileRef.current?.click()}
-          mt={4}
+          mt={2}
         >
           <Icon as={AddIcon} color="gray.300" fontSize="16px" />
           <Text fontSize="10pt" color="gray.500" mt={2}>
@@ -69,7 +73,7 @@ const LogoUpload: React.FC<LogoUploadProps> = ({
             id="file-upload"
             type="file"
             hidden
-            accept="image/x-png,image/gif,image/jpeg"
+            accept="image/png,image/jpeg,image/jpg"
             ref={selectFileRef}
             onChange={onSelectLogo}
           />

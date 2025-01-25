@@ -22,11 +22,12 @@ export const Title = styled.p`
 
 export const Label = styled.p`
   font-style: normal;
+  align-items: flex-start;
   padding: 4px 8px;
   background: #e5e7eb;
   border-radius: 20px;
   font-weight: 400;
-  font-size: 12px;
+  font-size: 10px;
   color: #000000;
   text-align: justify;
   width: fit-content;
@@ -42,16 +43,27 @@ export const Description = styled.p`
   gap: 6px;
   text-align: left;
 `;
+
+export const Description2 = styled.p`
+  font-style: normal;
+  font-weight: 400;
+  font-size: 10px;
+  line-height: 140%;
+  color: #4b5563;
+  gap: 6px;
+  text-align: left;
+`;
+
 export const ActionContainer = styled.div`
   box-sizing: border-box;
   display: flex;
   align-items: center;
-  padding: 12px 16px;
-  gap: 16px;
+  padding: 8px 2px;
   border: 1px solid #e5e7eb;
   box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.06), 0px 1px 3px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   cursor: pointer;
+  align-self: stretch;
 `;
 
 export const Icon = styled.img`
@@ -59,12 +71,21 @@ export const Icon = styled.img`
   ${marginStyle}
 `;
 
-export const Text = styled.p`
+export const Text1 = styled.p`
   position: flex;
   justify-content: space-between;
-  margin-right: 100px;
   font-weight: 700;
-  font-size: 16px;
+  font-size: 12px;
+  line-height: 140%;
+  ${marginStyle}
+`;
+
+export const Text4 = styled.p`
+  position: flex;
+  justify-content: space-between;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 140%;
   ${marginStyle}
 `;
 
@@ -88,11 +109,11 @@ export const Text3 = styled.p`
   ${marginStyle}
 `;
 
-
 export const Logo = styled.img`
   height: 36px;
   width: 36px;
-  margin-right: 6px;
+  margin-right: 8px;
+  margin-left: 8px;
   border-radius: 50%;
   object-fit: cover;
 `;
@@ -102,7 +123,7 @@ export const ChipContainer = styled.div`
   gap: 8px;
   margin-top: 8px;
   align-items: center;
-  white-space: nowrap;
+  flex-wrap: wrap;
 `;
 
 export const BenefitContainer = styled.div`

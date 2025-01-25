@@ -4,9 +4,11 @@ import { AddIcon, DeleteIcon } from "@chakra-ui/icons";
 
 type ImageUploadProps = {
   selectedFiles: string[];
+  disabled?: boolean;
   setSelectedFiles: (value: string[]) => void;
   selectFileRef: React.RefObject<HTMLInputElement>;
   onSelectImage: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  maxFiles: number;
 };
 
 const ImageUpload: React.FC<ImageUploadProps> = ({
@@ -14,6 +16,8 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   setSelectedFiles,
   selectFileRef,
   onSelectImage,
+  disabled,
+  maxFiles,
 }) => {
   const handleDelete = (index: number) => {
     const newFiles = [...selectedFiles];
@@ -21,20 +25,27 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     setSelectedFiles(newFiles);
   };
   return (
-    <Flex direction="column" width="100%" wrap="wrap">
+    <Flex direction="row" width="130" wrap="wrap" gap= "10px">
       {selectedFiles.map((file, index) => (
         <Flex
           key={index}
           direction="row"
           alignItems="center"
-          justifyContent="space-between"
+          position="relative"
+          align-items= "center" 
+          align-content= "center"
+          maxWidth="130px"
+          maxHeight="130px"
+          height="100%"
+          width="100%"
+          overflow="hidden"
         >
           <Image
             src={file}
-            maxWidth="178px"
-            maxHeight="178px"
             borderRadius="8px"
-            mt={4}
+            height="130px"
+            width="130px"
+            objectFit="cover" 
           />
           <Button
             bg="red.500"
@@ -44,12 +55,16 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
             variant="solid"
             size="md"
             onClick={() => handleDelete(index)}
+            position="absolute"
+            bottom="8px" /* Atur posisi tombol */
+            right="8px"
+            disabled={disabled}
           >
             <DeleteIcon />
           </Button>
         </Flex>
       ))}
-      {selectedFiles.length < 3 && (
+      {selectedFiles.length < maxFiles && (
         <Flex
           justify="center"
           align="center"
@@ -62,7 +77,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
           height="128px"
           borderColor="gray.500"
           onClick={() => selectFileRef.current?.click()}
-          mt={4}
+          _disabled={{ cursor: "not-allowed" }}
         >
           <Icon as={AddIcon} color="gray.300" fontSize="16px" />
           <Text fontSize="10pt" color="gray.500" mt={2}>
@@ -72,9 +87,10 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
             id="file-upload"
             type="file"
             hidden
-            accept="image/x-png,image/gif,image/jpeg"
+            accept="image/png,image/jpeg,image/jpg"
             ref={selectFileRef}
             onChange={onSelectImage}
+            disabled={disabled}
           />
         </Flex>
       )}

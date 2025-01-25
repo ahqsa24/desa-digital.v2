@@ -3,8 +3,10 @@ import {
   Background,
   CardContent,
   Title,
+  ContBadge,
   Description,
   Logo,
+  Location,
 } from "./_cardVillageStyle";
 
 type CardVillageProps = {
@@ -42,10 +44,14 @@ function CardVillage(props: CardVillageProps) {
       <Background src={header} alt='background' />
       <CardContent>
         <Logo src={logo} alt={logo} />
+        <ContBadge> <img src="./src/assets/icons/badge-1.svg" alt="badge"/> </ContBadge>
         <Title>{nameVillage}</Title>
-        <Description>10 Inovasi diterapkan</Description>
+        <Description>2 Inovasi diterapkan</Description>
+        <Location>
+        <img src="./src/assets/icons/location.svg" alt="loc"/>
         <Description>
-        {province} </Description>
+        {district} </Description> </Location>
+        
       </CardContent>
     </Container>
   );

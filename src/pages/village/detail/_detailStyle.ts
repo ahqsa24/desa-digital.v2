@@ -1,19 +1,49 @@
 import styled from "styled-components";
 import { marginStyle } from "Consts/sizing";
-import EFishery from "Assets/images/efishery.jpg";
 
 export const ContentContainer = styled.div`
-  padding: 0 16px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  margin-top: 16px;
+  gap: 16px;
+  padding: 0 16px;
+  heigh: 100%;
+  width: 100%;
+  max-width: 360px;
+  
 `;
+
+export const CardContainer = styled.div`
+  overflow: auto;
+  width: 100%;
+  white-space: nowrap;
+`
+
+export const Horizontal = styled.div`
+  display: flex;
+  gap: 16px;
+`
+
+
+export const Title2 = styled.p`
+  font-size: 16px;
+  font-weight: 700;
+  color: black;
+  margin: 24px 0 16px 0;
+`
+
+export const Image = styled.div`    
+  borderRadius: "8px";
+  height: "130px";
+  width: "130px";
+  objectFit: "cover";       
+`
 
 export const Title = styled.p`
   font-size: 18px;
   font-weight: 700;
   margin-top: 40px;
+  position: relative;
+  color: #1F2937;
 `;
 export const TagContainer = styled.div`
   display: flex;
@@ -31,11 +61,11 @@ export const TagContainer = styled.div`
 export const Label = styled.p`
   font-style: normal;
   padding: 4px 8px;
-  background: #e5e7eb;
+  background: #E5E7EB;
   border-radius: 20px;
   font-weight: 400;
   font-size: 12px;
-  color: #000000;
+  color: #4b5563;
   text-align: justify;
   width: fit-content;
   cursor: pointer;
@@ -51,39 +81,55 @@ export const Description = styled.p`
   text-align: justify;
 `;
 export const ActionContainer = styled.div`
-  box-sizing: border-box;
   display: flex;
+  width: 100%;
+  padding: 10px;
   align-items: center;
-  padding: 12px 16px;
-  gap: 16px;
+  gap: 8px;
+  border-radius: 10px;
   border: 1px solid #e5e7eb;
-  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.06), 0px 1px 3px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  cursor: pointer;
+  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.06), 0px 1px 3px 0px rgba(0, 0, 0, 0.10);
 `;
 
 export const Icon = styled.img`
   cursor: pointer;
   position: flex;
   justify-content: space-between;
-  height: 8px;
-  width: 10px;
   border-radius: 0px;
   ${marginStyle}
 `;
 
-export const Text = styled.p`
+export const SubText = styled.p`
   position: flex;
   justify-content: space-between;
-  margin-right: 100px;
   font-weight: 700;
   font-size: 16px;
-  ${marginStyle}
+  margin-bottom: 8px;
+  color: #1F2937;
+`;
+
+export const Text2 = styled.p`
+  color: var(--Primary, #347357);
+  /* xs/Medium */
+  font-family: Inter;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 140%; /* 16.8px */
+  text-decoration-line: underline;
+  text-decoration-style: solid;
+  text-decoration-skip-ink: none;
+  text-decoration-thickness: auto;
+  text-underline-offset: auto;
+  text-underline-position: from-font;
+  padding-bottom: 12px;
 `;
 
 export const Background = styled.img`
   width: 100%;
+  max-width: 360px;
   height: 150px;
+  margin-top: 56px;
   object-fit: cover;
 `;
 
@@ -96,10 +142,41 @@ export const Logo = styled.img`
   position: absolute;
   bottom: 0;
   left: 0;
+  border: 1px solid;
+  align-content: center;
 `;
 
 export const ChipContainer = styled.div`
   display: flex;
-  gap: 8px;
+  gap: 0px;
   align-items: center;
+`;
+
+export const Img = styled.img`
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 100%;
+`;
+
+export const ContPotensiDesa = styled.div`
+  display: flex;
+  align-items: flex-start;
+  align-content: flex-start;
+  gap: 8px;
+  align-self: stretch;
+  flex-wrap: wrap;
+`;
+
+export const ButtonKontak = styled.div`
+display: flex;
+width: 100%;
+padding: 12px 16px;
+align-items: center;
+gap: 16px;
+margin-top: 12px;
+border-radius: 10px;
+border: 1px solid var(--Gray-40, #D1D5DB);
+background: var(--Monochrome-White, #FFF);
+box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.06), 0px 1px 3px 0px rgba(0, 0, 0, 0.10);
 `;
