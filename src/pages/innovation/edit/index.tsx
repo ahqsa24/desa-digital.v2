@@ -1,5 +1,12 @@
 import { AddIcon, DeleteIcon } from "@chakra-ui/icons";
 import {
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogOverlay,
+  Box,
   Button,
   Flex,
   Input,
@@ -8,30 +15,22 @@ import {
   Text,
   Textarea,
   useToast,
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogContent,
-  AlertDialogOverlay,
-  Box,
 } from "@chakra-ui/react";
 import Container from "Components/container";
 import TopBar from "Components/topBar";
-import { User } from "firebase/auth";
 import {
+  deleteDoc,
   doc,
   getDoc,
-  updateDoc,
-  deleteDoc,
   serverTimestamp,
+  updateDoc,
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import React, { useEffect, useRef, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useNavigate, useParams } from "react-router-dom";
-import { auth, firestore, storage } from "../../../firebase/clientApp";
 import ImageUpload from "../../../components/form/ImageUpload";
+import { auth, firestore, storage } from "../../../firebase/clientApp";
 
 const categories = [
   "Pertanian Cerdas",
@@ -49,7 +48,6 @@ const EditInnovation: React.FC = () => {
   const navigate = useNavigate();
   const toast = useToast();
   const { id } = useParams<{ id: string }>(); // Assuming the route contains the innovation ID as a parameter
-  const [user] = useAuthState(auth);
 
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
   const selectFileRef = useRef<HTMLInputElement>(null);
@@ -375,6 +373,7 @@ const EditInnovation: React.FC = () => {
                 setSelectedFiles={setSelectedFiles}
                 selectFileRef={selectFileRef}
                 onSelectImage={onSelectImage}
+                maxFiles={5}
               />
               <Text fontWeight="700" fontSize="16px">
                 Perlu disiapkan{" "}
