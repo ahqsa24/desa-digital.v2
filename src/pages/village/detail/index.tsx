@@ -150,7 +150,7 @@ export default function DetailVillage() {
     };
     fetchUser();
     // console.log("User:", user);
-  });
+  }, [userLogin, id]);
 
   useEffect(() => {
     const fetchInnovations = async () => {
