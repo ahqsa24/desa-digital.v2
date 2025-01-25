@@ -1,5 +1,6 @@
 import { AddIcon, DeleteIcon, MinusIcon } from "@chakra-ui/icons";
 import {
+  Alert,
   Box,
   Button,
   Checkbox,
@@ -18,10 +19,8 @@ import {
 } from "@chakra-ui/react";
 import Container from "Components/container";
 import TopBar from "Components/topBar";
-import { paths } from "Consts/path";
 import {
   addDoc,
-  and,
   collection,
   doc,
   getDoc,
@@ -29,9 +28,8 @@ import {
   increment,
   query,
   serverTimestamp,
-  Timestamp,
   updateDoc,
-  where,
+  where
 } from "firebase/firestore";
 import {
   deleteObject,
@@ -42,11 +40,10 @@ import {
 } from "firebase/storage";
 import React, { useEffect, useRef, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { generatePath, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 import ImageUpload from "../../../components/form/ImageUpload";
 import { auth, firestore, storage } from "../../../firebase/clientApp";
-import { set } from "react-hook-form";
 
 type OptionType = {
   value: string;
@@ -91,6 +88,20 @@ const targetUsersOptions = [
   { value: "Lainnya", label: "Lainnya" },
 ];
 
+const predefinedModels = [
+  "Gratis",
+  "Layanan Berbayar",
+  "Subsidi Parsial",
+  "Pusat Multi-Layanan",
+  "Koperasi",
+  "Model Kemitraan",
+  "Menciptakan Pasar",
+  "Pengumpulan Data",
+  "Pelatihan/Pendidikan",
+  "Perusahaan Sosial",
+  "Lain-lain",
+];
+
 const AddInnovation: React.FC = () => {
   const navigate = useNavigate();
   const [user] = useAuthState(auth);
@@ -132,7 +143,6 @@ const AddInnovation: React.FC = () => {
   const [isEditable, setIsEditable] = useState(true);
   const toast = useToast();
   const [innovationId, setInnovationId] = useState("");
-  const [innovationData, setInnovationData] = useState(null);
 
   const onSelectImage = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -315,8 +325,32 @@ const AddInnovation: React.FC = () => {
 
     const innovatorData = innovatorDocSnap.data();
 
+    let finalTargetUser = selectedTargetUser?.value || "";
+    if (
+      selectedTargetUser?.value === "Lainnya" &&
+      customTargetUser.trim() !== ""
+    ) {
+      finalTargetUser = customTargetUser.trim();
+    }
+
+    const modelBisnis = selectedModels.filter((model) => model !== "Lain-lain");
+    if (
+      selectedModels.includes("Lain-lain") &&
+      otherBusinessModel.trim() !== ""
+    ) {
+      modelBisnis.push(otherBusinessModel);
+    }
+
+    const finalRequirements = [...requirements];
+    if (
+      newRequirement.trim() !== "" &&
+      !finalRequirements.includes(newRequirement.trim())
+    ) {
+      finalRequirements.push(newRequirement.trim());
+    }
+
     try {
-      if (status === "Ditolak" && innovationId) {
+      if (status === "Ditolak") {
         const docRef = doc(firestore, "innovations", innovationId);
         const docSnap = await getDoc(docRef);
         const existingData = docSnap.data();
@@ -350,7 +384,7 @@ const AddInnovation: React.FC = () => {
             await uploadString(imageRef, file, "data_url").then(async () => {
               const downloadURL = await getDownloadURL(imageRef);
               downloadURLs.push(downloadURL); // Tambahkan URL ke array
-              console.log("File available at", downloadURL);
+              console.log("Updated new img: ", downloadURL);
             });
           } else {
             // Jika file sudah berupa URL, langsung tambahkan ke array downloadURLs
@@ -358,7 +392,6 @@ const AddInnovation: React.FC = () => {
             console.log("Existing image URL added:", file);
           }
         }
-
         // Update images URL di Firestore
         await updateDoc(docRef, {
           images: downloadURLs,
@@ -368,7 +401,7 @@ const AddInnovation: React.FC = () => {
           statusInovasi: selectedStatus,
           namaInovasi: name,
           kategori: selectedCategory?.label,
-          targetPengguna: selectedTargetUser?.label,
+          targetPengguna: finalTargetUser,
           tahunDibuat: year,
           modelBisnis: selectedModels,
           deskripsi: description,
@@ -378,40 +411,13 @@ const AddInnovation: React.FC = () => {
             judul: item.benefit,
             deskripsi: item.description,
           })),
-          kebutuhan: requirements,
-          lainLain: otherBusinessModel,
+          infrastruktur: finalRequirements,
           editedAt: serverTimestamp(),
           status: "Menunggu",
         });
         setStatus("Menunggu");
         setAlertStatus("info");
       } else {
-        let finalTargetUser = selectedTargetUser?.value || "";
-        if (
-          selectedTargetUser?.value === "Lainnya" &&
-          customTargetUser.trim() !== ""
-        ) {
-          finalTargetUser = customTargetUser.trim();
-        }
-
-        const modelBisnis = selectedModels.filter(
-          (model) => model !== "Lain-lain"
-        );
-        if (
-          selectedModels.includes("Lain-lain") &&
-          otherBusinessModel.trim() !== ""
-        ) {
-          modelBisnis.push(otherBusinessModel);
-        }
-
-        const finalRequirements = [...requirements];
-        if (
-          newRequirement.trim() !== "" &&
-          !finalRequirements.includes(newRequirement.trim())
-        ) {
-          finalRequirements.push(newRequirement.trim());
-        }
-
         const innovationDocRef = await addDoc(
           collection(firestore, "innovations"),
           {
@@ -458,16 +464,6 @@ const AddInnovation: React.FC = () => {
           });
           console.log("Images uploaded", imageUrls);
         }
-
-        // Update jumlahInovasi in innovators collection
-        const innovatorDocRef = doc(
-          firestore,
-          "innovators",
-          user?.uid as string
-        );
-        await updateDoc(innovatorDocRef, {
-          jumlahInovasi: increment(1),
-        });
       }
 
       toast({
@@ -478,11 +474,6 @@ const AddInnovation: React.FC = () => {
         isClosable: true,
         position: "top",
       });
-      // navigate(
-      //   generatePath(paths.INNOVATION_CATEGORY_PAGE, {
-      //     category: category,
-      //   })
-      // ); // Ganti dengan rute yang sesuai
     } catch (error) {
       console.log("error", error);
       setError("Gagal menambahkan inovasi");
@@ -552,7 +543,19 @@ const AddInnovation: React.FC = () => {
           value: data.targetPengguna || "",
           label: data.targetPengguna || "",
         });
-        setSelectedModels(data.modelBisnis || []);
+        const otherModel = data.modelBisnis?.find(
+          (model: string) => !predefinedModels.includes(model)
+        );
+
+        if (otherModel) {
+          setOtherBusinessModel(otherModel);
+          setSelectedModels([
+            ...data.modelBisnis.filter((model: string) => model !== otherModel),
+            "Lain-lain",
+          ]);
+        } else {
+          setSelectedModels(data.modelBisnis || []);
+        }
         const mappedManfaat =
           data.manfaat?.map((item: { judul: string; deskripsi: string }) => ({
             benefit: item.judul || "", // Mapping 'judul' ke 'benefit'
@@ -560,6 +563,7 @@ const AddInnovation: React.FC = () => {
           })) || [];
 
         setBenefit(mappedManfaat);
+        // const mappedInfrastuktur
         setRequirements(data.infrastruktur || []);
         setSelectedFiles(data.images || []);
 
@@ -577,11 +581,28 @@ const AddInnovation: React.FC = () => {
           setAlertMessage(
             `Pengajuan ditolak dengan catatan: ${data.catatanAdmin || ""}`
           );
+        } else if (data.status === "Terverifikasi") {
+          // Update jumlahInovasi in innovators collection
+          const innovatorDocRef = doc(
+            firestore,
+            "innovators",
+            user?.uid as string
+          );
+          await updateDoc(innovatorDocRef, {
+            jumlahInovasi: increment(1),
+          });
         }
       }
     };
     fetchInnovationData();
   }, [innovationId]);
+  const splitModels = (models: string[], num: number) => {
+    const midpoint = Math.ceil(models.length / num);
+    return [models.slice(0, midpoint), models.slice(midpoint)];
+  };
+
+  // Bagi daftar model bisnis menjadi dua kolom
+  const [firstColumn, secondColumn] = splitModels(predefinedModels, 2);
 
   const options = [
     { value: "1", label: "Masih diproduksi" },
@@ -627,6 +648,14 @@ const AddInnovation: React.FC = () => {
         <Box p="0 16px">
           <Flex direction="column" marginTop="24px">
             <Stack spacing={3} width="100%">
+              <Alert
+                status={alertStatus}
+                fontSize={12}
+                borderRadius={4}
+                padding="8px"
+              >
+                {alertMessage}
+              </Alert>
               <Text fontWeight="400" fontSize="14px" mb="-2">
                 Status Inovasi <span style={{ color: "red" }}>*</span>
               </Text>
@@ -766,124 +795,84 @@ const AddInnovation: React.FC = () => {
                 </Text>
               </Flex>
 
-              <Text fontWeight="400" fontSize="14px" mb="-2">
-                Model Bisnis Digital <span style={{ color: "red" }}>*</span>
-              </Text>
-              <CheckboxGroup
-                colorScheme="green"
-                value={selectedModels}
-                onChange={(values) => setSelectedModels(values)}
-                isDisabled={!isEditable}
-              >
-                <Text
-                  fontWeight="400"
-                  fontStyle="normal"
-                  fontSize="10px"
-                  color="#9CA3AF"
-                  mb="-2"
-                >
-                  Dapat lebih dari 1
-                </Text>
-                <Flex gap={4}>
-                  {/* Kolom Pertama */}
-                  <Flex direction="column" gap={1}>
-                    {[
-                      "Gratis",
-                      "Layanan Berbayar",
-                      "Subsidi Parsial",
-                      "Pusat Multi-Layanan",
-                      "Koperasi",
-                      "Lain-lain",
-                    ].map((model, index) => (
-                      <Checkbox
-                        key={index}
-                        value={model}
-                        sx={{
-                          "& .chakra-checkbox__control": {
-                            borderColor: "#9CA3AF", // Warna border
-                            borderWidth: "1px", // Ketebalan garis
-                          },
-                          ".chakra-checkbox__label": {
-                            fontSize: "12px",
-                            fontStyle: "normal",
-                          },
-                        }}
-                      >
-                        {model}
-                      </Checkbox>
-                    ))}
-                  </Flex>
-                  {/* Kolom Kedua */}
-                  <Flex direction="column" gap={1}>
-                    {[
-                      "Model Kemitraan",
-                      "Menciptakan Pasar",
-                      "Pengumpulan Data",
-                      "Pelatihan/Pendidikan",
-                      "Perusahaan Sosial",
-                    ].map((model, index) => (
-                      <Checkbox
-                        key={index}
-                        value={model}
-                        sx={{
-                          "& .chakra-checkbox__control": {
-                            borderColor: "#9CA3AF", // Warna border
-                            borderWidth: "1px", // Ketebalan garis
-                          },
-                          ".chakra-checkbox__label": {
-                            fontSize: "12px",
-                            fontStyle: "normal",
-                          },
-                        }}
-                      >
-                        {model}
-                      </Checkbox>
-                    ))}
-                  </Flex>
-                </Flex>
-              </CheckboxGroup>
-              {selectedModels.includes("Lain-lain") && (
-                <Flex direction="column" alignItems="flex-start">
-                  <Input
-                    name="otherBusinessModel"
-                    placeholder="Silahkan tulis model bisnis lainnya"
-                    value={otherBusinessModel}
-                    disabled={!isEditable}
-                    onChange={(e) => {
-                      const wordCount = e.target.value
-                        .split(/\s+/)
-                        .filter((word) => word !== "").length;
-                      if (wordCount <= 5) {
-                        setOtherBusinessModel(e.target.value);
-                      }
-                    }}
-                    fontSize="14px"
-                    fontStyle="normal"
-                    mt={-2} // Margin atas agar ada jarak dari checkbox
-                    _placeholder={{ color: "#9CA3AF" }}
-                    _focus={{
-                      outline: "none",
-                      boxShadow: "0 0px 0 0 blue",
-                    }}
-                    border="none"
-                    borderBottom="1px solid #9CA3AF"
-                    borderRadius="0"
-                  />
-                  <Text
-                    fontWeight="400"
-                    fontStyle="normal"
-                    fontSize="10px"
-                    color="#9CA3AF"
-                  >
-                    {
-                      otherBusinessModel
-                        .split(/\s+/)
-                        .filter((word) => word !== "").length
-                    }
-                    /5 kata
+              <Stack spacing={1}>
+                <div>
+                  <Text fontWeight="400" fontSize="14px">
+                    Model Bisnis Digital <span style={{ color: "red" }}>*</span>
                   </Text>
-                </Flex>
-              )}
+                  <Text fontWeight="400" fontSize="10px" color="#9CA3AF">
+                    Dapat lebih dari 1
+                  </Text>
+                </div>
+                <div>
+                  <CheckboxGroup
+                    colorScheme="green"
+                    value={selectedModels}
+                    onChange={setSelectedModels}
+                    isDisabled={!isEditable}
+                  >
+                    <Flex gap={4}>
+                      {[firstColumn, secondColumn].map((column, colIndex) => (
+                        <Flex key={colIndex} direction="column" gap={1}>
+                          {column.map((model, index) => (
+                            <Checkbox
+                              key={index}
+                              value={model}
+                              sx={{
+                                "& .chakra-checkbox__control": {
+                                  borderColor: "#9CA3AF",
+                                  borderWidth: "1px",
+                                },
+                                ".chakra-checkbox__label": {
+                                  fontSize: "12px",
+                                  fontStyle: "normal",
+                                },
+                              }}
+                            >
+                              {model}
+                            </Checkbox>
+                          ))}
+                        </Flex>
+                      ))}
+                    </Flex>
+                  </CheckboxGroup>
+                </div>
+
+                {selectedModels.includes("Lain-lain") && (
+                  <Flex direction="column" alignItems="flex-start">
+                    <Input
+                      name="otherBusinessModel"
+                      placeholder="Silahkan tulis model bisnis lainnya"
+                      value={otherBusinessModel}
+                      disabled={!isEditable}
+                      onChange={(e) => {
+                        const wordCount = e.target.value
+                          .split(/\s+/)
+                          .filter((word) => word !== "").length;
+                        if (wordCount <= 5) {
+                          setOtherBusinessModel(e.target.value);
+                        }
+                      }}
+                      fontSize="14px"
+                      fontStyle="normal"
+                      mt={-2}
+                      _placeholder={{ color: "#9CA3AF" }}
+                      _focus={{ outline: "none", boxShadow: "0 0px 0 0 blue" }}
+                      border="none"
+                      borderBottom="1px solid #9CA3AF"
+                      borderRadius="0"
+                    />
+                    <Text fontWeight="400" fontSize="10px" color="#9CA3AF">
+                      {
+                        otherBusinessModel
+                          .split(/\s+/)
+                          .filter((word) => word !== "").length
+                      }
+                      /5 kata
+                    </Text>
+                  </Flex>
+                )}
+              </Stack>
 
               <Text fontWeight="400" fontSize="14px" mb="-2">
                 Desa yang menerapkan <span style={{ color: "red" }}>*</span>
@@ -1270,9 +1259,11 @@ const AddInnovation: React.FC = () => {
               {error}
             </Text>
           )}
-          <Button type="submit" mt="20px" width="100%" isLoading={loading}>
-            Tambah Inovasi
-          </Button>
+          {status !== "Menunggu" && (
+            <Button type="submit" mt="20px" width="100%" isLoading={loading}>
+              {status === "Ditolak" ? "Ajukan Ulang" : "Ajukan Inovasi"}
+            </Button>
+          )}
         </Box>
       </form>
     </Container>
