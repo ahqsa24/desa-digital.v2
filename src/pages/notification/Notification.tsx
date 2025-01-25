@@ -1,14 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { paths } from "Consts/path";
 // import Button from "Components/button";
-import { Button, Input, InputGroup, InputRightElement } from "@chakra-ui/react";
-import {
-
-} from "./_notifStyle";
-import { Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
+import { Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react';
 import Container from "Components/container";
 import TopBar from "Components/topBar";
-import { NotifContainer, Title, Description, Content, Date } from './_notifStyle'
+import {
+    Content, Date,
+    Description,
+    NotifContainer, Title
+} from "./_notifStyle";
 
 type NotifProps = {
     title?: string;
@@ -20,7 +18,7 @@ function Notification(props: NotifProps) {
 
     return (
         <Container page>
-            <TopBar title="Notifikasi" onBack={() => navigate(-1)} />
+            <TopBar title="Notifikasi"  />
             <Tabs variant='soft-rounded' colorScheme='green' mt={7} align="center" >
                 <TabList style={{ gap: "8px", display: "flex", flexDirection: "row" }}>
                     <Tab height="32px" width="160px" borderColor="#BBF7D0" backgroundColor="#F0FDF4" borderWidth={1} fontWeight="medium" fontSize="14px" >Umum</Tab>
