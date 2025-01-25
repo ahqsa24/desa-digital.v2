@@ -2,7 +2,7 @@ import { ArrowBackIcon } from "@chakra-ui/icons";
 import { Box, Button, Flex, Text } from "@chakra-ui/react";
 import { paths } from "Consts/path";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { useLocation, useNavigate } from "react-router";
+import { useLocation, useNavigate, useParams } from "react-router";
 import { auth } from "../../firebase/clientApp";
 import UserMenu from "./RightContent/UserMenu";
 
@@ -15,11 +15,14 @@ function TopBar(props: TopBarProps) {
   const { title, onBack } = props;
   const navigate = useNavigate();
   const location = useLocation();
-
+  const { id } = useParams<{ id: string }>();
   const [user] = useAuthState(auth);
 
   const allowedPaths = [paths.LANDING_PAGE, paths.ADMIN_PAGE];
   const isUserMenuVisible = allowedPaths.includes(location.pathname);
+
+  const isClaimButtonVisible =
+    location.pathname.includes("/innovation/detail/") && id;
 
   return (
     <Box
@@ -34,7 +37,11 @@ function TopBar(props: TopBarProps) {
       alignContent="center"
     >
       <Flex
-        justify={isUserMenuVisible ? `space-between` : `flex-start`}
+        justify={
+          isClaimButtonVisible || isUserMenuVisible
+            ? "space-between"
+            : "flex-start"
+        }
         align="center"
       >
         {!!onBack && (
@@ -50,27 +57,42 @@ function TopBar(props: TopBarProps) {
           fontSize="16px"
           fontWeight="700"
           color="white"
-          ml={isUserMenuVisible ? `0` : `24px`}
-          mt="2px"
+          ml={onBack ? "8px" : "0"}
           lineHeight="56px"
+          flex={1}
+          textAlign='left'
         >
           {title}
         </Text>
-        {user
-          ? isUserMenuVisible && <UserMenu user={user} />
-          : isUserMenuVisible && (
-              <Button
-                fontSize="14px"
-                fontWeight="700"
-                color="white"
-                cursor="pointer"
-                onClick={() => navigate(paths.LOGIN_PAGE)}
-                variant="link"
-                mt="2px"
-              >
-                Login
-              </Button>
-            )}
+        {isClaimButtonVisible && (
+          <Button
+            fontSize="12px"
+            fontWeight="500"
+            variant="inverted"
+            height="32px"
+            _hover={{ bg: "gray.200" }}
+            onClick={() => navigate(`/village/klaimInovasi/${id}`)}
+          >
+            Klaim Inovasi
+          </Button>
+        )}
+        {!isClaimButtonVisible &&
+          isUserMenuVisible &&
+          (user ? (
+            <UserMenu user={user} />
+          ) : (
+            <Button
+              fontSize="14px"
+              fontWeight="700"
+              color="white"
+              cursor="pointer"
+              onClick={() => navigate(paths.LOGIN_PAGE)}
+              variant="link"
+              mt="2px"
+            >
+              Login
+            </Button>
+          ))}
       </Flex>
     </Box>
   );
