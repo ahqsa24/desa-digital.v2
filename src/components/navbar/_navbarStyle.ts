@@ -6,7 +6,6 @@ export const OuterContainer = styled.div`
 `;
 
 export const Container = styled.div`
-  display: absolute;
   position: fixed;
   bottom: 0;
   width: 100%;

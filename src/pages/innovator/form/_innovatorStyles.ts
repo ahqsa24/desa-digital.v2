@@ -7,7 +7,3 @@ export const Label = styled.p`
   color: #4b5563;
   ${marginStyle}
 `;
-
-export const FormContainer = styled.div`
-  padding: 0 16px;
-`;

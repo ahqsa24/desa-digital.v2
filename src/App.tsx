@@ -15,10 +15,23 @@ import DetailVillage from "./pages/village/detail";
 import DetailInnovator from "./pages/innovator/detail";
 // import ProfileInnovator from "./pages/innovator/form
 import AddInnovation from "./pages/innovation/add";
-import ProfileVillage from "./pages/village/profile";
+import AddVillage from "./pages/village/form";
+import ProfileInnovator from "./pages/innovator/profile";
 import { ToastContainer } from "react-toastify";
-import InnovatorForm from "./pages/innovator/form"; 
+import InnovatorForm from "./pages/innovator/form";
 import EditInnovation from "./pages/innovation/edit";
+import EmailReset from "./pages/emailreset/EmailReset";
+import NewPassword from "./pages/resetpassword/newpassword/NewPassword";
+import ProfileVillage from "./pages/village/profile";
+import KlaimInovasi from "./pages/village/klaimInovasi";
+import AdminPage from "./pages/admin/AdminPage";
+import VerificationPage from "./pages/admin/verification/VerificationPage";
+import MakeAds from "./pages/admin/ads/make/MakeAds";
+import ResetPassword from "./pages/reset_password/ResetPassword";
+import Notification from "./pages/notification/Notification";
+import InnovationListPage from "./pages/innovator/detail/ProdukInovasi/InnovationListPage";
+import PengajuanInovasi from "./pages/innovator/profile/pengajuanInovasi/PengajuanInovasi";
+import PengajuanKlaim from "./pages/village/pengajuanKlaim";
 
 const queryClient = new QueryClient();
 
@@ -44,8 +57,8 @@ const routes = [
     exact: true,
   },
   {
-    path: paths.VILLAGE_PROFILE_PAGE,
-    element: <ProfileVillage />,
+    path: paths.INNOVATOR_PROFILE_PAGE,
+    element: <ProfileInnovator />,
     exact: true,
   },
   {
@@ -90,8 +103,77 @@ const routes = [
     exact: true,
   },
   {
+    path: paths.VILLAGE_FORM,
+    element: <AddVillage />,
+    exact: true,
+  },
+  {
     path: paths.INNOVATOR_FORM,
     element: <InnovatorForm />,
+    exact: true,
+  },
+  {
+    path: paths.RESET_PASSWORD_PAGE,
+    element: <ResetPassword />,
+    exact: true,
+  },
+  {
+    path: paths.VILLAGE_PROFILE_PAGE,
+    element: <ProfileVillage />,
+  },
+  {
+    path: paths.EMAIL_RESET_PASSWORD_PAGE,
+    element: <EmailReset />,
+    exact: true,
+  },
+  {
+    path: paths.NEW_PASSWORD_PAGE,
+    element: <NewPassword />,
+    exact: true,
+  },
+  {
+    path: paths.KLAIM_INOVASI_PAGE,
+    element: <KlaimInovasi />,
+    exact: true,
+  },
+  {
+    path: paths.NEW_PASSWORD_PAGE,
+    element: <NewPassword />,
+    exact: true,
+  },
+  {
+    path: paths.ADMIN_PAGE,
+    element: <AdminPage />,
+    exact: true,
+  },
+  {
+    path: paths.VERIFICATION_PAGE,
+    element: <VerificationPage />,
+    exact: true,
+  },
+  {
+    path: paths.MAKE_ADS,
+    element: <MakeAds />,
+    exact: true,
+  },
+  {
+    path: paths.NOTIFICATION_PAGE,
+    element: <Notification title={""} description={""} />,
+    exact: true,
+  },
+  {
+    path: paths.PRODUK_INOVASI_PAGE,
+    element: <InnovationListPage />, // Pastikan komponen ini sesuai
+    exact: true,
+  },
+  {
+    path: paths.PENGAJUAN_INOVASI_PAGE,
+    element: <PengajuanInovasi />,
+    exact: true,
+  },
+  {
+    path: paths.PENGAJUAN_KLAIM_PAGE,
+    element: <PengajuanKlaim />, 
     exact: true,
   },
 ];
@@ -112,6 +194,6 @@ const App: React.FC = () => {
       <ToastContainer />
     </QueryClientProvider>
   );
-}
+};
 
 export default App;

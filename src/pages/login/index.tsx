@@ -1,28 +1,29 @@
-import React, { useEffect, useState } from "react";
+import {
+  Button,
+  Input,
+  InputGroup,
+  InputRightElement,
+  Text,
+} from "@chakra-ui/react";
 import { paths } from "Consts/path";
-// import Button from "Components/button";
-import { Button, Input, InputGroup, InputRightElement } from "@chakra-ui/react";
-import { useForm } from "react-hook-form";
-import TextField from "Components/textField";
+import { doc, getDoc } from "firebase/firestore";
+import React, { useState } from "react";
+import {
+  useSignInWithEmailAndPassword
+} from "react-firebase-hooks/auth";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { FIREBASE_ERRORS } from "../../../src/firebase/errors";
+import { auth, firestore } from "../../firebase/clientApp";
 import {
   Action,
+  ActionContainer,
   Background,
   Container,
   Description,
   Label,
-  ActionContainer,
   Title,
 } from "./_loginStyle";
-import {
-  useAuthState,
-  useSignInWithEmailAndPassword,
-} from "react-firebase-hooks/auth";
-import { auth } from "../../firebase/clientApp";
-import { Text } from "@chakra-ui/react";
-import { FIREBASE_ERRORS } from "../../../src/firebase/errors";
-import { FaEyeSlash, FaEye } from "react-icons/fa";
-import { CheckboxContainer } from "../register/_registerStyle";
 
 const Login: React.FC = () => {
   const [loginForm, setLoginForm] = useState({
@@ -32,37 +33,54 @@ const Login: React.FC = () => {
   const [error, setError] = useState("");
   const [signInWithEmailAndPassword, user, loading, userError] =
     useSignInWithEmailAndPassword(auth);
-
   const [show, setShow] = useState(false);
+  const navigate = useNavigate();
   const onShowPassword = () => setShow(!show);
-  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (error) setError("");
-    if (!loginForm.email.includes("@")) return setError("Email tidak valid");
-    if (loginForm.password.length < 6)
-      return setError("Kata sandi minimal 6 karakter");
-    signInWithEmailAndPassword(loginForm.email, loginForm.password);
-  };
+
   const onChange = ({ target }: { target: HTMLInputElement }) => {
     setLoginForm((prev) => ({ ...prev, [target.name]: target.value }));
     if (error) setError("");
   };
-  const [userAuth, loadingAuth, errorAuth] = useAuthState(auth);
 
-  const navigate = useNavigate();
-  const form = useForm();
-  useEffect(() => {
-    if (user) {
-      navigate(paths.LANDING_PAGE);
+  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (error) setError("");
+
+    // Form validation
+    if (!loginForm.email.includes("@")) return setError("Email tidak valid");
+    if (loginForm.password.length < 6)
+      return setError("Kata sandi minimal 6 karakter");
+
+    try {
+      await signInWithEmailAndPassword(loginForm.email, loginForm.password);
+
+      if(auth.currentUser) {
+        const userRef = doc(firestore, "users", auth.currentUser.uid);
+        const userDoc = await getDoc(userRef);
+        if (userDoc.exists()) {
+          const userRole = userDoc.data()?.role;
+          if (userRole === "admin") {
+            navigate(paths.ADMIN_PAGE);
+            console.log("user snap admin", userDoc.data().role);
+          } else {
+            console.log("User  snap bukan admin: ", userDoc.data().role);
+            navigate(paths.LANDING_PAGE);
+          }
+        } else {
+          console.log("User not found in database");
+        }
+      }
+    } catch (error) {
+      console.log("Error getting user role:", error);
+      
     }
-    console.log("userAuth", user);
-  }, [user, navigate]);
+  };
 
   return (
     <Background>
       <Container>
         <Title>Halo!</Title>
-        <Description>Silakan masukkan akun</Description>
+        <Description>Silahkan masukkan akun</Description>
 
         <form onSubmit={onSubmit}>
           <Text fontSize="10pt" mt="12px">
@@ -77,7 +95,7 @@ const Login: React.FC = () => {
             mt="4px"
           />
           <Text fontSize="10pt" mt="12px">
-            Password
+            Kata sandi
           </Text>
 
           <InputGroup mt="4px" alignItems="center">
@@ -86,18 +104,14 @@ const Login: React.FC = () => {
               type={show ? "text" : "password"}
               onChange={onChange}
               required
-              placeholder="Password"
+              placeholder="Kata sandi"
             />
-            <InputRightElement
-              onClick={onShowPassword}
-              cursor="pointer"
-              mt="4px"
-            >
+            <InputRightElement onClick={onShowPassword} cursor="pointer">
               {show ? <FaEyeSlash /> : <FaEye />}
             </InputRightElement>
           </InputGroup>
           {(error || userError) && (
-            <Text textAlign="center" color="red" fontSize="10pt">
+            <Text textAlign="center" color="red" fontSize="10pt" mt={2}>
               {error ||
                 FIREBASE_ERRORS[
                   userError?.message as keyof typeof FIREBASE_ERRORS
@@ -106,7 +120,7 @@ const Login: React.FC = () => {
           )}
 
           <Button
-            mt={8}
+            mt={4}
             type="submit"
             alignItems="center"
             width="100%"
@@ -117,6 +131,13 @@ const Login: React.FC = () => {
         </form>
 
         <ActionContainer mt={24}>
+          <Label>Lupa kata sandi</Label>
+          <Action onClick={() => navigate(paths.EMAIL_RESET_PASSWORD_PAGE)}>
+            Klik disini
+          </Action>
+        </ActionContainer>
+
+        <ActionContainer mt={4}>
           <Label>Belum memiliki akun?</Label>
           <Action onClick={() => navigate(paths.REGISTER_PAGE)}>
             Registrasi

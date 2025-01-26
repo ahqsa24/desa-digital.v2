@@ -3,61 +3,119 @@ import { paths } from "Consts/path";
 import Loading from "Components/loading";
 import Container from "Components/container";
 import { generatePath, useNavigate } from "react-router-dom";
-import { MenuContainer, GridContainer, GridItem, Text } from "./_menuStyle";
+import { MenuContainer, GridContainer, GridItem } from "./_menuStyle";
 import { useQuery } from "react-query";
 import { getCategories } from "Services/categoryServices";
 
-function Menu() {
+import SmartAgriIcon from "@public/icons/smart-agri.svg";
+import AgriFoodIcon from "@public/icons/agri-food.svg";
+import EGovernmentIcon from "@public/icons/e-government.svg";
+import InformationSystemIcon from "@public/icons/information-system.svg";
+import LocalInfrastructureIcon from "@public/icons/local-infrastructure.svg";
+import MenuAllIcon from "@public/icons/menu-all.svg";
+
+import VerifDesaIcon from "@public/icons/verifikasi-desa.svg";
+import VerifInnovatorIcon from "@public/icons/verifikasi-innovator.svg";
+import VerifKlaimIcon from "@public/icons/verifikasi-klaim.svg";
+import VerifTambahInnovasiIcon from "@public/icons/verifikasi-tambah-innovasi.svg";
+import PembuatanIklanIcon from "@public/icons/pembuatan-innovasi.svg";
+
+import React from "react";
+import { Image, Text } from "@chakra-ui/react";
+
+type MenuProps = {
+  isAdmin?: boolean;
+};
+
+const Menu: React.FC<MenuProps> = ({ isAdmin = false }) => {
   const navigate = useNavigate();
   const { data, isLoading, isFetched } = useQuery("menu", getCategories);
 
+
   const predefinedCategories = [
     {
-      icon: "./src/assets/icons/smart-agri.svg",
+      icon: SmartAgriIcon,
       title: "Pertanian Cerdas",
     },
     {
-      icon: "./src/assets/icons/agri-food.svg",
+      icon: AgriFoodIcon,
       title: "Pemasaran Agri-Food dan E-Commerce",
     },
     {
-      icon: "./src/assets/icons/e-government.svg",
+      icon: EGovernmentIcon,
       title: "E-Government",
     },
     {
-      icon: "./src/assets/icons/information-system.svg",
+      icon: InformationSystemIcon,
       title: "Sistem Informasi",
     },
     {
-      icon: "./src/assets/icons/local-infrastructure.svg",
+      icon: LocalInfrastructureIcon,
       title: "Infrastruktur Lokal",
     },
     {
-      icon: "./src/assets/icons/menu-all.svg",
-      title: "Lihat Semua",
+      icon: MenuAllIcon,
+      title: "Semua Kategori Inovasi",
     },
   ];
 
-  const [menu, setMenu] = useState<any>(predefinedCategories);
+  const adminMenu = [
+    {
+      icon: VerifDesaIcon,
+      title: "Verifikasi Desa",
+    },
+    {
+      icon: VerifInnovatorIcon,
+      title: "Verifikasi Inovator",
+    },
+    {
+      icon: VerifKlaimIcon,
+      title: "Verifikasi Klaim Inovasi",
+    },
+    {
+      icon: VerifTambahInnovasiIcon,
+      title: "Verifikasi Tambah Inovasi",
+    },
+    {
+      icon: PembuatanIklanIcon,
+      title: "Pembuatan Iklan",
+    },
+    {
+      icon: MenuAllIcon,
+      title: "Semua Kategori Inovasi",
+    },
+  ];
+
+  const [menu, setMenu] = useState<{ icon: string | JSX.Element; title: string }[]>([]);
+  const menuItems = isAdmin ? adminMenu : predefinedCategories;
 
   const onClick = (category: string) => {
-    if (category === "Lihat Semua") {
+    if (category === "Semua Kategori Inovasi") {
       navigate(paths.INNOVATION_PAGE);
       return;
     }
-    const path = generatePath(paths.INNOVATION_CATEGORY_PAGE, {
-      category: category,
-    });
-    navigate(path);
+    const isAdminCategory = adminMenu.some((item) => item.title === category);
+    
+
+    if (isAdmin && isAdminCategory) {
+      const path = generatePath(paths.VERIFICATION_PAGE, {
+        category: category,
+      });
+      navigate(path);
+      return;
+    } else {
+      const path = generatePath(paths.INNOVATION_CATEGORY_PAGE, {
+        category: category,
+      });
+      navigate(path);
+    }
   };
 
   useEffect(() => {
     if (isFetched && data) {
-      //const temp = [...data?.slice(0, 5), data[data?.length - 1]];
-      //setMenu(temp);
-      setMenu(predefinedCategories);
+      setMenu(menuItems);
     }
-  }, [isFetched, data]);
+  }, [isFetched, data, isAdmin]);
 
   return (
     <Container>
@@ -67,8 +125,18 @@ function Menu() {
           <GridContainer>
             {menu?.map(({ icon, title }: any, idx: number) => (
               <GridItem key={idx} onClick={() => onClick(title)}>
-                <img src={icon} alt={title} width={40} height={40} />
-                <Text>{title}</Text>
+                <Image src={icon} alt={title} width={12} height={12} />
+                <Text
+                  fontSize="12px"
+                  fontWeight="400"
+                  lineHeight="140%"
+                  textAlign="center"
+                  mt="8px"
+                  width="90px"
+                  height="auto"
+                >
+                  {title}
+                </Text>
               </GridItem>
             ))}
           </GridContainer>
@@ -76,6 +144,5 @@ function Menu() {
       </MenuContainer>
     </Container>
   );
-}
-
+};
 export default Menu;

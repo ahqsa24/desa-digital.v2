@@ -52,4 +52,7 @@ export const CheckboxContainer = styled.div`
   align-items: center;
   gap: 4px;
   ${marginStyle}
+  input[type="radio"]:checked {
+    accent-color: #347357; /* Mengubah warna radio button saat dipilih */
+  }
 `

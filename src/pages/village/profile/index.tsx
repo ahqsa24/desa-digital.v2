@@ -1,701 +1,527 @@
-import {
-  Button,
-  Flex,
-  Input,
-  Select,
-  Stack,
-  Text,
-  Textarea,
-  useToast,
-} from "@chakra-ui/react";
-import Container from "Components/container";
+import DigitalLit from "Assets/icons/digital-literacy.svg";
+import DigitalRead from "Assets/icons/digital-readiness.svg";
+import Geography from "Assets/icons/geography.svg";
+import GoodService from "Assets/icons/good-service.svg";
+import Infrastructure from "Assets/icons/infrastructure.svg";
+import Location from "Assets/icons/location.svg";
+import Resource from "Assets/icons/resource-village.svg";
+import Send from "Assets/icons/send.svg";
+import SocCul from "Assets/icons/socio-cultural.svg";
+import CardInnovation from "Components/card/innovation";
 import TopBar from "Components/topBar";
-import React, { useEffect, useRef, useState } from "react";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { useNavigate } from "react-router-dom";
-import HeaderUpload from "../../../components/form/HeaderUpload";
-import LogoUpload from "../../../components/form/LogoUpload";
-import { auth, firestore, storage } from "../../../firebase/clientApp";
+import { paths } from "Consts/path";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router";
+import EnlargedImage from "../components/Image";
 
 import {
-  getProvinces,
-  getRegencies,
-  getDistricts,
-  getVillages,
-} from "../../../services/locationServices";
-import { doc, setDoc, updateDoc } from "firebase/firestore";
-import { getDownloadURL, ref, uploadString } from "firebase/storage";
+  Accordion,
+  AccordionButton,
+  AccordionIcon,
+  AccordionItem,
+  AccordionPanel,
+  Box,
+  Flex,
+  Text,
+  Button,
+  useDisclosure,
+} from "@chakra-ui/react";
+import {
+  DocumentData,
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  updateDoc,
+} from "firebase/firestore";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { generatePath, useNavigate } from "react-router-dom";
+import { auth, firestore } from "../../../firebase/clientApp";
+import {
+  ActionContainer,
+  Background,
+  CardContainer,
+  ChipContainer,
+  ContPotensiDesa,
+  ContentContainer,
+  Description,
+  Horizontal,
+  Icon,
+  Label,
+  Logo,
+  NavbarButton,
+  SubText,
+  Title,
+} from "./_profileStyle";
+import StatusCard from "Components/card/status/StatusCard";
+import RejectionModal from "Components/confirmModal/RejectionModal";
+import ActionDrawer from "Components/drawer/ActionDrawer";
 
-interface Location {
-  id: string;
-  name: string;
-}
-
-const AddVillage: React.FC = () => {
+export default function ProfileVillage() {
   const navigate = useNavigate();
-  const [user] = useAuthState(auth);
-
-  const [selectedLogo, setSelectedLogo] = useState<string>("");
-  const [selectedHeader, setSelectedHeader] = useState<string>("");
-  const selectedLogoRef = useRef<HTMLInputElement>(null);
-  const selectedHeaderRef = useRef<HTMLInputElement>(null);
+  const [userLogin] = useAuthState(auth);
+  const innovationsRef = collection(firestore, "innovations");
+  const [innovations, setInnovations] = useState<DocumentData[]>([]);
+  const [village, setVillage] = useState<DocumentData | undefined>(undefined);
+  const [owner, setOwner] = useState(false);
+  const [admin, setAdmin] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [textInputValue, setTextInputValue] = useState({
-    name: "",
-    description: "",
-    potensi: "",
-    geografis: "",
-    infrastruktur: "",
-    kesiapan: "",
-    literasi: "",
-    pemantapan: "",
-    sosial: "",
-    resource: "",
-    whatsapp: "",
-    instagram: "",
-    website: "",
-  });
-  const [provinces, setProvinces] = useState<Location[]>([]);
-  const [regencies, setRegencies] = useState<Location[]>([]);
-  const [districts, setDistricts] = useState<Location[]>([]);
-  const [villages, setVillages] = useState<Location[]>([]);
-  const [selectedProvince, setSelectedProvince] = useState<string>("");
-  const [selectedRegency, setSelectedRegency] = useState<string>("");
-  const [selectedDistrict, setSelectedDistrict] = useState<string>("");
-  const [selectedVillage, setSelectedVillage] = useState<string>("");
+  const { id } = useParams();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [openModal, setOpenModal] = useState(false);
+  const [modalInput, setModalInput] = useState("");
 
-  const handleFetchProvinces = async () => {
-    try {
-      const provincesData = await getProvinces();
-      setProvinces(provincesData);
-    } catch (error) {
-      console.error("Error fetching provinces:", error);
-    }
+  const formatLocation = (lokasi: any) => {
+    if (!lokasi) return "No Location";
+    const kecamatan = lokasi.kecamatan?.label || "Unknown Subdistrict";
+    const kabupaten = lokasi.kabupatenKota?.label || "Unknown City";
+    const provinsi = lokasi.provinsi?.label || "Unknown Province";
+
+    return `KECAMATAN ${kecamatan}, ${kabupaten}, ${provinsi}`;
   };
 
-  const handleFetchRegencies = async (provinceId: string) => {
+  const handleVerify = async () => {
+    setLoading(true);
     try {
-      const regenciesData = await getRegencies(provinceId);
-      setRegencies(regenciesData);
+      if (id) {
+        const docRef = doc(firestore, "villages", id);
+        await updateDoc(docRef, {
+          status: "Terverifikasi",
+        });
+        setVillage((prev) => ({
+          ...prev,
+          status: "Terverifikasi",
+        }));
+      } else {
+        throw new Error("Village ID is undefined");
+      }
     } catch (error) {
-      console.error("Error fetching regencies:", error);
+      // setError(error.message);
     }
+    setLoading(false);
+    onClose();
   };
 
-  const handleFetchDistricts = async (regencyId: string) => {
+  const handleReject = async () => {
+    setLoading(true);
     try {
-      const districtsData = await getDistricts(regencyId);
-      setDistricts(districtsData);
+      if (id) {
+        const docRef = doc(firestore, "villages", id);
+        await updateDoc(docRef, {
+          status: "Ditolak",
+          catatanAdmin: modalInput, // Simpan alasan penolakan ke Firestore
+        });
+        setVillage((prev) => ({
+          ...prev,
+          status: "Ditolak",
+          catatanAdmin: modalInput,
+        }));
+      } else {
+        throw new Error("Village ID is undefined");
+      }
     } catch (error) {
-      console.error("Error fetching districts:", error);
+      console.error("Error during rejection:", error);
     }
-  };
-
-  const handleFetchVillages = async (districtId: string) => {
-    try {
-      const villagesData = await getVillages(districtId);
-      setVillages(villagesData);
-    } catch (error) {
-      console.error("Error fetching villages:", error);
-    }
+    setLoading(false);
+    setOpenModal(false); // Tutup modal setelah menyimpan
   };
 
   useEffect(() => {
-    handleFetchProvinces();
-  }, []);
-
-  const handleProvinceChange = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const provinceId = event.target.value;
-    const provinceName = event.target.options[event.target.selectedIndex].text;
-    setSelectedProvince(provinceName);
-    handleFetchRegencies(provinceId);
-    setRegencies([]);
-    setDistricts([]);
-    setVillages([]);
-    setSelectedRegency("");
-    setSelectedDistrict("");
-    setSelectedVillage("");
-  };
-
-  const handleRegencyChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const regencyId = event.target.value;
-    const regencyName = event.target.options[event.target.selectedIndex].text;
-    setSelectedRegency(regencyName);
-    handleFetchDistricts(regencyId);
-    setDistricts([]);
-    setVillages([]);
-    setSelectedDistrict("");
-    setSelectedVillage("");
-  };
-
-  const handleDistrictChange = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const districtId = event.target.value;
-    const districtName = event.target.options[event.target.selectedIndex].text;
-    setSelectedDistrict(districtName);
-    handleFetchVillages(districtId);
-    setVillages([]);
-    setSelectedVillage("");
-  };
-
-  const handleVillageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const villageName = event.target.options[event.target.selectedIndex].text;
-    setSelectedVillage(villageName);
-  };
-
-  const toast = useToast();
-
-  const onSelectLogo = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const reader = new FileReader();
-    if (event.target.files?.[0]) {
-      reader.readAsDataURL(event.target.files[0]);
-    }
-    reader.onload = (readerEvent) => {
-      if (readerEvent.target?.result) {
-        setSelectedLogo(readerEvent.target?.result as string);
+    const fetchUser = async () => {
+      if (userLogin?.uid) {
+        const userRef = doc(firestore, "users", userLogin.uid);
+        const userDoc = await getDoc(userRef);
+        if (userDoc.exists()) {
+          const user = userDoc.data();
+          setAdmin(user?.role === "admin");
+        }
       }
     };
-  };
+    fetchUser();
+  });
 
-  const onSelectHeader = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const reader = new FileReader();
-    if (event.target.files?.[0]) {
-      reader.readAsDataURL(event.target.files[0]);
-    }
-    reader.onload = (readerEvent) => {
-      if (readerEvent.target?.result) {
-        setSelectedHeader(readerEvent.target?.result as string);
-      }
-    };
-  };
-
-  const onTextChange = ({
-    target: { name, value },
-  }: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setTextInputValue((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const onSubmitForm = async (event: React.FormEvent<HTMLElement>) => {
-    event.preventDefault();
-    setLoading(true);
-    setError("");
-
-    if (!user?.uid) {
-      setError("User ID is not defined. Please make sure you are logged in.");
-      setLoading(false);
-      return;
-    }
-
-    try {
-      const {
-        name,
-        description,
-        potensi,
-        geografis,
-        infrastruktur,
-        kesiapan,
-        literasi,
-        pemantapan,
-        sosial,
-        resource,
-        whatsapp,
-        instagram,
-        website,
-      } = textInputValue;
-      if (
-        !name ||
-        !description ||
-        !potensi ||
-        !geografis ||
-        !infrastruktur ||
-        !kesiapan ||
-        !literasi ||
-        !pemantapan ||
-        !sosial ||
-        !resource ||
-        !whatsapp ||
-        !instagram ||
-        !website 
-        // !selectedProvince ||
-        // !selectedDistrict ||
-        // !selectedRegency ||
-        // !selectedVillage
-      ) {
-        setError("Semua kolom harus diisi");
-        setLoading(false);
-        return;
-      }
-      console.log(textInputValue);
-      
-      const userId = user.uid;
-      const docRef = doc(firestore, "villages", userId);
-      await setDoc(docRef, {
-        namaDesa: name,
-        id: userId,
-        deskripsi: description,
-        potensiDesa: potensi,
-        geografisDesa: geografis,
-        infrastrukturDesa: infrastruktur,
-        kesiapanDesa: kesiapan,
-        literasiDesa: literasi,
-        pemantapanDesa: pemantapan,
-        sosialBudaya: sosial,
-        sumberDaya: resource,
-        whatsapp: whatsapp,
-        instagram: instagram,
-        website: website,
-        lokasi: {
-          provinsi: selectedProvince,
-          kabupatenKota: selectedRegency,
-          kecamatan: selectedDistrict,
-          desaKelurahan: selectedVillage,
-        },
-      });
-      console.log("Document writen with ID: ", userId);
-      // Upload logo
-      if (selectedLogo) {
-        const logoRef = ref(storage, `villages/${userId}/logo`);
-        await uploadString(logoRef, selectedLogo, "data_url").then(async () => {
-          const downloadURL = await getDownloadURL(logoRef);
-          await updateDoc(doc(firestore, "villages", userId), {
-            logo: downloadURL,
-          });
-          console.log("File available at", downloadURL);
-        });
-      } else {
-        setError("Logo harus diisi");
-        setLoading(false);
-        return;
-      }
-
-      // Upload header if provided
-      if (selectedHeader) {
-        const headerRef = ref(storage, `villages/${userId}/header`);
-        await uploadString(headerRef, selectedHeader, "data_url").then(
-          async () => {
-            const downloadURL = await getDownloadURL(headerRef);
-            await updateDoc(doc(firestore, "villages", userId), {
-              header: downloadURL,
-            });
-            console.log("File available at", downloadURL);
+  useEffect(() => {
+    const fetchVillageData = async () => {
+      if (id) {
+        const docRef = doc(firestore, "villages", id);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setVillage(docSnap.data());
+          if (docSnap.data()?.userId === userLogin?.uid) {
+            setOwner(true);
           }
-        );
+        }
       }
+    };
+    fetchVillageData();
+  });
 
-      setLoading(false);
-
-      toast({
-        title: "Profile berhasil dibuat",
-        status: "success",
-        duration: 5000,
-        isClosable: true,
-      });
-    } catch (error) {
-      console.error("Error adding document: ", error);
-      setLoading(false);
-      setError("Error adding document");
-      toast({
-        title: "Error",
-        description: "Terjadi kesalahan saat menambahkan dokumen.",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      });
-    }
-  };
+  useEffect(() => {
+    const fetchInnovations = async () => {
+      const innovationsSnapshot = await getDocs(innovationsRef);
+      const innovationsData = innovationsSnapshot.docs.map((doc) => doc.data());
+      setInnovations(innovationsData);
+    };
+    fetchInnovations();
+  }, [innovationsRef]);
 
   return (
-    <Container page px={16}>
-      <TopBar title="Registrasi Desa" onBack={() => navigate(-1)} />
-      <form onSubmit={onSubmitForm}>
-        <Flex direction="column" marginTop="24px">
-          <Stack spacing={3} width="100%">
-            <Text fontWeight="400" fontSize="14px">
-              Nama Desa <span style={{ color: "red" }}>*</span>
-            </Text>
-            <Input
-              name="name"
-              fontSize="10pt"
-              placeholder="Nama Desa"
-              _placeholder={{ color: "gray.500" }}
-              _focus={{
-                outline: "none",
-                bg: "white",
-                border: "1px solid",
-                borderColor: "black",
-              }}
-              value={textInputValue.name}
-              onChange={onTextChange}
-            />
+    <Box>
+      <TopBar title="Profil Desa" onBack={() => navigate(-1)} />
+      <div style={{ position: "relative", width: "100%" }}>
+        <Background src={village?.header} alt="background" />
+        <Logo mx={16} my={-40} src={village?.logo} alt="logo" />
+      </div>
+      <div>
+        <ContentContainer>
+          <Flex flexDirection="column" alignItems="flex-end" mb={owner ? 0 : 4}>
+            {owner && (
+              <Button size="xs" onClick={() => navigate("/PengajuanKlaim")}>
+                <Icon src={Send} alt="send" />
+                Pengajuan Klaim
+              </Button>
+            )}
+          </Flex>
 
-            <Text fontWeight="400" fontSize="14px">
-              Provinsi <span style={{ color: "red" }}>*</span>
-            </Text>
-            <Select
-              placeholder="Pilih Provinsi"
-              fontSize="10pt"
-              variant="outline"
-              cursor="pointer"
-              color={"gray.500"}
-              _focus={{
-                outline: "none",
-                bg: "white",
-                border: "1px solid",
-                borderColor: "black",
-              }}
-              onChange={handleProvinceChange}
+          <Title> {village?.namaDesa} </Title>
+          <ActionContainer>
+            <Icon src={Location} alt="loc" />
+            <Description>{formatLocation(village?.lokasi)}</Description>
+          </ActionContainer>
+          <div>
+            <SubText margin-bottom={16}>Tentang</SubText>
+            <Description>{village?.deskripsi}</Description>
+          </div>
+          <SubText>Kontak Desa</SubText>
+          <Flex flexDirection="column" alignItems="flex-start" gap="12px">
+            <Flex
+              width="100%"
+              flexDirection="row"
+              alignItems="flex-start"
+              gap="16px"
+              paddingBottom="12px"
             >
-              {provinces.map((item) => (
-                <option
-                  key={item.id}
-                  value={item.id}
-                  style={{ color: "black" }}
+              <Box color="#4B5563" fontSize="12px" minWidth="110px">
+                Nomor WhatsApp
+              </Box>
+              <Description>{village?.whatsapp}</Description>
+            </Flex>
+            <Flex
+              width="100%"
+              flexDirection="row"
+              alignItems="flex-start"
+              gap="16px"
+              paddingBottom="12px"
+            >
+              <Box color="#4B5563" fontSize="12px" minWidth="110px">
+                Link Instagram
+              </Box>
+              <Description>{village?.website}</Description>
+            </Flex>
+            <Flex
+              width="100%"
+              flexDirection="row"
+              alignItems="flex-start"
+              gap="16px"
+              paddingBottom="12px"
+            >
+              <Box color="#4B5563" fontSize="12px" minWidth="110px">
+                Link Website
+              </Box>
+              <Description>{village?.instagram}</Description>
+            </Flex>
+          </Flex>
+          <div>
+            <SubText>Potensi Desa</SubText>
+            <ContPotensiDesa>
+              {village?.potensiDesa?.map((potensi: string, index: number) => (
+                <ChipContainer key={index}>
+                  <Label>{potensi}</Label>
+                </ChipContainer>
+              ))}
+            </ContPotensiDesa>
+          </div>
+          <div>
+            <SubText>Karakteristik Desa</SubText>
+            <Accordion defaultIndex={[0]} allowMultiple>
+              <AccordionItem>
+                <h2>
+                  <AccordionButton paddingLeft="4px" paddingRight="4px">
+                    <Flex
+                      as="span"
+                      flex="1"
+                      textAlign="left"
+                      fontSize="12px"
+                      fontWeight="700"
+                      gap={2}
+                    >
+                      <Icon src={Geography} alt="geo" /> Geografis
+                    </Flex>
+                    <AccordionIcon color="#347357" />
+                  </AccordionButton>
+                </h2>
+                <AccordionPanel
+                  pb={4}
+                  fontSize={12}
+                  paddingLeft="4px"
+                  paddingRight="4px"
                 >
-                  {item.name}
-                </option>
-              ))}
-            </Select>
-
-            <Text fontWeight="400" fontSize="14px">
-              Kabupaten/Kota <span style={{ color: "red" }}>*</span>
-            </Text>
-            <Select
-              placeholder="Pilih Kabupaten/Kota"
-              fontSize="10pt"
-              variant="outline"
-              cursor="pointer"
-              color={"gray.500"}
-              _focus={{
-                outline: "none",
-                bg: "white",
-                border: "1px solid",
-                borderColor: "black",
-              }}
-              onChange={handleRegencyChange}
-              disabled={regencies.length === 0}
+                  {village?.geografisDesa}
+                </AccordionPanel>
+              </AccordionItem>
+              <AccordionItem>
+                <h2>
+                  <AccordionButton paddingLeft="4px" paddingRight="4px">
+                    <Flex
+                      as="span"
+                      flex="1"
+                      textAlign="left"
+                      fontSize="12px"
+                      fontWeight="700"
+                      gap={2}
+                    >
+                      <Icon src={Infrastructure} alt="Infrastrusture" />{" "}
+                      Infrastruktur
+                    </Flex>
+                    <AccordionIcon color="#347357" />
+                  </AccordionButton>
+                </h2>
+                <AccordionPanel
+                  pb={4}
+                  fontSize={12}
+                  paddingLeft="4px"
+                  paddingRight="4px"
+                >
+                  {village?.infrastrukturDesa}
+                </AccordionPanel>
+              </AccordionItem>
+              <AccordionItem>
+                <h2>
+                  <AccordionButton paddingLeft="4px" paddingRight="4px">
+                    <Flex
+                      as="span"
+                      flex="1"
+                      textAlign="left"
+                      fontSize="12px"
+                      fontWeight="700"
+                      gap={2}
+                    >
+                      <Icon src={DigitalRead} alt="DigR" /> Kesiapan Digital
+                    </Flex>
+                    <AccordionIcon color="#347357" />
+                  </AccordionButton>
+                </h2>
+                <AccordionPanel
+                  pb={4}
+                  fontSize={12}
+                  paddingLeft="4px"
+                  paddingRight="4px"
+                >
+                  {village?.kesiapanDigital}
+                </AccordionPanel>
+              </AccordionItem>
+              <AccordionItem>
+                <h2>
+                  <AccordionButton paddingLeft="4px" paddingRight="4px">
+                    <Flex
+                      as="span"
+                      flex="1"
+                      textAlign="left"
+                      fontSize="12px"
+                      fontWeight="700"
+                      gap={2}
+                    >
+                      <Icon src={DigitalLit} alt="DigL" /> Literasi Digital
+                    </Flex>
+                    <AccordionIcon color="#347357" />
+                  </AccordionButton>
+                </h2>
+                <AccordionPanel
+                  pb={4}
+                  fontSize={12}
+                  paddingLeft="4px"
+                  paddingRight="4px"
+                >
+                  {village?.kesiapanTeknologi}
+                </AccordionPanel>
+              </AccordionItem>
+              <AccordionItem>
+                <h2>
+                  <AccordionButton paddingLeft="4px" paddingRight="4px">
+                    <Flex
+                      as="span"
+                      flex="1"
+                      textAlign="left"
+                      fontSize="12px"
+                      fontWeight="700"
+                      gap={2}
+                    >
+                      <Icon src={GoodService} alt="GoodService" /> Pemantapan
+                      Pelayanan
+                    </Flex>
+                    <AccordionIcon color="#347357" />
+                  </AccordionButton>
+                </h2>
+                <AccordionPanel
+                  pb={4}
+                  fontSize={12}
+                  paddingLeft="4px"
+                  paddingRight="4px"
+                >
+                  {village?.pemantapanPelayanan}
+                </AccordionPanel>
+              </AccordionItem>
+              <AccordionItem>
+                <h2>
+                  <AccordionButton paddingLeft="4px" paddingRight="4px">
+                    <Flex
+                      as="span"
+                      flex="1"
+                      textAlign="left"
+                      fontSize="12px"
+                      fontWeight="700"
+                      gap={2}
+                    >
+                      <Icon src={SocCul} alt="SocCul" /> Sosial dan Budaya
+                    </Flex>
+                    <AccordionIcon color="#347357" />
+                  </AccordionButton>
+                </h2>
+                <AccordionPanel
+                  pb={4}
+                  fontSize={12}
+                  paddingLeft="4px"
+                  paddingRight="4px"
+                >
+                  {village?.sosialBudaya}
+                </AccordionPanel>
+              </AccordionItem>
+              <AccordionItem>
+                <h2>
+                  <AccordionButton paddingLeft="4px" paddingRight="4px">
+                    <Flex
+                      as="span"
+                      flex="1"
+                      textAlign="left"
+                      fontSize="12px"
+                      fontWeight="700"
+                      gap={2}
+                    >
+                      <Icon src={Resource} alt="Resource" /> Sumber Daya Alam
+                    </Flex>
+                    <AccordionIcon color="#347357" />
+                  </AccordionButton>
+                </h2>
+                <AccordionPanel
+                  pb={4}
+                  fontSize={12}
+                  paddingLeft="4px"
+                  paddingRight="4px"
+                >
+                  {village?.sumberDaya}
+                </AccordionPanel>
+              </AccordionItem>
+            </Accordion>
+          </div>
+          <div>
+            <SubText>Galeri Desa</SubText>
+            <CardContainer>
+              <Horizontal>
+                {village?.images &&
+                  (Object.values(village.images) as string[]).map(
+                    (image: string, index: number) => (
+                      <EnlargedImage key={index} src={image} />
+                    )
+                  )}
+              </Horizontal>
+            </CardContainer>
+          </div>
+          <div>
+            <Flex
+              justifyContent="space-between"
+              alignItems="flex-end"
+              alignSelf="stretch"
             >
-              {regencies.map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.name}
-                </option>
-              ))}
-            </Select>
-
-            <Text fontWeight="400" fontSize="14px">
-              Kecamatan <span style={{ color: "red" }}>*</span>
-            </Text>
-            <Select
-              placeholder="Pilih Kecamatan"
-              fontSize="10pt"
-              variant="outline"
-              cursor="pointer"
-              color={"gray.500"}
-              _focus={{
-                outline: "none",
-                bg: "white",
-                border: "1px solid",
-                borderColor: "black",
-              }}
-              onChange={handleDistrictChange}
-              disabled={districts.length === 0}
-            >
-              {districts.map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.name}
-                </option>
-              ))}
-            </Select>
-
-            <Text fontWeight="400" fontSize="14px">
-              Desa/Kelurahan <span style={{ color: "red" }}>*</span>
-            </Text>
-            <Select
-              placeholder="Pilih Kelurahan"
-              fontSize="10pt"
-              variant="outline"
-              cursor="pointer"
-              color={"gray.500"}
-              _focus={{
-                outline: "none",
-                bg: "white",
-                border: "1px solid",
-                borderColor: "black",
-              }}
-              disabled={villages.length === 0}
-              onChange={handleVillageChange}
-            >
-              {villages.map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.name}
-                </option>
-              ))}
-            </Select>
-
-            <Text fontWeight="400" fontSize="14px">
-              Logo Desa <span style={{ color: "red" }}>*</span>
-            </Text>
-            <LogoUpload
-              selectedLogo={selectedLogo}
-              setSelectedLogo={setSelectedLogo}
-              selectFileRef={selectedLogoRef}
-              onSelectLogo={onSelectLogo}
+              <SubText>Inovasi yang Diterapkan</SubText>
+              <Text
+                onClick={() => navigate("/target-page")} // Ganti "/target-page" dengan rute yang sesuai
+                cursor="pointer"
+                color="var(--Primary, #347357)"
+                fontSize="12px"
+                fontWeight="500"
+                textDecorationLine="underline"
+                paddingBottom="12px"
+              >
+                {" "}
+                Lihat Semua{" "}
+              </Text>
+            </Flex>
+            <CardContainer>
+              <Horizontal>
+                {innovations.map((innovation, idx) => (
+                  <CardInnovation
+                    key={idx}
+                    images={innovation.images}
+                    namaInovasi={innovation.namaInovasi}
+                    kategori={innovation.kategori}
+                    deskripsi={innovation.deskripsi}
+                    tahunDibuat={innovation.tahunDibuat}
+                    innovatorLogo={innovation.innovatorImgURL}
+                    innovatorName={innovation.namaInnovator}
+                    onClick={() =>
+                      navigate(
+                        generatePath(paths.DETAIL_INNOVATION_PAGE, {
+                          id: innovation.id,
+                        })
+                      )
+                    }
+                  />
+                ))}
+              </Horizontal>
+            </CardContainer>
+          </div>
+        </ContentContainer>
+      </div>
+      <Box>
+        {admin ? (
+          village?.status === "Terverifikasi" ||
+          village?.status === "Ditolak" ? (
+            <StatusCard
+              status={village?.status}
+              message={village?.catatanAdmin}
             />
-
-            <Text fontWeight="400" fontSize="14px">
-              Header Desa
-            </Text>
-            <HeaderUpload
-              selectedHeader={selectedHeader}
-              setSelectedHeader={setSelectedHeader}
-              selectFileRef={selectedHeaderRef}
-              onSelectHeader={onSelectHeader}
-            />
-
-            <Text fontWeight="400" fontSize="16px">
-              Tentang Inovasi di Desa <span style={{ color: "red" }}>*</span>
-            </Text>
-            <Textarea
-              name="description"
-              fontSize="10pt"
-              placeholder="Masukkan deskripsi desa"
-              _placeholder={{ color: "gray.500" }}
-              _focus={{
-                outline: "none",
-                bg: "white",
-                border: "1px solid",
-                borderColor: "black",
-              }}
-              height="100px"
-              value={textInputValue.description}
-              onChange={onTextChange}
-            />
-
-            <Text fontWeight="400" fontSize="14px">
-              Potensi Desa <span style={{ color: "red" }}>*</span>
-            </Text>
-            <Input
-              name="potensi"
-              fontSize="10pt"
-              placeholder="Masukkan potensi desa"
-              _placeholder={{ color: "gray.500" }}
-              _focus={{
-                outline: "none",
-                bg: "white",
-                border: "1px solid",
-                borderColor: "black",
-              }}
-              value={textInputValue.potensi}
-              onChange={onTextChange}
-            />
-
-            <Text fontWeight="700" fontSize="16px">
-              Karakteristik Desa
-            </Text>
-            <Text fontWeight="400" fontSize="14px">
-              Geografis <span style={{ color: "red" }}>*</span>
-            </Text>
-            <Input
-              name="geografis"
-              fontSize="10pt"
-              placeholder="Deskripsi geografis desa"
-              _placeholder={{ color: "gray.500" }}
-              _focus={{
-                outline: "none",
-                bg: "white",
-                border: "1px solid",
-                borderColor: "black",
-              }}
-              value={textInputValue.geografis}
-              onChange={onTextChange}
-            />
-
-            <Text fontWeight="400" fontSize="14px">
-              Infrastruktur <span style={{ color: "red" }}>*</span>
-            </Text>
-            <Input
-              name="infrastruktur"
-              fontSize="10pt"
-              placeholder="Deskripsi infrastruktur desa"
-              _placeholder={{ color: "gray.500" }}
-              _focus={{
-                outline: "none",
-                bg: "white",
-                border: "1px solid",
-                borderColor: "black",
-              }}
-              value={textInputValue.infrastruktur}
-              onChange={onTextChange}
-            />
-
-            <Text fontWeight="400" fontSize="14px">
-              Kesiapan Digital <span style={{ color: "red" }}>*</span>
-            </Text>
-            <Input
-              name="kesiapan"
-              fontSize="10pt"
-              placeholder="Deskripsi kesiapan digital desa"
-              _placeholder={{ color: "gray.500" }}
-              _focus={{
-                outline: "none",
-                bg: "white",
-                border: "1px solid",
-                borderColor: "black",
-              }}
-              value={textInputValue.kesiapan}
-              onChange={onTextChange}
-            />
-
-            <Text fontWeight="400" fontSize="14px">
-              Literasi Digital <span style={{ color: "red" }}>*</span>
-            </Text>
-            <Input
-              name="literasi"
-              fontSize="10pt"
-              placeholder="Deskripsi literasi digital desa"
-              _placeholder={{ color: "gray.500" }}
-              _focus={{
-                outline: "none",
-                bg: "white",
-                border: "1px solid",
-                borderColor: "black",
-              }}
-              value={textInputValue.literasi}
-              onChange={onTextChange}
-            />
-
-            <Text fontWeight="400" fontSize="14px">
-              Pemantapan Pelayanan <span style={{ color: "red" }}>*</span>
-            </Text>
-            <Input
-              name="pemantapan"
-              fontSize="10pt"
-              placeholder="Deskripsi pemantapan pelayanan desa"
-              _placeholder={{ color: "gray.500" }}
-              _focus={{
-                outline: "none",
-                bg: "white",
-                border: "1px solid",
-                borderColor: "black",
-              }}
-              value={textInputValue.pemantapan}
-              onChange={onTextChange}
-            />
-
-            <Text fontWeight="400" fontSize="14px">
-              Sosial dan Budaya <span style={{ color: "red" }}>*</span>
-            </Text>
-            <Input
-              name="sosial"
-              fontSize="10pt"
-              placeholder="Deskripsi sosial dan budaya desa"
-              _placeholder={{ color: "gray.500" }}
-              _focus={{
-                outline: "none",
-                bg: "white",
-                border: "1px solid",
-                borderColor: "black",
-              }}
-              value={textInputValue.sosial}
-              onChange={onTextChange}
-            />
-
-            <Text fontWeight="400" fontSize="14px">
-              Sumber Daya Alam <span style={{ color: "red" }}>*</span>
-            </Text>
-            <Input
-              name="resource"
-              fontSize="10pt"
-              placeholder="Deskripsi sumber daya alam desa"
-              _placeholder={{ color: "gray.500" }}
-              _focus={{
-                outline: "none",
-                bg: "white",
-                border: "1px solid",
-                borderColor: "black",
-              }}
-              value={textInputValue.resource}
-              onChange={onTextChange}
-            />
-
-            <Text fontWeight="700" fontSize="16px">
-              Kontak Desa
-            </Text>
-            <Text fontWeight="400" fontSize="14px">
-              Nomor WhatsApp <span style={{ color: "red" }}>*</span>
-            </Text>
-            <Input
-              name="whatsapp"
-              fontSize="10pt"
-              placeholder="62812345678"
-              type="number"
-              _placeholder={{ color: "gray.500" }}
-              _focus={{
-                outline: "none",
-                bg: "white",
-                border: "1px solid",
-                borderColor: "black",
-              }}
-              value={textInputValue.whatsapp}
-              onChange={onTextChange}
-            />
-
-            <Text fontWeight="400" fontSize="14px">
-              Link Instagram <span style={{ color: "red" }}>*</span>
-            </Text>
-            <Input
-              name="instagram"
-              type="url"
-              fontSize="10pt"
-              placeholder="Link Instagram desa"
-              _placeholder={{ color: "gray.500" }}
-              _focus={{
-                outline: "none",
-                bg: "white",
-                border: "1px solid",
-                borderColor: "black",
-              }}
-              value={textInputValue.instagram}
-              onChange={onTextChange}
-            />
-
-            <Text fontWeight="400" fontSize="14px">
-              Link Website <span style={{ color: "red" }}>*</span>
-            </Text>
-            <Input
-              name="website"
-              type="url"
-              fontSize="10pt"
-              placeholder="Link Website desa"
-              _placeholder={{ color: "gray.500" }}
-              _focus={{
-                outline: "none",
-                bg: "white",
-                border: "1px solid",
-                borderColor: "black",
-              }}
-              value={textInputValue.website}
-              onChange={onTextChange}
-            />
-          </Stack>
-        </Flex>
-        {error && (
-          <Text color="red" fontSize="10pt" textAlign="center" mt={2}>
-            {error}
-          </Text>
+          ) : (
+            <NavbarButton>
+              <Button width="100%" fontSize="14px" onClick={onOpen}>
+                Verifikasi Permohonan Akun
+              </Button>
+            </NavbarButton>
+          )
+        ) : (
+          <NavbarButton>
+            <Button width="100%" onClick={onOpen}>
+              Edit Profil
+            </Button>{" "}
+          </NavbarButton>
         )}
-        <Button type="submit" mt="20px" width="100%" isLoading={loading}>
-          Simpan
-        </Button>
-      </form>
-    </Container>
+        <RejectionModal
+          isOpen={openModal}
+          onClose={() => setOpenModal(false)}
+          onConfirm={handleReject}
+          loading={loading}
+          setMessage={setModalInput}
+          message={modalInput}
+        />
+        <ActionDrawer
+          isOpen={isOpen}
+          onClose={onClose}
+          onVerify={handleVerify}
+          isAdmin={admin}
+          role="Desa"
+          loading={loading}
+          setOpenModal={setOpenModal}
+        />
+      </Box>
+    </Box>
   );
-};
-
-export default AddVillage;
+}
