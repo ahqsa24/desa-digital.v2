@@ -54,7 +54,7 @@ function TopBar(props: TopBarProps) {
           />
         )}
         <Text
-          fontSize="16px"
+          fontSize={title && title.split(" ").length > 3 ? "14px" : "16px"}
           fontWeight="700"
           color="white"
           ml={onBack ? "8px" : "0"}
