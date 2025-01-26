@@ -7,6 +7,19 @@ import { MenuContainer, GridContainer, GridItem } from "./_menuStyle";
 import { useQuery } from "react-query";
 import { getCategories } from "Services/categoryServices";
 
+import SmartAgriIcon from "@public/icons/smart-agri.svg";
+import AgriFoodIcon from "@public/icons/agri-food.svg";
+import EGovernmentIcon from "@public/icons/e-government.svg";
+import InformationSystemIcon from "@public/icons/information-system.svg";
+import LocalInfrastructureIcon from "@public/icons/local-infrastructure.svg";
+import MenuAllIcon from "@public/icons/menu-all.svg";
+
+import VerifDesaIcon from "@public/icons/verifikasi-desa.svg";
+import VerifInnovatorIcon from "@public/icons/verifikasi-innovator.svg";
+import VerifKlaimIcon from "@public/icons/verifikasi-klaim.svg";
+import VerifTambahInnovasiIcon from "@public/icons/verifikasi-tambah-innovasi.svg";
+import PembuatanIklanIcon from "@public/icons/pembuatan-innovasi.svg";
+
 import React from "react";
 import { Image, Text } from "@chakra-ui/react";
 
@@ -18,61 +31,62 @@ const Menu: React.FC<MenuProps> = ({ isAdmin = false }) => {
   const navigate = useNavigate();
   const { data, isLoading, isFetched } = useQuery("menu", getCategories);
 
+
   const predefinedCategories = [
     {
-      icon: "./src/assets/icons/smart-agri.svg",
+      icon: SmartAgriIcon,
       title: "Pertanian Cerdas",
     },
     {
-      icon: "./src/assets/icons/agri-food.svg",
+      icon: AgriFoodIcon,
       title: "Pemasaran Agri-Food dan E-Commerce",
     },
     {
-      icon: "./src/assets/icons/e-government.svg",
+      icon: EGovernmentIcon,
       title: "E-Government",
     },
     {
-      icon: "./src/assets/icons/information-system.svg",
+      icon: InformationSystemIcon,
       title: "Sistem Informasi",
     },
     {
-      icon: "./src/assets/icons/local-infrastructure.svg",
+      icon: LocalInfrastructureIcon,
       title: "Infrastruktur Lokal",
     },
     {
-      icon: "./src/assets/icons/menu-all.svg",
+      icon: MenuAllIcon,
       title: "Semua Kategori Inovasi",
     },
   ];
 
   const adminMenu = [
     {
-      icon: "./src/assets/icons/verifikasi-desa.svg",
+      icon: VerifDesaIcon,
       title: "Verifikasi Desa",
     },
     {
-      icon: "./src/assets/icons/verifikasi-innovator.svg",
+      icon: VerifInnovatorIcon,
       title: "Verifikasi Inovator",
     },
     {
-      icon: "./src/assets/icons/verifikasi-klaim.svg",
+      icon: VerifKlaimIcon,
       title: "Verifikasi Klaim Inovasi",
     },
     {
-      icon: "./src/assets/icons/verifikasi-tambah-innovasi.svg",
+      icon: VerifTambahInnovasiIcon,
       title: "Verifikasi Tambah Inovasi",
     },
     {
-      icon: "./src/assets/icons/pembuatan-innovasi.svg",
+      icon: PembuatanIklanIcon,
       title: "Pembuatan Iklan",
     },
     {
-      icon: "./src/assets/icons/menu-all.svg",
+      icon: MenuAllIcon,
       title: "Semua Kategori Inovasi",
     },
   ];
 
-  const [menu, setMenu] = useState<{ icon: string; title: string }[]>([]);
+  const [menu, setMenu] = useState<{ icon: string | JSX.Element; title: string }[]>([]);
   const menuItems = isAdmin ? adminMenu : predefinedCategories;
 
   const onClick = (category: string) => {
