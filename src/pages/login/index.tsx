@@ -131,7 +131,7 @@ const Login: React.FC = () => {
           </Button>
         </form>
 
-        <ActionContainer mt={24}>
+        <ActionContainer mt={12}>
           <Label>Lupa kata sandi</Label>
           <Action onClick={() => navigate(paths.EMAIL_RESET_PASSWORD_PAGE)}>
             Klik disini
