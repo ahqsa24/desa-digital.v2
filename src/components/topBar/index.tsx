@@ -32,10 +32,13 @@ function TopBar(props: TopBarProps) {
       height="56px"
       zIndex="999"
       alignContent="center"
+      display="flex" // Tambahkan ini
+      alignItems="center" 
     >
       <Flex
-        justify={isUserMenuVisible ? `space-between` : `flex-start`}
-        align="center"
+        width="100%"
+      align="center"
+      justify="space-between" // Distribusi elemen secara merata
       >
         {!!onBack && (
           <ArrowBackIcon
@@ -56,21 +59,23 @@ function TopBar(props: TopBarProps) {
         >
           {title}
         </Text>
-        {user
-          ? isUserMenuVisible && <UserMenu user={user} />
-          : isUserMenuVisible && (
-              <Button
-                fontSize="14px"
-                fontWeight="700"
-                color="white"
-                cursor="pointer"
-                onClick={() => navigate(paths.LOGIN_PAGE)}
-                variant="link"
-                mt="2px"
-              >
-                Login
-              </Button>
-            )}
+        <Flex align="center" ml="auto">
+          {user
+            ? isUserMenuVisible && <UserMenu user={user} />
+            : isUserMenuVisible && (
+                <Button
+                  fontSize="14px"
+                  fontWeight="700"
+                  color="white"
+                  cursor="pointer"
+                  onClick={() => navigate(paths.LOGIN_PAGE)}
+                  variant="link"
+                  mt="2px"
+                >
+                  Login
+                </Button>
+              )}
+        </Flex>
       </Flex>
     </Box>
   );
