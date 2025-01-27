@@ -1,13 +1,13 @@
 import { Box, Button, Flex, Text } from "@chakra-ui/react";
 import React from "react";
-
+import redinesImg from "@public/images/rediness.svg";
 
 const Rediness: React.FC = () => {
   return (
     // <Container>
         <Flex>
           <Box
-            backgroundImage="src/assets/images/rediness.svg"
+            backgroundImage={redinesImg}
             height="166px"
             width="161px"
             backgroundSize="cover"
