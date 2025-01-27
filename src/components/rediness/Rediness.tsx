@@ -1,10 +1,8 @@
 import { Box, Button, Flex, Text } from "@chakra-ui/react";
-import Container from "Components/container";
 import React from "react";
 
-type RedinessProps = {};
 
-const Rediness: React.FC<RedinessProps> = () => {
+const Rediness: React.FC = () => {
   return (
     // <Container>
         <Flex>

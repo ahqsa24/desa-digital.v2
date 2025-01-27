@@ -1,4 +1,4 @@
-import { useToast } from '@chakra-ui/toast';
+import { useToast } from "@chakra-ui/toast";
 import Add from "Assets/icons/add.svg";
 import Container from "Components/container";
 import { paths } from "Consts/path";
@@ -11,20 +11,31 @@ import {
   getFirestore,
   onSnapshot,
   query,
-  where
+  where,
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Hero from "./components/hero";
 import Innovator from "./components/innovator";
 import Menu from "./components/menu";
-import Readiness from "./components/readiness";
-import { Box, Button, Flex, IconButton, Text, Tooltip, } from '@chakra-ui/react';
-import { AddIcon } from '@chakra-ui/icons';
-import TopBar from 'Components/topBar';
-import { useAuthState } from 'react-firebase-hooks/auth';
+import Rediness from "Components/rediness/Rediness";
+import Ads from "Components/ads/Ads";
+import SearchBarLink from "Components/search/SearchBarLink";
+import BestBanner from "Components/banner/BestBanner";
+import {
+  Box,
+  Button,
+  Flex,
+  IconButton,
+  Stack,
+  Text,
+  Tooltip,
+} from "@chakra-ui/react";
+import { AddIcon } from "@chakra-ui/icons";
+import TopBar from "Components/topBar";
+import { useAuthState } from "react-firebase-hooks/auth";
 import { firestore } from "../../firebase/clientApp";
 
 function Home() {
@@ -63,27 +74,27 @@ function Home() {
               </Box>
             ),
           });
-  
+
           // Tandai bahwa toast login sudah ditampilkan
           localStorage.setItem("hasLoggedIn", "true");
         }
-  
+
         // Dapatkan token otentikasi dan lakukan query database
         user.getIdToken().then((token) => {
           const db = getFirestore();
           const colRef = collection(db, "users");
           const q = query(colRef, where("id", "==", user.uid));
-  
+
           onSnapshot(q, (snapshot) => {
             if (!snapshot.empty) {
               const userData = snapshot.docs[0].data();
               setUserRole(userData.role);
             }
           });
-  
+
           const innovatorsRef = collection(db, "innovators");
           const qInnovators = query(innovatorsRef, where("id", "==", user.uid));
-  
+
           onSnapshot(qInnovators, (snapshot) => {
             setIsInnovator(!snapshot.empty);
           });
@@ -94,7 +105,7 @@ function Home() {
         localStorage.removeItem("hasLoggedIn"); // Hapus status login saat logout
       }
     });
-  
+
     return () => unsubscribe();
   }, [auth, toast]);
 
@@ -105,15 +116,15 @@ function Home() {
         const userSnap = await getDoc(userRef);
         if (userSnap.exists()) {
           setUserData(userSnap.data());
-          if(userSnap.data()?.role === 'innovator') {
+          if (userSnap.data()?.role === "innovator") {
             setIsInnovator(true);
           }
         }
       }
     };
     fetchUser();
-  })
-  
+  });
+
   useEffect(() => {
     const fetchInnovator = async () => {
       if (userLogin?.uid) {
@@ -125,7 +136,7 @@ function Home() {
       }
     };
     fetchInnovator();
-  })
+  });
 
   const handleAddInnovationClick = () => {
     if (isInnovator && inovator?.status === "Terverifikasi") {
@@ -137,22 +148,26 @@ function Home() {
         duration: 1000,
         isClosable: false,
         position: "top",
-      })
+      });
     }
   };
 
   return (
     <Container page>
       <TopBar title="Desa Digital Indonesia" />
-      <Hero description='KMS Desa Digital' text='Indonesia'/>
-      <Menu />
-      <Readiness />
-      <Box padding='0 14px' mt={4}>
-        <Text fontSize='16px' fontWeight='700' mb={2}>
-          Innovator Unggulan
-        </Text>
-        <Innovator />
-      </Box>
+      <Hero description="KMS Desa Digital" text="Indonesia" />
+      <Stack direction="column" gap={2}>
+        <SearchBarLink />
+        <Menu />
+        <Flex direction="row" justifyContent="space-between" padding="0 14px">
+          <Rediness />
+          <Ads />
+        </Flex>
+        <BestBanner />
+        <Box mt="120px">
+          <Innovator />
+        </Box>
+      </Stack>
       {userRole === "innovator" && (
         <Tooltip
           label="Tambah Inovasi"
@@ -163,22 +178,22 @@ function Home() {
           color="white"
           fontSize="12px"
           p={1}
-          borderRadius='8'
+          borderRadius="8"
         >
-          <Button 
-            borderRadius='50%' 
-            width='60px' 
-            height='60px' 
-            padding='0' 
-            display='flex' 
-            alignItems='center' 
-            justifyContent='center' 
-            position='fixed' 
-            zIndex='999' 
-            bottom='68px' 
-            marginLeft='267px' 
-            marginRight='33px'
-            marginBottom='1'
+          <Button
+            borderRadius="50%"
+            width="60px"
+            height="60px"
+            padding="0"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            position="fixed"
+            zIndex="999"
+            bottom="68px"
+            marginLeft="267px"
+            marginRight="33px"
+            marginBottom="1"
             onClick={handleAddInnovationClick}
           >
             <IconButton icon={<AddIcon />} aria-label="Tambah Inovasi" />

@@ -18,7 +18,6 @@ function Innovator() {
     const fetchInnovators = async () => {
       const innovatorsSnapshot = await getDocs(innovatorsRef);
       const innovatorsData = innovatorsSnapshot.docs.map((doc) => doc.data());
-      console.log("ini datanya gan: ",innovatorsData);
       setInnovators(innovatorsData);
     };
     fetchInnovators();
