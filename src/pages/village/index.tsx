@@ -1,30 +1,30 @@
-import Hero from "./components/hero";
-import { useQuery } from "react-query";
-import { getUsers } from "Services/userServices";
+import { Box } from "@chakra-ui/react";
+import CardVillage from "Components/card/village";
+import { paths } from "Consts/path";
 import React, { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { useNavigate, generatePath } from "react-router-dom";
+import { useQuery } from "react-query";
+import { generatePath, useNavigate } from "react-router-dom";
+import { getUsers } from "Services/userServices";
+import { auth, firestore } from "../../firebase/clientApp";
 import {
-  GridContainer,
   CardContent,
-  Containers,
-  Text,
-  Texthighlight,
   Column1,
   Column2,
+  Containers,
+  GridContainer,
+  Text,
+  Texthighlight,
 } from "./_villageStyle";
-import CardVillage from "Components/card/village";
-import { auth, firestore } from "../../firebase/clientApp";
-import { paths } from "Consts/path";
-import { Box } from "@chakra-ui/react";
-import SearchBarVil from "./components/SearchBarVil";
 import Dropdown from "./components/Filter";
+import Hero from "./components/hero";
+import SearchBarVil from "./components/SearchBarVil";
 
-import defaultLogo from "@public/images/default-logo.svg";
 import defaultHeader from "@public/images/default-header.svg";
+import defaultLogo from "@public/images/default-logo.svg";
 
-import { getProvinces, getRegencies } from "../../services/locationServices";
 import { collection, DocumentData, getDocs } from "firebase/firestore";
+import { getProvinces, getRegencies } from "../../services/locationServices";
 
 interface Location {
   id: string;
@@ -95,6 +95,7 @@ const Village: React.FC = () => {
           namaDesa: data.lokasi?.desaKelurahan?.label || "",
         };
       });
+      console.log("villagesData", villagesData);
       setVillages(villagesData);
     };
     fetchData();

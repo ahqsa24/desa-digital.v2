@@ -77,7 +77,7 @@ function Innovator() {
         </CardContent>
         <Text>
           {" "}
-          Menampilkan 2 inovator untuk{" "}
+          Menampilkan semua inovator untuk{" "}
           <Texthighlight> "Semua Kategori" </Texthighlight>{" "}
         </Text>
         <GridContainer>
