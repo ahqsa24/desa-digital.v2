@@ -46,54 +46,55 @@ function Innovator() {
   }, [firestore])
   
   return (
-  <Box>
-    <Hero />
-    <Containers>
-      <CardContent>
-        <Column>
+    <Box>
+      <Hero />
+      <Containers>
+        <CardContent>
+          <Column>
+            <Text>Pilih Inovator</Text>
+            <Select
+              placeholder="Pilih Kategori Inovator"
+              name="category"
+              fontSize="10pt"
+              variant="outline"
+              cursor="pointer"
+              color={"gray.500"}
+              _focus={{
+                outline: "none",
+                bg: "white",
+                border: "1px solid",
+                borderColor: "#E5E7EB",
+              }}
+            >
+              {categories.map((category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
+            </Select>
+            <SearchBarInnov placeholder="Search" />
+          </Column>
+        </CardContent>
         <Text>
-            Pilih Inovator
-          </Text>
-          <Select
-            placeholder= "Pilih Kategori Inovator"
-            name="category"
-            fontSize="10pt"
-            variant="outline"
-            cursor="pointer"
-            color={"gray.500"}
-            _focus={{
-              outline: "none",
-              bg: "white",
-              border: "1px solid",
-              borderColor: "#E5E7EB",
-            }}
-          >
-            {categories.map((category) => (
-                  <option key={category} value={category}>
-                    {category}
-                  </option>
-            ))}
-          </Select>
-          <SearchBarInnov placeholder="Search"/>
-        </Column>
-      </CardContent>
-      <Text> Menampilkan 2 inovator untuk <Texthighlight> "Semua Kategori" </Texthighlight> </Text>
-      <GridContainer >
-        {
-          innovators?.map((item: any, idx: number) => (
-          <CardInnovator
-            key={idx}
-            {...item}
-            onClick={() =>
-              navigate(
-                generatePath(paths.DETAIL_INNOVATOR_PAGE, { id: item.id})
-              )
-            }
-          />
-        ))}
-      </GridContainer>
-    </Containers>
-  </Box>
+          {" "}
+          Menampilkan 2 inovator untuk{" "}
+          <Texthighlight> "Semua Kategori" </Texthighlight>{" "}
+        </Text>
+        <GridContainer>
+          {innovators?.map((item: any, idx: number) => (
+            <CardInnovator
+              key={idx}
+              {...item}
+              onClick={() =>
+                navigate(
+                  generatePath(paths.INNOVATOR_PROFILE_PAGE, { id: item.id })
+                )
+              }
+            />
+          ))}
+        </GridContainer>
+      </Containers>
+    </Box>
   );
 }
      

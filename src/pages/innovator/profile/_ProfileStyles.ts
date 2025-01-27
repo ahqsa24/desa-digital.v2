@@ -160,7 +160,6 @@ export const Logo = styled.img`
   position: absolute;
   bottom: 0;
   left: 0;
-  border: 1px solid;
   align-content: center;
 `;
 
