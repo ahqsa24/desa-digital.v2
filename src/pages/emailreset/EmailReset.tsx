@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Input, Button, Text, Flex } from "@chakra-ui/react";
+import { Box, Input, Button, Text, Flex } from "@chakra-ui/react";
 import { Background, Container, Title, Description, Label, ActionContainer, Action } from "./_EmailResetStyle";
 import { useNavigate } from "react-router-dom";
 import { paths } from "Consts/path";
@@ -8,6 +8,7 @@ import {
   useAuthState,
   useSendPasswordResetEmail,
 } from "react-firebase-hooks/auth";
+import TopBar from "Components/topBar/index";
 
 // Definisikan tipe untuk data formulir
 
@@ -40,58 +41,59 @@ const EmailReset: React.FC = () => {
 
   return (
     <Background>
-      <Container>
-        {/* <ArrowBackIcon /> */}
-        <Title>Lupa Kata Sandi</Title>
-        <Description>
-          Masukkan email yang akan kami kirimkan kode untuk reset password.
-        </Description>
-        {success ? (
-          <Text textAlign="center" color="#347357" fontSize="14px" mt="4px">
-            Email berhasil dikirim
-          </Text>
-        ) : (
-          <>
-            <form onSubmit={onSubmit}>
-              <Text fontSize="10pt" mt="12px">
-                Email
-              </Text>
-              <Input
-                type="email"
-                placeholder="Email"
-                mt="4px"
-                onChange={(event) => setEmail(event.target.value)}
-              />
-              {/* Error tambahan */}
-              {error && (
-                <Text textAlign="left" color="red" fontSize="14px" mt="4px">
-                  {error?.message}
+      <TopBar title="" onBack={() => navigate(-1)} />
+        <Container>
+          <Title>Lupa Kata Sandi</Title>
+          <Description>
+            Masukkan email yang akan kami kirimkan kode untuk reset password.
+          </Description>
+          {success ? (
+            <Text textAlign="center" color="#347357" fontSize="14px" mt="4px">
+              Email berhasil dikirim
+            </Text>
+          ) : (
+            <>
+              <form onSubmit={onSubmit}>
+                <Text fontSize="10pt" mt="12px">
+                  Email
                 </Text>
-              )}
-              <Flex direction="column" gap={1}>
-                <Button mt={3} type="submit" width="100%" isLoading={loading}>
-                  Kirim Email
-                </Button>
-                <Text
-                  textAlign="center"
-                  fontSize="14px"
-                  fontWeight="400"
-                  color="#4b5563"
-                >
-                  Atau
-                </Text>
+                <Input
+                  type="email"
+                  placeholder="Email"
+                  mt="4px"
+                  onChange={(event) => setEmail(event.target.value)}
+                />
+                {/* Error tambahan */}
+                {error && (
+                  <Text textAlign="left" color="red" fontSize="14px" mt="4px">
+                    {error?.message}
+                  </Text>
+                )}
+                <Flex direction="column" gap={1}>
+                  <Button mt={3} type="submit" width="100%" isLoading={loading}>
+                    Kirim Email
+                  </Button>
+                  
+                  <Text
+                    textAlign="center"
+                    fontSize="14px"
+                    fontWeight="400"
+                    color="#4b5563"
+                  >
+                    Atau
+                  </Text>
 
-                <ActionContainer>
-                  <Label>Kembali ke</Label>
-                  <Action onClick={() => navigate(paths.LOGIN_PAGE)}>
-                    login
-                  </Action>
-                </ActionContainer>
-              </Flex>
-            </form>
-          </>
-        )}
-      </Container>
+                  <ActionContainer>
+                    <Label>Kembali ke</Label>
+                    <Action onClick={() => navigate(paths.LOGIN_PAGE)}>
+                      login
+                    </Action>
+                  </ActionContainer>
+                </Flex>
+              </form>
+            </>
+          )}
+        </Container>
     </Background>
   );
 };
