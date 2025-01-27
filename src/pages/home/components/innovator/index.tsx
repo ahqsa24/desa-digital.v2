@@ -6,6 +6,8 @@ import { useEffect, useState } from "react";
 import { generatePath, useNavigate } from "react-router-dom";
 import { firestore } from "../../../../firebase/clientApp";
 import { CardContainer, Horizontal, Title } from "./_innovatorStyle";
+import defaultHeader from "@public/images/default-header.svg";
+import defaultLogo from "@public/images/default-logo.svg";
 
 function Innovator() {
   const navigate = useNavigate();
@@ -16,10 +18,11 @@ function Innovator() {
     const fetchInnovators = async () => {
       const innovatorsSnapshot = await getDocs(innovatorsRef);
       const innovatorsData = innovatorsSnapshot.docs.map((doc) => doc.data());
+      console.log("ini datanya gan: ",innovatorsData);
       setInnovators(innovatorsData);
     };
     fetchInnovators();
-  }, [firestore]);
+  }, [innovatorsRef]);
 
   return (
     <Box padding="0 14px">
@@ -30,10 +33,9 @@ function Innovator() {
             <CardInnovator
               key={idx}
               id={item.id}
-              header={item.header}
-              logo={item.logo}
-              innovatorName={item.namaInovator}
-              description={item.deskripsi}
+              header={item.header || defaultHeader}
+              logo={item.logo || defaultLogo}
+              namaInovator={item.namaInovator}
               jumlahDesaDampingan={item.jumlahDesaDampingan}
               jumlahInovasi={item.jumlahInovasi}
               onClick={() =>

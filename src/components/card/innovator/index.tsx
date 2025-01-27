@@ -7,12 +7,14 @@ import {
   Logo,
 } from "./_cardInnovatorStyle";
 
+import defaultHeader from "@public/images/default-header.svg";
+import defaultLogo from "@public/images/default-logo.svg";
+
 type CardInnovatorProps = {
   id: string;
   header: string;
   logo: string;
-  innovatorName: string;
-  description: string;
+  namaInovator: string;
   jumlahDesaDampingan: number
   jumlahInovasi: number
   onClick: () => void;
@@ -22,7 +24,7 @@ function CardInnovator(props: CardInnovatorProps) {
   const {
     header,
     logo,
-    innovatorName,
+    namaInovator,
     onClick,
     jumlahDesaDampingan,
     jumlahInovasi
@@ -30,10 +32,10 @@ function CardInnovator(props: CardInnovatorProps) {
   
   return (
     <Container onClick={onClick}>
-      <Background src={header} alt={innovatorName} />
+      <Background src={header || defaultHeader} alt={namaInovator} />
       <CardContent>
-        <Logo src={logo} alt={logo} />
-        <Title>{innovatorName}</Title>
+        <Logo src={logo || defaultLogo } alt={logo} />
+        <Title>{namaInovator}</Title>
         <Description>{jumlahDesaDampingan} Desa Dampingan</Description>
         <Description>{jumlahInovasi} Inovasi</Description>
       </CardContent>

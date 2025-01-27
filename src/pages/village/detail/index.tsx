@@ -470,9 +470,18 @@ export default function DetailVillage() {
               )
             ) : (
               // Logika untuk Non-Admin
-              <Button width="100%" fontSize="14px" mb={8} onClick={onOpen}>
-                Kontak Desa
-              </Button>
+              <Flex flexGrow={1} position="sticky" bottom="0">
+                <Button
+                  width="100%"
+                  fontSize="14px"
+                  mb={8}
+                  position="sticky"
+                  bottom="0"
+                  onClick={onOpen}
+                >
+                  Kontak Desa
+                </Button>
+              </Flex>
             )}
           </Box>
           <RejectionModal
