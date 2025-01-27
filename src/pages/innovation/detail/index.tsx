@@ -251,7 +251,7 @@ function DetailInnovation() {
         <ActionContainer
           onClick={() =>
             navigate(
-              generatePath(paths.DETAIL_INNOVATOR_PAGE, {
+              generatePath(paths.INNOVATOR_PROFILE_PAGE, {
                 id: data.innovatorId,
               })
             )

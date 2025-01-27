@@ -1,14 +1,15 @@
 import { ChevronRightIcon } from "@chakra-ui/icons";
 import {
   Box,
+  Button,
   Flex,
   Icon,
   Image,
   Stack,
   Text,
-  useDisclosure
+  useDisclosure,
 } from "@chakra-ui/react";
-import Button from "Components/button";
+import Send from "Assets/icons/send.svg";
 import RejectionModal from "Components/confirmModal/RejectionModal";
 import Container from "Components/container";
 import ActionDrawer from "Components/drawer/ActionDrawer";
@@ -31,7 +32,6 @@ import { LuDot } from "react-icons/lu";
 import { TbPlant2 } from "react-icons/tb";
 import { generatePath, useNavigate, useParams } from "react-router-dom";
 import { auth, firestore } from "../../../firebase/clientApp";
-import ButtonPengajuan from "../components/hero/ButtonPengajuan"; // Impor tombol
 import InnovationPreview from "../components/hero/innovations";
 import {
   Background,
@@ -44,7 +44,7 @@ import {
 const DetailInnovator: React.FC = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const navigate = useNavigate();
-  const { id } = useParams(); // Ensure TypeScript knows id is a string
+  const { id } = useParams();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [innovatorData, setInnovatorData] = useState<DocumentData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -52,6 +52,7 @@ const DetailInnovator: React.FC = () => {
   const [innovations, setInnovations] = useState<DocumentData[]>([]);
   const [villages, setVillages] = useState<DocumentData[]>([]); // Add state for villages
   const [admin, setAdmin] = useState(false);
+  const [owner, setOwner] = useState(false);
   const [userLogin] = useAuthState(auth);
   const [openModal, setOpenModal] = useState(false);
   const [modalInput, setModalInput] = useState("");
@@ -109,11 +110,14 @@ const DetailInnovator: React.FC = () => {
         const userDoc = await getDoc(userRef);
         if (userDoc.exists()) {
           setAdmin(userDoc.data().role === "admin");
+          if (id === userLogin.uid) {
+            setOwner(true);
+          }
         }
       }
-    }
+    };
     fetchUser();
-  })
+  });
   // Fetch innovator data
   useEffect(() => {
     if (!id) {
@@ -214,10 +218,20 @@ const DetailInnovator: React.FC = () => {
           right="16px"
           transform="translateY(-50%)"
         >
-          <ButtonPengajuan
-            label="Pengajuan Inovasi" // Teks tombol
-            to="/innovator/profile/pengajuanInovasi"
-          />
+          {owner && (
+            <Button
+              leftIcon={<Image src={Send} alt="send" />}
+              onClick={onOpen}
+              fontSize="12px"
+              fontWeight="500"
+              height="29px"
+              width="136px"
+              padding="6px 8px"
+              borderRadius="4px"
+            >
+              Pengajuan Inovasi
+            </Button>
+          )}
         </Box>
       </Flex>
       <ContentContainer>
@@ -257,7 +271,7 @@ const DetailInnovator: React.FC = () => {
                   overflowWrap="break-word"
                   fontSize="12px"
                 >
-                  08126489023
+                  {innovatorData.whatsapp}
                 </Text>
               </Flex>
               <Flex
@@ -275,7 +289,7 @@ const DetailInnovator: React.FC = () => {
                   overflowWrap="break-word"
                   fontSize="12px"
                 >
-                  https://www.instagram.com/desasoge/
+                  {innovatorData.instagram}
                 </Text>
               </Flex>
               <Flex
@@ -293,7 +307,7 @@ const DetailInnovator: React.FC = () => {
                   overflowWrap="break-word"
                   fontSize="12px"
                 >
-                  https://www.instagram.com/desasoge/
+                  {innovatorData.website}
                 </Text>
               </Flex>
             </Flex>
@@ -411,7 +425,7 @@ const DetailInnovator: React.FC = () => {
             </Box>
           ))}
         </Flex>
-        <Button mt={-3} size="m" fullWidth type="submit" onClick={onOpen}>
+        <Button mt={-3} size="m"  type="submit" onClick={onOpen}>
           Kontak Inovator
         </Button>
         <RejectionModal

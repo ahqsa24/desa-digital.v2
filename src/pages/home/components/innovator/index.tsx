@@ -1,12 +1,11 @@
+import { Box } from "@chakra-ui/react";
 import CardInnovator from "Components/card/innovator";
-import Container from "Components/container";
 import { paths } from "Consts/path";
 import { DocumentData, collection, getDocs } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { generatePath, useNavigate } from "react-router-dom";
 import { firestore } from "../../../../firebase/clientApp";
 import { CardContainer, Horizontal, Title } from "./_innovatorStyle";
-import { Box } from "@chakra-ui/react";
 
 function Innovator() {
   const navigate = useNavigate();
@@ -39,7 +38,7 @@ function Innovator() {
               jumlahInovasi={item.jumlahInovasi}
               onClick={() =>
                 navigate(
-                  generatePath(paths.DETAIL_INNOVATOR_PAGE, { id: item.id })
+                  generatePath(paths.INNOVATOR_PROFILE_PAGE, { id: item.id })
                 )
               }
             />
