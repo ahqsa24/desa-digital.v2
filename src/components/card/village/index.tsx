@@ -9,6 +9,9 @@ import {
   Location,
 } from "./_cardVillageStyle";
 
+import badge1 from "@public/icons/badge-1.svg";
+import locationIcon from "@public/icons/location.svg";
+
 type CardVillageProps = {
   provinsi?: string;
   kabupatenKota?: string;
@@ -29,12 +32,12 @@ function CardVillage(props: CardVillageProps) {
         <Logo src={logo} alt={logo} />
         <ContBadge>
           {" "}
-          <img src="./src/assets/icons/badge-1.svg" alt="badge" />{" "}
+          <img src={badge1} alt="badge" />{" "}
         </ContBadge>
         <Title>{namaDesa}</Title>
         <Description>0 Inovasi diterapkan</Description>
         <Location>
-          <img src="./src/assets/icons/location.svg" alt="loc" />
+          <img src={locationIcon} alt="loc" />
           <Description>
             {kabupatenKota}, {provinsi}{" "}
           </Description>{" "}
