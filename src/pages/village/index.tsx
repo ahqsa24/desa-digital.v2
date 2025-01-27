@@ -96,7 +96,6 @@ const Village: React.FC = () => {
         };
       });
       setVillages(villagesData);
-      console.log(villagesData);
     };
     fetchData();
   }, [villagesRef]);
