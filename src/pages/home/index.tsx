@@ -144,7 +144,7 @@ function Home() {
   return (
     <Container page>
       <TopBar title="Desa Digital Indonesia" />
-      <Hero description='Inovasi Digital' text='Indonesia'/>
+      <Hero description='KMS Desa Digital' text='Indonesia'/>
       <Menu />
       <Readiness />
       <Box padding='0 14px' mt={4}>
