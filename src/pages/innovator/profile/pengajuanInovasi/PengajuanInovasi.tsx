@@ -1,27 +1,24 @@
-import React from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { ChevronDownIcon } from '@chakra-ui/icons';
 import {
     Box,
-    Flex,
-    Popover,
-    PopoverTrigger,
-    PopoverContent,
-    PopoverHeader,
-    PopoverBody,
-    PopoverFooter,
-    PopoverArrow,
-    PopoverCloseButton,
     Button,
     Checkbox,
-    VStack,
-    Icon,
+    Flex,
+    Popover,
+    PopoverArrow,
+    PopoverBody,
+    PopoverCloseButton,
+    PopoverContent,
+    PopoverFooter,
+    PopoverHeader,
+    PopoverTrigger,
+    VStack
 } from '@chakra-ui/react';
-import { ChevronDownIcon } from '@chakra-ui/icons';
 import TopBar from 'Components/topBar';
-import Container from 'Components/container';
-import SearchBarInnov from '../../components/hero/SearchBarInnov';
+import React from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import CardPengajuanInovasi from '../../components/hero/CardPengajuanInovasi';
-import CardKlaim from 'Components/card/cardklaim';
+import SearchBarInnov from '../../components/hero/SearchBarInnov';
 
 const PengajuanInovasi: React.FC = () => {
     const navigate = useNavigate();

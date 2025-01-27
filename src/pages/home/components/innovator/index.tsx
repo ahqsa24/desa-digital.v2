@@ -1,12 +1,13 @@
+import { Box } from "@chakra-ui/react";
 import CardInnovator from "Components/card/innovator";
-import Container from "Components/container";
 import { paths } from "Consts/path";
 import { DocumentData, collection, getDocs } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { generatePath, useNavigate } from "react-router-dom";
 import { firestore } from "../../../../firebase/clientApp";
 import { CardContainer, Horizontal, Title } from "./_innovatorStyle";
-import { Box } from "@chakra-ui/react";
+import defaultHeader from "@public/images/default-header.svg";
+import defaultLogo from "@public/images/default-logo.svg";
 
 function Innovator() {
   const navigate = useNavigate();
@@ -20,7 +21,7 @@ function Innovator() {
       setInnovators(innovatorsData);
     };
     fetchInnovators();
-  }, [firestore]);
+  }, [innovatorsRef]);
 
   return (
     <Box padding="0">
@@ -31,15 +32,14 @@ function Innovator() {
             <CardInnovator
               key={idx}
               id={item.id}
-              header={item.header}
-              logo={item.logo}
-              innovatorName={item.namaInovator}
-              description={item.deskripsi}
+              header={item.header || defaultHeader}
+              logo={item.logo || defaultLogo}
+              namaInovator={item.namaInovator}
               jumlahDesaDampingan={item.jumlahDesaDampingan}
               jumlahInovasi={item.jumlahInovasi}
               onClick={() =>
                 navigate(
-                  generatePath(paths.DETAIL_INNOVATOR_PAGE, { id: item.id })
+                  generatePath(paths.INNOVATOR_PROFILE_PAGE, { id: item.id })
                 )
               }
             />

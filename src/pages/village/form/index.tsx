@@ -12,12 +12,11 @@ import LocationSelector from "Components/form/LocationSellector";
 import MultiSellect from "Components/form/MultiSellect";
 import TopBar from "Components/topBar";
 import {
-  deleteField,
   doc,
   getDoc,
   serverTimestamp,
   setDoc,
-  updateDoc,
+  updateDoc
 } from "firebase/firestore";
 import {
   deleteObject,
@@ -40,9 +39,9 @@ import {
   getVillages,
 } from "../../../services/locationServices";
 
-interface Location {
-  id: string;
-  name: string;
+interface Option {
+  value: string;
+  label: string;
 }
 
 const AddVillage: React.FC = () => {
@@ -83,22 +82,20 @@ const AddVillage: React.FC = () => {
     { value: "pariwisata", label: "Pariwisata" },
     { value: "industri", label: "Industri" },
   ];
-  const [provinces, setProvinces] = useState<Location[]>([]);
-  const [regencies, setRegencies] = useState<Location[]>([]);
-  const [districts, setDistricts] = useState<Location[]>([]);
-  const [villages, setVillages] = useState<Location[]>([]);
+  const [provinces, setProvinces] = useState<Option[]>([]);
+  const [regencies, setRegencies] = useState<Option[]>([]);
+  const [districts, setDistricts] = useState<Option[]>([]);
+  const [villages, setVillages] = useState<Option[]>([]);
 
-  const [selectedProvince, setSelectedProvince] = useState<Location | null>(
-    null
-  );
-  const [selectedRegency, setSelectedRegency] = useState<Location | null>(null);
-  const [selectedDistrict, setSelectedDistrict] = useState<Location | null>(
-    null
-  );
-  const [selectedVillage, setSelectedVillage] = useState<Location | null>(null);
+  const [selectedProvince, setSelectedProvince] = useState<Option | null>(null);
+  const [selectedRegency, setSelectedRegency] = useState<Option | null>(null);
+  const [selectedDistrict, setSelectedDistrict] = useState<Option | null>(null);
+  const [selectedVillage, setSelectedVillage] = useState<Option | null>(null);
+
   const [selectedPotensi, setSelectedPotensi] = useState<
     { value: string; label: string }[]
   >([]);
+
   const [alertStatus, setAlertStatus] = useState<"info" | "warning" | "error">(
     "warning"
   );
@@ -106,19 +103,23 @@ const AddVillage: React.FC = () => {
     "Profil masih kosong. Silahkan isi data di bawah terlebih dahulu."
   );
 
-  const fetchProvinces = async () => {
-    try {
-      const provincesData = await getProvinces();
-      setProvinces(provincesData);
-    } catch (error) {
-      console.error("Error fetching provinces:", error);
-    }
-  };
+   const fetchProvinces = async () => {
+     try {
+       const provincesData = await getProvinces();
+       setProvinces(
+         provincesData.map((loc) => ({ value: loc.id, label: loc.name }))
+       );
+     } catch (error) {
+       console.error("Error fetching provinces:", error);
+     }
+   };
 
   const fetchRegencies = async (provinceId: string) => {
     try {
       const regenciesData = await getRegencies(provinceId);
-      setRegencies(regenciesData);
+      setRegencies(
+        regenciesData.map((loc) => ({ value: loc.id, label: loc.name }))
+      );
     } catch (error) {
       console.error("Error fetching regencies:", error);
     }
@@ -127,7 +128,9 @@ const AddVillage: React.FC = () => {
   const fetchDistricts = async (regencyId: string) => {
     try {
       const districtsData = await getDistricts(regencyId);
-      setDistricts(districtsData);
+      setDistricts(
+        districtsData.map((loc) => ({ value: loc.id, label: loc.name }))
+      );
     } catch (error) {
       console.error("Error fetching districts:", error);
     }
@@ -136,7 +139,9 @@ const AddVillage: React.FC = () => {
   const fetchVillages = async (districtId: string) => {
     try {
       const villagesData = await getVillages(districtId);
-      setVillages(villagesData);
+      setVillages(
+        villagesData.map((loc) => ({ value: loc.id, label: loc.name }))
+      );
     } catch (error) {
       console.error("Error fetching villages:", error);
     }
@@ -146,7 +151,7 @@ const AddVillage: React.FC = () => {
     fetchProvinces();
   }, []);
 
-  const handleProvinceChange = (selected: any) => {
+  const handleProvinceChange = (selected: Option | null) => {
     setSelectedProvince(selected);
     setSelectedRegency(null);
     setSelectedDistrict(null);
@@ -155,35 +160,29 @@ const AddVillage: React.FC = () => {
     setDistricts([]);
     setVillages([]);
     if (selected) fetchRegencies(selected.value);
-    console.log(selected);
   };
 
-  const handleRegencyChange = (selected: any) => {
+  const handleRegencyChange = (selected: Option | null) => {
     setSelectedRegency(selected);
     setSelectedDistrict(null);
     setSelectedVillage(null);
     setDistricts([]);
     setVillages([]);
     if (selected) fetchDistricts(selected.value);
-    console.log(selected);
   };
 
-  const handleDistrictChange = (selected: any) => {
-    setSelectedDistrict(selected);
-    setSelectedVillage(null);
-    setVillages([]);
-    if (selected) fetchVillages(selected.value);
-  };
+   const handleDistrictChange = (selected: Option | null) => {
+     setSelectedDistrict(selected);
+     setSelectedVillage(null);
+     setVillages([]);
+     if (selected) fetchVillages(selected.value);
+   };
 
-  const handleVillageChange = (selected: any) => {
+  const handleVillageChange = (selected: Option | null) => {
     setSelectedVillage(selected);
   };
 
-  const mapToOptions = (
-    locations: Location[]
-  ): { value: string; label: string }[] =>
-    locations.map((loc) => ({ value: loc.id, label: loc.name }));
-
+  
   const onSelectImage = (
     event: React.ChangeEvent<HTMLInputElement>,
     maxFiles: number
@@ -563,6 +562,7 @@ const AddVillage: React.FC = () => {
             label: potensi.charAt(0).toUpperCase() + potensi.slice(1),
           }))
         );
+        
         setSelectedLogo(data.logo);
         setSelectedHeader(data.header);
         setSelectedFiles(Object.values(data.images || {}));
@@ -621,7 +621,7 @@ const AddVillage: React.FC = () => {
               <LocationSelector
                 label="Provinsi"
                 placeholder="Pilih Provinsi"
-                options={mapToOptions(provinces)}
+                options={provinces}
                 value={selectedProvince}
                 onChange={handleProvinceChange}
                 isRequired
@@ -631,7 +631,7 @@ const AddVillage: React.FC = () => {
               <LocationSelector
                 label="Kabupaten/Kota"
                 placeholder="Pilih Kabupaten/Kota"
-                options={mapToOptions(regencies)}
+                options={regencies}
                 value={selectedRegency}
                 onChange={handleRegencyChange}
                 isDisabled={!selectedProvince}
@@ -641,7 +641,7 @@ const AddVillage: React.FC = () => {
               <LocationSelector
                 label="Kecamatan"
                 placeholder="Pilih Kecamatan"
-                options={mapToOptions(districts)}
+                options={districts}
                 value={selectedDistrict}
                 onChange={handleDistrictChange}
                 isDisabled={!selectedRegency}
@@ -651,7 +651,7 @@ const AddVillage: React.FC = () => {
               <LocationSelector
                 label="Desa/Kelurahan"
                 placeholder="Pilih Kelurahan"
-                options={mapToOptions(villages)}
+                options={villages}
                 value={selectedVillage}
                 onChange={handleVillageChange}
                 isDisabled={!selectedDistrict}
@@ -729,7 +729,7 @@ const AddVillage: React.FC = () => {
                 value={selectedPotensi}
                 onChange={(selected) => setSelectedPotensi(selected)}
                 disabled={!isEditable}
-              />
+              /> 
 
               <Box>
                 <Text fontWeight="700" fontSize="16px" mb="6px">

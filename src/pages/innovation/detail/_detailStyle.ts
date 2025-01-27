@@ -123,7 +123,7 @@ export const ChipContainer = styled.div`
   gap: 8px;
   margin-top: 8px;
   align-items: center;
-  white-space: nowrap;
+  flex-wrap: wrap;
 `;
 
 export const BenefitContainer = styled.div`

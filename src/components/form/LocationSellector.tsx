@@ -7,7 +7,7 @@ interface LocationSelectorProps {
   placeholder: string;
   options: { value: string; label: string }[];
   value: { value: string; label: string } | null;
-  onChange: (selected: any) => void;
+  onChange: (selected: { value: string; label: string } | null) => void;
   isDisabled?: boolean;
   isRequired?: boolean;
   disabled?: boolean;

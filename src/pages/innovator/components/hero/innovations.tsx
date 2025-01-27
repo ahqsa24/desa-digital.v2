@@ -1,10 +1,15 @@
 import React from "react";
 import { Flex, Text, Box } from "@chakra-ui/react";
-import { useNavigate } from "react-router-dom";
+import { generatePath, useNavigate } from "react-router-dom";
 import CardInnovation from "Components/card/innovation";
+import { paths } from "Consts/path";
 
 const InnovationPreview = ({ innovations, innovatorId }: any) => {
   const navigate = useNavigate();
+  const handleClick = (id : string) =>  {
+    const path = generatePath(paths.DETAIL_INNOVATION_PAGE, { id });
+    navigate(path);
+  }
 
   // Cek jumlah inovasi
   const hasMoreInnovations = innovations.length > 2;
@@ -23,7 +28,7 @@ const InnovationPreview = ({ innovations, innovatorId }: any) => {
             color="#347357"
             cursor="pointer"
             textDecoration="underline"
-            onClick={() => navigate(`/innovator/${innovatorId}/all-innovations`)}
+            // onClick={() => navigate(`/innovator/${innovatorId}/all-innovations`)}
           >
             Lihat Semua
           </Text>
@@ -40,7 +45,7 @@ const InnovationPreview = ({ innovations, innovatorId }: any) => {
         align="stretch"
       >
         {innovations.slice(0, 2).map((innovation: any, idx: number) => (
-          <Box key={idx} width="calc(50% - 8px)" display="flex" flexDirection="column"> {/* 50% agar 2 card tampil berdampingan */}
+          <Box key={idx} width="calc(50% - 8px)" display="flex" flexDirection="column" >
             <CardInnovation
               images={innovation.images}
               namaInovasi={innovation.namaInovasi}
@@ -49,6 +54,7 @@ const InnovationPreview = ({ innovations, innovatorId }: any) => {
               jumlahDiterapkan={innovation.jumlahDiterapkan}
               innovatorLogo={innovation.innovatorImgURL}
               innovatorName={innovation.namaInnovator}
+              onClick={() => handleClick(innovation.id)}
             />
           </Box>
         ))}

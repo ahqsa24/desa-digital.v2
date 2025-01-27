@@ -41,6 +41,7 @@ import Send from "Assets/icons/send.svg";
 import { Icon, NavbarButton } from "../../village/profile/_profileStyle";
 import StatusCard from "Components/card/status/StatusCard";
 import RejectionModal from "Components/confirmModal/RejectionModal";
+import ActionDrawer from "Components/drawer/ActionDrawer";
 
 const ProfileInnovator: React.FC = () => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -143,7 +144,7 @@ const ProfileInnovator: React.FC = () => {
     };
 
     fetchInnovatorData();
-  }, );
+  }, [id, userLogin?.uid]);
 
   // Fetch innovations data
   useEffect(() => {
@@ -168,21 +169,7 @@ const ProfileInnovator: React.FC = () => {
     }
   }, [id]);
 
-  // Dummy data untuk Desa Dampingan, nantinya ini akan diganti dengan data dari Firestore
-  useEffect(() => {
-    const dummyVillages = [
-      {
-        id: "village1",
-        namaDesa: "Desa Puntang",
-        inovasiDiterapkan: [
-          "Pakan Otomatis (eFeeder)",
-          "Lapak Ikan (eFisheryFeed)",
-        ],
-        logo: "https://via.placeholder.com/50",
-      },
-    ];
-    setVillages(dummyVillages);
-  }, []);
+
 
   if (loading) {
     return <div>Loading...</div>;
@@ -204,8 +191,11 @@ const ProfileInnovator: React.FC = () => {
   };
 
   return (
-    <Box>
-      <TopBar title="Profil Saya" onBack={() => navigate(-1)} />
+    <>
+      <TopBar
+        title={owner ? "Profile Saya" : "Profil Inovator"}
+        onBack={() => navigate(-1)}
+      />
       <Flex position="relative">
         <Background src={innovatorData.header} alt="header" />
         <Logo src={innovatorData.logo} alt="logo" mx={16} my={-40} />
@@ -214,15 +204,18 @@ const ProfileInnovator: React.FC = () => {
         <Stack gap={2}>
           <Flex direction="column" align="flex-end" mb={owner ? 0 : 6}>
             {owner && (
-              <Button 
+              <Button
+              leftIcon={<Image src={Send} alt="send" />}
+              onClick={onOpen}
+              fontSize="12px"
+              fontWeight="500"
               height="29px"
               width="136px"
-              onClick={() => navigate(paths.PENGAJUAN_INOVASI_PAGE)}>
-                <Icon src={Send} />
-                <Text fontSize="12px" fontWeight="500" ml="4px">
-                  Pengajuan Inovasi
-                </Text>
-              </Button>
+              padding="6px 8px"
+              borderRadius="4px"
+            >
+              Pengajuan Inovasi
+            </Button>
             )}
           </Flex>
           <Title>{innovatorData.namaInovator}</Title>
@@ -247,41 +240,47 @@ const ProfileInnovator: React.FC = () => {
             <Text fontSize="16px" fontWeight="700" >
               Tentang
             </Text>
-            <Flex flexDirection="column" alignItems="flex-start" gap="16px">
-              <Flex
-                width="100%"
-                flexDirection="row"
-                alignItems="flex-start"
-                gap="16px"
-              >
-                <Box color="#4B5563" fontSize="12px" minWidth="110px">
-                  Nomor WhatsApp
-                </Box>
-                <Description>{innovatorData.whatsapp}</Description>
-              </Flex>
-              <Flex
-                width="100%"
-                flexDirection="row"
-                alignItems="flex-start"
-                gap="16px"
-              >
-                <Box color="#4B5563" fontSize="12px" minWidth="110px">
-                  Link Instagram
-                </Box>
-                <Description>{innovatorData.instagram}</Description>
-              </Flex>
-              <Flex
-                width="100%"
-                flexDirection="row"
-                alignItems="flex-start"
-                gap="16px"
-                paddingBottom="12px"
-              >
-                <Box color="#4B5563" fontSize="12px" minWidth="110px">
-                  Link Website
-                </Box>
-                <Description>{innovatorData.website}</Description>
-              </Flex>
+            <Flex flexDirection="column" alignItems="flex-start" gap="12px">
+              {owner && (
+                <>
+                  <Flex
+                    width="100%"
+                    flexDirection="row"
+                    alignItems="flex-start"
+                    gap="16px"
+                    paddingBottom="12px"
+                  >
+                    <Box color="#4B5563" fontSize="12px" minWidth="110px">
+                      Nomor WhatsApp
+                    </Box>
+                    <Description>{innovatorData.whatsapp}</Description>
+                  </Flex>
+                  <Flex
+                    width="100%"
+                    flexDirection="row"
+                    alignItems="flex-start"
+                    gap="16px"
+                    paddingBottom="12px"
+                  >
+                    <Box color="#4B5563" fontSize="12px" minWidth="110px">
+                      Link Instagram
+                    </Box>
+                    <Description>{innovatorData.instagram}</Description>
+                  </Flex>
+                  <Flex
+                    width="100%"
+                    flexDirection="row"
+                    alignItems="flex-start"
+                    gap="16px"
+                    paddingBottom="12px"
+                  >
+                    <Box color="#4B5563" fontSize="12px" minWidth="110px">
+                      Link Website
+                    </Box>
+                    <Description>{innovatorData.website}</Description>
+                  </Flex>
+                </>
+              )}
             </Flex>
 
             <Flex direction="row" alignItems="center" mt="-10px" >
@@ -415,7 +414,7 @@ const ProfileInnovator: React.FC = () => {
       ) : (
         <NavbarButton>
           <Button width="100%" onClick={onOpen}>
-            Edit Profil
+            Kontak Inovator
           </Button>
         </NavbarButton>
       )}
@@ -427,7 +426,16 @@ const ProfileInnovator: React.FC = () => {
         message={modalInput}
         loading={loading}
       />
-    </Box>
+      <ActionDrawer
+        isOpen={isOpen}
+        onClose={onClose}
+        onVerify={handleVerify}
+        isAdmin={admin}
+        role="Inovator"
+        loading={loading}
+        setOpenModal={setOpenModal}
+      />
+    </>
   );
 };
 

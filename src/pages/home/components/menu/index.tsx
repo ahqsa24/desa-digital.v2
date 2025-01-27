@@ -7,6 +7,19 @@ import { MenuContainer, GridContainer, GridItem } from "./_menuStyle";
 import { useQuery } from "react-query";
 import { getCategories } from "Services/categoryServices";
 
+import SmartAgriIcon from "@public/icons/smart-agri.svg";
+import AgriFoodIcon from "@public/icons/agri-food.svg";
+import EGovernmentIcon from "@public/icons/e-government.svg";
+import InformationSystemIcon from "@public/icons/information-system.svg";
+import LocalInfrastructureIcon from "@public/icons/local-infrastructure.svg";
+import MenuAllIcon from "@public/icons/menu-all.svg";
+
+import VerifDesaIcon from "@public/icons/verifikasi-desa.svg";
+import VerifInnovatorIcon from "@public/icons/verifikasi-innovator.svg";
+import VerifKlaimIcon from "@public/icons/verifikasi-klaim.svg";
+import VerifTambahInnovasiIcon from "@public/icons/verifikasi-tambah-innovasi.svg";
+import PembuatanIklanIcon from "@public/icons/pembuatan-innovasi.svg";
+
 import React from "react";
 import { Image, Text } from "@chakra-ui/react";
 
@@ -20,59 +33,61 @@ const Menu: React.FC<MenuProps> = ({ isAdmin = false }) => {
 
   const predefinedCategories = [
     {
-      icon: "./src/assets/icons/smart-agri.svg",
+      icon: SmartAgriIcon,
       title: "Pertanian Cerdas",
     },
     {
-      icon: "./src/assets/icons/agri-food.svg",
+      icon: AgriFoodIcon,
       title: "Pemasaran Agri-Food dan E-Commerce",
     },
     {
-      icon: "./src/assets/icons/e-government.svg",
+      icon: EGovernmentIcon,
       title: "E-Government",
     },
     {
-      icon: "./src/assets/icons/information-system.svg",
+      icon: InformationSystemIcon,
       title: "Sistem Informasi",
     },
     {
-      icon: "./src/assets/icons/local-infrastructure.svg",
+      icon: LocalInfrastructureIcon,
       title: "Infrastruktur Lokal",
     },
     {
-      icon: "./src/assets/icons/menu-all.svg",
+      icon: MenuAllIcon,
       title: "Semua Kategori Inovasi",
     },
   ];
 
   const adminMenu = [
     {
-      icon: "./src/assets/icons/verifikasi-desa.svg",
+      icon: VerifDesaIcon,
       title: "Verifikasi Desa",
     },
     {
-      icon: "./src/assets/icons/verifikasi-innovator.svg",
+      icon: VerifInnovatorIcon,
       title: "Verifikasi Inovator",
     },
     {
-      icon: "./src/assets/icons/verifikasi-klaim.svg",
+      icon: VerifKlaimIcon,
       title: "Verifikasi Klaim Inovasi",
     },
     {
-      icon: "./src/assets/icons/verifikasi-tambah-innovasi.svg",
+      icon: VerifTambahInnovasiIcon,
       title: "Verifikasi Tambah Inovasi",
     },
     {
-      icon: "./src/assets/icons/pembuatan-innovasi.svg",
+      icon: PembuatanIklanIcon,
       title: "Pembuatan Iklan",
     },
     {
-      icon: "./src/assets/icons/menu-all.svg",
+      icon: MenuAllIcon,
       title: "Semua Kategori Inovasi",
     },
   ];
 
-  const [menu, setMenu] = useState<{ icon: string; title: string }[]>([]);
+  const [menu, setMenu] = useState<
+    { icon: string | JSX.Element; title: string }[]
+  >([]);
   const menuItems = isAdmin ? adminMenu : predefinedCategories;
 
   const onClick = (category: string) => {
@@ -81,7 +96,6 @@ const Menu: React.FC<MenuProps> = ({ isAdmin = false }) => {
       return;
     }
     const isAdminCategory = adminMenu.some((item) => item.title === category);
-    
 
     if (isAdmin && isAdminCategory) {
       const path = generatePath(paths.VERIFICATION_PAGE, {
@@ -101,17 +115,33 @@ const Menu: React.FC<MenuProps> = ({ isAdmin = false }) => {
     if (isFetched && data) {
       setMenu(menuItems);
     }
-  }, [isFetched, data, isAdmin]);
+  }, [isFetched, data, isAdmin, menuItems]);
 
   return (
     <Container>
       <MenuContainer>
         {isLoading && <Loading />}
+        {!isAdmin && !isLoading && (
+          <Text
+            textAlign="center"
+            // m="16px 0 16px 0"
+            mb="16px"
+            fontSize="14px"
+            fontWeight="700"
+            color="brand.100"
+          >
+            Kategori Inovasi
+          </Text>
+        )}
         {isFetched && (
           <GridContainer>
-            {menu?.map(({ icon, title }: any, idx: number) => (
+            {menu?.map(({ icon, title }: { icon: string | JSX.Element; title: string }, idx: number) => (
               <GridItem key={idx} onClick={() => onClick(title)}>
-                <Image src={icon} alt={title} width={12} height={12} />
+                {typeof icon === "string" ? (
+                  <Image src={icon} alt={title} width={10} height={10} />
+                ) : (
+                  icon
+                )}
                 <Text
                   fontSize="12px"
                   fontWeight="400"

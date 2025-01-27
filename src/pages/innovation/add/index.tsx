@@ -1,5 +1,6 @@
 import { AddIcon, DeleteIcon, MinusIcon } from "@chakra-ui/icons";
 import {
+  Alert,
   Box,
   Button,
   Checkbox,
@@ -18,20 +19,28 @@ import {
 } from "@chakra-ui/react";
 import Container from "Components/container";
 import TopBar from "Components/topBar";
-import { paths } from "Consts/path";
 import {
   addDoc,
   collection,
   doc,
   getDoc,
+  getDocs,
   increment,
+  query,
   serverTimestamp,
   updateDoc,
+  where
 } from "firebase/firestore";
-import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
-import React, { useRef, useState } from "react";
+import {
+  deleteObject,
+  getDownloadURL,
+  ref,
+  uploadBytesResumable,
+  uploadString,
+} from "firebase/storage";
+import React, { useEffect, useRef, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { generatePath, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 import ImageUpload from "../../../components/form/ImageUpload";
 import { auth, firestore, storage } from "../../../firebase/clientApp";
@@ -81,6 +90,20 @@ const targetUsersOptions = [
   { value: "Lainnya", label: "Lainnya" },
 ];
 
+const predefinedModels = [
+  "Gratis",
+  "Layanan Berbayar",
+  "Subsidi Parsial",
+  "Pusat Multi-Layanan",
+  "Koperasi",
+  "Model Kemitraan",
+  "Menciptakan Pasar",
+  "Pengumpulan Data",
+  "Pelatihan/Pendidikan",
+  "Perusahaan Sosial",
+  "Lain-lain",
+];
+
 const AddInnovation: React.FC = () => {
   const navigate = useNavigate();
   const [user] = useAuthState(auth);
@@ -98,15 +121,15 @@ const AddInnovation: React.FC = () => {
     priceMin: "",
     priceMax: "",
     customTargetUser: "",
-    benefit: "",
-    benefitDescription: "",
   });
   const [category, setCategory] = useState("");
   const [requirements, setRequirements] = useState<string[]>([]);
   const [newRequirement, setNewRequirement] = useState("");
   const [selectedModels, setSelectedModels] = useState<(string | number)[]>([]);
   const [otherBusinessModel, setOtherBusinessModel] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<OptionType | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<OptionType | null>(
+    null
+  );
   const [selectedTargetUser, setSelectedTargetUser] =
     useState<OptionType | null>(null);
   const [customTargetUser, setCustomTargetUser] = useState<string>("");
@@ -120,9 +143,10 @@ const AddInnovation: React.FC = () => {
     "Profil masih kosong. Silahkan isi data di bawah terlebih dahulu."
   );
   const [selectedStatus, setSelectedStatus] = useState("Masih diproduksi");
-  const [status, setStatus] = useState("")
-
+  const [status, setStatus] = useState("");
+  const [isEditable, setIsEditable] = useState(true);
   const toast = useToast();
+  const [innovationId, setInnovationId] = useState("");
 
   const onSelectImage = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -281,17 +305,8 @@ const AddInnovation: React.FC = () => {
       return;
     }
 
-    const {
-      name,
-      year,
-      description,
-      villages,
-      benefit,
-      benefitDescription,
-      priceMax,
-      priceMin,
-      otherBusinessModel,
-    } = textInputsValue;
+    const { name, year, description, villages, priceMax, priceMin } =
+      textInputsValue;
 
     // Fetch innovator data
     const userId = user.uid;
@@ -314,52 +329,146 @@ const AddInnovation: React.FC = () => {
 
     const innovatorData = innovatorDocSnap.data();
 
-    try {
-      const userId = user.uid;
-      const docRef = doc(firestore, "innovations")
+    let finalTargetUser = selectedTargetUser?.value || "";
+    if (
+      selectedTargetUser?.value === "Lainnya" &&
+      customTargetUser.trim() !== ""
+    ) {
+      finalTargetUser = customTargetUser.trim();
+    }
 
-      
-      const innovationDocRef = await addDoc(
-        collection(firestore, "innovations"),
-        {
+    const modelBisnis = selectedModels.filter((model) => model !== "Lain-lain");
+    if (
+      selectedModels.includes("Lain-lain") &&
+      otherBusinessModel.trim() !== ""
+    ) {
+      modelBisnis.push(otherBusinessModel);
+    }
+
+    const finalRequirements = [...requirements];
+    if (
+      newRequirement.trim() !== "" &&
+      !finalRequirements.includes(newRequirement.trim())
+    ) {
+      finalRequirements.push(newRequirement.trim());
+    }
+
+    try {
+      if (status === "Ditolak") {
+        const docRef = doc(firestore, "innovations", innovationId);
+        const docSnap = await getDoc(docRef);
+        const existingData = docSnap.data();
+        const existingImages = existingData?.images || [];
+
+        const imagesToDelete = existingImages.filter(
+          (img: string) => !selectedFiles.includes(img)
+        );
+
+        // Hapus gambar yang tidak ada dalam selectedFiles
+        if (imagesToDelete) {
+          for (const image of imagesToDelete) {
+            const imageRef = ref(storage, image);
+            await deleteObject(imageRef).catch((error) => {
+              console.error("Error deleting image:", error);
+            });
+          }
+        }
+
+        // Upload gambar baru yang ada dalam selectedFiles
+        const imagesRef = ref(storage, `innovations/${innovationId}/images`);
+        const downloadURLs: string[] = [];
+
+        for (let i = 0; i < selectedFiles.length; i++) {
+          const file = selectedFiles[i];
+
+          // Cek apakah file merupakan data URL (base64)
+          if (file.startsWith("data:")) {
+            // Jika file adalah data URL, upload ke Firebase Storage
+            const imageRef = ref(imagesRef, `${i}`);
+            await uploadString(imageRef, file, "data_url").then(async () => {
+              const downloadURL = await getDownloadURL(imageRef);
+              downloadURLs.push(downloadURL); // Tambahkan URL ke array
+              console.log("Updated new img: ", downloadURL);
+            });
+          } else {
+            // Jika file sudah berupa URL, langsung tambahkan ke array downloadURLs
+            downloadURLs.push(file);
+            console.log("Existing image URL added:", file);
+          }
+        }
+        // Update images URL di Firestore
+        await updateDoc(docRef, {
+          images: downloadURLs,
+        });
+
+        await updateDoc(docRef, {
           statusInovasi: selectedStatus,
           namaInovasi: name,
-          kategori: categoryOptions,
-          targetPengguna: targetUsersOptions,
+          kategori: selectedCategory?.label,
+          targetPengguna: finalTargetUser,
           tahunDibuat: year,
+          modelBisnis: selectedModels,
           deskripsi: description,
-          desaMenerapkan: villages,
           hargaMinimal: priceMin,
           hargaMaksimal: priceMax,
-          manfaat: benefit,
-          deskripsiManfaat: benefitDescription,
-          kebutuhan: requirements,
-          lainLain: otherBusinessModel,
-          innovatorId: user?.uid,
-          createdAt: serverTimestamp(),
+          manfaat: benefit.map((item) => ({
+            judul: item.benefit,
+            deskripsi: item.description,
+          })),
+          infrastruktur: finalRequirements,
           editedAt: serverTimestamp(),
-          namaInnovator: innovatorData?.namaInovator,
-          innovatorImgURL: innovatorData?.logo,
-        }
-      );
-
-      console.log("Document written with ID: ", innovationDocRef.id);
-
-      if (selectedFiles.length > 0) {
-        const imageUrls = await uploadFiles(selectedFiles, innovationDocRef.id);
-        await updateDoc(innovationDocRef, {
-          images: imageUrls,
+          status: "Menunggu",
         });
-        console.log("Images uploaded", imageUrls);
+        setStatus("Menunggu");
+        setAlertStatus("info");
+      } else {
+        const innovationDocRef = await addDoc(
+          collection(firestore, "innovations"),
+          {
+            statusInovasi: selectedStatus,
+            namaInovasi: name,
+            kategori: selectedCategory?.label,
+            targetPengguna: finalTargetUser,
+            tahunDibuat: year,
+            inputDesaMenerapkan: villages,
+            deskripsi: description,
+            hargaMinimal: priceMin,
+            hargaMaksimal: priceMax,
+            manfaat: benefit.map((item) => ({
+              judul: item.benefit,
+              deskripsi: item.description,
+            })),
+            infrastruktur: finalRequirements,
+            modelBisnis: modelBisnis,
+            createdAt: serverTimestamp(),
+            editedAt: serverTimestamp(),
+            status: "Menunggu",
+            catatanAdmin: null,
+            innovatorId: user.uid,
+            namaInnovator: innovatorData.namaInovator,
+            innovatorImgURL: innovatorData?.logo || null,
+            // desaMenerapkan: [
+            //   {
+            //     desaId: null,
+            //     namaDesa: null,
+            //     logo: null,
+            //     tanggalKlaim: null,
+            //   },
+            // ],
+          }
+        );
+
+        setInnovationId(innovationDocRef.id);
+        console.log("ID inovasi: ", innovationDocRef.id);
+
+        if (selectedFiles.length > 0) {
+          const imageUrls = await uploadFiles(selectedFiles, innovationId);
+          await updateDoc(innovationDocRef, {
+            images: imageUrls,
+          });
+          console.log("Images uploaded", imageUrls);
+        }
       }
-
-      setLoading(false);
-
-      // Update jumlahInovasi in innovators collection
-      const innovatorDocRef = doc(firestore, "innovators", user?.uid as string);
-      await updateDoc(innovatorDocRef, {
-        jumlahInovasi: increment(1),
-      });
 
       toast({
         title:
@@ -367,12 +476,8 @@ const AddInnovation: React.FC = () => {
         status: "success",
         duration: 3000,
         isClosable: true,
+        position: "top",
       });
-      navigate(
-        generatePath(paths.INNOVATION_CATEGORY_PAGE, {
-          category: category,
-        })
-      ); // Ganti dengan rute yang sesuai
     } catch (error) {
       console.log("error", error);
       setError("Gagal menambahkan inovasi");
@@ -384,20 +489,124 @@ const AddInnovation: React.FC = () => {
         isClosable: true,
       });
     }
+    setIsEditable(false);
+    setLoading(false);
+    setAlertStatus("info");
   };
 
-  const [isModal1Open, setIsModal1Open] = useState(false);
-    const [isModal2Open, setIsModal2Open] = useState(false);
-    const closeModal = () => {
-        setIsModal1Open(false);
-        setIsModal2Open(false);
+  useEffect(() => {
+    const checkExistingInnovation = async () => {
+      if (!user?.uid) return;
+
+      // Query untuk mengecek apakah pengguna sudah mengajukan inovasi sebelumnya
+      const innovationsQuery = query(
+        collection(firestore, "innovations"),
+        where("innovatorId", "==", user.uid),
+        where("status", "in", ["Menunggu", "Ditolak", "Terverifikasi"])
+      );
+
+      const querySnapshot = await getDocs(innovationsQuery);
+      if (!querySnapshot.empty) {
+        // Jika sudah ada inovasi, set ID inovasi dan statusnya
+        const existingDoc = querySnapshot.docs[0].data();
+        setInnovationId(querySnapshot.docs[0].id); // Menyimpan ID inovasi
+        setStatus(existingDoc.status); // Menyimpan status inovasi
+        console.log("Data Inovasi: ", existingDoc);
+      } else {
+        setInnovationId(""); // Tidak ada inovasi, reset ID
+      }
     };
 
-    const handleModal1Yes = () => {
-        setIsModal2Open(true);
-        setIsModal1Open(false); // Tutup modal pertama
-        // Di sini tidak membuka modal kedua
+    checkExistingInnovation();
+  }, [user?.uid]);
+
+  useEffect(() => {
+    if (!innovationId) return;
+
+    const fetchInnovationData = async () => {
+      const docRef = doc(firestore, "innovations", innovationId);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        setTextInputsValue({
+          name: data.namaInovasi || "",
+          year: data.tahunDibuat || "",
+          description: data.deskripsi || "",
+          villages: data.inputDesaMenerapkan || "",
+          priceMin: data.hargaMinimal || "",
+          priceMax: data.hargaMaksimal || "",
+          otherBusinessModel: data.otherBusinessModel || "",
+          customTargetUser: data.customTargetUser || "",
+        });
+        setSelectedStatus(data.statusInovasi || "");
+        setSelectedCategory({
+          value: data.kategori || "",
+          label: data.kategori || "",
+        });
+        setSelectedTargetUser({
+          value: data.targetPengguna || "",
+          label: data.targetPengguna || "",
+        });
+        const otherModel = data.modelBisnis?.find(
+          (model: string) => !predefinedModels.includes(model)
+        );
+
+        if (otherModel) {
+          setOtherBusinessModel(otherModel);
+          setSelectedModels([
+            ...data.modelBisnis.filter((model: string) => model !== otherModel),
+            "Lain-lain",
+          ]);
+        } else {
+          setSelectedModels(data.modelBisnis || []);
+        }
+        const mappedManfaat =
+          data.manfaat?.map((item: { judul: string; deskripsi: string }) => ({
+            benefit: item.judul || "", // Mapping 'judul' ke 'benefit'
+            description: item.deskripsi || "", // Mapping 'deskripsi' ke 'description'
+          })) || [];
+
+        setBenefit(mappedManfaat);
+        // const mappedInfrastuktur
+        setRequirements(data.infrastruktur || []);
+        setSelectedFiles(data.images || []);
+
+        if (data.status === "Menunggu") {
+          setIsEditable(false); // Jika status "pending", form tidak bisa diedit
+          setStatus("Menunggu");
+          setAlertStatus("info");
+          setAlertMessage(
+            `Inovasi sudah didaftakan. Menunggu verifikasi admin.`
+          );
+        } else if (data.status === "Ditolak") {
+          setIsEditable(true); // Jika diverifikasi atau ditolak, form bisa diedit
+          setStatus("Ditolak");
+          setAlertStatus("error");
+          setAlertMessage(
+            `Pengajuan ditolak dengan catatan: ${data.catatanAdmin || ""}`
+          );
+        } else if (data.status === "Terverifikasi") {
+          // Update jumlahInovasi in innovators collection
+          const innovatorDocRef = doc(
+            firestore,
+            "innovators",
+            user?.uid as string
+          );
+          await updateDoc(innovatorDocRef, {
+            jumlahInovasi: increment(1),
+          });
+        }
+      }
     };
+    fetchInnovationData();
+  }, [innovationId]);
+  const splitModels = (models: string[], num: number) => {
+    const midpoint = Math.ceil(models.length / num);
+    return [models.slice(0, midpoint), models.slice(midpoint)];
+  };
+
+  // Bagi daftar model bisnis menjadi dua kolom
+  const [firstColumn, secondColumn] = splitModels(predefinedModels, 2);
 
   const options = [
     { value: "1", label: "Masih diproduksi" },
@@ -443,6 +652,14 @@ const AddInnovation: React.FC = () => {
         <Box p="0 16px">
           <Flex direction="column" marginTop="24px">
             <Stack spacing={3} width="100%">
+              <Alert
+                status={alertStatus}
+                fontSize={12}
+                borderRadius={4}
+                padding="8px"
+              >
+                {alertMessage}
+              </Alert>
               <Text fontWeight="400" fontSize="14px" mb="-2">
                 Status Inovasi <span style={{ color: "red" }}>*</span>
               </Text>
@@ -450,6 +667,7 @@ const AddInnovation: React.FC = () => {
                 defaultValue="Masih diproduksi"
                 name="status"
                 onChange={(value) => setSelectedStatus(value)}
+                isDisabled={!isEditable}
               >
                 <HStack spacing={4}>
                   {options.map((option) => (
@@ -478,6 +696,7 @@ const AddInnovation: React.FC = () => {
                 name="name"
                 fontSize="14px"
                 placeholder="Nama Inovasi"
+                isDisabled={!isEditable}
                 _placeholder={{ color: "#9CA3AF" }}
                 _focus={{
                   outline: "none",
@@ -495,12 +714,13 @@ const AddInnovation: React.FC = () => {
                 placeholder="Pilih kategori"
                 options={categoryOptions}
                 value={selectedCategory}
+                isDisabled={!isEditable}
                 onChange={(selectedOption) =>
                   setSelectedCategory(selectedOption)
                 }
                 styles={customStyles} // Terapkan gaya khusus
                 isClearable
-              ></Select>
+              />
 
               <Text fontWeight="400" fontSize="14px" mb="-2">
                 Target Pengguna <span style={{ color: "red" }}>*</span>
@@ -509,6 +729,7 @@ const AddInnovation: React.FC = () => {
                 placeholder="Pilih target pengguna"
                 options={targetUsersOptions}
                 value={selectedTargetUser}
+                isDisabled={!isEditable}
                 onChange={handleTargetUserChange}
                 styles={customStyles} // Terapkan gaya yang sama
                 isClearable
@@ -518,6 +739,7 @@ const AddInnovation: React.FC = () => {
                   name="customTargetUser"
                   fontSize="14px"
                   placeholder="Masukkan target pengguna"
+                  disabled={!isEditable}
                   _placeholder={{ color: "#9CA3AF" }}
                   _focus={{
                     outline: "none",
@@ -537,6 +759,7 @@ const AddInnovation: React.FC = () => {
                 name="year"
                 fontSize="14px"
                 placeholder="Ketik tahun"
+                disabled={!isEditable}
                 _placeholder={{ color: "#9CA3AF" }}
                 _focus={{
                   outline: "none",
@@ -555,6 +778,7 @@ const AddInnovation: React.FC = () => {
                   name="description"
                   fontSize="14px"
                   placeholder="Masukkan deskripsi singkat tentang inovasi"
+                  disabled={!isEditable}
                   _placeholder={{ color: "#9CA3AF" }}
                   _focus={{
                     outline: "none",
@@ -575,122 +799,84 @@ const AddInnovation: React.FC = () => {
                 </Text>
               </Flex>
 
-              <Text fontWeight="400" fontSize="14px" mb="-2">
-                Model Bisnis Digital <span style={{ color: "red" }}>*</span>
-              </Text>
-              <CheckboxGroup
-                colorScheme="green"
-                value={selectedModels}
-                onChange={(values) => setSelectedModels(values)}
-              >
-                <Text
-                  fontWeight="400"
-                  fontStyle="normal"
-                  fontSize="10px"
-                  color="#9CA3AF"
-                  mb="-2"
-                >
-                  Dapat lebih dari 1
-                </Text>
-                <Flex gap={4}>
-                  {/* Kolom Pertama */}
-                  <Flex direction="column" gap={1}>
-                    {[
-                      "Gratis",
-                      "Layanan Berbayar",
-                      "Subsidi Parsial",
-                      "Pusat Multi-Layanan",
-                      "Koperasi",
-                      "Lain-lain",
-                    ].map((model, index) => (
-                      <Checkbox
-                        key={index}
-                        value={model}
-                        sx={{
-                          "& .chakra-checkbox__control": {
-                            borderColor: "#9CA3AF", // Warna border
-                            borderWidth: "1px", // Ketebalan garis
-                          },
-                          ".chakra-checkbox__label": {
-                            fontSize: "12px",
-                            fontStyle: "normal",
-                          },
-                        }}
-                      >
-                        {model}
-                      </Checkbox>
-                    ))}
-                  </Flex>
-                  {/* Kolom Kedua */}
-                  <Flex direction="column" gap={1}>
-                    {[
-                      "Model Kemitraan",
-                      "Menciptakan Pasar",
-                      "Pengumpulan Data",
-                      "Pelatihan/Pendidikan",
-                      "Perusahaan Sosial",
-                    ].map((model, index) => (
-                      <Checkbox
-                        key={index}
-                        value={model}
-                        sx={{
-                          "& .chakra-checkbox__control": {
-                            borderColor: "#9CA3AF", // Warna border
-                            borderWidth: "1px", // Ketebalan garis
-                          },
-                          ".chakra-checkbox__label": {
-                            fontSize: "12px",
-                            fontStyle: "normal",
-                          },
-                        }}
-                      >
-                        {model}
-                      </Checkbox>
-                    ))}
-                  </Flex>
-                </Flex>
-              </CheckboxGroup>
-              {selectedModels.includes("Lain-lain") && (
-                <Flex direction="column" alignItems="flex-start">
-                  <Input
-                    name="otherBusinessModel"
-                    placeholder="Silahkan tulis model bisnis lainnya"
-                    value={otherBusinessModel}
-                    onChange={(e) => {
-                      const wordCount = e.target.value
-                        .split(/\s+/)
-                        .filter((word) => word !== "").length;
-                      if (wordCount <= 5) {
-                        setOtherBusinessModel(e.target.value);
-                      }
-                    }}
-                    fontSize="14px"
-                    fontStyle="normal"
-                    mt={-2} // Margin atas agar ada jarak dari checkbox
-                    _placeholder={{ color: "#9CA3AF" }}
-                    _focus={{
-                      outline: "none",
-                      boxShadow: "0 0px 0 0 blue",
-                    }}
-                    border="none"
-                    borderBottom="1px solid #9CA3AF"
-                    borderRadius="0"
-                  />
-                  <Text
-                    fontWeight="400"
-                    fontStyle="normal"
-                    fontSize="10px"
-                    color="#9CA3AF"
-                  >
-                    {
-                      otherBusinessModel
-                        .split(/\s+/)
-                        .filter((word) => word !== "").length
-                    }
-                    /5 kata
+              <Stack spacing={1}>
+                <div>
+                  <Text fontWeight="400" fontSize="14px">
+                    Model Bisnis Digital <span style={{ color: "red" }}>*</span>
                   </Text>
-                </Flex>
-              )}
+                  <Text fontWeight="400" fontSize="10px" color="#9CA3AF">
+                    Dapat lebih dari 1
+                  </Text>
+                </div>
+                <div>
+                  <CheckboxGroup
+                    colorScheme="green"
+                    value={selectedModels}
+                    onChange={setSelectedModels}
+                    isDisabled={!isEditable}
+                  >
+                    <Flex gap={4}>
+                      {[firstColumn, secondColumn].map((column, colIndex) => (
+                        <Flex key={colIndex} direction="column" gap={1}>
+                          {column.map((model, index) => (
+                            <Checkbox
+                              key={index}
+                              value={model}
+                              sx={{
+                                "& .chakra-checkbox__control": {
+                                  borderColor: "#9CA3AF",
+                                  borderWidth: "1px",
+                                },
+                                ".chakra-checkbox__label": {
+                                  fontSize: "12px",
+                                  fontStyle: "normal",
+                                },
+                              }}
+                            >
+                              {model}
+                            </Checkbox>
+                          ))}
+                        </Flex>
+                      ))}
+                    </Flex>
+                  </CheckboxGroup>
+                </div>
+
+                {selectedModels.includes("Lain-lain") && (
+                  <Flex direction="column" alignItems="flex-start">
+                    <Input
+                      name="otherBusinessModel"
+                      placeholder="Silahkan tulis model bisnis lainnya"
+                      value={otherBusinessModel}
+                      disabled={!isEditable}
+                      onChange={(e) => {
+                        const wordCount = e.target.value
+                          .split(/\s+/)
+                          .filter((word) => word !== "").length;
+                        if (wordCount <= 5) {
+                          setOtherBusinessModel(e.target.value);
+                        }
+                      }}
+                      fontSize="14px"
+                      fontStyle="normal"
+                      mt={-2}
+                      _placeholder={{ color: "#9CA3AF" }}
+                      _focus={{ outline: "none", boxShadow: "0 0px 0 0 blue" }}
+                      border="none"
+                      borderBottom="1px solid #9CA3AF"
+                      borderRadius="0"
+                    />
+                    <Text fontWeight="400" fontSize="10px" color="#9CA3AF">
+                      {
+                        otherBusinessModel
+                          .split(/\s+/)
+                          .filter((word) => word !== "").length
+                      }
+                      /5 kata
+                    </Text>
+                  </Flex>
+                )}
+              </Stack>
 
               <Text fontWeight="400" fontSize="14px" mb="-2">
                 Desa yang menerapkan <span style={{ color: "red" }}>*</span>
@@ -716,6 +902,7 @@ const AddInnovation: React.FC = () => {
                   }}
                   height="100px"
                   value={textInputsValue.villages}
+                  disabled={!isEditable}
                   onChange={onTextChange}
                 />
                 <Text
@@ -761,6 +948,7 @@ const AddInnovation: React.FC = () => {
                       }}
                       value={textInputsValue.priceMin}
                       onChange={onTextChange}
+                      disabled={!isEditable}
                     />
                   </InputGroup>
                   <MinusIcon mx="2" color="#9CA3AF" mt="3" />
@@ -784,6 +972,7 @@ const AddInnovation: React.FC = () => {
                       }}
                       value={textInputsValue.priceMax}
                       onChange={onTextChange}
+                      disabled={!isEditable}
                     />
                   </InputGroup>
                 </Flex>
@@ -808,7 +997,7 @@ const AddInnovation: React.FC = () => {
                   selectFileRef={selectFileRef}
                   onSelectImage={onSelectImage}
                   maxFiles={5}
-                  // disabled={!}
+                  disabled={!isEditable}
                 />
               </Flex>
 
@@ -834,6 +1023,7 @@ const AddInnovation: React.FC = () => {
                       _placeholder={{ color: "#9CA3AF" }}
                       _focus={{ outline: "none", bg: "white", border: "none" }}
                       value={item.benefit}
+                      disabled={!isEditable}
                       onChange={(e) => {
                         const wordCount = e.target.value
                           .split(/\s+/)
@@ -846,15 +1036,17 @@ const AddInnovation: React.FC = () => {
                       }}
                     />
                     {benefit.length > 1 && (
-                      <DeleteIcon
-                        cursor="pointer"
-                        color="red.500"
+                      <Button
+                        variant="none"
+                        disabled={!isEditable}
                         onClick={() => {
                           setBenefit((prev) =>
                             prev.filter((_, i) => i !== index)
                           );
                         }}
-                      />
+                      >
+                        <DeleteIcon color="red.500" />
+                      </Button>
                     )}
                   </Flex>
                   <Text
@@ -864,8 +1056,9 @@ const AddInnovation: React.FC = () => {
                     mt="2px"
                   >
                     {
-                      item.benefit.split(/\s+/).filter((word) => word !== "")
-                        .length
+                      (item.benefit || "")
+                        .split(/\s+/)
+                        .filter((word) => word !== "").length
                     }
                     /5 kata
                   </Text>
@@ -880,6 +1073,7 @@ const AddInnovation: React.FC = () => {
                       _placeholder={{ color: "#9CA3AF" }}
                       _focus={{ outline: "none", bg: "white", border: "none" }}
                       value={item.description}
+                      disabled={!isEditable}
                       onChange={(e) => {
                         const wordCount = e.target.value
                           .split(/\s+/)
@@ -899,7 +1093,7 @@ const AddInnovation: React.FC = () => {
                       mt="2px"
                     >
                       {
-                        item.description
+                        (item.description || "")
                           .split(/\s+/)
                           .filter((word) => word !== "").length
                       }
@@ -914,6 +1108,7 @@ const AddInnovation: React.FC = () => {
                 mt={-3}
                 variant="outline"
                 leftIcon={<AddIcon />}
+                disabled={!isEditable}
                 onClick={() => {
                   // Validasi input terakhir sebelum menambahkan manfaat baru
                   const lastBenefit = benefit[benefit.length - 1];
@@ -958,6 +1153,7 @@ const AddInnovation: React.FC = () => {
                           border: "none",
                         }}
                         value={requirement}
+                        disabled={!isEditable}
                         onChange={(e) => {
                           const wordCount = e.target.value
                             .split(/\s+/)
@@ -971,16 +1167,18 @@ const AddInnovation: React.FC = () => {
                         }}
                       />
                       {/* Ikon hapus hanya muncul jika ada lebih dari satu kolom */}
-                      {requirements.length > 1 && (
-                        <DeleteIcon
-                          cursor="pointer"
-                          color="red.500"
+                      {requirements.length >= 1 && (
+                        <Button
+                          variant="none"
+                          disabled={!isEditable}
                           onClick={() => {
                             setRequirements((prev) =>
                               prev.filter((_, i) => i !== index)
                             );
                           }}
-                        />
+                        >
+                          <DeleteIcon color="red.500" />
+                        </Button>
                       )}
                     </Flex>
                     {/* Keterangan jumlah kata */}
@@ -999,7 +1197,6 @@ const AddInnovation: React.FC = () => {
                   </Flex>
                 ))}
 
-                {/* Contoh */}
                 <Text
                   fontWeight="400"
                   fontStyle="normal"
@@ -1009,7 +1206,6 @@ const AddInnovation: React.FC = () => {
                   Contoh: Mempunyai listrik
                 </Text>
 
-                {/* Input untuk menambahkan persiapan infrastruktur baru */}
                 <Flex direction="column" mt={2}>
                   <Input
                     name="newRequirement"
@@ -1018,6 +1214,7 @@ const AddInnovation: React.FC = () => {
                     _placeholder={{ color: "#9CA3AF" }}
                     _focus={{ outline: "none", bg: "white", border: "none" }}
                     value={newRequirement}
+                    disabled={!isEditable}
                     onChange={(e) => {
                       const wordCount = e.target.value
                         .split(/\s+/)
@@ -1052,6 +1249,7 @@ const AddInnovation: React.FC = () => {
                     onClick={onAddRequirement}
                     _hover={{ bg: "none" }}
                     leftIcon={<AddIcon />}
+                    disabled={!isEditable}
                     mt={2}
                   >
                     Tambah Infrastruktur Lain
@@ -1061,27 +1259,15 @@ const AddInnovation: React.FC = () => {
             </Stack>
           </Flex>
           {error && (
-            <Text color="red.500" fontSize="12px" mt="4px">
+            <Text color="red.500" fontSize="12px" mt="4px" textAlign="center">
               {error}
             </Text>
           )}
-        <div>
+          {status !== "Menunggu" && (
             <Button type="submit" mt="20px" width="100%" isLoading={loading}>
-              Tambah Inovasi
+              {status === "Ditolak" ? "Ajukan Ulang" : "Ajukan Inovasi"}
             </Button>
-          <ConfModal
-            isOpen={isModal1Open}
-            onClose={closeModal}
-            modalTitle=""
-            modalBody1={modalBody1}     // Mengirimkan teks konten modal
-            onYes={handleModal1Yes}
-          />
-          <SecConfModal 
-            isOpen={isModal2Open} 
-            onClose={closeModal} 
-            modalBody2={modalBody2}     // Mengirimkan teks konten modal
-          />
-        </div>
+          )}
         </Box>
       </form>
     </Container>

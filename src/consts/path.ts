@@ -17,12 +17,11 @@ export const paths = {
   VILLAGE_FORM: "/village/form",
   DETAIL_VILLAGE_PAGE: "/village/detail/:id",
   VILLAGE_PROFILE_PAGE: "/village/profile/:id",
-  KLAIM_INOVASI_PAGE: "/village/klaimInovasi",
+  KLAIM_INOVASI_PAGE: "/village/klaimInovasi/:id",
   PENGAJUAN_KLAIM_PAGE: "/village/pengajuanKlaim",
 
   // ! innovator
   INNOVATOR_PAGE: "/innovator",
-  INNOVATOR_DETAIL: "/innovator/detail",
   INNOVATOR_PROFILE_PAGE: "/innovator/profile/:id",
   DETAIL_INNOVATOR_PAGE: "/innovator/detail/:id",
   INNOVATOR_FORM: "/innovator/form",
@@ -34,7 +33,6 @@ export const paths = {
   ADD_INNOVATION: "/innovation/add",
   INNOVATION_CATEGORY_PAGE: "/innovation/:category",
   DETAIL_INNOVATION_PAGE: "/innovation/detail/:id",
-  DETAIL_INNOVATION: "/innovation/detail",
   EDIT_INNOVATION_PAGE: "/innovation/edit/:id",
   SEMUA_INOVASI_DITERAPKAN_PAGE: "/village/semuaInovasiDiterapkan",
   KLAIM_INOVASI_MANUAL_PAGE: "/village/klaimInovasiManual",
