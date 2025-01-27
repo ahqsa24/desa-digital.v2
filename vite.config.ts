@@ -16,6 +16,7 @@ export default defineConfig({
       Services: path.resolve(dirName, "src/services"),
       Hooks: path.resolve(dirName, "src/hooks"),
       "@public": path.resolve(dirName, "public"),
+      // "@firebase": path.resolve(dirName, "src/firebase"),
     },
   },
 });
