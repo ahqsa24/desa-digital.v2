@@ -122,6 +122,26 @@ export const ContPotensiDesa = styled.div`
   flex-wrap: wrap;
 `;
 
+export const GridContainer = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-content: center;
+  align-items: left;
+  gap: 16px;
+  padding: px;
+  position: relative;
+  width: 100%;
+`;
+
+export const SubText = styled.p`
+  position: flex;
+  justify-content: space-between;
+  font-weight: 700;
+  font-size: 16px;
+  margin-bottom: 8px;
+  color: #1F2937;
+`;
+
 export const ButtonKontak = styled.div`
 display: flex;
 width: 100%;
