@@ -1,4 +1,4 @@
-import { Box } from "@chakra-ui/react";
+import { Box,Text } from "@chakra-ui/react";
 import CardInnovator from "Components/card/innovator";
 import { paths } from "Consts/path";
 import { DocumentData, collection, getDocs } from "firebase/firestore";
@@ -24,8 +24,10 @@ function Innovator() {
   }, [innovatorsRef]);
 
   return (
-    <Box padding="0">
- 
+    <Box padding="16px">
+      <Text fontSize="16px" fontWeight="700" lineHeight="140%" mb="16px" mt="10px">
+        Inovator Unggulan
+      </Text>
       <CardContainer>
         <Horizontal>
           {innovators.map((item, idx) => (
