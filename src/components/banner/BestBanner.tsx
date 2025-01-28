@@ -30,15 +30,15 @@ const BestBanner: React.FC<BestBannerProps> = () => {
       <Box>
         <Flex position="relative">
           <Fade in={visibleBox === 0}>
-            <Box
+          <Box
               backgroundImage={banner}
               width="329px"
               height="135px"
               padding="23px 23px 13px 23px"
               position="absolute"
             >
-              <Flex justifyContent="space-between">
-                <Box justifyItems="center" mt="21px">
+              <Flex justifyContent="center" alignItems="center" gap="16px">
+                <Box display="flex" flexDirection="column" alignItems="center"  mt="30px">
                   <Image src={seccond} />
                   <Text
                     fontSize="12px"
@@ -51,7 +51,7 @@ const BestBanner: React.FC<BestBannerProps> = () => {
                     Habibi Garden
                   </Text>
                 </Box>
-                <Box justifyItems="center">
+                <Box display="flex" flexDirection="column" alignItems="center" mt="-30px">
                   <Image src={first} />
                   <Text
                     fontSize="12px"
@@ -61,10 +61,10 @@ const BestBanner: React.FC<BestBannerProps> = () => {
                     width="90px"
                     height="auto"
                   >
-                    eFishery
+                    Inagria
                   </Text>
                 </Box>
-                <Box justifyItems="center" mt="21px">
+                <Box display="flex" flexDirection="column" alignItems="center" mt="30px">
                   <Image src={third} />
                   <Text
                     fontSize="12px"
@@ -74,7 +74,7 @@ const BestBanner: React.FC<BestBannerProps> = () => {
                     width="90px"
                     height="auto"
                   >
-                    Inagria
+                    eFishery
                   </Text>
                 </Box>
               </Flex>
@@ -89,8 +89,8 @@ const BestBanner: React.FC<BestBannerProps> = () => {
               padding="23px 23px 13px 23px"
               position="absolute"
             >
-              <Flex justifyContent="space-between">
-                <Box justifyItems="center" mt="21px">
+              <Flex justifyContent="center" alignItems="center" gap="16px">
+                <Box display="flex" flexDirection="column" alignItems="center"  mt="30px">
                   <Image src={seccond} />
                   <Text
                     fontSize="12px"
@@ -103,7 +103,7 @@ const BestBanner: React.FC<BestBannerProps> = () => {
                     Desa Soge
                   </Text>
                 </Box>
-                <Box justifyItems="center">
+                <Box display="flex" flexDirection="column" alignItems="center" mt="-30px">
                   <Image src={first} />
                   <Text
                     fontSize="12px"
@@ -116,7 +116,7 @@ const BestBanner: React.FC<BestBannerProps> = () => {
                     Desa Cikajang
                   </Text>
                 </Box>
-                <Box justifyItems="center" mt="21px">
+                <Box display="flex" flexDirection="column" alignItems="center" mt="30px">
                   <Image src={third} />
                   <Text
                     fontSize="12px"
