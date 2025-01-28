@@ -24,13 +24,7 @@ type CardVillageProps = {
 
 //TODO : jumlah desa diterapkan dibuat dinamis
 function CardVillage(props: CardVillageProps) {
-  const {
-    district,
-    logo,
-    header,
-    nameVillage,
-    onClick,
-  } = props;
+  const { provinsi, kabupatenKota, logo, header, namaDesa, onClick } = props;
 
   return (
     <Container onClick={onClick}>
