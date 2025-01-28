@@ -45,6 +45,7 @@ function TopBar(props: TopBarProps) {
             : "flex-start"
         }
         align="center"
+        width="100%"
       >
         {!!onBack && (
           <ArrowBackIcon
