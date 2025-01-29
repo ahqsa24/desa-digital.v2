@@ -3,8 +3,10 @@ import { Box, Button, Flex, Text } from "@chakra-ui/react";
 import { paths } from "Consts/path";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useLocation, useNavigate, useParams } from "react-router";
-import { auth } from "../../firebase/clientApp";
+import { auth, firestore } from "../../firebase/clientApp";
 import UserMenu from "./RightContent/UserMenu";
+import { useEffect, useState } from "react";
+import { doc, getDoc } from "firebase/firestore";
 
 type TopBarProps = {
   title: string | undefined;
@@ -17,12 +19,26 @@ function TopBar(props: TopBarProps) {
   const location = useLocation();
   const { id } = useParams<{ id: string }>();
   const [user] = useAuthState(auth);
+  const [village, setVillage] = useState(false);
 
   const allowedPaths = [paths.LANDING_PAGE, paths.ADMIN_PAGE];
   const isUserMenuVisible = allowedPaths.includes(location.pathname);
 
   const isClaimButtonVisible =
     location.pathname.includes("/innovation/detail/") && id;
+
+  useEffect(() => {
+    const fecthVillage = async () => {
+      if (user) {
+        const Ref = doc(firestore, "villages", user.uid);
+        const docSnap = await getDoc(Ref);
+        if (docSnap.exists()) {
+          setVillage(true);
+        }
+      }
+    };
+    fecthVillage();
+  }, [user]);
 
   return (
     <Box
@@ -60,11 +76,11 @@ function TopBar(props: TopBarProps) {
           ml={onBack ? "8px" : "0"}
           lineHeight="56px"
           flex={1}
-          textAlign='left'
+          textAlign="left"
         >
           {title}
         </Text>
-        {isClaimButtonVisible && (
+        {isClaimButtonVisible && village && (
           <Button
             fontSize="12px"
             fontWeight="500"

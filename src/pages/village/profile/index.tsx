@@ -32,7 +32,9 @@ import {
   doc,
   getDoc,
   getDocs,
+  query,
   updateDoc,
+  where,
 } from "firebase/firestore";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { generatePath, useNavigate } from "react-router-dom";
@@ -156,14 +158,41 @@ export default function ProfileVillage() {
     fetchVillageData();
   });
 
-  useEffect(() => {
-    const fetchInnovations = async () => {
-      const innovationsSnapshot = await getDocs(innovationsRef);
-      const innovationsData = innovationsSnapshot.docs.map((doc) => doc.data());
-      setInnovations(innovationsData);
-    };
-    fetchInnovations();
-  }, [innovationsRef]);
+   useEffect(() => {
+     const fetchVillageAndInnovations = async () => {
+       if (!id) return;
+
+       // Fetch data dari collection villages berdasarkan id
+       const villageRef = doc(firestore, "villages", id);
+       const villageSnap = await getDoc(villageRef);
+
+       if (villageSnap.exists()) {
+         const villageData = villageSnap.data();
+         const inovasiDiterapkan = villageData?.inovasiDiterapkan || [];
+
+         // Ambil semua inovasiId dari field inovasiDiterapkan
+         const inovasiIds = inovasiDiterapkan.map(
+           (inovasi: any) => inovasi.inovasiId
+         );
+         if (inovasiIds.length > 0) {
+           // Fetch data dari collection innovations berdasarkan inovasiId
+           const innovationsRef = collection(firestore, "innovations");
+           const innovationsQuery = query(
+             innovationsRef,
+             where("__name__", "in", inovasiIds)
+           );
+           const innovationsSnapshot = await getDocs(innovationsQuery);
+
+           const innovationsData = innovationsSnapshot.docs.map((doc) =>
+             doc.data()
+           );
+           setInnovations(innovationsData);
+         }
+       }
+     };
+
+     fetchVillageAndInnovations();
+   }, [id]);
 
   return (
     <Box>
