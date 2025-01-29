@@ -67,6 +67,7 @@ const VerificationPage: React.FC = () => {
       "Verifikasi Desa": "villages",
       "Verifikasi Inovator": "innovators",
       "Verifikasi Tambah Inovasi": "innovations",
+      "Verifikasi Klaim Inovasi": "claimInnovations",
     };
 
     const collectionName = categoryToCollectionMap[category || ""];
@@ -96,7 +97,7 @@ const VerificationPage: React.FC = () => {
             const isVillageCategory = category === "Verifikasi Desa";
             const description = isVillageCategory
               ? formatLocation(data.lokasi)
-              : data.deskripsi || "No Description";
+              : data.deskripsi || "Klaim " + data.namaInovasi;
 
             return (
               <CardNotification
