@@ -444,7 +444,8 @@ function DetailInnovation() {
             > Lihat Semua </Text>
           </Flex>
           <ActionContainer>
-            <Text3>Belum tersedia</Text3>
+          <Logo src={datainnovator.log} alt="logo" />
+            <Text1>Belum tersedia</Text1>
           </ActionContainer>
         </Flex>
 
