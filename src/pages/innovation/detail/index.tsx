@@ -452,8 +452,7 @@ function DetailInnovation() {
         {owner && ( // Conditionally render the Edit button
           <Button
             width="100%"
-            marginTop={13}
-            marginBottom={3}
+            fontSize="16px"
             onClick={() =>
               navigate(
                 generatePath(paths.EDIT_INNOVATION_PAGE, {
@@ -465,6 +464,7 @@ function DetailInnovation() {
             Edit
           </Button>
         )}
+        {!owner && (
         <div>
           {admin ? (
             data.status === "Terverifikasi" || data.status === "Ditolak" ? (
@@ -475,11 +475,12 @@ function DetailInnovation() {
               </Button>
             )
           ) : (
-            <Button width="100%" fontSize="14px" onClick={onOpen}>
+            <Button width="100%" fontSize="16px" onClick={onOpen}>
               Ketahui lebih lanjut
             </Button>
           )}
         </div>
+        )}
         <RejectionModal
           isOpen={openModal}
           onClose={() => setOpenModal(false)}
