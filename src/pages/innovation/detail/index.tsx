@@ -319,7 +319,7 @@ function DetailInnovation() {
             <Text fontSize="12px" fontWeight="600">
               Model Bisnis
             </Text>
-            <Text fontSize="12px" fontWeight="400">
+            <Text fontSize="12px" fontWeight="400" color="#4B5563">
               {data.modelBisnis?.join(", ")}
             </Text>
           </div>
@@ -328,7 +328,7 @@ function DetailInnovation() {
             <Text fontSize="12px" fontWeight="600">
               Desa yang Menerapkan
             </Text>
-            <Text fontSize="12px" fontWeight="400">
+            <Text fontSize="12px" fontWeight="400" color="#4B5563">
               {data.inputDesaMenerapkan}
             </Text>
           </div>
@@ -337,7 +337,7 @@ function DetailInnovation() {
             <Text fontSize="12px" fontWeight="600">
               Kisaran Harga
             </Text>
-            <Text fontSize="12px" fontWeight="400">
+            <Text fontSize="12px" fontWeight="400" color="#4B5563">
               {data.hargaMinimal
                 ? `Rp. ${data.hargaMinimal}${
                     data.hargaMaksimal ? ` - Rp. ${data.hargaMaksimal}` : ""
