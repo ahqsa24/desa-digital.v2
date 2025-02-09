@@ -188,6 +188,7 @@ function DetailInnovation() {
         <Slider {...settings}>
           {data.images.map((image: string, index: number) => (
             <Img
+              marginTop="14px"
               maxWidth="360px"
               maxHeight="248px"
               width="360px"
@@ -204,6 +205,7 @@ function DetailInnovation() {
         data.images &&
         data.images.length === 1 && (
           <Img
+            marginTop="14px"
             src={data.images[0]}
             maxWidth="360px"
             maxHeight="248px"
