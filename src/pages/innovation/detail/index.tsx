@@ -377,15 +377,17 @@ function DetailInnovation() {
                                 alignItems="center"
                                 w="auto"
                                 flexWrap="nowrap"
+                                gap="12px"
                               >
                                 <FaCircle
-                                  style={{
-                                    marginRight: "10px",
-                                    color: "#568A73",
-                                  }}
+                                  size={12}
+                                    color= "#568A73"
+                                    style={{  
+                                      overflow: "visible" 
+                                    }}
                                 />
-                                <Text fontSize="12px" fontWeight="700">
-                                  Manfaat {index + 1}: {item.judul}
+                                <Text fontSize="12px" fontWeight="700" textAlign="start">
+                                  {item.judul}
                                 </Text>
                               </Flex>
                               <AccordionIcon ml={8} color="#568A73" />
