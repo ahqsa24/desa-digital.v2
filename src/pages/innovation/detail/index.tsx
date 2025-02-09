@@ -183,7 +183,7 @@ function DetailInnovation() {
   };
 
   return (
-    <Container page>
+    <Box>
       <TopBar title="Detail Inovasi" onBack={() => navigate(-1)} />
       {data.images && data.images.length > 1 ? (
         <Slider {...settings}>
@@ -206,12 +206,12 @@ function DetailInnovation() {
         data.images &&
         data.images.length === 1 && (
           <Img
-            marginTop="14px"
+            marginTop="56px"
             src={data.images[0]}
             maxWidth="360px"
             maxHeight="248px"
-            width="360px"
-            height="248px"
+            width="100%"
+            height="100%"
             objectFit="cover"
             objectPosition="center"
             alt="background"
@@ -474,8 +474,8 @@ function DetailInnovation() {
               </Button>
             )
           ) : (
-            <Button width="100%" fontSize="14px" mb={8} onClick={onOpen}>
-              Kontak Inovator
+            <Button width="100%" fontSize="14px" onClick={onOpen}>
+              Ketahui lebih lanjut
             </Button>
           )}
         </div>
@@ -497,7 +497,7 @@ function DetailInnovation() {
           role="Inovator"
         />
       </ContentContainer>
-    </Container>
+    </Box>
   );
 }
 
