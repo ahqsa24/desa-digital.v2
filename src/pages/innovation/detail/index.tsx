@@ -167,6 +167,9 @@ function DetailInnovation() {
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1,
+    arrows: false,
+    autoplay: true,
+    autoplaySpeed: 4000,
   };
 
   const owner = user && user.uid === data.innovatorId; // Check if the current user is the creator
