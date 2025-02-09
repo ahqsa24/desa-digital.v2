@@ -50,6 +50,7 @@ import {
   Text2,
   Text3,
   Title,
+  SubText,
 } from "./_detailStyle.ts";
 
 function DetailInnovation() {
@@ -167,6 +168,9 @@ function DetailInnovation() {
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1,
+    arrows: false,
+    autoplay: true,
+    autoplaySpeed: 4000,
   };
 
   const owner = user && user.uid === data.innovatorId; // Check if the current user is the creator
@@ -179,12 +183,13 @@ function DetailInnovation() {
   };
 
   return (
-    <Container page>
+    <Box>
       <TopBar title="Detail Inovasi" onBack={() => navigate(-1)} />
       {data.images && data.images.length > 1 ? (
         <Slider {...settings}>
           {data.images.map((image: string, index: number) => (
             <Img
+              marginTop="14px"
               maxWidth="360px"
               maxHeight="248px"
               width="360px"
@@ -201,11 +206,12 @@ function DetailInnovation() {
         data.images &&
         data.images.length === 1 && (
           <Img
+            marginTop="56px"
             src={data.images[0]}
             maxWidth="360px"
             maxHeight="248px"
-            width="360px"
-            height="248px"
+            width="100%"
+            height="100%"
             objectFit="cover"
             objectPosition="center"
             alt="background"
@@ -251,7 +257,7 @@ function DetailInnovation() {
         <ActionContainer
           onClick={() =>
             navigate(
-              generatePath(paths.DETAIL_INNOVATOR_PAGE, {
+              generatePath(paths.INNOVATOR_PROFILE_PAGE, {
                 id: data.innovatorId,
               })
             )
@@ -314,7 +320,7 @@ function DetailInnovation() {
             <Text fontSize="12px" fontWeight="600">
               Model Bisnis
             </Text>
-            <Text fontSize="12px" fontWeight="400">
+            <Text fontSize="12px" fontWeight="400" color="#4B5563">
               {data.modelBisnis?.join(", ")}
             </Text>
           </div>
@@ -323,20 +329,19 @@ function DetailInnovation() {
             <Text fontSize="12px" fontWeight="600">
               Desa yang Menerapkan
             </Text>
-            <Text fontSize="12px" fontWeight="400">
+            <Text fontSize="12px" fontWeight="400" color="#4B5563">
               {data.inputDesaMenerapkan}
             </Text>
           </div>
-
           <div>
             <Text fontSize="12px" fontWeight="600">
               Kisaran Harga
             </Text>
-            <Text fontSize="12px" fontWeight="400">
+            <Text fontSize="12px" fontWeight="400" color="#4B5563">
               {data.hargaMinimal
                 ? `Rp. ${data.hargaMinimal}${
                     data.hargaMaksimal ? ` - Rp. ${data.hargaMaksimal}` : ""
-                  }`
+                }`
                 : "Harga tidak tersedia"}
             </Text>
           </div>
@@ -372,15 +377,17 @@ function DetailInnovation() {
                                 alignItems="center"
                                 w="auto"
                                 flexWrap="nowrap"
+                                gap="12px"
                               >
                                 <FaCircle
+                                  size={12}
+                                  color="#568A73"
                                   style={{
-                                    marginRight: "10px",
-                                    color: "#568A73",
+                                    overflow: "visible"
                                   }}
                                 />
-                                <Text fontSize="12px" fontWeight="700">
-                                  Manfaat {index + 1}: {item.judul}
+                                <Text fontSize="12px" fontWeight="700" textAlign="start">
+                                  {item.judul}
                                 </Text>
                               </Flex>
                               <AccordionIcon ml={8} color="#568A73" />
@@ -408,7 +415,7 @@ function DetailInnovation() {
             Perlu Disiapkan
           </Text>
           {Array.isArray(data.infrastruktur) &&
-          data.infrastruktur.length > 0 ? (
+            data.infrastruktur.length > 0 ? (
             data.infrastruktur.map((item, index) => (
               <BenefitContainer key={index}>
                 <Icon src={Check} alt="check" />
@@ -419,21 +426,33 @@ function DetailInnovation() {
             <Description>No specific needs listed.</Description>
           )}
         </div>
-
-        <div>
-          <Text fontSize="16px" fontWeight="700" lineHeight="140%" mb="16px">
-            Desa yang Menerapkan
-          </Text>
+        <Flex flexDirection="column">
+          <Flex justifyContent="space-between" alignItems="flex-end" align-self="stretch">
+            <SubText>Desa yang Menerapkan</SubText>
+            <Text
+              onClick={() =>  navigate(
+                generatePath(paths.DESA_YANG_MENERAPKAN_PAGE, {
+                  id: data.id,
+                })
+              )} 
+              cursor="pointer"
+              color="var(--Primary, #347357)"
+              fontSize="12px"
+              fontWeight="500"
+              textDecorationLine="underline"
+              paddingBottom="12px"
+            > Lihat Semua </Text>
+          </Flex>
           <ActionContainer>
-            <Text3>Belum tersedia</Text3>
+          <Logo src={datainnovator.log} alt="logo" />
+            <Text1>Belum tersedia</Text1>
           </ActionContainer>
-        </div>
+        </Flex>
 
         {owner && ( // Conditionally render the Edit button
           <Button
             width="100%"
-            marginTop={13}
-            marginBottom={3}
+            fontSize="16px"
             onClick={() =>
               navigate(
                 generatePath(paths.EDIT_INNOVATION_PAGE, {
@@ -445,6 +464,7 @@ function DetailInnovation() {
             Edit
           </Button>
         )}
+        {!owner && (
         <div>
           {admin ? (
             data.status === "Terverifikasi" || data.status === "Ditolak" ? (
@@ -455,11 +475,12 @@ function DetailInnovation() {
               </Button>
             )
           ) : (
-            <Button width="100%" fontSize="14px" mb={8} onClick={onOpen}>
-              Kontak Inovator
+            <Button width="100%" fontSize="16px" onClick={onOpen}>
+              Ketahui lebih lanjut
             </Button>
           )}
         </div>
+        )}
         <RejectionModal
           isOpen={openModal}
           onClose={() => setOpenModal(false)}
@@ -478,7 +499,7 @@ function DetailInnovation() {
           role="Inovator"
         />
       </ContentContainer>
-    </Container>
+    </Box>
   );
 }
 

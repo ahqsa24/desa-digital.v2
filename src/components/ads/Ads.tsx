@@ -1,9 +1,9 @@
 import { Box, Button, Flex, Fade, Text } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
+import defAds1 from "@public/images/default-ads-1.svg";
+import defAds2 from "@public/images/default-ads-2.svg";
 
-type AdsProps = {};
-
-const Ads: React.FC<AdsProps> = () => {
+const Ads: React.FC = () => {
   const [visibleBox, setVisibleBox] = useState(0);
 
   useEffect(() => {
@@ -18,7 +18,7 @@ const Ads: React.FC<AdsProps> = () => {
     <Flex position="relative" height="166px" width="161px">
       <Fade in={visibleBox === 0}>
         <Box
-          backgroundImage="src/assets/images/default-ads-1.svg"
+          backgroundImage={defAds1}
           height="166px"
           width="161px"
           backgroundSize="cover"
@@ -73,7 +73,7 @@ const Ads: React.FC<AdsProps> = () => {
 
       <Fade in={visibleBox === 1}>
         <Box
-          backgroundImage="src/assets/images/default-ads-2.svg"
+          backgroundImage={defAds2}
           height="166px"
           width="161px"
           backgroundSize="cover"

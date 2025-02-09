@@ -1,12 +1,15 @@
 import { Box, Fade, Flex, Image, Text } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 
-import first from "../../assets/icons/first.svg";
-import seccond from "../../assets/icons/seccond.svg";
-import third from "../../assets/icons/third.svg";
-import banner from "../../assets/images/banner-unggulan.svg";
+import first from "@public/icons/first.svg";
+import seccond from "@public/icons/seccond.svg";
+import third from "@public/icons/third.svg";
+import banner from "@public/images/banner-unggulan.svg";
 
-type BestBannerProps = {};
+type BestBannerProps = {
+  namaDesa?: string;
+  namaInovator?: string;
+};
 
 const BestBanner: React.FC<BestBannerProps> = () => {
   const [visibleBox, setVisibleBox] = useState(0);

@@ -31,7 +31,6 @@ const Menu: React.FC<MenuProps> = ({ isAdmin = false }) => {
   const navigate = useNavigate();
   const { data, isLoading, isFetched } = useQuery("menu", getCategories);
 
-
   const predefinedCategories = [
     {
       icon: SmartAgriIcon,
@@ -86,7 +85,9 @@ const Menu: React.FC<MenuProps> = ({ isAdmin = false }) => {
     },
   ];
 
-  const [menu, setMenu] = useState<{ icon: string | JSX.Element; title: string }[]>([]);
+  const [menu, setMenu] = useState<
+    { icon: string | JSX.Element; title: string }[]
+  >([]);
   const menuItems = isAdmin ? adminMenu : predefinedCategories;
 
   const onClick = (category: string) => {
@@ -95,7 +96,6 @@ const Menu: React.FC<MenuProps> = ({ isAdmin = false }) => {
       return;
     }
     const isAdminCategory = adminMenu.some((item) => item.title === category);
-    
 
     if (isAdmin && isAdminCategory) {
       const path = generatePath(paths.VERIFICATION_PAGE, {
@@ -115,17 +115,33 @@ const Menu: React.FC<MenuProps> = ({ isAdmin = false }) => {
     if (isFetched && data) {
       setMenu(menuItems);
     }
-  }, [isFetched, data, isAdmin]);
+  }, [isFetched, data, isAdmin, menuItems]);
 
   return (
     <Container>
       <MenuContainer>
         {isLoading && <Loading />}
+        {!isAdmin && !isLoading && (
+          <Text
+            textAlign="center"
+            // m="16px 0 16px 0"
+            mb="16px"
+            fontSize="14px"
+            fontWeight="700"
+            color="brand.100"
+          >
+            Kategori Inovasi
+          </Text>
+        )}
         {isFetched && (
           <GridContainer>
-            {menu?.map(({ icon, title }: any, idx: number) => (
+            {menu?.map(({ icon, title }: { icon: string | JSX.Element; title: string }, idx: number) => (
               <GridItem key={idx} onClick={() => onClick(title)}>
-                <Image src={icon} alt={title} width={12} height={12} />
+                {typeof icon === "string" ? (
+                  <Image src={icon} alt={title} width={10} height={10} />
+                ) : (
+                  icon
+                )}
                 <Text
                   fontSize="12px"
                   fontWeight="400"

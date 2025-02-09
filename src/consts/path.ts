@@ -22,7 +22,6 @@ export const paths = {
 
   // ! innovator
   INNOVATOR_PAGE: "/innovator",
-  INNOVATOR_DETAIL: "/innovator/detail",
   INNOVATOR_PROFILE_PAGE: "/innovator/profile/:id",
   DETAIL_INNOVATOR_PAGE: "/innovator/detail/:id",
   INNOVATOR_FORM: "/innovator/form",
@@ -34,6 +33,6 @@ export const paths = {
   ADD_INNOVATION: "/innovation/add",
   INNOVATION_CATEGORY_PAGE: "/innovation/:category",
   DETAIL_INNOVATION_PAGE: "/innovation/detail/:id",
-  DETAIL_INNOVATION: "/innovation/detail",
   EDIT_INNOVATION_PAGE: "/innovation/edit/:id",
+  DESA_YANG_MENERAPKAN_PAGE: "/innovation/desaYangMenerapkan/:id",
 };

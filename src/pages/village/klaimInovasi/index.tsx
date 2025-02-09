@@ -21,8 +21,8 @@ import {
 } from "./_klaimStyles";
 
 import { useDisclosure } from "@chakra-ui/react";
-import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore";
-import { ref, uploadString } from "firebase/storage";
+import { doc, getDoc, increment, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
+import { getDownloadURL, ref, uploadBytes, uploadString } from "firebase/storage";
 import { useNavigate, useParams } from "react-router-dom";
 
 const KlaimInovasi: React.FC = () => {
@@ -55,6 +55,7 @@ const KlaimInovasi: React.FC = () => {
       setSelectedCheckboxes([...selectedCheckboxes, checkbox]);
     }
   };
+
 
   const onSelectImage = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -132,21 +133,58 @@ const KlaimInovasi: React.FC = () => {
       const inovRef = doc(firestore, "innovations", id);
       const inovSnap = await getDoc(inovRef);
       const dataInov = inovSnap.data();
+
+      const inovatorRef = doc(firestore, "innovators", dataInov?.innovatorId);
+
       await setDoc(docRef, {
         namaDesa: dataDesa?.namaDesa,
         namaInovasi: dataInov?.namaInovasi,
+        inovasiId: id,
+        inovatorId: dataInov?.innovatorId,
         createdAt: serverTimestamp(),
         catatanAdmin: "",
         status: "Menunggu",
       });
       console.log("Document written with ID: ", docRef.id);
-      if (selectedFiles) {
-        const storageRef = ref(storage, `claimInnovations/${userId}/images`);
-        selectedFiles.forEach(async (file, index) => {
-          const imageRef = ref(storageRef, `${index + 1}`);
-          await uploadString(imageRef, file, "data_url");
-        });
-      }
+       if (selectedFiles.length > 0) {
+         const storageRef = ref(storage, `claimInnovations/${userId}/images`);
+         const imageUrls: string[] = [];
+
+         for (let i = 0; i < selectedFiles.length; i++) {
+           const file = selectedFiles[i];
+           const imageRef = ref(storageRef, `${Date.now()}_${i}`);
+           const response = await fetch(file);
+           const blob = await response.blob();
+           await uploadBytes(imageRef, blob);
+           const downloadURL = await getDownloadURL(imageRef);
+           imageUrls.push(downloadURL);
+         }
+
+         await updateDoc(docRef, {
+           images: imageUrls,
+         });
+         console.log("Images uploaded", imageUrls);
+       }
+
+       await updateDoc(inovatorRef, {
+        jumlahDesaDampingan: increment(1),
+        desaDampingan:[{
+          namaDesa: dataDesa?.namaDesa,
+          desaId: userId,
+        }]
+      });
+      await updateDoc(desaRef,{
+        jumlahInovasi: increment(1),
+        inovasiDiterapkan:[{
+          namaInovasi: dataInov?.namaInovasi,
+          inovasiId: id,
+        }]
+      })
+      await updateDoc(inovRef,{
+        jumlahDesaKlaim: increment(1),
+      })
+       setLoading(false);
+       
     } catch (error) {
       setError("Failed to submit claim");
     }
