@@ -50,6 +50,7 @@ import {
   Text2,
   Text3,
   Title,
+  SubText,
 } from "./_detailStyle.ts";
 
 function DetailInnovation() {
@@ -332,7 +333,6 @@ function DetailInnovation() {
               {data.inputDesaMenerapkan}
             </Text>
           </div>
-
           <div>
             <Text fontSize="12px" fontWeight="600">
               Kisaran Harga
@@ -341,7 +341,7 @@ function DetailInnovation() {
               {data.hargaMinimal
                 ? `Rp. ${data.hargaMinimal}${
                     data.hargaMaksimal ? ` - Rp. ${data.hargaMaksimal}` : ""
-                  }`
+                }`
                 : "Harga tidak tersedia"}
             </Text>
           </div>
@@ -381,10 +381,10 @@ function DetailInnovation() {
                               >
                                 <FaCircle
                                   size={12}
-                                    color= "#568A73"
-                                    style={{  
-                                      overflow: "visible" 
-                                    }}
+                                  color="#568A73"
+                                  style={{
+                                    overflow: "visible"
+                                  }}
                                 />
                                 <Text fontSize="12px" fontWeight="700" textAlign="start">
                                   {item.judul}
@@ -415,7 +415,7 @@ function DetailInnovation() {
             Perlu Disiapkan
           </Text>
           {Array.isArray(data.infrastruktur) &&
-          data.infrastruktur.length > 0 ? (
+            data.infrastruktur.length > 0 ? (
             data.infrastruktur.map((item, index) => (
               <BenefitContainer key={index}>
                 <Icon src={Check} alt="check" />
@@ -426,15 +426,27 @@ function DetailInnovation() {
             <Description>No specific needs listed.</Description>
           )}
         </div>
-
-        <div>
-          <Text fontSize="16px" fontWeight="700" lineHeight="140%" mb="16px">
-            Desa yang Menerapkan
-          </Text>
+        <Flex flexDirection="column">
+          <Flex justifyContent="space-between" alignItems="flex-end" align-self="stretch">
+            <SubText>Desa yang Menerapkan</SubText>
+            <Text
+              onClick={() =>  navigate(
+                generatePath(paths.DESA_YANG_MENERAPKAN_PAGE, {
+                  id: data.id,
+                })
+              )} 
+              cursor="pointer"
+              color="var(--Primary, #347357)"
+              fontSize="12px"
+              fontWeight="500"
+              textDecorationLine="underline"
+              paddingBottom="12px"
+            > Lihat Semua </Text>
+          </Flex>
           <ActionContainer>
             <Text3>Belum tersedia</Text3>
           </ActionContainer>
-        </div>
+        </Flex>
 
         {owner && ( // Conditionally render the Edit button
           <Button
