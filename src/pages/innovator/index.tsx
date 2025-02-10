@@ -51,7 +51,7 @@ function Innovator() {
       <Containers>
         <CardContent>
           <Column>
-            <Text>Pilih Inovator</Text>
+            <Text>Kategori Inovator</Text>
             <Select
               placeholder="Pilih Kategori Inovator"
               name="category"
