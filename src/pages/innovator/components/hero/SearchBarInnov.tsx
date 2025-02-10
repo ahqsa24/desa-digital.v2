@@ -22,7 +22,7 @@ const SearchBarinnov: React.FC<SearchBarInnovProps> = ({ placeholder }) => {
           <Input
             type="text"
             placeholder={placeholder}
-            fontSize="10pt"
+            fontSize="12px"
             _placeholder={{ color: "gray.500" }}
             _hover={{
               bg: "white",

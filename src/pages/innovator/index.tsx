@@ -55,7 +55,7 @@ function Innovator() {
             <Select
               placeholder="Pilih Kategori Inovator"
               name="category"
-              fontSize="10pt"
+              fontSize="12px"
               variant="outline"
               cursor="pointer"
               color={"gray.500"}
@@ -72,7 +72,7 @@ function Innovator() {
                 </option>
               ))}
             </Select>
-            <SearchBarInnov placeholder="Search" />
+            <SearchBarInnov placeholder="Cari inovator" />
           </Column>
         </CardContent>
         <Text>

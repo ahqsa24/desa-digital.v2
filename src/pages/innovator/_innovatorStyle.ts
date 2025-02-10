@@ -15,11 +15,13 @@ export const GridContainer = styled.div`
 export const Containers = styled.div`
   display: inline-flex;
   flex-direction: column;
-  align-items: flex-start;
   gap: 16px;
   position: relative;
-  top: -60px;
+  top: -70px;
   margin: 16px;
+  width: 100%;  
+  padding: 16px;
+  margin: 0px 0;
 `;
 
 export const CardContent = styled.div`
@@ -29,17 +31,17 @@ export const CardContent = styled.div`
     min-width: 120px;
     display: flex;
     width: 100%;
-    max-width: 380px;
+    max-width: 328px;
     width: 100%;
-    height: 135px;
-    padding: 26px;
-    flex-direction: row;
+    height: 145px;
+    padding: 16px;
+    Padding-top: 12px;
+    flex-direction: column;
     align-items: left;
-    gap: 12px;
+    gap: 8px;
     position: relative;
     background: #FFF;
     top: 0px;
-     
     
 `
 export const Text = styled.p`
