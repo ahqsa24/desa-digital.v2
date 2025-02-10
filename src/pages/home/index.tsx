@@ -155,7 +155,10 @@ function Home() {
   return (
     <Container page>
       <TopBar title="Desa Digital Indonesia" />
-      <Hero description="KMS Desa Digital" text="Indonesia" />
+      <Hero description="KMS Desa Digital" text="Indonesia"
+        isAdmin={userRole === "Admin"}
+        isInnovator={userRole === "innovator"}
+        isVillage={userRole === "village"} />
       <Stack direction="column" gap={2}>
         <SearchBarLink />
         <Menu />
