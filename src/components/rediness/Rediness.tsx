@@ -8,8 +8,8 @@ const Rediness: React.FC = () => {
         <Flex>
           <Box
             backgroundImage={redinesImg}
-            height="166px"
-            width="161px"
+            height="160px"
+            width="160px"
             backgroundSize="cover"
             backgroundPosition="center"
             padding="12px"
