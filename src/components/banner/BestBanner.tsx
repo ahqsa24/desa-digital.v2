@@ -24,7 +24,7 @@ const BestBanner: React.FC<BestBannerProps> = () => {
 
   return (
     <Box padding="0 14px" pos="relative">
-      <Text fontSize="16px" fontWeight="700" lineHeight="140%" mb="16px">
+      <Text fontSize="16px" fontWeight="700" lineHeight="140%" mb="16px" color="#1A202C">
         Inovator dan Desa Unggulan
       </Text>
       <Box>
