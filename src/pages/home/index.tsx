@@ -160,7 +160,7 @@ function Home() {
         isInnovator={userRole === "innovator"}
         isVillage={userRole === "village"} />
       <Stack direction="column" gap={2}>
-        <SearchBarLink />
+        <SearchBarLink placeholderText="Cari Inovasi atau inovator di sini..."/>
         <Menu />
         <Flex direction="row" justifyContent="space-between" padding="0 14px">
           <Rediness />
