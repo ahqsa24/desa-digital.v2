@@ -32,9 +32,10 @@ const BestBanner: React.FC<BestBannerProps> = () => {
           <Fade in={visibleBox === 0}>
             <Box
               backgroundImage={banner}
-              width="329px"
-              height="135px"
-              padding="23px 23px 13px 23px"
+              backgroundSize="100%"
+              width="332px"
+              height="140px"
+              padding="23px 23px 14px 23px"
               position="absolute"
             >
               <Flex justifyContent="space-between">
@@ -84,9 +85,10 @@ const BestBanner: React.FC<BestBannerProps> = () => {
           <Fade in={visibleBox === 1}>
             <Box
               backgroundImage={banner}
-              width="329px"
-              height="135px"
-              padding="23px 23px 13px 23px"
+              backgroundSize="100%"
+              width="332px"
+              height="140px"
+              padding="23px 23px 15px 23px"
               position="absolute"
             >
               <Flex justifyContent="space-between">
