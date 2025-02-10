@@ -29,12 +29,23 @@ export const CardContent = styled.div`
   flex-direction: column;
   gap: 4px;
   position: relative;
+  align-item: flex-start;
+  flex: 1 0 0;
+  align-self: stretch;
 `
 
 export const Title = styled.p`
   font-size: 12px;
   font-weight: 700;
-  color: black;
+  color: 1F2937;
+  
+  white-space: wrap;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  align-self: stretch;
+  text-overflow: ellipsis;
 `
 
 export const Description = styled.p`
