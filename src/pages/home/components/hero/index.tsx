@@ -12,8 +12,8 @@ const Hero: React.FC<HeroProps> = ({ description, text, isAdmin = false, isInnov
   return (
     <Background isAdmin={isAdmin} isInnovator={isInnovator} isVillage={isVillage}>
       <Container>
-        <Title>Selamat Datang di</Title>
-        <Description>
+        <Title color="#1A202C">Selamat Datang di</Title>
+        <Description color="#1A202C">
           {description} <br /> {text}
         </Description>
       </Container>
