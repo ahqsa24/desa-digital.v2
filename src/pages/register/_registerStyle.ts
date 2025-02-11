@@ -29,7 +29,7 @@ export const Description = styled.p`
   text-align: center;
 `
 export const Label = styled.p`
-  font-size: 14px;
+  font-size:10pt; 
   font-weight: 400;
   color: #4b5563;
   ${marginStyle}
@@ -46,6 +46,7 @@ export const ActionContainer = styled.div`
 export const Action = styled(Label)`
   color: #347357;
   cursor: pointer;
+  text-decoration: underline;
 `
 export const CheckboxContainer = styled.div`
   display: flex;

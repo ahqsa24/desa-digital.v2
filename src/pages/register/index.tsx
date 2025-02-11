@@ -4,6 +4,7 @@ import {
   InputGroup,
   InputRightElement,
   Text,
+  Box,
 } from "@chakra-ui/react";
 import { paths } from "Consts/path";
 import { User } from "firebase/auth";
@@ -24,6 +25,8 @@ import {
   Label,
   Title,
 } from "./_registerStyle";
+import TopBar from "Components/topBar";
+
 
 const Register: React.FC = () => {
   const [regisForm, setRegisForm] = useState({
@@ -108,6 +111,8 @@ const Register: React.FC = () => {
   }, [userCred, navigate]);
 
   return (
+<Box>
+<TopBar title="" onBack={() => navigate(-1)} />
     <Background>
       <Container>
         <Title>Halo!</Title>
@@ -124,6 +129,7 @@ const Register: React.FC = () => {
             required
             placeholder="Email"
             mt="4px"
+            fontSize="10pt"
           />
           <Text fontSize="10pt" mt="12px">
             Kata sandi
@@ -136,18 +142,18 @@ const Register: React.FC = () => {
               onChange={onChange}
               required
               placeholder="Kata sandi"
+              fontSize="10pt"
             />
             <InputRightElement
               onClick={onShowPassword}
               cursor="pointer"
-              mt="4px"
             >
               {show ? <FaEyeSlash /> : <FaEye />}
             </InputRightElement>
           </InputGroup>
 
           <Text fontSize="10pt" mt="12px">
-            Konfirmasi kata sandi
+            Ulangi kata sandi
           </Text>
 
           <InputGroup mt="4px" alignItems="center">
@@ -156,12 +162,12 @@ const Register: React.FC = () => {
               type={show ? "text" : "password"}
               onChange={handleConfirmPasswordChange} // Gunakan handleConfirmPasswordChange
               required
-              placeholder="Konfirmasi kata sandi"
+              placeholder="Tulis ulang kata sandi"
+              fontSize="10pt"
             />
             <InputRightElement
               onClick={onShowPassword}
               cursor="pointer"
-              mt="4px"
             >
               {show ? <FaEyeSlash /> : <FaEye />}
             </InputRightElement>
@@ -205,17 +211,19 @@ const Register: React.FC = () => {
             alignItems="center"
             width="100%"
             isLoading={loading}
+            fontSize="14px"
           >
             Registrasi
           </Button>
         </form>
 
-        <ActionContainer mt={24}>
+        <ActionContainer mt={16}>
           <Label>Sudah memiliki akun?</Label>
           <Action onClick={() => navigate(paths.LOGIN_PAGE)}>Login</Action>
         </ActionContainer>
       </Container>
     </Background>
+    </Box>
   );
 };
 
