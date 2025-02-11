@@ -12,8 +12,9 @@ export const Horizontal = styled.div`
 `
 
 export const Title = styled.p`
-  font-size: 16px;
-  font-weight: 700;
+  font-size: 14px;
+  font-weight: 600;
   color: black;
-  margin: 24px 0 16px 0;
+  margin: 24px 0 8px 0;
+  color:"#1F2937");
 `

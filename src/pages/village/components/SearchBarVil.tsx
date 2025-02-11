@@ -23,7 +23,7 @@ const SearchBarVil: React.FC<SearchBarProps> = ({ placeholder }) => {
           <Input
             placeholder={placeholder}
             fontSize="10pt"
-            _placeholder={{ color: "gray.500" }}
+            _placeholder={{ color: "#9CA3AF" }}
             _hover={{
               bg: "white",
               border: "1px solid",

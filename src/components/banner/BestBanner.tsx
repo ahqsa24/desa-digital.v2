@@ -24,7 +24,7 @@ const BestBanner: React.FC<BestBannerProps> = () => {
 
   return (
     <Box padding="0 14px" pos="relative">
-      <Text fontSize="16px" fontWeight="700" lineHeight="140%" mb="16px">
+      <Text fontSize="16px" fontWeight="700" lineHeight="140%" mb="16px" color="#1F2937">
         Inovator dan Desa Unggulan
       </Text>
       <Box>
@@ -32,9 +32,10 @@ const BestBanner: React.FC<BestBannerProps> = () => {
           <Fade in={visibleBox === 0}>
             <Box
               backgroundImage={banner}
-              width="329px"
-              height="135px"
-              padding="23px 23px 13px 23px"
+              backgroundSize="100%"
+              width="332px"
+              height="140px"
+              padding="23px 23px 14px 23px"
               position="absolute"
             >
               <Flex justifyContent="space-between">
@@ -47,6 +48,7 @@ const BestBanner: React.FC<BestBannerProps> = () => {
                     textAlign="center"
                     width="90px"
                     height="auto"
+                    color="#1F2937"
                   >
                     Habibi Garden
                   </Text>
@@ -60,6 +62,7 @@ const BestBanner: React.FC<BestBannerProps> = () => {
                     textAlign="center"
                     width="90px"
                     height="auto"
+                    color="#1F2937"
                   >
                     eFishery
                   </Text>
@@ -73,6 +76,7 @@ const BestBanner: React.FC<BestBannerProps> = () => {
                     textAlign="center"
                     width="90px"
                     height="auto"
+                    color="#1F2937"
                   >
                     Inagria
                   </Text>
@@ -84,9 +88,10 @@ const BestBanner: React.FC<BestBannerProps> = () => {
           <Fade in={visibleBox === 1}>
             <Box
               backgroundImage={banner}
-              width="329px"
-              height="135px"
-              padding="23px 23px 13px 23px"
+              backgroundSize="100%"
+              width="332px"
+              height="140px"
+              padding="23px 23px 15px 23px"
               position="absolute"
             >
               <Flex justifyContent="space-between">
@@ -99,6 +104,7 @@ const BestBanner: React.FC<BestBannerProps> = () => {
                     textAlign="center"
                     width="90px"
                     height="auto"
+                    color="#1F2937"
                   >
                     Desa Soge
                   </Text>
@@ -112,6 +118,7 @@ const BestBanner: React.FC<BestBannerProps> = () => {
                     textAlign="center"
                     width="90px"
                     height="auto"
+                    color="#1F2937"
                   >
                     Desa Cikajang
                   </Text>
@@ -125,6 +132,7 @@ const BestBanner: React.FC<BestBannerProps> = () => {
                     textAlign="center"
                     width="90px"
                     height="auto"
+                    color="#1F2937"
                   >
                     Desa Dramaga
                   </Text>

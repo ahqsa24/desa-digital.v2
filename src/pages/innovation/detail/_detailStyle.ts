@@ -133,3 +133,11 @@ export const BenefitContainer = styled.div`
   margin-bottom: 8px;
 `;
 
+export const SubText = styled.p`
+  position: flex;
+  justify-content: space-between;
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 8px;
+  color: #1F2937;
+`;
