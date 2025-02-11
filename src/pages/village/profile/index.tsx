@@ -207,11 +207,22 @@ export default function ProfileVillage() {
         <ContentContainer>
           <Flex flexDirection="column" alignItems="flex-end" mb={owner ? 0 : 4}>
             {owner && (
-              <Button size="xs" onClick={() => navigate("/PengajuanKlaim")}>
+
+              <Button
+                fontSize="12px"
+                fontWeight="500"
+                height="29px"
+                width="130px"
+                padding="6px 8px"
+                borderRadius="4px"
+                display="flex"
+                justifyContent="space-between"
+                onClick={() => navigate("/PengajuanKlaim")}>
                 <Icon src={Send} alt="send" />
                 Pengajuan Klaim
               </Button>
             )}
+
           </Flex>
 
           <Title> {village?.namaDesa} </Title>
