@@ -27,14 +27,15 @@ const EnlargedImage: React.FC<EnlargedImageProps> = ({ src }) => {
             <Modal isOpen={isOpen} onClose={onClose} isCentered blockScrollOnMount={false}>
                 <ModalOverlay />
                 <ModalContent bg="transparent" boxShadow="none" maxW="fit-content">
-                    <ModalBody p={0}>
+                    <ModalBody >
                         <Image
                             src={src}
                             borderRadius="4px"
                             objectFit="cover"
-                            maxHeight="40vh"
-                            maxWidth="60vw"
+                            maxHeight="200px"
+                            maxWidth="300px"
                             position="relative"
+                            marginRight="12px"
 
                         />
 
