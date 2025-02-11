@@ -50,4 +50,5 @@ export const ActionContainer = styled.div`
 export const Action = styled(Label)`
   color: #347357;
   cursor: pointer;
+  text-decoration: underline;
 `;
