@@ -7,9 +7,11 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 
-type SearchBarLinkProps = {};
+type SearchBarLinkProps = {
+  placeholderText?:string;
+};
 
-const SearchBarLink: React.FC<SearchBarLinkProps> = () => {
+const SearchBarLink: React.FC<SearchBarLinkProps> = ({ placeholderText }) => {
   return (
     <Flex justify="center" maxW="360px" mb='16px'>
       <Flex position='absolute' top='175px'>
@@ -19,7 +21,7 @@ const SearchBarLink: React.FC<SearchBarLinkProps> = () => {
             children={<SearchIcon color="gray.300" />}
           />
           <Input
-            placeholder="Search"
+            placeholder={placeholderText || "Search"}
             fontSize="10pt"
             bg="white"
             _placeholder={{ color: "gray.500" }}

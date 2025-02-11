@@ -19,8 +19,8 @@ const Ads: React.FC = () => {
       <Fade in={visibleBox === 0}>
         <Box
           backgroundImage={defAds1}
-          height="166px"
-          width="161px"
+          height="160px"
+          width="160px"
           backgroundSize="cover"
           backgroundPosition="center"
           padding="12px"
@@ -54,7 +54,7 @@ const Ads: React.FC = () => {
             <br />
             Informasi inovasi digital desa
           </Text>
-          <Flex justifyContent="flex-end" mt="26px">
+          <Flex justifyContent="flex-end" mt="12px">
             <Button
               variant="inverted"
               border="none"
@@ -74,8 +74,8 @@ const Ads: React.FC = () => {
       <Fade in={visibleBox === 1}>
         <Box
           backgroundImage={defAds2}
-          height="166px"
-          width="161px"
+          height="160px"
+          width="160px"
           backgroundSize="cover"
           backgroundPosition="center"
           padding="12px"
@@ -109,7 +109,7 @@ const Ads: React.FC = () => {
             <br />
             Desa digital di Indonesia
           </Text>
-          <Flex justifyContent="flex-end" mt="12px">
+          <Flex justifyContent="flex-end" mt="10px">
             <Button
               variant="inverted"
               border="none"

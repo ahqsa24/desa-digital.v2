@@ -1,14 +1,19 @@
 import styled from "styled-components";
-import HeroBackground from "Assets/images/hero-background.jpg";
+import HeroBackground from "Assets/images/Background-desadigital.svg";
 import AdminBackground from "Assets/images/hero-background-admin.svg";
+import InnovatorBackground from "Assets/images/Background-inovator3.svg";
+import VillageBackground from "Assets/images/Background-desahome1.svg";
+
 interface BackgroundProps {
   isAdmin?: boolean;
+  isInnovator?:boolean
+  isVillage?:boolean
 }
 
 export const Background = styled.div<BackgroundProps>`
   padding: 16px;
-  background-image: ${({ isAdmin }) =>
-    `url(${isAdmin ? AdminBackground : HeroBackground})`};
+   background-image: ${({ isAdmin, isInnovator, isVillage }) =>
+    `url(${isAdmin ? AdminBackground : isInnovator ? InnovatorBackground : isVillage ? VillageBackground: HeroBackground})`};
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
