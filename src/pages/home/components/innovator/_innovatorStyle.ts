@@ -16,5 +16,5 @@ export const Title = styled.p`
   font-weight: 600;
   color: black;
   margin: 24px 0 8px 0;
-  color: #1A202C);
+  color:"#1F2937");
 `
