@@ -24,7 +24,7 @@ export const Logo = styled.img`
 `
 
 export const CardContent = styled.div`
-  padding: 32px 8px 8px 8px;
+  padding: 8px 8px 8px 8px;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -32,6 +32,16 @@ export const CardContent = styled.div`
   align-item: flex-start;
   flex: 1 0 0;
   align-self: stretch;
+`
+export const ContBadge = styled.div`
+  display: flex;
+  width: 100%;
+  height: 21px;
+  gap: 10 px;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 8px;
+
 `
 
 export const Title = styled.p`
