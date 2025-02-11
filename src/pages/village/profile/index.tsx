@@ -48,12 +48,14 @@ import {
   ContentContainer,
   Description,
   Horizontal,
+  GridContainer,
   Icon,
   Label,
   Logo,
   NavbarButton,
   SubText,
   Title,
+  DescriptionLoc,
 } from "./_profileStyle";
 import StatusCard from "Components/card/status/StatusCard";
 import RejectionModal from "Components/confirmModal/RejectionModal";
@@ -158,41 +160,41 @@ export default function ProfileVillage() {
     fetchVillageData();
   });
 
-   useEffect(() => {
-     const fetchVillageAndInnovations = async () => {
-       if (!id) return;
+  useEffect(() => {
+    const fetchVillageAndInnovations = async () => {
+      if (!id) return;
 
-       // Fetch data dari collection villages berdasarkan id
-       const villageRef = doc(firestore, "villages", id);
-       const villageSnap = await getDoc(villageRef);
+      // Fetch data dari collection villages berdasarkan id
+      const villageRef = doc(firestore, "villages", id);
+      const villageSnap = await getDoc(villageRef);
 
-       if (villageSnap.exists()) {
-         const villageData = villageSnap.data();
-         const inovasiDiterapkan = villageData?.inovasiDiterapkan || [];
+      if (villageSnap.exists()) {
+        const villageData = villageSnap.data();
+        const inovasiDiterapkan = villageData?.inovasiDiterapkan || [];
 
-         // Ambil semua inovasiId dari field inovasiDiterapkan
-         const inovasiIds = inovasiDiterapkan.map(
-           (inovasi: any) => inovasi.inovasiId
-         );
-         if (inovasiIds.length > 0) {
-           // Fetch data dari collection innovations berdasarkan inovasiId
-           const innovationsRef = collection(firestore, "innovations");
-           const innovationsQuery = query(
-             innovationsRef,
-             where("__name__", "in", inovasiIds)
-           );
-           const innovationsSnapshot = await getDocs(innovationsQuery);
+        // Ambil semua inovasiId dari field inovasiDiterapkan
+        const inovasiIds = inovasiDiterapkan.map(
+          (inovasi: any) => inovasi.inovasiId
+        );
+        if (inovasiIds.length > 0) {
+          // Fetch data dari collection innovations berdasarkan inovasiId
+          const innovationsRef = collection(firestore, "innovations");
+          const innovationsQuery = query(
+            innovationsRef,
+            where("__name__", "in", inovasiIds)
+          );
+          const innovationsSnapshot = await getDocs(innovationsQuery);
 
-           const innovationsData = innovationsSnapshot.docs.map((doc) =>
-             doc.data()
-           );
-           setInnovations(innovationsData);
-         }
-       }
-     };
+          const innovationsData = innovationsSnapshot.docs.map((doc) =>
+            doc.data()
+          );
+          setInnovations(innovationsData);
+        }
+      }
+    };
 
-     fetchVillageAndInnovations();
-   }, [id]);
+    fetchVillageAndInnovations();
+  }, [id]);
 
   return (
     <Box>
@@ -215,52 +217,53 @@ export default function ProfileVillage() {
           <Title> {village?.namaDesa} </Title>
           <ActionContainer>
             <Icon src={Location} alt="loc" />
-            <Description>{formatLocation(village?.lokasi)}</Description>
+            <DescriptionLoc>{formatLocation(village?.lokasi)}</DescriptionLoc>
           </ActionContainer>
-          <div>
+          <Flex direction="column">
             <SubText margin-bottom={16}>Tentang</SubText>
             <Description>{village?.deskripsi}</Description>
-          </div>
-          <SubText>Kontak Desa</SubText>
-          <Flex flexDirection="column" alignItems="flex-start" gap="12px">
-            <Flex
-              width="100%"
-              flexDirection="row"
-              alignItems="flex-start"
-              gap="16px"
-              paddingBottom="12px"
-            >
-              <Box color="#4B5563" fontSize="12px" minWidth="110px">
-                Nomor WhatsApp
-              </Box>
-              <Description>{village?.whatsapp}</Description>
-            </Flex>
-            <Flex
-              width="100%"
-              flexDirection="row"
-              alignItems="flex-start"
-              gap="16px"
-              paddingBottom="12px"
-            >
-              <Box color="#4B5563" fontSize="12px" minWidth="110px">
-                Link Website
-              </Box>
-              <Description>{village?.website}</Description>
-            </Flex>
-            <Flex
-              width="100%"
-              flexDirection="row"
-              alignItems="flex-start"
-              gap="16px"
-              paddingBottom="12px"
-            >
-              <Box color="#4B5563" fontSize="12px" minWidth="110px">
-                Link Instagram
-              </Box>
-              <Description>{village?.instagram}</Description>
+          </Flex>
+          <Flex direction="column">
+            <SubText>Kontak Desa</SubText>
+            <Flex flexDirection="column" alignItems="flex-start" >
+              <Flex
+                width="100%"
+                flexDirection="row"
+                alignItems="flex-start"
+                gap="16px"
+                paddingBottom="12px"
+              >
+                <Box color="#4B5563" fontSize="12px" minWidth="110px">
+                  Nomor WhatsApp
+                </Box>
+                <Description>{village?.whatsapp}</Description>
+              </Flex>
+              <Flex
+                width="100%"
+                flexDirection="row"
+                alignItems="flex-start"
+                gap="16px"
+                paddingBottom="12px"
+              >
+                <Box color="#4B5563" fontSize="12px" minWidth="110px">
+                  Link Website
+                </Box>
+                <Description>{village?.website}</Description>
+              </Flex>
+              <Flex
+                width="100%"
+                flexDirection="row"
+                alignItems="flex-start"
+                gap="16px"
+              >
+                <Box color="#4B5563" fontSize="12px" minWidth="110px">
+                  Link Instagram
+                </Box>
+                <Description>{village?.instagram}</Description>
+              </Flex>
             </Flex>
           </Flex>
-          <div>
+          <Flex direction="column">
             <SubText>Potensi Desa</SubText>
             <ContPotensiDesa>
               {village?.potensiDesa?.map((potensi: string, index: number) => (
@@ -269,7 +272,7 @@ export default function ProfileVillage() {
                 </ChipContainer>
               ))}
             </ContPotensiDesa>
-          </div>
+          </Flex>
           <div>
             <SubText>Karakteristik Desa</SubText>
             <Accordion defaultIndex={[0]} allowMultiple>
@@ -452,7 +455,7 @@ export default function ProfileVillage() {
               </AccordionItem>
             </Accordion>
           </div>
-          <div>
+          <Flex direction="column" paddingTop={1}>
             <SubText>Galeri Desa</SubText>
             <CardContainer>
               <Horizontal>
@@ -464,12 +467,13 @@ export default function ProfileVillage() {
                   )}
               </Horizontal>
             </CardContainer>
-          </div>
+          </Flex>
           <div>
             <Flex
               justifyContent="space-between"
               alignItems="flex-end"
               alignSelf="stretch"
+              paddingTop={2}
             >
               <SubText>Inovasi yang Diterapkan</SubText>
               <Text
@@ -486,7 +490,7 @@ export default function ProfileVillage() {
               </Text>
             </Flex>
             <CardContainer>
-              <Horizontal>
+              <GridContainer>
                 {innovations.map((innovation, idx) => (
                   <CardInnovation
                     key={idx}
@@ -506,7 +510,7 @@ export default function ProfileVillage() {
                     }
                   />
                 ))}
-              </Horizontal>
+              </GridContainer>
             </CardContainer>
           </div>
         </ContentContainer>
@@ -514,7 +518,7 @@ export default function ProfileVillage() {
       <Box>
         {admin ? (
           village?.status === "Terverifikasi" ||
-          village?.status === "Ditolak" ? (
+            village?.status === "Ditolak" ? (
             <StatusCard
               status={village?.status}
               message={village?.catatanAdmin}

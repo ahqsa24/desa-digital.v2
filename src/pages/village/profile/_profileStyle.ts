@@ -75,12 +75,43 @@ export const Description = styled.div`
   font-size: 12px;
   line-height: 140%;
   color: #4b5563;
+  text-align: justify;
+  width: 100%;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  white-space: normal;
+  
+`;
+
+export const DescriptionLoc = styled.div`
+  display: flex;
+  flex: 1 0 0;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 140%;
+  color: #4b5563;
   gap: 6px;
   text-align: justify;
   width: 100%;
   word-break: break-word;
   overflow-wrap: anywhere;
   white-space: normal;
+  text-align:left;
+`;
+
+export const GridContainer = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-content: center;
+  align-items: left;
+  gap: 16px;
+  padding: px;
+  position: relative;
+  width: 100%;
+   & > *:nth-child(n+3) { /* Sembunyikan item ke-3 dan seterusnya */
+    display: none;
+  }
 `;
 
 export const ActionContainer = styled.div`
@@ -182,6 +213,7 @@ export const ContPotensiDesa = styled.div`
   gap: 8px;
   align-self: stretch;
   flex-wrap: wrap;
+  padding-bottom: 6px;
 `;
 
 export const ButtonKontak = styled.div`
