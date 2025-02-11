@@ -29,6 +29,8 @@ export const Description = styled.p`
   color: #6b7280;
   font-weight: 400;
   text-align: left;
+  line-height: 140%;
+  font-size: 14px;
 `;
 
 export const Label = styled.p`
