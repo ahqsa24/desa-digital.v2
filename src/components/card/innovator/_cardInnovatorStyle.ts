@@ -47,7 +47,7 @@ export const ContBadge = styled.div`
 export const Title = styled.p`
   font-size: 12px;
   font-weight: 700;
-  color: 1F2937;
+  color: #1F2937;
   
   white-space: wrap;
   overflow: hidden;
