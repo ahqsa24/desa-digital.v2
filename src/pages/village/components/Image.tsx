@@ -32,8 +32,8 @@ const EnlargedImage: React.FC<EnlargedImageProps> = ({ src }) => {
                             src={src}
                             borderRadius="4px"
                             objectFit="cover"
-                            maxHeight="30vh"
-                            maxWidth="50vw"
+                            maxHeight="40vh"
+                            maxWidth="60vw"
                             position="relative"
 
                         />
