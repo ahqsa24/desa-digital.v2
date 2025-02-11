@@ -4,6 +4,7 @@ import {
   InputGroup,
   InputRightElement,
   Text,
+  Box,
 } from "@chakra-ui/react";
 import { paths } from "Consts/path";
 import { doc, getDoc } from "firebase/firestore";
@@ -24,7 +25,7 @@ import {
   Label,
   Title,
 } from "./_loginStyle";
-
+import TopBar from "Components/topBar";
 const Login: React.FC = () => {
   const [loginForm, setLoginForm] = useState({
     email: "",
@@ -77,6 +78,8 @@ const Login: React.FC = () => {
   };
 
   return (
+    <Box>
+    <TopBar title="" onBack={() => navigate(-1)} />
     <Background>
       <Container>
         <Title>Halo!</Title>
@@ -93,6 +96,7 @@ const Login: React.FC = () => {
             required
             placeholder="Email"
             mt="4px"
+            fontSize="10pt"
           />
           <Text fontSize="10pt" mt="12px">
             Kata sandi
@@ -105,6 +109,7 @@ const Login: React.FC = () => {
               onChange={onChange}
               required
               placeholder="Kata sandi"
+              fontSize="10pt"
             />
             <InputRightElement onClick={onShowPassword} cursor="pointer">
               {show ? <FaEyeSlash /> : <FaEye />}
@@ -130,8 +135,8 @@ const Login: React.FC = () => {
           </Button>
         </form>
 
-        <ActionContainer mt={24}>
-          <Label>Lupa kata sandi</Label>
+        <ActionContainer mt={20}>
+          <Label>Lupa kata sandi?</Label>
           <Action onClick={() => navigate(paths.EMAIL_RESET_PASSWORD_PAGE)}>
             Klik disini
           </Action>
@@ -145,6 +150,7 @@ const Login: React.FC = () => {
         </ActionContainer>
       </Container>
     </Background>
+    </Box>
   );
 };
 
