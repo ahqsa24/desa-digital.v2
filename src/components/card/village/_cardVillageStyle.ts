@@ -6,12 +6,11 @@ export const Container = styled.div`
   border-radius: 8px;
   display: flex;
   width: 100%;
-  height: 189px;
+  height: 197px;
   flex-direction: column;
   align-items: flex-start;
   overflow: hidden;
   cursor: pointer;
-  
 `
 
 export const Background = styled.img`
@@ -36,6 +35,7 @@ export const CardContent = styled.div`
   align-item: flex-start;
   flex: 1 0 0;
   align-self: stretch;
+  
 `
 export const ContBadge = styled.div`
   display: flex;
@@ -50,18 +50,35 @@ export const ContBadge = styled.div`
 export const Title = styled.p`
   font-size: 12px;
   font-weight: 700;
-  color: 1F2937;
+  color: #1F2937;;
   line-height: 140%;
+
+  white-space: wrap;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  align-self: stretch;
+  text-overflow: ellipsis;
   
 `
 export const Description = styled.p`
   font-size: 10px;
   font-weight: 400;
   color: #374151;
+  
+  white-space: wrap;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  align-self: stretch;
+  text-overflow: ellipsis;
 `
 export const Location = styled.p`
   display: flex;
   align-items: center;
   gap: 4px;
   margin-top: auto;
+  
 `
