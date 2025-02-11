@@ -126,7 +126,8 @@ const Village: React.FC = () => {
             </Column2>
           </Column1>
           <Column1>
-            <SearchBarVil />
+            <SearchBarVil
+            placeholder="Cari desa" />
           </Column1>
         </CardContent>
         <Text>
