@@ -12,6 +12,7 @@ import {
   Applied,
   InnovatorName,
 } from "./_cardInnovationStyle";
+import { Flex } from "@chakra-ui/react";
 
 type CardInnovationProps = {
   images?: string[];
@@ -34,19 +35,21 @@ function CardInnovation(props: CardInnovationProps) {
         <Title>{namaInovasi}</Title>
         <Category>{kategori}</Category>
         <Description>{deskripsi}</Description>
-        <CompanyContainer>
-          {typeof innovatorLogo === "string" ? (
-            <Icon src={innovatorLogo} alt={namaInovasi} />
-          ) : (
-            <div>{innovatorLogo}</div>
-          )}
-          {typeof innovatorName === "string" ? (
-            <InnovatorName>{innovatorName}</InnovatorName>
-          ) : (
-            <div>{innovatorName}</div>
-          )}
-        </CompanyContainer>
-        <Applied>Sejak {tahunDibuat}</Applied>
+        <Flex marginTop="auto" direction="column">
+          <CompanyContainer>
+            {typeof innovatorLogo === "string" ? (
+              <Icon src={innovatorLogo} alt={namaInovasi} />
+            ) : (
+              <div>{innovatorLogo}</div>
+            )}
+            {typeof innovatorName === "string" ? (
+              <InnovatorName>{innovatorName}</InnovatorName>
+            ) : (
+              <div>{innovatorName}</div>
+            )}
+          </CompanyContainer>
+          <Applied>Sejak {tahunDibuat}</Applied>
+        </Flex>
       </Content>
     </Container>
   );
