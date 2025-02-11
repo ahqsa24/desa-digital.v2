@@ -243,7 +243,7 @@ export default function ProfileVillage() {
               paddingBottom="12px"
             >
               <Box color="#4B5563" fontSize="12px" minWidth="110px">
-                Link Instagram
+                Link Website
               </Box>
               <Description>{village?.website}</Description>
             </Flex>
@@ -255,7 +255,7 @@ export default function ProfileVillage() {
               paddingBottom="12px"
             >
               <Box color="#4B5563" fontSize="12px" minWidth="110px">
-                Link Website
+                Link Instagram
               </Box>
               <Description>{village?.instagram}</Description>
             </Flex>
