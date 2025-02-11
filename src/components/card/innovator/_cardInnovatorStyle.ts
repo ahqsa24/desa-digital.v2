@@ -24,17 +24,40 @@ export const Logo = styled.img`
 `
 
 export const CardContent = styled.div`
-  padding: 32px 8px 8px 8px;
+  padding: 8px;
   display: flex;
   flex-direction: column;
   gap: 4px;
   position: relative;
+  align-item: flex-start;
+  flex: 1 0 0;
+  align-self: stretch;
+  height: 115px;
+  
+`
+export const ContBadge = styled.div`
+  display: flex;
+  width: 100%;
+  height: 21px;
+  gap: 10 px;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 8px;
+
 `
 
 export const Title = styled.p`
   font-size: 12px;
   font-weight: 700;
-  color: black;
+  color: #1F2937;
+  
+  white-space: wrap;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  align-self: stretch;
+  text-overflow: ellipsis;
 `
 
 export const Description = styled.p`

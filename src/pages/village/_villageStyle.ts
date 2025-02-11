@@ -49,12 +49,14 @@ export const Text = styled.p`
   text-align: left;
   display: inline;
   align-items: flex-start;
+  color: #1F2937;
 `;
 
 export const Texthighlight = styled.span`
   font-size: 12px;
   font-weight: 700;
   display: inline;
+  color: #1F2937;
 `;
 
 export const Column1 = styled.div`

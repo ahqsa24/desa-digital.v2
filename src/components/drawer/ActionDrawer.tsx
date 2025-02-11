@@ -5,7 +5,8 @@ import {
     DrawerContent,
     DrawerFooter,
     DrawerHeader,
-    DrawerOverlay
+    DrawerOverlay,
+    DrawerCloseButton,
 } from "@chakra-ui/react";
 import Instagram from "Assets/icons/instagram.svg";
 import Web from "Assets/icons/web.svg";
@@ -94,11 +95,19 @@ const ActionDrawer: React.FC<ActionDrawerProps> = ({
                 fontSize: "16px",
               }}
             >
+              <DrawerCloseButton 
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                color: "#1F2937",
+                paddingTop: "10px",
+              }}
+              />
               Kontak {role}
             </DrawerHeader>
             <DrawerBody fontSize={12} color="#374151" paddingX={4} gap={4}>
-              Terapkan produk inovasi desa digital dengan cara menghubungi
-              inovator melalui saluran di bawah ini:
+              Terapkan produk inovasi desa digital dengan cara menghubungi&nbsp;
+              {role} melalui saluran di bawah ini:
               <ButtonKontak>
                 <Icon src={Whatsapp} alt="WA" />
                 WhatsApp
