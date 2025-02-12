@@ -75,6 +75,10 @@ export default function ProfileVillage() {
   const [openModal, setOpenModal] = useState(false);
   const [modalInput, setModalInput] = useState("");
 
+  const handleClick = () => {
+    navigate(`/village/inovasiDiterapkan?userId=${userLogin?.uid}`)
+  };
+
   const formatLocation = (lokasi: any) => {
     if (!lokasi) return "No Location";
     const kecamatan = lokasi.kecamatan?.label || "Unknown Subdistrict";
@@ -488,7 +492,7 @@ export default function ProfileVillage() {
             >
               <SubText>Inovasi yang Diterapkan</SubText>
               <Text
-                onClick={() => navigate("/target-page")} // Ganti "/target-page" dengan rute yang sesuai
+                onClick={handleClick} 
                 cursor="pointer"
                 color="var(--Primary, #347357)"
                 fontSize="12px"

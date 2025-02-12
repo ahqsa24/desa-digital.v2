@@ -32,6 +32,8 @@ import Notification from "./pages/notification/Notification";
 import InnovationListPage from "./pages/innovator/detail/ProdukInovasi/InnovationListPage";
 import PengajuanInovasi from "./pages/innovator/profile/pengajuanInovasi/PengajuanInovasi";
 import PengajuanKlaim from "./pages/village/pengajuanKlaim";
+import InovasiDiterapkan from "./pages/village/inovasiDiterapkan";
+
 
 const queryClient = new QueryClient();
 
@@ -174,6 +176,11 @@ const routes = [
   {
     path: paths.PENGAJUAN_KLAIM_PAGE,
     element: <PengajuanKlaim />, 
+    exact: true,
+  },
+  {
+    path: paths.INOVASI_DITERAPKAN_PAGE,
+    element: <InovasiDiterapkan />, 
     exact: true,
   },
 ];

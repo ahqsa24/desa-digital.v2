@@ -19,6 +19,7 @@ export const paths = {
   VILLAGE_PROFILE_PAGE: "/village/profile/:id",
   KLAIM_INOVASI_PAGE: "/village/klaimInovasi/:id",
   PENGAJUAN_KLAIM_PAGE: "/village/pengajuanKlaim",
+  INOVASI_DITERAPKAN_PAGE: "/village/inovasiDiterapkan",
 
   // ! innovator
   INNOVATOR_PAGE: "/innovator",
