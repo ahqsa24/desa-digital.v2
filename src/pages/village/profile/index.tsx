@@ -64,6 +64,7 @@ import ActionDrawer from "Components/drawer/ActionDrawer";
 export default function ProfileVillage() {
   const navigate = useNavigate();
   const [userLogin] = useAuthState(auth);
+  const [user] = useAuthState(auth);
   const innovationsRef = collection(firestore, "innovations");
   const [innovations, setInnovations] = useState<DocumentData[]>([]);
   const [village, setVillage] = useState<DocumentData | undefined>(undefined);
@@ -166,14 +167,15 @@ export default function ProfileVillage() {
 
   useEffect(() => {
     const fetchVillageAndInnovations = async () => {
-      if (!id) return;
+      if (!user) return;
 
       // Fetch data dari collection villages berdasarkan id
-      const villageRef = doc(firestore, "villages", id);
-      const villageSnap = await getDoc(villageRef);
+      const villageRef = collection(firestore, "villages");
+      const q = query(villageRef, where("userId", "==", user.uid));
+      const villageSnap = await getDocs(q);
 
-      if (villageSnap.exists()) {
-        const villageData = villageSnap.data();
+      if (!villageSnap.empty) {
+        const villageData = villageSnap.docs[0].data();
         const inovasiDiterapkan = villageData?.inovasiDiterapkan || [];
 
         // Ambil semua inovasiId dari field inovasiDiterapkan
@@ -181,24 +183,30 @@ export default function ProfileVillage() {
           (inovasi: any) => inovasi.inovasiId
         );
         if (inovasiIds.length > 0) {
-          // Fetch data dari collection innovations berdasarkan inovasiId
-          const innovationsRef = collection(firestore, "innovations");
-          const innovationsQuery = query(
-            innovationsRef,
-            where("__name__", "in", inovasiIds)
-          );
-          const innovationsSnapshot = await getDocs(innovationsQuery);
+          const fetchInnovations = async () => {
+            try {
+              const innovationsRef = collection(firestore, "innovations");
+              const q = query(innovationsRef, where("__name__", "in", inovasiIds));
+              const snapshot = await getDocs(q);
 
-          const innovationsData = innovationsSnapshot.docs.map((doc) =>
-            doc.data()
-          );
-          setInnovations(innovationsData);
+              const innovationsData = snapshot.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+              }));
+
+              setInnovations(innovationsData);
+            } catch (error) {
+              console.error("Gagal mengambil data inovasi:", error);
+            }
+          };
+
+          fetchInnovations();
         }
       }
     };
 
     fetchVillageAndInnovations();
-  }, [id]);
+  }, [user]);
 
   return (
     <Box>
@@ -492,7 +500,7 @@ export default function ProfileVillage() {
             >
               <SubText>Inovasi yang Diterapkan</SubText>
               <Text
-                onClick={handleClick} 
+                onClick={handleClick}
                 cursor="pointer"
                 color="var(--Primary, #347357)"
                 fontSize="12px"
@@ -506,25 +514,28 @@ export default function ProfileVillage() {
             </Flex>
             <CardContainer>
               <GridContainer>
-                {innovations.map((innovation, idx) => (
-                  <CardInnovation
-                    key={idx}
-                    images={innovation.images}
-                    namaInovasi={innovation.namaInovasi}
-                    kategori={innovation.kategori}
-                    deskripsi={innovation.deskripsi}
-                    tahunDibuat={innovation.tahunDibuat}
-                    innovatorLogo={innovation.innovatorImgURL}
-                    innovatorName={innovation.namaInnovator}
-                    onClick={() =>
-                      navigate(
-                        generatePath(paths.DETAIL_INNOVATION_PAGE, {
-                          id: innovation.id,
-                        })
-                      )
-                    }
-                  />
-                ))}
+                {innovations.length > 0 ? (
+                  innovations.map((innovation, idx) => (
+                    <CardInnovation
+                      key={idx}
+                      images={innovation.images}
+                      namaInovasi={innovation.namaInovasi}
+                      kategori={innovation.kategori}
+                      deskripsi={innovation.deskripsi}
+                      tahunDibuat={innovation.tahunDibuat}
+                      innovatorLogo={innovation.innovatorImgURL}
+                      innovatorName={innovation.namaInnovator}
+                      onClick={() =>
+                        navigate(
+                          generatePath(paths.DETAIL_INNOVATION_PAGE, {
+                            id: innovation.id,
+                          })
+                        )
+                      }
+                    />
+                  ))
+                ) : (<Text>Belum ada inovasi yang diterapkan.</Text>
+                )}
               </GridContainer>
             </CardContainer>
           </div>
