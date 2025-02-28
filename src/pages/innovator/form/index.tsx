@@ -114,9 +114,16 @@ const InnovatorForm: React.FC = () => {
   const onTextChange = ({
     target: { name, value },
   }: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const wordCount = value.split(/\s+/).filter((word) => word !== "").length;
     if (name === "description") {
-      const wordCount = value.split(/\s+/).filter((word) => word !== "").length;
       if (wordCount <= 80) {
+        setTextInputsValue((prev) => ({
+          ...prev,
+          [name]: value,
+        }));
+      }
+    } else if (name === "name") {
+      if (wordCount <= 4) {
         setTextInputsValue((prev) => ({
           ...prev,
           [name]: value,
@@ -397,6 +404,8 @@ const InnovatorForm: React.FC = () => {
                 placeholder="Nama Inovator"
                 value={textInputsValue.name}
                 onChange={onTextChange}
+                wordCount={getDescriptionWordCount()}
+                maxWords={4}
                 disabled={!isEditable}
               />
               <Text fontWeight="400" fontSize="14px" mb="-2">
