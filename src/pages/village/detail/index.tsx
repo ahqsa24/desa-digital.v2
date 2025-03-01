@@ -504,6 +504,11 @@ export default function DetailVillage() {
             onVerify={handleVerify}
             setOpenModal={setOpenModal}
             role="Desa"
+            contactData={{
+              whatsapp: village?.whatsapp || "", 
+              instagram: village?.instagram || "",
+              website: village?.website || ""
+            }}
           />
     </Box>
   );
