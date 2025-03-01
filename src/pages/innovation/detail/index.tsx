@@ -60,13 +60,13 @@ function DetailInnovation() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [user] = useAuthState(auth);
   const [data, setData] = useState<DocumentData>({});
-  const [datainnovator, setDatainnovator] = useState<DocumentData>({});
+  const [innovatorData, setDatainnovator] = useState<DocumentData>({});
   const [admin, setAdmin] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [modalInput, setModalInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
+ 
   useEffect(() => {
     const fetchUser = async () => {
       if (user?.uid) {
@@ -263,10 +263,10 @@ function DetailInnovation() {
             )
           }
         >
-          <Logo src={datainnovator.logo} alt="logo" />
+          <Logo src={innovatorData.logo} alt="logo" />
           <div>
             <Text2>Inovator</Text2>
-            <Text1>{datainnovator.namaInovator}</Text1>
+            <Text1>{innovatorData.namaInovator}</Text1>
           </div>
         </ActionContainer>
         <Stack spacing="8px">
@@ -339,11 +339,14 @@ function DetailInnovation() {
             </Text>
             <Text fontSize="12px" fontWeight="400" color="#4B5563">
               {data.hargaMinimal
-                ? `Rp. ${data.hargaMinimal}${
-                    data.hargaMaksimal ? ` - Rp. ${data.hargaMaksimal}` : ""
-                }`
+                ? `Rp. ${new Intl.NumberFormat("id-ID").format(data.hargaMinimal)}${
+                    data.hargaMaksimal
+                      ? ` - Rp. ${new Intl.NumberFormat("id-ID").format(data.hargaMaksimal)}`
+                      : ""
+                  }`
                 : "Harga tidak tersedia"}
             </Text>
+
           </div>
         </Stack>
 
@@ -426,7 +429,7 @@ function DetailInnovation() {
             <Description>No specific needs listed.</Description>
           )}
         </div>
-        <Flex flexDirection="column">
+        <Flex flexDirection="column" paddingBottom="70px">
           <Flex justifyContent="space-between" alignItems="flex-end" align-self="stretch">
             <SubText>Desa yang Menerapkan</SubText>
             <Text
@@ -444,8 +447,8 @@ function DetailInnovation() {
             > Lihat Semua </Text>
           </Flex>
           <ActionContainer>
-          <Logo src={datainnovator.log} alt="logo" />
-            <Text1>Belum tersedia</Text1>
+          <Logo src={innovatorData.log} alt="logo" />
+            <Text1> {data.inputDesaMenerapkan ?? "Belum tersedia"}</Text1>
           </ActionContainer>
         </Flex>
 
@@ -465,12 +468,22 @@ function DetailInnovation() {
           </Button>
         )}
         {!owner && (
-        <div>
+        <Box
+          position="fixed"
+          bottom="0"
+          left="50%"
+          transform="translateX(-50%)" 
+          width="100%"
+          maxWidth="360px" 
+          bg="white"
+          p="3.5"
+          boxShadow="0px -6px 12px rgba(0, 0, 0, 0.1)"
+        >
           {admin ? (
             data.status === "Terverifikasi" || data.status === "Ditolak" ? (
               <StatusCard message={data.catatanAdmin} status={data.status} />
             ) : (
-              <Button width="100%" fontSize="14px" mb={8} onClick={onOpen}>
+              <Button width="100%" fontSize="14px" onClick={onOpen}>
                 Verifikasi Permohonan Inovasi
               </Button>
             )
@@ -479,7 +492,8 @@ function DetailInnovation() {
               Ketahui lebih lanjut
             </Button>
           )}
-        </div>
+        </Box>
+
         )}
         <RejectionModal
           isOpen={openModal}
@@ -497,6 +511,11 @@ function DetailInnovation() {
           onVerify={handleVerify}
           setOpenModal={setOpenModal}
           role="Inovator"
+          contactData={{
+            whatsapp: innovatorData?.whatsapp || "", 
+            instagram: innovatorData?.instagram || "",
+            website: innovatorData?.website || ""
+          }}
         />
       </ContentContainer>
     </Box>
