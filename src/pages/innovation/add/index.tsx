@@ -718,6 +718,7 @@ const AddInnovation: React.FC = () => {
                 isClearable
               />
 
+              {/*
               <Text fontWeight="400" fontSize="14px" mb="-2">
                 Target Pengguna <span style={{ color: "red" }}>*</span>
               </Text>
@@ -747,6 +748,7 @@ const AddInnovation: React.FC = () => {
                   mt="2"
                 />
               )}
+              */}
 
               <Text fontWeight="400" fontSize="14px" mb="-2">
                 Tahun dibuat inovasi <span style={{ color: "red" }}>*</span>
