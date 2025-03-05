@@ -17,8 +17,6 @@ import {
     Icon
 } from "../../pages/village/detail/_detailStyle";
 
-
-
 interface ContactData {
   whatsapp?: string;
   instagram?: string;
