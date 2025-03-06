@@ -66,6 +66,7 @@ const categoryOptions = [
   { value: "Pengelolaan Sumber Daya", label: "Pengelolaan Sumber Daya" },
   { value: "Pertanian Cerdas", label: "Pertanian Cerdas" },
   { value: "Sistem Informasi", label: "Sistem Informasi" },
+  { value: "UMKM", label: "UMKM" },
 ];
 
 const targetUsersOptions = [
@@ -178,6 +179,7 @@ const AddInnovation: React.FC = () => {
   const onTextChange = ({
     target: { name, value },
   }: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const wordCount = value.split(/\s+/).filter((word) => word !== "").length;
     if (name === "priceMin" || name === "priceMax") {
       // Validasi hanya angka
       if (/^\d*$/.test(value)) {
@@ -187,15 +189,13 @@ const AddInnovation: React.FC = () => {
         }));
       }
     } else if (name === "description") {
-      const wordCount = value.split(/\s+/).filter((word) => word !== "").length;
       if (wordCount <= 80) {
         setTextInputsValue((prev) => ({
           ...prev,
           [name]: value,
         }));
       }
-    } else if (name === "desa") {
-      const wordCount = value.split(/\s+/).filter((word) => word !== "").length;
+    } else if (name === "villages") {
       if (wordCount <= 20) {
         setTextInputsValue((prev) => ({
           ...prev,
@@ -203,7 +203,6 @@ const AddInnovation: React.FC = () => {
         }));
       }
     } else if (name === "otherBusinessModel") {
-      const wordCount = value.split(/\s+/).filter((word) => word !== "").length;
       if (wordCount <= 5) {
         setTextInputsValue((prev) => ({
           ...prev,
@@ -718,38 +717,6 @@ const AddInnovation: React.FC = () => {
                 isClearable
               />
 
-              {/*
-              <Text fontWeight="400" fontSize="14px" mb="-2">
-                Target Pengguna <span style={{ color: "red" }}>*</span>
-              </Text>
-              <Select
-                placeholder="Pilih target pengguna"
-                options={targetUsersOptions}
-                value={selectedTargetUser}
-                isDisabled={!isEditable}
-                onChange={handleTargetUserChange}
-                styles={customStyles} // Terapkan gaya yang sama
-                isClearable
-              />
-              {selectedTargetUser?.value === "Lainnya" && (
-                <Input
-                  name="customTargetUser"
-                  fontSize="14px"
-                  placeholder="Masukkan target pengguna"
-                  disabled={!isEditable}
-                  _placeholder={{ color: "#9CA3AF" }}
-                  _focus={{
-                    outline: "none",
-                    bg: "white",
-                    borderColor: "black",
-                  }}
-                  value={customTargetUser}
-                  onChange={(e) => setCustomTargetUser(e.target.value)}
-                  mt="2"
-                />
-              )}
-              */}
-
               <Text fontWeight="400" fontSize="14px" mb="-2">
                 Tahun dibuat inovasi <span style={{ color: "red" }}>*</span>
               </Text>
@@ -1076,7 +1043,7 @@ const AddInnovation: React.FC = () => {
                         const wordCount = e.target.value
                           .split(/\s+/)
                           .filter((word) => word !== "").length;
-                        if (wordCount <= 10) {
+                        if (wordCount <= 20) {
                           // Batas 10 kata
                           const updatedBenefits = [...benefit];
                           updatedBenefits[index].description = e.target.value;
@@ -1095,7 +1062,7 @@ const AddInnovation: React.FC = () => {
                           .split(/\s+/)
                           .filter((word) => word !== "").length
                       }
-                      /10 kata
+                      /20 kata
                     </Text>
                   </Flex>
                 </Flex>
