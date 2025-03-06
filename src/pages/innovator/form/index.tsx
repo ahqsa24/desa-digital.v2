@@ -42,6 +42,7 @@ const categories = [
   "Pemerintah Daerah",
   "Perusahaan",
   "Start Up",
+  "UMKM",
 ];
 
 const businessModels = [
