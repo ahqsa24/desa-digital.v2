@@ -593,7 +593,7 @@ const AddVillage: React.FC = () => {
   }, [user]);
 
   return (
-    <Container page>
+    <Container page pb={24}>
       <TopBar title="Registrasi Profil Desa" onBack={() => navigate(-1)} />
       <Box p="0 16px">
         <form onSubmit={onSubmitForm}>

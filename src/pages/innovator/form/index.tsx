@@ -384,7 +384,7 @@ const InnovatorForm: React.FC = () => {
   };
 
   return (
-    <Container page>
+    <Container page pb={24}>
       <TopBar title="Register Inovator" onBack={() => navigate(-1)} />
       <Box p="0 16px">
         <form onSubmit={onSubmitForm}>
