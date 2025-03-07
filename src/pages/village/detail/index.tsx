@@ -454,7 +454,18 @@ export default function DetailVillage() {
               </Horizontal>
             </CardContainer>
           </div>
-          <Box>
+          <Box
+            left={580}
+            position="fixed" 
+            bottom="0" 
+            height="11%"
+            width="23.8%" 
+            bg="white"
+            boxShadow="mt"
+            borderWidth="1px"
+            borderRadius="lg"
+            borderColor="gray.200"
+          >
             {/* Logika untuk Admin */}
             {admin ? (
               village?.status === "Terverifikasi" ||
@@ -472,12 +483,13 @@ export default function DetailVillage() {
               )
             ) : (
               // Logika untuk Non-Admin
-              <Flex flexGrow={1} position="sticky" bottom="0">
+              <Flex flexGrow={1} position="fixed" bottom="0">
                 <Button
-                  width="100%"
+                  left={590}
+                  width="21.8%"
                   fontSize="14px"
-                  mb={8}
-                  position="sticky"
+                  mb={5}
+                  position="fixed"
                   bottom="0"
                   onClick={onOpen}
                 >
@@ -504,6 +516,11 @@ export default function DetailVillage() {
             onVerify={handleVerify}
             setOpenModal={setOpenModal}
             role="Desa"
+            contactData={{
+              whatsapp: village?.whatsapp || "", 
+              instagram: village?.instagram || "",
+              website: village?.website || ""
+            }}
           />
     </Box>
   );
