@@ -34,6 +34,7 @@ import PengajuanInovasi from "./pages/innovator/profile/pengajuanInovasi/Pengaju
 import PengajuanKlaim from "./pages/village/pengajuanKlaim";
 import BantuanFAQ from "./pages/bantuanFAQ";
 import DesaYangMenerapkan from "./pages/innovation/desaYangMenerapkan";
+import DashboardAdmin from "./pages/admin/dashboard";
 
 const queryClient = new QueryClient();
 
@@ -186,6 +187,11 @@ const routes = [
   {
     path: paths.DESA_YANG_MENERAPKAN_PAGE,
     element: <DesaYangMenerapkan />,
+    exact: true,
+  },
+  {
+    path: paths.ADMIN_DASHBOARD,
+    element: <DashboardAdmin />,
     exact: true,
   },
 ];
