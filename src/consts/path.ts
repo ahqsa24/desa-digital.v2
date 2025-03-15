@@ -13,6 +13,9 @@ export const paths = {
   VERIFICATION_PAGE: "/admin/verification/:category",
   MAKE_ADS: "/admin/ads/make",
   ADMIN_DASHBOARD:"/admin/dashboard",
+  ADMIN_DASHBOARD_DESA: "/admin/dashboard-desa",
+  ADMIN_DASHBOARD_INOVASI: "/admin/dashboard-inovasi",
+  ADMIN_DASHBOARD_INOVATOR: "/admin/dashboard-inovator",
 
   // ! village
   VILLAGE_PAGE: "/village",

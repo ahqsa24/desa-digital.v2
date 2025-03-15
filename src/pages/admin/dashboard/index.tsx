@@ -91,6 +91,7 @@ const CustomLabel = ({ x, y, width, value }: CustomLabelProps) => {
             x={x + width / 2}
             y={y + 20} // Padding 2px dari ujung atas
             fill="#FFFFFF"
+            fontSize={15}
             textAnchor="middle"
             fontWeight="bold"
         >
@@ -381,7 +382,7 @@ const DashboardAdmin: React.FC = () => {
                 </Text>
                 <ChakraLink
                     as={NavLink}
-                    to={userRole === "admin" ? paths.ADMIN_DASHBOARD : paths.VILLAGE_DASHBOARD}
+                    to={paths.ADMIN_DASHBOARD_DESA}
                     fontSize="sm"
                     color="gray.500"
                     textDecoration="underline"
@@ -393,7 +394,7 @@ const DashboardAdmin: React.FC = () => {
             <Box
                 bg="white"
                 borderRadius="xl"
-                pt="50px"
+                pt="10px"
                 pb="1px"
                 mx="15px"
                 boxShadow="md"
@@ -402,8 +403,8 @@ const DashboardAdmin: React.FC = () => {
                 mt={4}
                 overflow="visible"
             >
-                <ResponsiveContainer width="100%" height={170}>
-                    <BarChart data={chartData} margin={{ top: 25, right: 20, left: 20, bottom: 0 }}>
+                <ResponsiveContainer width="100%" height={200}>
+                    <BarChart data={chartData} margin={{ top: 5, right: 20, left: 20, bottom: 0 }}>
                         <XAxis dataKey="name" axisLine={false} tickLine={false} hide />
                         <Tooltip cursor={{ fill: 'transparent' }} />
                         <Bar dataKey="value" radius={[10, 10, 0, 0]} fill="#064E3B">
@@ -422,7 +423,7 @@ const DashboardAdmin: React.FC = () => {
                 </Text>
                 <ChakraLink
                     as={NavLink}
-                    to={userRole === "admin" ? paths.ADMIN_DASHBOARD : paths.VILLAGE_DASHBOARD}
+                    to={paths.ADMIN_DASHBOARD_INOVATOR}
                     fontSize="sm"
                     color="gray.500"
                     textDecoration="underline"
@@ -433,7 +434,7 @@ const DashboardAdmin: React.FC = () => {
             <Box
                 bg="white"
                 borderRadius="xl"
-                pt="50px"
+                pt="10px"
                 pb="1px"
                 mx="15px"
                 boxShadow="md"
@@ -442,8 +443,8 @@ const DashboardAdmin: React.FC = () => {
                 mt={4}
                 overflow="visible"
             >
-                <ResponsiveContainer width="100%" height={170}>
-                    <BarChart data={chartData} margin={{ top: 25, right: 20, left: 20, bottom: 0 }}>
+                <ResponsiveContainer width="100%" height={200}>
+                    <BarChart data={chartData} margin={{ top: 5, right: 20, left: 20, bottom: 0 }}>
                         <XAxis dataKey="name" axisLine={false} tickLine={false} hide />
                         <Tooltip cursor={{ fill: 'transparent' }} />
                         <Bar dataKey="value" radius={[10, 10, 0, 0]} fill="#064E3B">
@@ -456,6 +457,47 @@ const DashboardAdmin: React.FC = () => {
                     </BarChart>
                 </ResponsiveContainer>
             </Box>
+            <Flex justify="space-between" align="center" mt="24px" mx="15px">
+                <Text fontSize="m" fontWeight="bold" color="gray.800">
+                    Inovasi Unggulan
+                </Text>
+                <ChakraLink
+                    as={NavLink}
+                    to={paths.ADMIN_DASHBOARD_INOVASI}
+                    fontSize="sm"
+                    color="gray.500"
+                    textDecoration="underline"
+                >
+                    Lihat Dashboard
+                </ChakraLink>
+            </Flex>
+            <Box
+                bg="white"
+                borderRadius="xl"
+                pt="10px"
+                pb="1px"
+                mx="15px"
+                boxShadow="md"
+                border="2px solid"
+                borderColor="gray.200"
+                mt={4}
+                overflow="visible"
+            >
+                <ResponsiveContainer width="100%" height={200}>
+                    <BarChart data={chartData} margin={{ top: 5, right: 20, left: 20, bottom: 0 }}>
+                        <XAxis dataKey="name" axisLine={false} tickLine={false} hide />
+                        <Tooltip cursor={{ fill: 'transparent' }} />
+                        <Bar dataKey="value" radius={[10, 10, 0, 0]} fill="#064E3B">
+                            <LabelList dataKey="name" position="top" fontSize="10px" formatter={(name: string) => name.replace(/^Desa\s+/i, "")} />
+                            <LabelList dataKey="rank" content={<CustomLabel x={0} y={0} width={0} value={""} />} />
+                            {chartData.map((entry, index) => (
+                                <Cell key={`cell-${index}`} />
+                            ))}
+                        </Bar>
+                    </BarChart>
+                </ResponsiveContainer>
+            </Box>
+            <Box pb={10} />
 
 
         </Box>
