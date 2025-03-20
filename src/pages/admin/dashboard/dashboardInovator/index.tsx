@@ -14,6 +14,8 @@ import { firestore } from "../../../../firebase/clientApp";
 import { FaSeedling } from "react-icons/fa6";
 import redinesImg from "@public/images/rediness.svg";
 import { Filter } from "lucide-react";
+import ScoreCardDashboardInovator from "Components/dashboard/admin/scorecardDashboardInovator";
+import SebaranKategoriInovator from "Components/dashboard/admin/sebaranKategoriInovator";
 
 
 const DashboardAdminInovator: React.FC = () => {
@@ -121,184 +123,10 @@ const DashboardAdminInovator: React.FC = () => {
 
             <Stack gap="16px" paddingTop="55px" />
 
-            {/* SCORECARD STATISTIK */}
-            <Stack>
-                <Box p={5}>
-                    <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap={4}>
-                        {stats.map((stat, index) => (
-                            <Box
-                                key={index}
-                                p={5}
-                                borderRadius="lg"
-                                boxShadow="lg"
-                                border="2px solid"
-                                borderColor="gray.200"
-                                bg="white"
-                                position="relative"
-                            >
-                                <Flex direction="column">
-                                    <Text fontSize="2xl" fontWeight="bold" color="green.700">
-                                        {stat.value}
-                                    </Text>
-                                    <Text fontSize="12px" color="gray.600">{stat.label}</Text>
-                                </Flex>
-                            </Box>
-                        ))}
-                    </Grid>
-                </Box>
-            </Stack>
-            {/* SCORECARD STATISTIK SELESAI */}
+            <ScoreCardDashboardInovator/>
+            <SebaranKategoriInovator/>
 
-
-            {/* PIE CHART SEBARAN KATEGORI INOVATOR */}
-            <Flex justify="space-between" align="center" mt="11px" mx="15px">
-                {/* Judul */}
-                <Text fontSize="sm" fontWeight="bold" color="gray.800">
-                    Sebaran Provinsi Desa Digital
-                </Text>
-            </Flex>
-
-            <Box
-                bg="white"
-                borderRadius="xl"
-                pt="5px"
-                pb="1px"
-                mx="15px"
-                boxShadow="md"
-                border="2px solid"
-                borderColor="gray.200"
-                mt={4}
-                overflow="visible"
-            >
-                {/* Pie Chart */}
-                <Flex justify="center" align="center">
-                    <PieChart width={320} height={220}>
-                        <Pie
-                            data={data}
-                            cx="50%"
-                            cy="50%"
-                            labelLine={false}
-                            outerRadius={120}
-                            dataKey="value"
-                            label={renderCustomizedLabel} // Menampilkan label persentase di dalam chart
-                        >
-                            {data.map((entry, index) => (
-                                <Cell key={`cell-${index}`} fill={entry.color} />
-                            ))}
-                        </Pie>
-                        <Tooltip />
-                    </PieChart>
-
-                    {/* Legend */}
-                    <Box ml={4}>
-                        {data.map((entry, index) => (
-                            <Flex key={index} align="center" mb={1} mr={7} whiteSpace="nowrap">
-                                <Box w={2} h={2} bg={entry.color} borderRadius="full" mr={2} />
-                                <Text fontSize="10px">{entry.name}</Text>
-                            </Flex>
-                        ))}
-                    </Box>
-                </Flex>
-            </Box>
-            {/* PIE CHART SEBARAN KATEGORI INOVATOR SELESAI */}
-
-
-            {/* TOP 5 INOVATOR TERBAIK */}
-            <Flex justify="space-between" align="center" mt="24px" mx="15px">
-                <Text fontSize="sm" fontWeight="bold" color="gray.800">
-                    Top 5 Inovator Terbaik
-                </Text>
-            </Flex>
-            <Box
-                bg="white"
-                borderRadius="xl"
-                pt="15px"
-                pb="1px"
-                mx="15px"
-                boxShadow="md"
-                border="2px solid"
-                borderColor="gray.200"
-                mt={4}
-                overflow="visible"
-            >
-                <ResponsiveContainer width="100%" height={170}>
-                    <BarChart data={bar} margin={{ top: 25, right: 20, left: 20, bottom: 0 }}>
-                        <XAxis dataKey="name" axisLine={false} tickLine={false} hide />
-                        <Tooltip cursor={{ fill: 'transparent' }} />
-                        <Bar dataKey="value" radius={[10, 10, 0, 0]} fill="#064E3B">
-                            <LabelList dataKey="name" position="top" fontSize="10px" formatter={(name: string) => name.replace(/^Desa\s+/i, "")} />
-                            <LabelList
-                                dataKey="rank"
-                                content={(props) => {
-                                    const { x, y, value } = props;
-                                    return (
-                                        <text x={x} y={y} fill="black" textAnchor="middle" fontSize="10px">
-                                            {value}
-                                        </text>
-                                    );
-                                }}
-                            />                            {bar.map((entry, index) => (
-                                <Cell key={`cell-${index}`} />
-                            ))}
-                        </Bar>
-                    </BarChart>
-                </ResponsiveContainer>
-            </Box>
-            <Box
-                bg="white"
-                borderRadius="xl"
-                pt={0}
-                pb={3}
-                mx="15px"
-                boxShadow="md"
-                border="0px solid"
-                borderColor="gray.200"
-                mt={4}
-            >
-                {/* Table Container */}
-                <TableContainer maxWidth="100%" width="auto" borderRadius="md">
-                    <Table variant="simple" size="sm" > {/* Mengurangi ukuran tabel */}
-                        {/* Header Tabel */}
-                        <Thead bg="#D1EDE1">
-                            <Tr>
-                                <Th p={3} fontSize="8px" textAlign="center">No</Th>
-                                <Th p={1} fontSize="8px" textAlign="center">Desa</Th>
-                                <Th p={1} fontSize="8px" textAlign="center">Status Desa</Th>
-                                <Th p={1} fontSize="8px" textAlign="center">Infrastruktur Jalan</Th>
-                            </Tr>
-                        </Thead>
-
-                        {/* Body Tabel */}
-                        <Tbody>
-                            {currentData.map((row) => (
-                                <Tr key={row.no}>
-                                    <Td p={1} fontSize="8px" textAlign="center" fontWeight="bold">{row.no}</Td>
-                                    <Td p={1} fontSize="8px" textAlign="center">{row.desa}</Td>
-                                    <Td p={1} fontSize="8px" textAlign="center">{row.status}</Td>
-                                    <Td p={1} fontSize="8px" textAlign="center">{row.jalan}</Td>
-                                </Tr>
-                            ))}
-                        </Tbody>
-                    </Table>
-                </TableContainer>
-
-                {/* Paginasi */}
-                <Flex justify="center" mt={3} gap={2}>
-                    {[...Array(totalPages)].map((_, index) => (
-                        <Button
-                            key={index}
-                            size="xs"
-                            borderRadius="full"
-                            bg={currentPage === index + 1 ? "gray.800" : "white"}
-                            color={currentPage === index + 1 ? "white" : "gray.800"}
-                            onClick={() => setCurrentPage(index + 1)}
-                            _hover={{ bg: "gray.300" }}
-                        >
-                            {index + 1}
-                        </Button>
-                    ))}
-                </Flex>
-            </Box>
+            
             {/* TOP 5 INOVATOR SELESAI */}
             <Box pb={10} />
         </Box>
