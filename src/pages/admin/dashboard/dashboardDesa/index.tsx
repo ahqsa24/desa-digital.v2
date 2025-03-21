@@ -14,11 +14,11 @@ import { firestore } from "../../../../firebase/clientApp";
 import { FaSeedling } from "react-icons/fa6";
 import redinesImg from "@public/images/rediness.svg";
 import { Filter } from "lucide-react";
-import SebaranProvinsiDashboardDesa from "Components/dashboard/admin/sebaranProvinsiDashboardDesa";
-import SebaranPotensiDesa from "Components/dashboard/admin/sebaranPotensiDesa";
-import SebaranKondisiDesa from "Components/dashboard/admin/sebaranKondisiDesa";
-import ScoreCardDashboardDesa from "Components/dashboard/admin/scorecardDashboardDesa";
-import SebaranKlasifikasiDashboardDesa from "Components/dashboard/admin/sebaranKlasifikasiDashboardDesa";
+import SebaranProvinsiDashboardDesa from "Components/dashboard/admin/dashboardDesa/sebaranProvinsiDashboardDesa";
+import SebaranPotensiDesa from "Components/dashboard/admin/dashboardDesa/sebaranPotensiDesa";
+import SebaranKondisiDesa from "Components/dashboard/admin/dashboardDesa/sebaranKondisiDesa";
+import ScoreCardDashboardDesa from "Components/dashboard/admin/dashboardDesa/scorecardDashboardDesa";
+import SebaranKlasifikasiDashboardDesa from "Components/dashboard/admin/dashboardDesa/sebaranKlasifikasiDashboardDesa";
 
 
 

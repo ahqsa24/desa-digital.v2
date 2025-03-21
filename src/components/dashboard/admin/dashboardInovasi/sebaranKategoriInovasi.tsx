@@ -1,75 +1,79 @@
-import { Box, Flex, Text, Stack, Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, SimpleGrid, Checkbox, useDisclosure } from "@chakra-ui/react";
+import { Box, Flex, Text, Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, SimpleGrid, Checkbox } from "@chakra-ui/react";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
+import { Filter } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { PieChart, Pie, Tooltip, Cell } from "recharts";
-import { Filter } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 
-const SebaranProvinsiDashboardDesa: React.FC = () => {
-    const navigate = useNavigate();
-    const { isOpen, onOpen, onClose } = useDisclosure();
+const SebaranKategoriInnovations: React.FC = () => {
+    const [kategoriData, setKategoriData] = useState<{ name: string; value: number; color: string }[]>([]);
+    const [filteredData, setFilteredData] = useState<{ name: string; value: number; color: string }[]>([]);
+    const [allCategories, setAllCategories] = useState<string[]>([]);
+    const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+    const [isOpen, setIsOpen] = useState(false);
 
-    // State untuk filter provinsi
-    const [selectedProvinces, setSelectedProvinces] = useState<string[]>([]);
-    const [data, setData] = useState<{ name: string; value: number; color: string }[]>([]);
-    const [filteredData, setFilteredData] = useState(data);
-    const colors = ["#A7C7A5", "#1E5631", "#174E3B", "#C1D6C3", "#88B04B"];
+    // Warna untuk tiap kategori inovasi
+    const colors: string[] = ["#A7C7A5", "#1E5631", "#174E3B", "#4A7C59", "#7B9E89"];
 
-    // Fetch Data dari Firestore
-    const fetchProvinceData = async () => {
+    // Fungsi untuk mengambil data kategori dari Firestore
+    const fetchKategoriData = async () => {
         try {
             const db = getFirestore();
-            const villagesRef = collection(db, "villages");
-            const snapshot = await getDocs(villagesRef);
+            const innovationsRef = collection(db, "innovations");
+            const snapshot = await getDocs(innovationsRef);
 
-            const provinceCount: { [key: string]: number } = {};
+            const kategoriCount: Record<string, number> = {};
 
             snapshot.forEach((doc) => {
                 const data = doc.data();
-                if (data.lokasi?.provinsi?.label) {
-                    const province = data.lokasi.provinsi.label;
-                    provinceCount[province] = (provinceCount[province] || 0) + 1;
+                if (data.kategori) {
+                    const kategoriText = data.kategori.trim(); // Normalisasi teks
+
+                    if (kategoriCount[kategoriText]) {
+                        kategoriCount[kategoriText]++;
+                    } else {
+                        kategoriCount[kategoriText] = 1;
+                    }
                 }
             });
 
-            const chartData = Object.keys(provinceCount).map((province, index) => ({
-                name: province,
-                value: provinceCount[province],
-                color: colors[index % colors.length],
-            }));
+            // Konversi hasil ke format Pie Chart, hanya ambil 5 kategori teratas
+            const sortedData = Object.entries(kategoriCount)
+                .sort((a, b) => b[1] - a[1]) // Urutkan dari jumlah terbesar
+                .slice(0, 5) // Ambil hanya 5 kategori teratas
+                .map(([key, value], index) => ({
+                    name: key,
+                    value: value,
+                    color: colors[index % colors.length],
+                }));
 
-            setData(chartData);
-            setFilteredData(chartData);
+            setKategoriData(sortedData);
+            setFilteredData(sortedData);
+            setAllCategories(Object.keys(kategoriCount)); // Simpan semua kategori untuk filter
+            setSelectedCategories(Object.keys(kategoriCount).slice(0, 5)); // Pilih default 5 kategori teratas
         } catch (error) {
-            console.error("Error fetching province data:", error);
+            console.error("❌ Error fetching category data:", error);
         }
     };
 
     useEffect(() => {
-        fetchProvinceData();
+        fetchKategoriData();
     }, []);
 
-    // Daftar Provinsi untuk Filter
-    const provinces = data.map((d) => d.name);
+    // Fungsi untuk menerapkan filter berdasarkan kategori yang dipilih
+    const applyFilter = () => {
+        const filtered = kategoriData.filter((item) => selectedCategories.includes(item.name));
+        setFilteredData(filtered);
+        setIsOpen(false);
+    };
 
-    // Fungsi untuk menangani perubahan checkbox filter
-    const handleCheckboxChange = (provinsi: string) => {
-        setSelectedProvinces((prev) =>
-            prev.includes(provinsi) ? prev.filter((p) => p !== provinsi) : [...prev, provinsi]
+    // Fungsi untuk menangani perubahan checkbox pada filter
+    const handleCheckboxChange = (category: string) => {
+        setSelectedCategories((prev) =>
+            prev.includes(category) ? prev.filter((item) => item !== category) : [...prev, category]
         );
     };
 
-    // Terapkan Filter ke Pie Chart
-    const applyFilter = () => {
-        if (selectedProvinces.length === 0) {
-            setFilteredData(data);
-        } else {
-            setFilteredData(data.filter((item) => selectedProvinces.includes(item.name)));
-        }
-        onClose();
-    };
-
-    // Custom Label untuk Pie Chart
+    // Custom Label agar teks ada di dalam Pie Chart
     interface LabelProps {
         cx: number;
         cy: number;
@@ -95,14 +99,11 @@ const SebaranProvinsiDashboardDesa: React.FC = () => {
 
     return (
         <Box>
-            {/* PIE CHART SEBARAN PROVINSI DESA */}
+            {/* HEADER DAN FILTER BUTTON */}
             <Flex justify="space-between" align="center" mt="24px" mx="15px">
-                {/* Judul */}
                 <Text fontSize="sm" fontWeight="bold" color="gray.800">
-                    Sebaran Provinsi Desa Digital
+                    Sebaran Kategori Inovasi
                 </Text>
-
-                {/* Tombol Filter */}
                 <Button
                     bg="white"
                     boxShadow="md"
@@ -116,10 +117,10 @@ const SebaranProvinsiDashboardDesa: React.FC = () => {
                     _hover={{ bg: "gray.100" }}
                     cursor="pointer"
                     leftIcon={<Filter size={14} stroke="#1E5631" fill="#1E5631" />}
-                    onClick={onOpen} // Menampilkan modal filter
+                    onClick={() => setIsOpen(true)}
                 >
                     <Text fontSize="10px" fontWeight="medium" color="black">
-                        Provinsi
+                        Kategori
                     </Text>
                 </Button>
             </Flex>
@@ -137,16 +138,17 @@ const SebaranProvinsiDashboardDesa: React.FC = () => {
                 mt={4}
                 overflow="visible"
             >
+                {/* Pie Chart */}
                 <Flex justify="center" align="center">
                     <PieChart width={320} height={220}>
                         <Pie
                             data={filteredData}
-                            cx="50%"
+                            cx="55%"
                             cy="50%"
                             labelLine={false}
-                            outerRadius={120}
+                            outerRadius={130}
                             dataKey="value"
-                            label={renderCustomizedLabel}
+                            label={renderCustomizedLabel} // Menampilkan label persentase di dalam chart
                         >
                             {filteredData.map((entry, index) => (
                                 <Cell key={`cell-${index}`} fill={entry.color} />
@@ -167,37 +169,27 @@ const SebaranProvinsiDashboardDesa: React.FC = () => {
                 </Flex>
             </Box>
 
-            {/* MODAL FILTER PROVINSI */}
-            <Modal isOpen={isOpen} onClose={onClose} isCentered>
+            {/* MODAL FILTER KATEGORI */}
+            <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} isCentered>
                 <ModalOverlay />
                 <ModalContent borderRadius="xl" p={4} width={350} overflowY="auto">
-                    <ModalHeader fontSize="lg" fontWeight="bold">
-                        Filter Provinsi
-                    </ModalHeader>
+                    <ModalHeader fontSize="lg" fontWeight="bold">Filter Kategori</ModalHeader>
                     <ModalCloseButton />
-
                     <ModalBody>
                         <SimpleGrid columns={2} spacing={3}>
-                            {provinces.map((provinsi) => (
+                            {allCategories.map((category) => (
                                 <Checkbox
-                                    key={provinsi}
-                                    isChecked={selectedProvinces.includes(provinsi)}
-                                    onChange={() => handleCheckboxChange(provinsi)}
+                                    key={category}
+                                    isChecked={selectedCategories.includes(category)}
+                                    onChange={() => handleCheckboxChange(category)}
                                 >
-                                    {provinsi}
+                                    {category}
                                 </Checkbox>
                             ))}
                         </SimpleGrid>
                     </ModalBody>
-
                     <ModalFooter>
-                        <Button
-                            bg="#1E5631"
-                            color="white"
-                            width="100%"
-                            _hover={{ bg: "#16432D" }}
-                            onClick={applyFilter}
-                        >
+                        <Button bg="#1E5631" color="white" width="100%" _hover={{ bg: "#16432D" }} onClick={applyFilter}>
                             Terapkan Filter
                         </Button>
                     </ModalFooter>
@@ -207,5 +199,4 @@ const SebaranProvinsiDashboardDesa: React.FC = () => {
     );
 };
 
-export default SebaranProvinsiDashboardDesa;
-    
+export default SebaranKategoriInnovations;

@@ -14,8 +14,9 @@ import { firestore } from "../../../../firebase/clientApp";
 import { FaSeedling } from "react-icons/fa6";
 import redinesImg from "@public/images/rediness.svg";
 import { Filter } from "lucide-react";
-import ScoreCardDashboardInovator from "Components/dashboard/admin/scorecardDashboardInovator";
-import SebaranKategoriInovator from "Components/dashboard/admin/sebaranKategoriInovator";
+import ScoreCardDashboardInovator from "Components/dashboard/admin/dashboardInovator/scorecardDashboardInovator";
+import SebaranKategoriInovator from "Components/dashboard/admin/dashboardInovator/sebaranKategoriInovator";
+import Top5Inovator from "Components/dashboard/admin/dashboardInovator/top5Inovator";
 
 
 const DashboardAdminInovator: React.FC = () => {
@@ -125,9 +126,7 @@ const DashboardAdminInovator: React.FC = () => {
 
             <ScoreCardDashboardInovator/>
             <SebaranKategoriInovator/>
-
-            
-            {/* TOP 5 INOVATOR SELESAI */}
+            <Top5Inovator/>
             <Box pb={10} />
         </Box>
     );
