@@ -2,7 +2,7 @@ import { Box, Flex, Text, Icon, Link as ChakraLink } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
-import { ResponsiveContainer, BarChart, Bar, XAxis, Tooltip, LabelList, Cell } from "recharts";
+import { ResponsiveContainer, BarChart, Bar, XAxis,YAxis, Tooltip, LabelList, Cell } from "recharts";
 import { NavLink } from "react-router-dom";
 import { paths } from "Consts/path";
 
@@ -59,10 +59,12 @@ const DesaDigitalUnggulan: React.FC = () => {
 
                 // Urutan khusus untuk ranking (4, 2, 1, 3, 5)
                 const customOrder = [3, 1, 0, 2, 4];
+                const customHeights = [20, 40, 50, 35, 15]; // Custom tinggi batang sesuai ranking (1st - 5th)
 
                 const rankedVillages = customOrder.map((index, rankIndex) => ({
                     name: villages[index]?.name || "",
-                    value: villages[index]?.value || 0,
+                    value: customHeights[rankIndex], // dipakai buat chart
+                    valueAsli: villages[index]?.value || 0, // hanya buat info internal
                     rank: `${["4th", "2nd", "1st", "3rd", "5th"][rankIndex]}`,
                 }));
 
@@ -81,7 +83,7 @@ const DesaDigitalUnggulan: React.FC = () => {
             {/* 🔹 Header Desa Digital Unggulan */}
             <Flex justify="space-between" align="center" mt="24px" mx="15px">
                 <Text fontSize="m" fontWeight="bold" color="gray.800">
-                    Desa Digital Unggulan
+                    Top 5 Desa Digital
                 </Text>
                 <ChakraLink
                     as={NavLink}

@@ -36,51 +36,46 @@ const CustomLabel: React.FC<CustomLabelProps> = ({ x, y, width, value }) => {
     );
 };
 
-const SebaranPotensiDesa: React.FC = () => {
+const KategoriInovasiDesa: React.FC = () => {
     const [barData, setBarData] = useState<ChartData[]>([]);
-    const [allPotensiData, setAllPotensiData] = useState<Record<string, number>>({});
+    const [allKategoriData, setAllKategoriData] = useState<Record<string, number>>({});
     const [kondisiData, setKondisiData] = useState<{ kategori: string; jumlah: number }[]>([]);
     const ITEMS_PER_PAGE = 5;
     const [currentPage, setCurrentPage] = useState(1);
 
 
-    const fetchPotensiData = async () => {
+    const fetchKategoriData = async () => {
         try {
             const db = getFirestore();
-            const villagesRef = collection(db, "villages");
-            const snapshot = await getDocs(villagesRef);
+            const innovationsRef = collection(db, "innovations");
+            const snapshot = await getDocs(innovationsRef);
 
-            const potensiCount: Record<string, number> = {};
+            const kategoriCount: Record<string, number> = {};
 
             snapshot.forEach((doc) => {
                 const data = doc.data();
-                if (Array.isArray(data.potensiDesa)) {
-                    data.potensiDesa.forEach((potensi: string) => {
-                        const formattedPotensi =
-                            potensi.charAt(0).toUpperCase() + potensi.slice(1).toLowerCase();
-                        potensiCount[formattedPotensi] = (potensiCount[formattedPotensi] || 0) + 1;
-                    });
+                const kategori = data.kategori;
+
+                if (kategori && typeof kategori === "string") {
+                    const formatted = kategori.charAt(0).toUpperCase() + kategori.slice(1).toLowerCase();
+                    kategoriCount[formatted] = (kategoriCount[formatted] || 0) + 1;
                 }
             });
 
-            setAllPotensiData({ ...potensiCount });
+            setAllKategoriData({ ...kategoriCount });
 
-            const kondisiArray = Object.keys(potensiCount)
+            const kondisiArray = Object.keys(kategoriCount)
                 .map((key) => ({
                     kategori: key,
-                    jumlah: potensiCount[key],
+                    jumlah: kategoriCount[key],
                 }))
-                .sort((a, b) => b.jumlah - a.jumlah); // Urutkan descending
+                .sort((a, b) => b.jumlah - a.jumlah);
 
             setKondisiData(kondisiArray);
 
-
-
-            const sortedPotensi = Object.keys(potensiCount)
-                .map((name) => ({
-                    name,
-                    value: potensiCount[name],
-                }))
+            // Chart top 5 logic
+            const sortedKategori = Object.keys(kategoriCount)
+                .map((name) => ({ name, value: kategoriCount[name] }))
                 .sort((a, b) => b.value - a.value)
                 .slice(0, 5);
 
@@ -89,20 +84,21 @@ const SebaranPotensiDesa: React.FC = () => {
             const customRanks = ["4th", "2nd", "1st", "3rd", "5th"];
 
             const rankedData = customOrder.map((index, rankIndex) => ({
-                name: sortedPotensi[index]?.name || "",
+                name: sortedKategori[index]?.name || "",
                 value: customHeights[rankIndex],
-                valueAsli: sortedPotensi[index]?.value || 0,
+                valueAsli: sortedKategori[index]?.value || 0,
                 rank: customRanks[rankIndex],
             }));
 
             setBarData(rankedData);
         } catch (error) {
-            console.error("Error fetching potensi data:", error);
+            console.error("Error fetching kategori data:", error);
         }
     };
 
+
     const handleDownload = () => {
-        const sorted = Object.entries(allPotensiData)
+        const sorted = Object.entries(allKategoriData)
             .map(([name, count]) => ({ name, value: count as number }))
             .sort((a, b) => b.value - a.value);
 
@@ -120,7 +116,7 @@ const SebaranPotensiDesa: React.FC = () => {
     };
 
     useEffect(() => {
-        fetchPotensiData();
+        fetchKategoriData();
     }, []);
 
     const totalPages = Math.ceil(kondisiData.length / ITEMS_PER_PAGE);
@@ -130,7 +126,7 @@ const SebaranPotensiDesa: React.FC = () => {
             {/* 🔹 Header */}
             <Flex justify="space-between" align="center" mt="24px" mx="15px">
                 <Text fontSize="sm" fontWeight="bold" color="gray.800">
-                    Sebaran Potensi Desa
+                    Kategori Inovasi yang Diterapkan
                 </Text>
                 <Button
                     bg="white"
@@ -249,4 +245,4 @@ const SebaranPotensiDesa: React.FC = () => {
     );
 };
 
-export default SebaranPotensiDesa;
+export default KategoriInovasiDesa;

@@ -38,9 +38,11 @@ const Top5Innovations: React.FC = () => {
                 // 🔹 Ambil top 5 untuk barchart dengan urutan custom (4, 2, 1, 3, 5)
                 const top5 = tableFormatted.slice(0, 5);
                 const customOrder = [3, 1, 0, 2, 4];
+                const customHeights = [20, 40, 50, 35, 15]; // Custom tinggi batang sesuai ranking (1st - 5th)
+
                 const rankedInnovations = customOrder.map((index, rankIndex) => ({
                     name: top5[index]?.name || "",
-                    value: top5[index]?.count || 0,
+                    value: customHeights[rankIndex], // dipakai buat chart
                     rank: `${["4th", "2nd", "1st", "3rd", "5th"][rankIndex]}`,
                 }));
 

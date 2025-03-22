@@ -38,6 +38,8 @@ import DashboardAdmin from "./pages/admin/dashboard";
 import DashboardAdminDesa from "./pages/admin/dashboard/dashboardDesa";
 import DashboardAdminInovator from "./pages/admin/dashboard/dashboardInovator";
 import DashboardAdminInovasi from "./pages/admin/dashboard/dashboardInovasi";
+import DashboardPerangkatDesa from "./pages/village/dashboard";
+import RekomendasiInovasi from "./pages/village/dashboard/rekomendasiDashboard";
 
 const queryClient = new QueryClient();
 
@@ -210,6 +212,16 @@ const routes = [
   {
     path: paths.ADMIN_DASHBOARD_INOVASI,
     element: <DashboardAdminInovasi />,
+    exact: true,
+  },
+  {
+    path: paths.VILLAGE_DASHBOARD,
+    element: <DashboardPerangkatDesa />,
+    exact: true,
+  },
+  {
+    path: paths.VILLAGE_RECOMENDATION,
+    element: <RekomendasiInovasi />,
     exact: true,
   },
 ];

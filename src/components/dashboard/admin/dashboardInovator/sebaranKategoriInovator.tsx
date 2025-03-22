@@ -81,7 +81,7 @@ const SebaranKategoriInovator: React.FC = () => {
             {/* 🔹 PIE CHART SEBARAN KATEGORI INOVATOR */}
             <Flex justify="space-between" align="center" mt="11px" mx="15px">
                 <Text fontSize="sm" fontWeight="bold" color="gray.800">
-                    Sebaran Kategori Inovator (Top 3)
+                    Sebaran Kategori Inovator
                 </Text>
             </Flex>
 

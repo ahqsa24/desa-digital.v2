@@ -59,10 +59,11 @@ const InovatorUnggulan: React.FC = () => {
         
                 // Urutan khusus untuk ranking (4, 2, 1, 3, 5)
                 const customOrder = [3, 1, 0, 2, 4];
+                const customHeights = [20, 38, 44, 35, 15];
         
                 const rankedInovators = customOrder.map((index, rankIndex) => ({
                     name: inovators[index]?.name || "",
-                    value: inovators[index]?.value || 0,
+                    value: customHeights[rankIndex], // dipakai buat chart
                     rank: `${["4th", "2nd", "1st", "3rd", "5th"][rankIndex]}`,
                 }));
         
@@ -83,7 +84,7 @@ const InovatorUnggulan: React.FC = () => {
             {/* 🔹 Header Inovator Unggulan */}
             <Flex justify="space-between" align="center" mt="24px" mx="15px">
                 <Text fontSize="m" fontWeight="bold" color="gray.800">
-                    Inovator Unggulan
+                    Top 5 Inovator
                 </Text>
                 <ChakraLink
                     as={NavLink}

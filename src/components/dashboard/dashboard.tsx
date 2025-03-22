@@ -76,7 +76,7 @@ const Dashboard = () => {
         <Box p={4}>
             <Flex justifyContent="space-between" alignItems="center" mb={4}>
                 <Text fontSize="17" fontWeight="bold" color="gray.700">
-                    Dashboard
+                    Pantau Inovasi Sekarang
                 </Text>
                 <Link
                     as={NavLink}

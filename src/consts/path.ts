@@ -25,6 +25,7 @@ export const paths = {
   KLAIM_INOVASI_PAGE: "/village/klaimInovasi/:id",
   PENGAJUAN_KLAIM_PAGE: "/village/pengajuanKlaim",
   VILLAGE_DASHBOARD: "/village/dashboard",
+  VILLAGE_RECOMENDATION: "/village/dashboard/rekomendasi",
 
   // ! innovator
   INNOVATOR_PAGE: "/innovator",

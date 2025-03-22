@@ -13,10 +13,13 @@ import { getAuth } from "firebase/auth";
 import { FaSeedling } from "react-icons/fa6";
 import redinesImg from "@public/images/rediness.svg";
 import { Filter } from "lucide-react";
+import { DownloadIcon } from "@chakra-ui/icons";
+import * as XLSX from "xlsx";
+
 
 const ITEMS_PER_PAGE = 5; // Jumlah data per halaman
 
-const Top5Inovator: React.FC = () => {
+const Top5InovatorVillage: React.FC = () => {
     const [chartData, setChartData] = useState<{ name: string; value: number; rank: string }[]>([]);
 
     // 🔹 Ambil Data Inovator Unggulan dari Firestore
@@ -120,7 +123,21 @@ const Top5Inovator: React.FC = () => {
         fetchInovatorData();
     }, []);
 
-
+    const handleDownload = () => {
+        const excelData = inovatorData.map((item) => ({
+            No: item.no,
+            "Nama Inovator": item.namaInovator,
+            "Jumlah Inovasi": item.jumlahInovasi,
+            "Jumlah Desa Dampingan": item.jumlahDesaDampingan,
+        }));
+    
+        const worksheet = XLSX.utils.json_to_sheet(excelData);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "SemuaInovator");
+    
+        XLSX.writeFile(workbook, "Semua_Inovator.xlsx");
+    };
+    
 
     // Hitung total halaman
     const totalPages = Math.ceil(inovatorData.length / ITEMS_PER_PAGE);
@@ -138,6 +155,24 @@ const Top5Inovator: React.FC = () => {
                 <Text fontSize="m" fontWeight="bold" color="gray.800">
                     Top 5 Inovator Terbaik
                 </Text>
+                <Button
+                    bg="white"
+                    boxShadow="md"
+                    border="2px solid"
+                    borderColor="gray.200"
+                    px={2}
+                    py={2}
+                    display="flex"
+                    alignItems="center"
+                    gap={2}
+                    _hover={{ bg: "gray.100" }}
+                    cursor="pointer"
+                    onClick={handleDownload}
+                ><DownloadIcon boxSize={3} color="black" /> {/* Tambahin Icon */}
+                    <Text fontSize="10px" fontWeight="medium" color="black">
+                        Download
+                    </Text>
+                </Button>
             </Flex>
 
             <Box
@@ -232,4 +267,4 @@ const Top5Inovator: React.FC = () => {
     );
 };
 
-export default Top5Inovator;
+export default Top5InovatorVillage;

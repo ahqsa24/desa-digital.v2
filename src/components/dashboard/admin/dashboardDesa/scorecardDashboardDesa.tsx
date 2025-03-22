@@ -62,10 +62,10 @@ const ScoreCardDashboardDesa: React.FC = () => {
 
     // Data statistik untuk Scorecard
     const stats = [
-        { label: "Desa Digital", value: totalVillage },
         { label: "Provinsi", value: totalProvince },
         { label: "Kabupaten", value: totalKabupaten },
         { label: "Kecamatan", value: totalKecamatan },
+        { label: "Desa Digital", value: totalVillage },
     ];
 
     return (
