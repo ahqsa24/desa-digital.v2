@@ -55,18 +55,23 @@ const Rekomendasi = () => {
                         </Text>
                     </Box>
                 </Flex>
-                <Flex justifyContent="space-between" alignItems="center" mb={2} mt={4}>
+                <Flex justifyContent="space-between" alignItems="center" mb={0.9} mt={3}>
                     <Text fontSize="10px" color="gray.500">
                         Cek rekomendasi inovasi digital lainnya untuk desamu disini
                     </Text>
                     <Button
                         colorScheme="green"
                         size="xs"
+                        fontSize="10px"
                         p={1}
-                        borderRadius="md"
+                        borderRadius="4"
                         minW="auto"
-                        h="20px"
+                        
+                        h="22px"
+                        w='180px'
                         onClick={onOpen} // Trigger buka drawer
+                        boxShadow="md" // ✅ shadow awal
+                        _hover={{ bg: "#16432D" }}
                     >
                         Lihat Rekomendasi
                     </Button>

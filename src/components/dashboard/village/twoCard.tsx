@@ -1,13 +1,11 @@
-import React from "react";
-import { Box, Flex, Text, Icon, useColorModeValue } from "@chakra-ui/react";
-import { IconType } from "react-icons"; // penting nih buat tipe icon!
-import { LuSmartphoneNfc } from "react-icons/lu";
-import { FaUsers } from "react-icons/fa";
-import { FaSeedling, FaUser } from "react-icons/fa6";
-
+import React, { useEffect, useState } from "react";
+import { Box, Flex, Text, Icon, useColorModeValue, Image } from "@chakra-ui/react";
+import { FaUser } from "react-icons/fa";
+import VillageActive from 'Assets/icons/village-active.svg';
+import { getFirestore, collection, getDocs } from "firebase/firestore";
 
 interface CardItemProps {
-    icon: IconType;
+    icon: React.ReactNode;
     mainText: string;
     subText: string;
     label: string;
@@ -15,8 +13,7 @@ interface CardItemProps {
 
 const CardItem: React.FC<CardItemProps> = ({ icon, mainText, subText, label }) => {
     const cardBg = useColorModeValue("white", "gray.800");
-    const iconBg = useColorModeValue("green.100", "green.700");
-    const iconColor = useColorModeValue("green.700", "green.200");
+    const iconBg = useColorModeValue("rgba(52, 115, 87, 0.2)", "green.700");
     const textSecondary = useColorModeValue("gray.500", "gray.400");
 
     return (
@@ -35,11 +32,11 @@ const CardItem: React.FC<CardItemProps> = ({ icon, mainText, subText, label }) =
                 <Text fontSize="23px" fontWeight="bold">
                     {mainText}
                 </Text>
-                <Box bg={iconBg} p={2} borderRadius="full">
-                    <Icon as={icon} w={4} h={4} color={iconColor} />
+                <Box bg={iconBg} p={2.1} borderRadius="full">
+                    {icon}
                 </Box>
             </Flex>
-            <Text mt={2} fontSize="15px" fontWeight="semibold">
+            <Text mt={1.9} fontSize="15px" fontWeight="semibold">
                 {label}
             </Text>
             <Text fontSize="7px" color={textSecondary}>
@@ -50,17 +47,43 @@ const CardItem: React.FC<CardItemProps> = ({ icon, mainText, subText, label }) =
 };
 
 const TwoCard: React.FC = () => {
+    const [totalInovasi, setTotalInovasi] = useState("0/0");
+    const [totalInovator, setTotalInovator] = useState("0/0");
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const db = getFirestore();
+
+            try {
+                const inovasiSnap = await getDocs(collection(db, "innovations"));
+                const totalAllInovasi = inovasiSnap.size;
+                const desaInovasi = inovasiSnap.docs.filter(doc => doc.data().desa === "Babakan");
+                setTotalInovasi(`${desaInovasi.length}/${totalAllInovasi}`);
+
+                const innovatorSnap = await getDocs(collection(db, "innovators"));
+                const totalAllInnovators = innovatorSnap.size;
+                const desaInnovators = innovatorSnap.docs.filter(doc => doc.data().desa === "Babakan");
+                setTotalInovator(`${desaInnovators.length}/${totalAllInnovators}`);
+
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        };
+
+        fetchData();
+    }, []);
+
     return (
         <Flex direction={{ base: "column", md: "row" }} gap={2}>
             <CardItem
-                icon={LuSmartphoneNfc}
-                mainText="23/121"
+                icon={<Image src={VillageActive} alt="Village Icon" w={5} h={5} />}
+                mainText={totalInovasi}
                 label="Inovasi"
                 subText="Telah diterapkan oleh desa Babakan"
             />
             <CardItem
-                icon={FaUsers}
-                mainText="12/47"
+                icon={<FaUser />}
+                mainText={totalInovator}
                 label="Inovator"
                 subText="Telah memberikan inovasi untuk desa Babakan"
             />
