@@ -14,7 +14,7 @@ import {
     DrawerHeader,
 } from "@chakra-ui/react";
 import { FaSeedling } from "react-icons/fa6";
-import efisheryLogo from "assets/images/efishery-logo.jpg";
+import efisheryLogo from "../../src/assets/images/efishery-logo.jpg";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { paths } from "Consts/path";
