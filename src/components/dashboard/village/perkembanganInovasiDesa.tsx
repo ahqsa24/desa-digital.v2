@@ -119,9 +119,9 @@ import {
           overflow="visible"
         >
           <ResponsiveContainer width="100%" height={200}>
-            <BarChart data={barData} margin={{ top: 50, right: 40, left: 1, bottom: 0 }} barSize={25}>
+            <BarChart data={barData} margin={{ top: 20, right: 40, left: 1, bottom: 15 }} barSize={25}>
               <XAxis
-                label={{ value: "Tahun", position: "insideBottom", fontSize: 10, dy: 3 }}
+                label={{ value: "Tahun", position: "insideBottom", fontSize: 10, dx:3, dy: 5 }}
                 dataKey="name"
                 tick={{ fontSize: 8 }}
                 angle={0}
@@ -129,7 +129,7 @@ import {
                 interval={0}
               />
               <YAxis
-                label={{ value: "Jumlah Inovasi", angle: -90, position: "insideLeft", fontSize: 10, dx: 20, dy: 20 }}
+                label={{ value: "Jumlah Inovasi", angle: -90, position: "insideLeft", fontSize: 10, dx: 15, dy: 40 }}
                 tick={{ fontSize: 10 }}
               />
               <Tooltip />

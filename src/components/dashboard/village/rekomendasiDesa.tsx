@@ -14,7 +14,7 @@ import {
     DrawerHeader,
 } from "@chakra-ui/react";
 import { FaSeedling } from "react-icons/fa6";
-import efisheryLogo from "../../../assets/images/efishery-logo.jpg";
+import efisheryLogo from "assets/images/efishery-logo.jpg";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { paths } from "Consts/path";
@@ -55,7 +55,7 @@ const Rekomendasi = () => {
                         </Text>
                     </Box>
                 </Flex>
-                <Flex justifyContent="space-between" alignItems="center" mb={0.9} mt={3}>
+                <Flex justifyContent="space-between" alignItems="center" mb={0.5} mt={3}>
                     <Text fontSize="10px" color="gray.500">
                         Cek rekomendasi inovasi digital lainnya untuk desamu disini
                     </Text>
@@ -69,8 +69,8 @@ const Rekomendasi = () => {
                         
                         h="22px"
                         w='180px'
-                        onClick={onOpen} // Trigger buka drawer
-                        boxShadow="md" // ✅ shadow awal
+                        onClick={onOpen} 
+                        boxShadow="md" 
                         _hover={{ bg: "#16432D" }}
                     >
                         Lihat Rekomendasi
@@ -83,8 +83,9 @@ const Rekomendasi = () => {
                 <DrawerOverlay />
                 <DrawerContent
                     sx={{
-                        borderRadius: "lg",
+                        borderTopRadius: "3xl",
                         width: "360px", // match sama drawer lain
+                        h:"770px",
                         my: "auto",
                         mx: "auto",
                     }}
@@ -94,43 +95,55 @@ const Rekomendasi = () => {
                         justifyContent="space-between"
                         alignItems="center"
                     >
-                        <Text fontSize="15px" fontWeight="bold">
+                        <Text fontSize="18px" fontWeight="bold" mt="4px" ml="4px">
                             Rekomendasi Inovasi
                         </Text>
-                        <DrawerCloseButton />
+                        <DrawerCloseButton mt="10px" mr="4px"/>
                     </DrawerHeader>
 
-                    <DrawerBody textAlign="center">
+                    <DrawerBody p={0}>
+                    <Flex
+                        direction="column"
+                        align="center"
+                        justify="center"
+                        textAlign="center"
+                        height="100%"
+                        px={6}
+                        py={8}
+                    >
                         <Text fontWeight="bold" fontSize="lg">
-                            eFeeder
+                        eFeeder
                         </Text>
                         <Text fontSize="sm" mb={4}>
-                            dari eFishery
+                        dari eFishery
                         </Text>
 
                         <Box my={6}>
-                            <Image
-                                src={efisheryLogo} // ganti dengan logo real
-                                alt="eFeeder"
-                                mx="auto"
-                                boxSize="80px"
-                            />
+                        <Image
+                            src={efisheryLogo}
+                            alt="eFeeder"
+                            mx="auto"
+                            boxSize="80px"
+                        />
                         </Box>
 
                         <Text fontWeight="bold" mb={1}>
-                            Cocok dengan desamu!
+                        Cocok dengan desamu!
                         </Text>
                         <Text fontSize="sm" color="gray.600">
-                            Saatnya desamu berinovasi! Terapkan inovasi dan buat perubahan besar di desamu
+                        Saatnya desamu berinovasi! Terapkan inovasi dan buat perubahan besar di desamu
                         </Text>
+                    </Flex>
                     </DrawerBody>
 
-                    <DrawerFooter flexDirection="column" gap={2}>
+                    <DrawerFooter flexDirection="column" gap={3}>
                         <Button
-                            bg="#1E5631"
+                            bg="#347357"
                             color="white"
                             w="full"
-                            _hover={{ bg: "#16432D" }}
+                            fontSize="sm"
+                            border = "2px"
+                            _hover={{ bg: "#2e5e4b" }}
                         >
                             Detail Inovasi
                         </Button>
@@ -138,6 +151,8 @@ const Rekomendasi = () => {
                             variant="outline"
                             colorScheme="green"
                             w="full"
+                            fontSize="sm"
+                            mb={3}
                             onClick={() => {
                                 onClose(); // tutup drawer
                                 navigate(paths.VILLAGE_RECOMENDATION); // redirect

@@ -1,14 +1,18 @@
-import { Box, Flex, Stack, Text, Icon, Link as ChakraLink } from "@chakra-ui/react";
+import { Box, Flex, Stack, Text, Icon, Image, Link as ChakraLink } from "@chakra-ui/react";
 import { ArrowUpRight, ArrowDownRight, Leaf, Users, Phone } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { getFirestore, collection, getDocs, doc, getDoc, query, where, Timestamp } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { getAuth } from "firebase/auth";
 import { firestore } from "../../../firebase/clientApp";
+import { FaUsers } from "react-icons/fa";
+import VillageActive from 'Assets/icons/village-active.svg';
+import UserActive from 'Assets/icons/user-active.svg'
+import InnovationActive from "Assets/icons/innovation.svg";
 
 // 📌 Tipe Props untuk Komponen
 type InfoCardProps = {
-    icon: React.ElementType;
+    icon: React.ReactNode;
     title: string;
     value: number;
     change: number;
@@ -105,9 +109,9 @@ const InformasiUmum: React.FC = () => {
             </Flex>
 
             {/* Kartu Statistik */}
-            <InfoCard icon={Leaf} title="Desa Digital" value={totalVillage} change={changeVillage} isIncrease={isIncreaseVillage} />
-            <InfoCard icon={Users} title="Innovator" value={totalInnovators} change={changeInnovator} isIncrease={isIncreaseInnovator} />
-            <InfoCard icon={Phone} title="Inovasi" value={totalInnovation} change={changeInnovation} isIncrease={isIncreaseInnovation} />
+            <InfoCard icon={<Image src={VillageActive} alt="Village Icon" boxSize={6} />} title="Desa Digital" value={totalVillage} change={changeVillage} isIncrease={isIncreaseVillage} />
+            <InfoCard icon={<FaUsers size={24} color="#347357"/>} title="Innovator" value={totalInnovators} change={changeInnovator} isIncrease={isIncreaseInnovator} />
+            <InfoCard icon={<Image src={InnovationActive} alt="Innovation Icon" boxSize={6} />} title="Inovasi" value={totalInnovation} change={changeInnovation} isIncrease={isIncreaseInnovation} />
         </Stack>
     );
 };
@@ -127,8 +131,8 @@ const InfoCard: React.FC<InfoCardProps> = ({ icon, title, value, change, isIncre
             transition="all 0.2s ease-in-out"
             height="100px"
         >
-            <Box bg="green.50" p="8px" borderRadius="lg">
-                <Icon as={icon} boxSize={6} color="green.500" />
+            <Box bg="green.50" p="8px" borderRadius="full">
+                {icon}
             </Box>
             <Box>
                 <Text fontSize="15px" fontWeight="semibold" color="green.700">

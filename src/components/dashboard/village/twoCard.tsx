@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Box, Flex, Text, Icon, useColorModeValue, Image } from "@chakra-ui/react";
-import { FaUser } from "react-icons/fa";
-import VillageActive from 'Assets/icons/village-active.svg';
+import { FaUser, FaUsers } from "react-icons/fa";
+import InnovationActive from "Assets/icons/innovation.svg";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
 
 interface CardItemProps {
@@ -32,9 +32,10 @@ const CardItem: React.FC<CardItemProps> = ({ icon, mainText, subText, label }) =
                 <Text fontSize="23px" fontWeight="bold">
                     {mainText}
                 </Text>
-                <Box bg={iconBg} p={2.1} borderRadius="full">
+                <Box bg={iconBg} w={9} h={9} display="flex" alignItems="center" justifyContent="center" borderRadius="full">
                     {icon}
                 </Box>
+
             </Flex>
             <Text mt={1.9} fontSize="15px" fontWeight="semibold">
                 {label}
@@ -76,13 +77,13 @@ const TwoCard: React.FC = () => {
     return (
         <Flex direction={{ base: "column", md: "row" }} gap={2}>
             <CardItem
-                icon={<Image src={VillageActive} alt="Village Icon" w={5} h={5} />}
+                icon={<Image src={InnovationActive} alt="Innovation Icon" w={5} h={5} />}
                 mainText={totalInovasi}
                 label="Inovasi"
                 subText="Telah diterapkan oleh desa Babakan"
             />
             <CardItem
-                icon={<FaUser />}
+                icon={<FaUsers size={20} color="#347357"/>}
                 mainText={totalInovator}
                 label="Inovator"
                 subText="Telah memberikan inovasi untuk desa Babakan"
