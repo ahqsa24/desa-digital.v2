@@ -21,8 +21,7 @@ import {
   import { paths } from "Consts/path";
   import { getAuth } from "firebase/auth";
   import { firestore } from "../../firebase/clientApp";
-  // import efisheryLogo from "../assets/images/efishery-logo.jpg";
-  import efisheryLogo from "../../src/assets/images/efishery-logo.jpg";
+  import efisheryLogo from "../../assets/images/efishery-logo.jpg";
   
   const Dashboard = () => {
     const [userRole, setUserRole] = useState(null);
