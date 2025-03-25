@@ -87,7 +87,7 @@ import {
         label: "Desa Digital",
         value: totalVillage,
         icon: (
-          <Box bg="rgba(52, 115, 87, 0.2)" borderRadius="full" p={2}>
+          <Box bg="#F0FFF4" borderRadius="full" p={2}>
             <Image src={VillageActive} w={5} h={5} alt="Village Icon" />
           </Box>
         )
@@ -96,7 +96,7 @@ import {
         label: "Inovator",
         value: totalInnovators,
         icon: (
-          <Box bg="rgba(52, 115, 87, 0.2)" borderRadius="full" p={2}>
+          <Box bg="#F0FFF4" borderRadius="full" p={2}>
             <FaUsers size={20} color="#347357" />
           </Box>
         )

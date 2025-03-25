@@ -8,7 +8,7 @@ import { firestore } from "../../../firebase/clientApp";
 import { FaUsers } from "react-icons/fa";
 import VillageActive from 'Assets/icons/village-active.svg';
 import UserActive from 'Assets/icons/user-active.svg'
-import InnovationActive from "Assets/icons/innovation.svg";
+import InnovationActive from "Assets/icons/innovation2.svg";
 
 // 📌 Tipe Props untuk Komponen
 type InfoCardProps = {
