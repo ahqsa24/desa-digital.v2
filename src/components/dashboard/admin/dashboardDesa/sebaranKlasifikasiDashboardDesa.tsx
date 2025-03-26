@@ -1,27 +1,31 @@
-import { Box, Flex, Text } from "@chakra-ui/react";
+import {
+    Box,
+    Flex,
+    Text,
+    Button,
+} from "@chakra-ui/react";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { PieChart, Pie, Tooltip, Cell } from "recharts";
 import { useNavigate } from "react-router-dom";
+import { DownloadIcon } from "@chakra-ui/icons"; // ⬅️ Tambah icon download
+import * as XLSX from "xlsx"; // ⬅️ Import xlsx
 
 const SebaranKlasifikasiDashboardDesa: React.FC = () => {
     const navigate = useNavigate();
     const [userRole, setUserRole] = useState<string | null>(null);
-
     const [geo, setGeo] = useState<{ name: string; value: number; color: string }[]>([]);
 
-    // Warna khusus untuk tiap kategori geografis
     const colors2: Record<string, string> = {
         "Dataran Tinggi": "#A7C7A5",
         "Dataran Rendah": "#1E5631",
         "Dataran Sedang": "#174E3B"
     };
 
-    // Fungsi untuk mengambil data geografis dari Firestore
     const fetchGeoData = async () => {
         try {
             const db = getFirestore();
-            const villagesRef = collection(db, "villages"); // Referensi ke koleksi villages
+            const villagesRef = collection(db, "villages");
             const snapshot = await getDocs(villagesRef);
 
             const geoCount: Record<string, number> = {
@@ -33,8 +37,7 @@ const SebaranKlasifikasiDashboardDesa: React.FC = () => {
             snapshot.forEach((doc) => {
                 const data = doc.data();
                 if (data.geografisDesa) {
-                    const geoText = data.geografisDesa.toLowerCase(); // Normalisasi teks
-
+                    const geoText = data.geografisDesa.toLowerCase();
                     if (geoText.includes("dataran tinggi")) {
                         geoCount["Dataran Tinggi"]++;
                     } else if (geoText.includes("dataran rendah")) {
@@ -45,13 +48,12 @@ const SebaranKlasifikasiDashboardDesa: React.FC = () => {
                 }
             });
 
-            // Konversi hasil ke dalam format yang sesuai untuk Pie Chart
             const chartData = Object.keys(geoCount)
-                .filter((key) => geoCount[key] > 0) // Hanya masukkan jika ada data
+                .filter((key) => geoCount[key] > 0)
                 .map((key) => ({
                     name: key,
                     value: geoCount[key],
-                    color: colors2[key as keyof typeof colors2] // Pastikan TypeScript mengenali key sebagai kunci yang valid
+                    color: colors2[key as keyof typeof colors2]
                 }));
 
             setGeo(chartData);
@@ -60,11 +62,24 @@ const SebaranKlasifikasiDashboardDesa: React.FC = () => {
         }
     };
 
+    const handleDownloadExcel = () => {
+        const excelData = geo.map((item, index) => ({
+            No: index + 1,
+            "Klasifikasi Geografis": item.name,
+            "Jumlah Desa": item.value,
+        }));
+
+        const worksheet = XLSX.utils.json_to_sheet(excelData);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Klasifikasi Geografis");
+
+        XLSX.writeFile(workbook, "sebaran_klasifikasi_geografis.xlsx");
+    };
+
     useEffect(() => {
         fetchGeoData();
     }, []);
 
-    // Definisikan tipe parameter untuk fungsi label custom
     interface LabelProps {
         cx: number;
         cy: number;
@@ -75,7 +90,6 @@ const SebaranKlasifikasiDashboardDesa: React.FC = () => {
         name: string;
     }
 
-    // Custom Label agar teks ada di dalam Pie Chart
     const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, name }: LabelProps) => {
         const RADIAN = Math.PI / 180;
         const radius = innerRadius + (outerRadius - innerRadius) * 0.6;
@@ -91,12 +105,27 @@ const SebaranKlasifikasiDashboardDesa: React.FC = () => {
 
     return (
         <Box>
-            {/* PIE CHART SEBARAN KLASIFIKASI GEOGRAFIS DESA */}
+            {/* HEADER + DOWNLOAD */}
             <Flex justify="space-between" align="center" mt="24px" mx="15px">
-                {/* Judul */}
                 <Text fontSize="sm" fontWeight="bold" color="gray.800">
                     Sebaran Klasifikasi Geografis Desa
                 </Text>
+                <Button
+                    size="sm"
+                    bg="white"
+                    boxShadow="md"
+                    border="2px solid"
+                    borderColor="gray.200"
+                    px={2}
+                    py={2}
+                    display="flex"
+                    alignItems="center"
+                    _hover={{ bg: "gray.100" }}
+                    cursor="pointer"
+                    onClick={handleDownloadExcel}
+                >
+                    <DownloadIcon boxSize={3} color="black" />
+                </Button>
             </Flex>
 
             <Box
@@ -111,7 +140,6 @@ const SebaranKlasifikasiDashboardDesa: React.FC = () => {
                 mt={4}
                 overflow="visible"
             >
-                {/* Pie Chart */}
                 <Flex justify="center" align="center">
                     <PieChart width={320} height={220}>
                         <Pie
@@ -130,7 +158,6 @@ const SebaranKlasifikasiDashboardDesa: React.FC = () => {
                         <Tooltip />
                     </PieChart>
 
-                    {/* Legend */}
                     <Box ml={4}>
                         {geo.map((entry, index) => (
                             <Flex key={index} align="center" mb={1} mr={7} whiteSpace="nowrap">

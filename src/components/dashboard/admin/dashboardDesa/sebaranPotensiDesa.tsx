@@ -1,10 +1,29 @@
-import { Box, Flex, Text, Button } from "@chakra-ui/react";
-import { Table, Thead, Tbody, Tr, Th, Td, TableContainer, useDisclosure, ModalOverlay, Modal, ModalContent, ModalHeader, ModalCloseButton, ModalBody, Select, ModalFooter } from "@chakra-ui/react";
+import {
+    Box,
+    Flex,
+    Text,
+    Button,
+    Table,
+    Thead,
+    Tbody,
+    Tr,
+    Th,
+    Td,
+    TableContainer,
+} from "@chakra-ui/react";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import * as XLSX from "xlsx";
-import { ResponsiveContainer, BarChart, Bar, XAxis, Tooltip, LabelList, Cell } from "recharts";
-import { DownloadIcon } from "@chakra-ui/icons"; // Import icon
+import {
+    ResponsiveContainer,
+    BarChart,
+    Bar,
+    XAxis,
+    Tooltip,
+    LabelList,
+    Cell,
+} from "recharts";
+import { DownloadIcon } from "@chakra-ui/icons";
 
 type ChartData = {
     valueAsli: any;
@@ -20,14 +39,13 @@ type CustomLabelProps = {
     value: string;
 };
 
-// 🔹 Custom label persis kayak DesaDigitalUnggulan
 const CustomLabel: React.FC<CustomLabelProps> = ({ x, y, width, value }) => {
     return (
         <text
             x={x + width / 2}
-            y={y + 20}
+            y={y + 25}
             fill="#FFFFFF"
-            fontSize={15}
+            fontSize={12}
             textAnchor="middle"
             fontWeight="bold"
         >
@@ -42,7 +60,6 @@ const SebaranPotensiDesa: React.FC = () => {
     const [kondisiData, setKondisiData] = useState<{ kategori: string; jumlah: number }[]>([]);
     const ITEMS_PER_PAGE = 5;
     const [currentPage, setCurrentPage] = useState(1);
-
 
     const fetchPotensiData = async () => {
         try {
@@ -70,11 +87,9 @@ const SebaranPotensiDesa: React.FC = () => {
                     kategori: key,
                     jumlah: potensiCount[key],
                 }))
-                .sort((a, b) => b.jumlah - a.jumlah); // Urutkan descending
+                .sort((a, b) => b.jumlah - a.jumlah);
 
             setKondisiData(kondisiArray);
-
-
 
             const sortedPotensi = Object.keys(potensiCount)
                 .map((name) => ({
@@ -116,7 +131,7 @@ const SebaranPotensiDesa: React.FC = () => {
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, "PotensiDesa");
 
-        XLSX.writeFile(workbook, "Sebaran_Semua_Potensi_Desa.xlsx");
+        XLSX.writeFile(workbook, "sebaran_potensi_desa.xlsx");
     };
 
     useEffect(() => {
@@ -133,6 +148,7 @@ const SebaranPotensiDesa: React.FC = () => {
                     Sebaran Potensi Desa
                 </Text>
                 <Button
+                    size="sm"
                     bg="white"
                     boxShadow="md"
                     border="2px solid"
@@ -141,14 +157,11 @@ const SebaranPotensiDesa: React.FC = () => {
                     py={2}
                     display="flex"
                     alignItems="center"
-                    gap={2}
                     _hover={{ bg: "gray.100" }}
                     cursor="pointer"
                     onClick={handleDownload}
-                ><DownloadIcon boxSize={3} color="black" /> {/* Tambahin Icon */}
-                    <Text fontSize="10px" fontWeight="medium" color="black">
-                        Download
-                    </Text>
+                >
+                    <DownloadIcon boxSize={3} color="black" />
                 </Button>
             </Flex>
 
@@ -187,6 +200,8 @@ const SebaranPotensiDesa: React.FC = () => {
                     </BarChart>
                 </ResponsiveContainer>
             </Box>
+
+            {/* 🔹 Table */}
             <Box
                 bg="white"
                 borderRadius="xl"
@@ -198,19 +213,15 @@ const SebaranPotensiDesa: React.FC = () => {
                 borderColor="gray.200"
                 mt={4}
             >
-                {/* Table Container */}
                 <TableContainer maxWidth="100%" width="auto" borderRadius="md">
-                    <Table variant="simple" size="sm"> {/* Mengurangi ukuran tabel */}
-                        {/* Header Tabel */}
-                        <Thead bg="#D1EDE1">
+                    <Table variant="simple" size="sm">
+                        <Thead bg="#F0FFF4">
                             <Tr>
                                 <Th p={3} fontSize="8px" textAlign="center">No</Th>
                                 <Th p={1} fontSize="8px" textAlign="center">Kategori Potensi</Th>
                                 <Th p={1} fontSize="8px" textAlign="center">Jumlah</Th>
                             </Tr>
                         </Thead>
-
-                        {/* Body Tabel */}
                         <Tbody>
                             {kondisiData
                                 .slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
@@ -227,7 +238,7 @@ const SebaranPotensiDesa: React.FC = () => {
                     </Table>
                 </TableContainer>
 
-                {/* Paginasi */}
+                {/* 🔹 Pagination */}
                 <Flex justify="center" mt={3} gap={2}>
                     {[...Array(totalPages)].map((_, index) => (
                         <Button
@@ -244,7 +255,6 @@ const SebaranPotensiDesa: React.FC = () => {
                     ))}
                 </Flex>
             </Box>
-
         </Box>
     );
 };

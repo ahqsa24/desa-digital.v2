@@ -1,7 +1,24 @@
-import {Box,Flex,Text,Button,Drawer,DrawerBody,DrawerContent,DrawerFooter,DrawerHeader,DrawerOverlay,DrawerCloseButton,SimpleGrid,Checkbox,useDisclosure,} from "@chakra-ui/react";
+import {
+    Box,
+    Flex,
+    Text,
+    Button,
+    Drawer,
+    DrawerBody,
+    DrawerContent,
+    DrawerFooter,
+    DrawerHeader,
+    DrawerOverlay,
+    DrawerCloseButton,
+    SimpleGrid,
+    Checkbox,
+    useDisclosure,
+} from "@chakra-ui/react";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { Filter } from "lucide-react";
+import { DownloadIcon } from "@chakra-ui/icons";
+import * as XLSX from "xlsx";
 import { useNavigate } from "react-router-dom";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
@@ -14,7 +31,6 @@ const SebaranProvinsiDashboardDesa: React.FC = () => {
     const [filteredData, setFilteredData] = useState(provinceData);
     const [markers, setMarkers] = useState<{ [key: string]: { lat: number; lon: number } }>({});
 
-    // 🔹 Fungsi untuk Fetch Koordinat dari API OpenStreetMap
     async function getCoordinates(provinsi: string) {
         try {
             const response = await fetch(
@@ -30,7 +46,6 @@ const SebaranProvinsiDashboardDesa: React.FC = () => {
         return null;
     }
 
-    // 🔹 Fetch Data Desa dari Firestore
     const fetchProvinceData = async () => {
         try {
             const db = getFirestore();
@@ -58,7 +73,20 @@ const SebaranProvinsiDashboardDesa: React.FC = () => {
         }
     };
 
-    // 🔹 Fetch Koordinat untuk Setiap Provinsi
+    const handleDownloadExcel = () => {
+        const excelData = provinceData.map((item, index) => ({
+            No: index + 1,
+            Provinsi: item.name,
+            "Jumlah Desa Digital": item.count,
+        }));
+
+        const worksheet = XLSX.utils.json_to_sheet(excelData);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Sebaran Provinsi");
+
+        XLSX.writeFile(workbook, "sebaran_provinsi_desa_digital.xlsx");
+    };
+
     useEffect(() => {
         async function fetchCoordinates() {
             const newMarkers: { [key: string]: { lat: number; lon: number } } = {};
@@ -80,17 +108,14 @@ const SebaranProvinsiDashboardDesa: React.FC = () => {
         fetchProvinceData();
     }, []);
 
-    // Daftar Provinsi untuk Filter
     const provinces = provinceData.map((d) => d.name);
 
-    // 🔹 Fungsi untuk Checkbox Filter
     const handleCheckboxChange = (provinsi: string) => {
         setSelectedProvinces((prev) =>
             prev.includes(provinsi) ? prev.filter((p) => p !== provinsi) : [...prev, provinsi]
         );
     };
 
-    // 🔹 Terapkan Filter ke Peta
     const applyFilter = () => {
         if (selectedProvinces.length === 0) {
             setFilteredData(provinceData);
@@ -102,30 +127,48 @@ const SebaranProvinsiDashboardDesa: React.FC = () => {
 
     return (
         <Box>
-            {/* HEADER + FILTER BUTTON */}
+            {/* HEADER + FILTER + DOWNLOAD BUTTON */}
             <Flex justify="space-between" align="center" mt="24px" mx="15px">
                 <Text fontSize="sm" fontWeight="bold" color="gray.800">
                     Sebaran Provinsi Desa Digital
                 </Text>
+                <Flex gap={2}>
                 <Button
-                    bg="white"
-                    boxShadow="md"
-                    border="2px solid"
-                    borderColor="gray.200"
-                    px={2}
-                    py={2}
-                    display="flex"
-                    alignItems="center"
-                    gap={2}
-                    _hover={{ bg: "gray.100" }}
-                    cursor="pointer"
-                    leftIcon={<Filter size={14} stroke="#1E5631" fill="#1E5631" />}
-                    onClick={onOpen}
-                >
-                    <Text fontSize="10px" fontWeight="medium" color="black">
-                        Provinsi
-                    </Text>
-                </Button>
+                        size="sm"
+                        bg="white"
+                        boxShadow="md"
+                        border="2px solid"
+                        borderColor="gray.200"
+                        px={2}
+                        py={2}
+                        display="flex"
+                        alignItems="center"
+                        _hover={{ bg: "gray.100" }}
+                        cursor="pointer"
+                        onClick={handleDownloadExcel}
+                    >
+                        <DownloadIcon boxSize={3} color="black" />
+                    </Button>
+                    <Button
+                        size="sm"
+                        bg="white"
+                        boxShadow="md"
+                        border="2px solid"
+                        borderColor="gray.200"
+                        px={2}
+                        py={2}
+                        display="flex"
+                        alignItems="center"
+                        _hover={{ bg: "gray.100" }}
+                        cursor="pointer"
+                        leftIcon={<Filter size={14} stroke="#1E5631" fill="#1E5631" />}
+                        onClick={onOpen}
+                    >
+                        <Text fontSize="10px" fontWeight="medium" color="black" mr={1}>
+                            Provinsi
+                        </Text>
+                    </Button>
+                </Flex>
             </Flex>
 
             {/* LEAFLET MAP */}
@@ -166,20 +209,15 @@ const SebaranProvinsiDashboardDesa: React.FC = () => {
                 <DrawerContent
                     sx={{
                         borderRadius: "lg",
-                        width: "360px", // Sama dengan `ActionDrawer`
+                        width: "360px",
                         my: "auto",
                         mx: "auto",
                     }}
                 >
-                    <DrawerHeader
-                        display="flex"
-                        justifyContent="space-between"
-                        alignItems="center"
-                    >
+                    <DrawerHeader display="flex" justifyContent="space-between" alignItems="center">
                         <Text fontSize="15px" fontWeight="bold">Filter Provinsi</Text>
                         <DrawerCloseButton />
                     </DrawerHeader>
-
 
                     <DrawerBody>
                         <SimpleGrid columns={2} spacingX={2} spacingY={2} w="full">
