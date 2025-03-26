@@ -7,7 +7,7 @@ import {
   Image,
 } from "@chakra-ui/react";
 import { FaUsers } from "react-icons/fa";
-import InnovationActive from "Assets/icons/innovation1.svg";
+import InnovationActive from "Assets/icons/innovation2.svg";
 import {
   getFirestore,
   collection,

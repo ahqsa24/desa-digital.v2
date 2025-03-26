@@ -97,8 +97,8 @@ const SebaranKlasifikasiDashboardDesa: React.FC = () => {
         const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
         return (
-            <text x={x} y={y} fill="white" textAnchor="middle" dominantBaseline="central" fontSize={10} fontWeight="bold" fontFamily="poppins">
-                {`${name} ${(percent * 100).toFixed(0)}%`}
+            <text x={x} y={y} fill="white" textAnchor="middle" dominantBaseline="central" fontSize={25} fontWeight="bold" fontFamily="poppins">
+                {`${(percent * 100).toFixed(0)}%`}
             </text>
         );
     };
