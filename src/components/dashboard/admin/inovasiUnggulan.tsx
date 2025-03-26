@@ -24,9 +24,9 @@ const CustomLabel: React.FC<CustomLabelProps> = ({ x, y, width, value }) => {
     return (
         <text
             x={x + width / 2}
-            y={y + 20} // Padding dari atas
+            y={y + 25} // Padding dari atas
             fill="#FFFFFF"
-            fontSize={15}
+            fontSize={14}
             textAnchor="middle"
             fontWeight="bold"
         >
@@ -112,7 +112,7 @@ const InovasiUnggulan: React.FC = () => {
                     <BarChart data={chartData} margin={{ top: 5, right: 20, left: 20, bottom: 0 }}>
                         <XAxis dataKey="name" axisLine={false} tickLine={false} hide />
                         <Tooltip cursor={{ fill: 'transparent' }} />
-                        <Bar dataKey="value" radius={[10, 10, 0, 0]} fill="#064E3B">
+                        <Bar dataKey="value" radius={[10, 10, 0, 0]} fill="#1E5631">
                             <LabelList dataKey="name" position="top" fontSize="10px" formatter={(name: string) => name.replace(/^Desa\s+/i, "")} />
                             <LabelList dataKey="rank" content={<CustomLabel x={0} y={0} width={0} value={""} />} />
                             {chartData.map((entry, index) => (
