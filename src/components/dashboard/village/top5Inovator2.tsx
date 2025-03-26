@@ -71,9 +71,9 @@ const Top5InovatorVillage: React.FC = () => {
         return (
             <text
                 x={x + width / 2}
-                y={y + 20} // Padding dari atas
+                y={y + 25} // Padding dari atas
                 fill="#FFFFFF"
-                fontSize={15}
+                fontSize={12}
                 textAnchor="middle"
                 fontWeight="bold"
             >
@@ -156,6 +156,7 @@ const Top5InovatorVillage: React.FC = () => {
                     Top 5 Inovator Terbaik
                 </Text>
                 <Button
+                    size="sm"
                     bg="white"
                     boxShadow="md"
                     border="2px solid"
@@ -168,10 +169,7 @@ const Top5InovatorVillage: React.FC = () => {
                     _hover={{ bg: "gray.100" }}
                     cursor="pointer"
                     onClick={handleDownload}
-                ><DownloadIcon boxSize={3} color="black" /> {/* Tambahin Icon */}
-                    <Text fontSize="10px" fontWeight="medium" color="black">
-                        Download
-                    </Text>
+                ><DownloadIcon boxSize={3} color="black" />
                 </Button>
             </Flex>
 
@@ -191,7 +189,7 @@ const Top5InovatorVillage: React.FC = () => {
                     <BarChart data={chartData} margin={{ top: 20, right: 20, left: 20, bottom: 0 }}>
                         <XAxis dataKey="name" axisLine={false} tickLine={false} hide />
                         <Tooltip cursor={{ fill: "transparent" }} />
-                        <Bar dataKey="value" radius={[10, 10, 0, 0]} fill="#064E3B">
+                        <Bar dataKey="value" radius={[10, 10, 0, 0]} fill="#1E5631">
                             <LabelList
                                 dataKey="name"
                                 position="top"
@@ -223,7 +221,7 @@ const Top5InovatorVillage: React.FC = () => {
                 <TableContainer maxWidth="100%" width="auto" borderRadius="md">
                     <Table variant="simple" size="sm" > {/* Mengurangi ukuran tabel */}
                         {/* Header Tabel */}
-                        <Thead bg="#D1EDE1">
+                        <Thead bg="#F0FFF4">
                             <Tr>
                                 <Th p={3} fontSize="8px" textAlign="center">No</Th>
                                 <Th p={1} fontSize="8px" textAlign="center">Nama Inovator</Th>

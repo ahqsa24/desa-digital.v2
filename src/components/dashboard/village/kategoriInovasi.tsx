@@ -4,7 +4,7 @@ import { getFirestore, collection, getDocs } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import * as XLSX from "xlsx";
 import { ResponsiveContainer, BarChart, Bar, XAxis, Tooltip, LabelList, Cell } from "recharts";
-import { DownloadIcon } from "@chakra-ui/icons"; // Import icon
+import { DownloadIcon } from "@chakra-ui/icons";
 
 type ChartData = {
     valueAsli: any;
@@ -25,9 +25,9 @@ const CustomLabel: React.FC<CustomLabelProps> = ({ x, y, width, value }) => {
     return (
         <text
             x={x + width / 2}
-            y={y + 20}
+            y={y + 25}
             fill="#FFFFFF"
-            fontSize={15}
+            fontSize={12}
             textAnchor="middle"
             fontWeight="bold"
         >
@@ -110,9 +110,9 @@ const KategoriInovasiDesa: React.FC = () => {
 
         const worksheet = XLSX.utils.json_to_sheet(excelData);
         const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "PotensiDesa");
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Kategori Desa");
 
-        XLSX.writeFile(workbook, "Sebaran_Semua_Potensi_Desa.xlsx");
+        XLSX.writeFile(workbook, "inovasi_yang_diterapkan.xlsx");
     };
 
     useEffect(() => {
@@ -129,6 +129,7 @@ const KategoriInovasiDesa: React.FC = () => {
                     Kategori Inovasi yang Diterapkan
                 </Text>
                 <Button
+                    size="sm"
                     bg="white"
                     boxShadow="md"
                     border="2px solid"
@@ -141,10 +142,7 @@ const KategoriInovasiDesa: React.FC = () => {
                     _hover={{ bg: "gray.100" }}
                     cursor="pointer"
                     onClick={handleDownload}
-                ><DownloadIcon boxSize={3} color="black" /> {/* Tambahin Icon */}
-                    <Text fontSize="10px" fontWeight="medium" color="black">
-                        Download
-                    </Text>
+                ><DownloadIcon boxSize={3} color="black" />
                 </Button>
             </Flex>
 
@@ -198,7 +196,7 @@ const KategoriInovasiDesa: React.FC = () => {
                 <TableContainer maxWidth="100%" width="auto" borderRadius="md">
                     <Table variant="simple" size="sm"> {/* Mengurangi ukuran tabel */}
                         {/* Header Tabel */}
-                        <Thead bg="#D1EDE1">
+                        <Thead bg="#F0FFF4">
                             <Tr>
                                 <Th p={3} fontSize="8px" textAlign="center">No</Th>
                                 <Th p={1} fontSize="8px" textAlign="center">Kategori Potensi</Th>
