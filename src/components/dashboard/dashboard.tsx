@@ -22,6 +22,7 @@ import {
   import { getAuth } from "firebase/auth";
   import { firestore } from "../../firebase/clientApp";
   import efisheryLogo from "../../assets/images/efishery-logo.jpg";
+  import bgRecommendation from "Assets/images/background-recommendation.png";
   
   const Dashboard = () => {
     const [userRole, setUserRole] = useState(null);
@@ -150,16 +151,19 @@ import {
   
         {userRole === "village" && (
           <Box
-            mt={4}
-            p={6}
-            mx="auto"
-            bg="white"
-            boxShadow="md"
-            borderRadius="lg"
-            border="1px solid"
-            borderColor="gray.200"
-            position="relative"
-            overflow="hidden"
+          mt={4}
+          p={6}
+          mx="auto"
+          bg="white"
+          backgroundImage={`url(${bgRecommendation})`}
+          backgroundSize="cover"
+          backgroundPosition="center"
+          boxShadow="md"
+          borderRadius="lg"
+          border="1px solid"
+          borderColor="gray.200"
+          position="relative"
+          overflow="hidden"
           >
             <Text fontSize="sm" fontWeight="bold" mb={2}>
               Inovasi digital terbaik untuk desamu
