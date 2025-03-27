@@ -12,8 +12,8 @@ import {
   getFirestore,
   collection,
   getDocs,
-  getDoc,
-  doc,
+  query,
+  where,
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
@@ -90,23 +90,41 @@ const TwoCard: React.FC = () => {
       }
 
       try {
-        const userRef = doc(db, "users", user.uid);
-        const userSnap = await getDoc(userRef);
-        const desa = userSnap.data()?.desa || "Desa";
-        setUserDesa(desa);
+        // Ambil nama desa dari koleksi 'villages'
+        const desaQuery = query(
+          collection(db, "villages"),
+          where("userId", "==", user.uid)
+        );
+        const desaSnap = await getDocs(desaQuery);
 
+        let namaDesa = "Desa";
+        if (!desaSnap.empty) {
+          const desaData = desaSnap.docs[0].data();
+          namaDesa = desaData?.namaDesa || "Desa";
+          setUserDesa(namaDesa);
+        } else {
+          setUserDesa("Desa Tidak Diketahui");
+        }
+
+        // Ambil semua inovasi
         const inovasiSnap = await getDocs(collection(db, "innovations"));
         const totalAllInovasi = inovasiSnap.size;
 
+        // Filter inovasi yang diterapkan oleh desa ini
         const desaInovasi = inovasiSnap.docs.filter((doc) => {
           const inputDesaMenerapkan = doc.data().inputDesaMenerapkan || [];
-          return inputDesaMenerapkan.includes(desa);
+          return inputDesaMenerapkan.some((nama: string) =>
+            nama.toLowerCase().includes(namaDesa.toLowerCase())
+          );
         });
+
         setTotalInovasi(`${desaInovasi.length}/${totalAllInovasi}`);
 
+        // Ambil semua inovator
         const innovatorSnap = await getDocs(collection(db, "innovators"));
         const totalAllInnovators = innovatorSnap.size;
 
+        // Hitung inovator unik yang menginovasikan ke desa ini
         const innovatorIds = new Set(
           desaInovasi.map((doc) => doc.data().innovatorId)
         );
@@ -126,13 +144,13 @@ const TwoCard: React.FC = () => {
         icon={<Image src={InnovationActive} alt="Innovation Icon" w={5} h={5} />}
         mainText={totalInovasi}
         label="Inovasi"
-        subText={`Telah diterapkan oleh desa ${userDesa}`}
+        subText={`Telah diterapkan oleh Desa ${userDesa}`}
       />
       <CardItem
         icon={<FaUsers size={20} color="#347357" />}
         mainText={totalInovator}
         label="Inovator"
-        subText={`Telah memberikan inovasi untuk desa ${userDesa}`}
+        subText={`Telah memberikan inovasi untuk Desa ${userDesa}`}
       />
     </Flex>
   );
