@@ -153,6 +153,7 @@ import {
           <Box
           mt={4}
           p={6}
+          pb={4}
           mx="auto"
           bg="white"
           backgroundImage={`url(${bgRecommendation})`}
