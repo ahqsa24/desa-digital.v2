@@ -18,6 +18,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { paths } from "Consts/path";
 import efisheryLogo from "Assets/images/efishery-logo.jpg";
+import bgRecommendation from "Assets/images/background-recommendation.png";
 
 const Rekomendasi = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -31,6 +32,9 @@ const Rekomendasi = () => {
                 p={6}
                 mx="15px"
                 bg="white"
+                backgroundImage={`url(${bgRecommendation})`}
+                backgroundSize="cover"
+                backgroundPosition="center"
                 boxShadow="md"
                 borderRadius="lg"
                 border="1px solid"
@@ -50,11 +54,11 @@ const Rekomendasi = () => {
                             eFeeder
                         </Text>
                         <Text fontSize="sm" color="gray.600">
-                            Innovator: eFishery
+                            Inovator: eFishery
                         </Text>
                     </Box>
                 </Flex>
-                <Flex justifyContent="space-between" alignItems="center" mb={0.5} mt={3}>
+                <Flex justifyContent="space-between" alignItems="center" mt={3}>
                     <Text fontSize="10px" color="gray.500">
                         Cek rekomendasi inovasi digital lainnya untuk desamu disini
                     </Text>
@@ -65,11 +69,10 @@ const Rekomendasi = () => {
                         p={1}
                         borderRadius="4"
                         minW="auto"
-                        
                         h="22px"
-                        w='180px'
-                        onClick={onOpen} 
-                        boxShadow="md" 
+                        w="180px"
+                        onClick={onOpen}
+                        boxShadow="md"
                         _hover={{ bg: "#16432D" }}
                     >
                         Lihat Rekomendasi
@@ -83,8 +86,8 @@ const Rekomendasi = () => {
                 <DrawerContent
                     sx={{
                         borderTopRadius: "3xl",
-                        width: "360px", // match sama drawer lain
-                        h:"770px",
+                        width: "360px",
+                        h: "770px",
                         my: "auto",
                         mx: "auto",
                     }}
@@ -97,42 +100,42 @@ const Rekomendasi = () => {
                         <Text fontSize="18px" fontWeight="bold" mt="4px" ml="4px">
                             Rekomendasi Inovasi
                         </Text>
-                        <DrawerCloseButton mt="10px" mr="4px"/>
+                        <DrawerCloseButton mt="10px" mr="4px" />
                     </DrawerHeader>
 
                     <DrawerBody p={0}>
-                    <Flex
-                        direction="column"
-                        align="center"
-                        justify="center"
-                        textAlign="center"
-                        height="100%"
-                        px={6}
-                        py={8}
-                    >
-                        <Text fontWeight="bold" fontSize="lg">
-                        eFeeder
-                        </Text>
-                        <Text fontSize="sm" mb={4}>
-                        dari eFishery
-                        </Text>
+                        <Flex
+                            direction="column"
+                            align="center"
+                            justify="center"
+                            textAlign="center"
+                            height="100%"
+                            px={6}
+                            py={8}
+                        >
+                            <Text fontWeight="bold" fontSize="lg">
+                                eFeeder
+                            </Text>
+                            <Text fontSize="sm" mb={4}>
+                                dari eFishery
+                            </Text>
 
-                        <Box my={6}>
-                        <Image
-                            src={efisheryLogo}
-                            alt="eFeeder"
-                            mx="auto"
-                            boxSize="80px"
-                        />
-                        </Box>
+                            <Box my={6}>
+                                <Image
+                                    src={efisheryLogo}
+                                    alt="eFeeder"
+                                    mx="auto"
+                                    boxSize="80px"
+                                />
+                            </Box>
 
-                        <Text fontWeight="bold" mb={1}>
-                        Cocok dengan desamu!
-                        </Text>
-                        <Text fontSize="sm" color="gray.600">
-                        Saatnya desamu berinovasi! Terapkan inovasi dan buat perubahan besar di desamu
-                        </Text>
-                    </Flex>
+                            <Text fontWeight="bold" mb={1}>
+                                Cocok dengan desamu!
+                            </Text>
+                            <Text fontSize="sm" color="gray.600">
+                                Saatnya desamu berinovasi! Terapkan inovasi dan buat perubahan besar di desamu
+                            </Text>
+                        </Flex>
                     </DrawerBody>
 
                     <DrawerFooter flexDirection="column" gap={3}>
@@ -141,7 +144,7 @@ const Rekomendasi = () => {
                             color="white"
                             w="full"
                             fontSize="sm"
-                            border = "2px"
+                            border="2px"
                             _hover={{ bg: "#2e5e4b" }}
                         >
                             Detail Inovasi
@@ -153,13 +156,12 @@ const Rekomendasi = () => {
                             fontSize="sm"
                             mb={3}
                             onClick={() => {
-                                onClose(); // tutup drawer
-                                navigate(paths.VILLAGE_RECOMENDATION); // redirect
+                                onClose();
+                                navigate(paths.VILLAGE_RECOMENDATION);
                             }}
                         >
                             Rekomendasi Lainnya
                         </Button>
-
                     </DrawerFooter>
                 </DrawerContent>
             </Drawer>
