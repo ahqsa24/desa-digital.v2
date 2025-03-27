@@ -92,16 +92,7 @@ function TopBar(props: TopBarProps) {
         >
           {title}
         </Text>
-        {/* Ikon Filter (Hanya muncul di halaman tertentu) */}
-        {showFilterIcon && (
-          <IconButton
-            icon={<SlidersHorizontal size={20} color="white" />}
-            aria-label="Filter"
-            variant="unstyled"
-            onClick={onFilterClick} // Akan membuka modal filter nanti
-          />
-        )}
-        
+                
         {isClaimButtonVisible && village && (
           <Button
             fontSize="12px"
