@@ -194,7 +194,7 @@ const PerkembanganInovasiDesa: React.FC = () => {
         <DrawerOverlay />
         <DrawerContent
           sx={{
-            borderRadius: "lg",
+            borderTopRadius: "lg",
             width: "360px",
             my: "auto",
             mx: "auto",

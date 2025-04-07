@@ -249,7 +249,7 @@ const SebaranKondisiDesa: React.FC = () => {
       {/* Drawer */}
       <Drawer isOpen={isOpen} placement="bottom" onClose={handleCloseDrawer}>
         <DrawerOverlay />
-        <DrawerContent sx={{ borderRadius: "lg", width: "360px", my: "auto", mx: "auto" }}>
+        <DrawerContent sx={{ borderTopRadius: "lg", width: "360px", my: "auto", mx: "auto" }}>
           <DrawerHeader display="flex" justifyContent="space-between" alignItems="center">
             <Text fontSize="15px" fontWeight="bold">Filter Wilayah</Text>
             <DrawerCloseButton onClick={handleCloseDrawer} />
