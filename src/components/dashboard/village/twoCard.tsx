@@ -144,13 +144,13 @@ const TwoCard: React.FC = () => {
         icon={<Image src={InnovationActive} alt="Innovation Icon" w={5} h={5} />}
         mainText={totalInovasi}
         label="Inovasi"
-        subText={`Telah diterapkan oleh Desa ${userDesa}`}
+        subText={`Telah diterapkan oleh ${userDesa}`}
       />
       <CardItem
         icon={<FaUsers size={20} color="#347357" />}
         mainText={totalInovator}
         label="Inovator"
-        subText={`Telah memberikan inovasi untuk Desa ${userDesa}`}
+        subText={`Telah memberikan inovasi untuk ${userDesa}`}
       />
     </Flex>
   );
