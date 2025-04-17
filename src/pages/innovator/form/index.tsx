@@ -124,7 +124,7 @@ const InnovatorForm: React.FC = () => {
         }));
       }
     } else if (name === "name") {
-      if (wordCount <= 4) {
+      if (wordCount <= 10) {
         setTextInputsValue((prev) => ({
           ...prev,
           [name]: value,
