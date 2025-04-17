@@ -406,7 +406,7 @@ const InnovatorForm: React.FC = () => {
                 value={textInputsValue.name}
                 onChange={onTextChange}
                 wordCount={getDescriptionWordCount()}
-                maxWords={4}
+                maxWords={10}
                 disabled={!isEditable}
               />
               <Text fontWeight="400" fontSize="14px" mb="-2">
