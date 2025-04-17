@@ -138,6 +138,12 @@ const InnovatorForm: React.FC = () => {
     }
   };
 
+  const getNameWordCount = () => {
+    return textInputsValue.name
+      .split(/\s+/)
+      .filter((word) => word !== "").length;
+  };
+
   const getDescriptionWordCount = () => {
     return textInputsValue.description
       .split(/\s+/)
@@ -405,7 +411,7 @@ const InnovatorForm: React.FC = () => {
                 placeholder="Nama Inovator"
                 value={textInputsValue.name}
                 onChange={onTextChange}
-                wordCount={getDescriptionWordCount()}
+                wordCount={getNameWordCount()}
                 maxWords={10}
                 disabled={!isEditable}
               />
