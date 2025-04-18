@@ -42,6 +42,7 @@ const categories = [
   "Pemerintah Daerah",
   "Perusahaan",
   "Start Up",
+  "UMKM",
 ];
 
 const businessModels = [
@@ -123,7 +124,7 @@ const InnovatorForm: React.FC = () => {
         }));
       }
     } else if (name === "name") {
-      if (wordCount <= 4) {
+      if (wordCount <= 10) {
         setTextInputsValue((prev) => ({
           ...prev,
           [name]: value,
@@ -135,6 +136,12 @@ const InnovatorForm: React.FC = () => {
         [name]: value,
       }));
     }
+  };
+
+  const getNameWordCount = () => {
+    return textInputsValue.name
+      .split(/\s+/)
+      .filter((word) => word !== "").length;
   };
 
   const getDescriptionWordCount = () => {
@@ -383,7 +390,7 @@ const InnovatorForm: React.FC = () => {
   };
 
   return (
-    <Container page>
+    <Container page pb={24}>
       <TopBar title="Register Inovator" onBack={() => navigate(-1)} />
       <Box p="0 16px">
         <form onSubmit={onSubmitForm}>
@@ -404,8 +411,8 @@ const InnovatorForm: React.FC = () => {
                 placeholder="Nama Inovator"
                 value={textInputsValue.name}
                 onChange={onTextChange}
-                wordCount={getDescriptionWordCount()}
-                maxWords={4}
+                wordCount={getNameWordCount()}
+                maxWords={10}
                 disabled={!isEditable}
               />
               <Text fontWeight="400" fontSize="14px" mb="-2">
