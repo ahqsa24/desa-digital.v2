@@ -205,7 +205,6 @@ const Top5InovatorVillage: React.FC = () => {
                 </ResponsiveContainer>
             </Box>
 
-
             <Box
                 bg="white"
                 borderRadius="xl"
@@ -216,6 +215,7 @@ const Top5InovatorVillage: React.FC = () => {
                 border="0px solid"
                 borderColor="gray.200"
                 mt={4}
+                mb={5}
             >
                 {/* Table Container */}
                 <TableContainer maxWidth="100%" width="auto" borderRadius="md">
