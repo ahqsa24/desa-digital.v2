@@ -90,7 +90,6 @@ const TwoCard: React.FC = () => {
       }
 
       try {
-        // Ambil nama desa dari koleksi 'villages'
         const desaQuery = query(
           collection(db, "villages"),
           where("userId", "==", user.uid)
@@ -110,12 +109,12 @@ const TwoCard: React.FC = () => {
         const inovasiSnap = await getDocs(collection(db, "innovations"));
         const totalAllInovasi = inovasiSnap.size;
 
-        // Filter inovasi yang diterapkan oleh desa ini
         const desaInovasi = inovasiSnap.docs.filter((doc) => {
-          const inputDesaMenerapkan = doc.data().inputDesaMenerapkan || [];
-          return inputDesaMenerapkan.some((nama: string) =>
-            nama.toLowerCase().includes(namaDesa.toLowerCase())
-          );
+          const inputDesaMenerapkan = doc.data().inputDesaMenerapkan;
+          return Array.isArray(inputDesaMenerapkan) &&
+            inputDesaMenerapkan.some((nama: string) =>
+              nama?.toLowerCase().trim() === namaDesa.toLowerCase().trim()
+            );
         });
 
         setTotalInovasi(`${desaInovasi.length}/${totalAllInovasi}`);
@@ -124,12 +123,12 @@ const TwoCard: React.FC = () => {
         const innovatorSnap = await getDocs(collection(db, "innovators"));
         const totalAllInnovators = innovatorSnap.size;
 
-        // Hitung inovator unik yang menginovasikan ke desa ini
         const innovatorIds = new Set(
           desaInovasi.map((doc) => doc.data().innovatorId)
         );
 
         setTotalInovator(`${innovatorIds.size}/${totalAllInnovators}`);
+
       } catch (error) {
         console.error("Error fetching data:", error);
       }
