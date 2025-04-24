@@ -263,6 +263,7 @@ import {
                 fontSize="sm"
                 border="2px"
                 _hover={{ bg: "#2e5e4b" }}
+                onClick={() => navigate("/innovation/detail/8HeAYMhzlFQvdUgoSXpX")}
               >
                 Detail Inovasi
               </Button>
