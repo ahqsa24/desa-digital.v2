@@ -294,6 +294,23 @@ const AddInnovation: React.FC = () => {
     event.preventDefault();
     setLoading(true);
     setError("");
+
+    const { name, year, description, villages, priceMax, priceMin } =
+      textInputsValue;
+
+    const modelBisnis = selectedModels.filter((model) => model !== "Lain-lain");
+    if (
+      selectedModels.includes("Lain-lain") &&
+      otherBusinessModel.trim() !== ""
+    ) {
+      modelBisnis.push(otherBusinessModel);
+    }
+
+    if (!selectedStatus || !name || !selectedCategory || !year || !description || !modelBisnis.length || !villages || !priceMin || !priceMax || benefit.length === 0 || selectedFiles.length === 0 || requirements.length === 0) {
+      alert("Mohon lengkapi semua kolom wajib sebelum mengajukan inovasi.");
+      setLoading(false);
+      return;
+    }
     if (selectedModels.length === 0) {
       setError("Pilih setidaknya satu model bisnis digital.");
       return;
@@ -303,9 +320,6 @@ const AddInnovation: React.FC = () => {
       setLoading(false);
       return;
     }
-
-    const { name, year, description, villages, priceMax, priceMin } =
-      textInputsValue;
 
     // Fetch innovator data
     const userId = user.uid;
@@ -337,14 +351,6 @@ const AddInnovation: React.FC = () => {
       finalTargetUser = customTargetUser.trim();
     }
     */}
-
-    const modelBisnis = selectedModels.filter((model) => model !== "Lain-lain");
-    if (
-      selectedModels.includes("Lain-lain") &&
-      otherBusinessModel.trim() !== ""
-    ) {
-      modelBisnis.push(otherBusinessModel);
-    }
 
     const finalRequirements = [...requirements];
     if (
@@ -706,6 +712,7 @@ const AddInnovation: React.FC = () => {
                 }}
                 value={textInputsValue.name}
                 onChange={onTextChange}
+                required
               />
 
               <Text fontWeight="400" fontSize="14px" mb="-2">
@@ -721,6 +728,7 @@ const AddInnovation: React.FC = () => {
                 }
                 styles={customStyles} // Terapkan gaya khusus
                 isClearable
+                required
               />
 
               <Text fontWeight="400" fontSize="14px" mb="-2">
@@ -739,6 +747,7 @@ const AddInnovation: React.FC = () => {
                 }}
                 value={textInputsValue.year}
                 onChange={onTextChange}
+                required
               />
 
               <Text fontWeight="400" fontSize="14px" mb="-2">
@@ -759,6 +768,7 @@ const AddInnovation: React.FC = () => {
                   height="100px"
                   value={textInputsValue.description}
                   onChange={onTextChange}
+                  required
                 />
                 <Text
                   fontWeight="400"
@@ -875,6 +885,7 @@ const AddInnovation: React.FC = () => {
                   value={textInputsValue.villages}
                   disabled={!isEditable}
                   onChange={onTextChange}
+                  required
                 />
                 <Text
                   fontWeight="400"
@@ -920,6 +931,7 @@ const AddInnovation: React.FC = () => {
                       value={textInputsValue.priceMin}
                       onChange={onTextChange}
                       disabled={!isEditable}
+                      required
                     />
                   </InputGroup>
                   <MinusIcon mx="2" color="#9CA3AF" mt="3" />
@@ -944,6 +956,7 @@ const AddInnovation: React.FC = () => {
                       value={textInputsValue.priceMax}
                       onChange={onTextChange}
                       disabled={!isEditable}
+                      required
                     />
                   </InputGroup>
                 </Flex>
@@ -995,6 +1008,7 @@ const AddInnovation: React.FC = () => {
                       _focus={{ outline: "none", bg: "white", border: "none" }}
                       value={item.benefit}
                       disabled={!isEditable}
+                      required
                       onChange={(e) => {
                         const wordCount = e.target.value
                           .split(/\s+/)
@@ -1045,6 +1059,7 @@ const AddInnovation: React.FC = () => {
                       _focus={{ outline: "none", bg: "white", border: "none" }}
                       value={item.description}
                       disabled={!isEditable}
+                      required
                       onChange={(e) => {
                         const wordCount = e.target.value
                           .split(/\s+/)
@@ -1125,6 +1140,7 @@ const AddInnovation: React.FC = () => {
                         }}
                         value={requirement}
                         disabled={!isEditable}
+                        required
                         onChange={(e) => {
                           const wordCount = e.target.value
                             .split(/\s+/)
@@ -1186,6 +1202,7 @@ const AddInnovation: React.FC = () => {
                     _focus={{ outline: "none", bg: "white", border: "none" }}
                     value={newRequirement}
                     disabled={!isEditable}
+                    required
                     onChange={(e) => {
                       const wordCount = e.target.value
                         .split(/\s+/)
@@ -1217,7 +1234,16 @@ const AddInnovation: React.FC = () => {
                   </Text>
                   <Button
                     variant="outline"
-                    onClick={onAddRequirement}
+                    onClick={() => {
+                      // Validasi infrastruktur terakhir sebelum menambahkan yang baru
+                      const lastRequirement = requirements[requirements.length - 1];
+                      if (!lastRequirement) {
+                        alert("Silakan isi persiapan infrastruktur sebelum menambahkan yang baru.");
+                        return;
+                      }
+                      // Tambahkan infrastruktur baru
+                      onAddRequirement();
+                    }}
                     _hover={{ bg: "none" }}
                     leftIcon={<AddIcon />}
                     disabled={!isEditable}
