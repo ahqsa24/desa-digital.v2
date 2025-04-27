@@ -6,6 +6,8 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import ConfModal from "../../../components/confirmModal/confModal";
 import SecConfModal from "../../../components/confirmModal/secConfModal";
 import ImageUpload from "../../../components/form/ImageUpload";
+import DocUpload from "../../../components/form/DocUpload";
+import VidUpload from "../../../components/form/VideoUpload";
 import { auth, firestore, storage } from "../../../firebase/clientApp";
 
 import { Box, Flex } from "@chakra-ui/react";
@@ -281,7 +283,7 @@ const KlaimInovasi: React.FC = () => {
             </Field>
           </Collapse>
 
-          {/* <Collapse in={selectedCheckboxes.includes("video")} animateOpacity>
+          <Collapse in={selectedCheckboxes.includes("video")} animateOpacity>
             <Field>
               <Flex flexDirection="column" gap="2px">
                 <Text1>
@@ -297,9 +299,9 @@ const KlaimInovasi: React.FC = () => {
                 onSelectVid={onSelectVid}
               />
             </Field>
-          </Collapse> */}
+          </Collapse>
 
-          {/* <Collapse in={selectedCheckboxes.includes("dokumen")} animateOpacity>
+          <Collapse in={selectedCheckboxes.includes("dokumen")} animateOpacity>
             <Field>
               <Flex flexDirection="column" gap="2px">
                 <Text1>
@@ -315,7 +317,8 @@ const KlaimInovasi: React.FC = () => {
                 onSelectDoc={onSelectDoc}
               />
             </Field>
-          </Collapse> */}
+          </Collapse>
+
         </Container>
         <div>
           <NavbarButton>
