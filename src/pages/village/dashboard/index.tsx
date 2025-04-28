@@ -81,7 +81,7 @@ const DashboardPerangkatDesa: React.FC = () => {
             <PerkembanganInovasiDesa/>
             <KategoriInovasiDesa/>
             <Top5InovatorVillage/>
-            <Box pb={20} />
+            <Box pb={5} />
         </Box>
     );
 };

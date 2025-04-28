@@ -20,6 +20,7 @@ import { paths } from "Consts/path";
 import efisheryLogo from "Assets/images/efishery-logo.jpg";
 import bgRecommendation from "Assets/images/background-recommendation.png";
 
+
 const Rekomendasi = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const navigate = useNavigate();
@@ -146,9 +147,11 @@ const Rekomendasi = () => {
                             fontSize="sm"
                             border="2px"
                             _hover={{ bg: "#2e5e4b" }}
+                            onClick={() => navigate("/innovation/detail/8HeAYMhzlFQvdUgoSXpX")}
                         >
                             Detail Inovasi
                         </Button>
+
                         <Button
                             variant="outline"
                             colorScheme="green"

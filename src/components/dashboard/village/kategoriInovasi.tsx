@@ -1,10 +1,13 @@
 import { Box, Flex, Text, Button } from "@chakra-ui/react";
 import { Table, Thead, Tbody, Tr, Th, Td, TableContainer, useDisclosure, ModalOverlay, Modal, ModalContent, ModalHeader, ModalCloseButton, ModalBody, Select, ModalFooter } from "@chakra-ui/react";
-import { getFirestore, collection, getDocs } from "firebase/firestore";
+import { getFirestore, collection, getDocs, where, query } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 import React, { useEffect, useState } from "react";
 import * as XLSX from "xlsx";
 import { ResponsiveContainer, BarChart, Bar, XAxis, Tooltip, LabelList, Cell } from "recharts";
 import { DownloadIcon } from "@chakra-ui/icons";
+import { TooltipProps } from "recharts";
+import { ValueType, NameType } from "recharts/types/component/DefaultTooltipContent";
 
 type ChartData = {
     valueAsli: any;
@@ -36,6 +39,25 @@ const CustomLabel: React.FC<CustomLabelProps> = ({ x, y, width, value }) => {
     );
 };
 
+const CustomTooltip = ({
+    active,
+    payload,
+    label,
+  }: TooltipProps<ValueType, NameType>) => {
+    if (active && payload && payload.length > 0) {
+      const data = payload[0].payload;
+  
+      return (
+        <div style={{ background: "white", padding: "10px", border: "1px solid #ccc" }}>
+          <p style={{ margin: 0, fontWeight: "bold" }}>{data.name}</p>
+          <p style={{ margin: 0 }}>Total : {data.valueAsli}</p>
+        </div>
+      );
+    }
+  
+    return null;
+  };
+
 const KategoriInovasiDesa: React.FC = () => {
     const [barData, setBarData] = useState<ChartData[]>([]);
     const [allKategoriData, setAllKategoriData] = useState<Record<string, number>>({});
@@ -47,6 +69,31 @@ const KategoriInovasiDesa: React.FC = () => {
     const fetchKategoriData = async () => {
         try {
             const db = getFirestore();
+            const auth = getAuth();
+            const user = auth.currentUser;
+
+            if (!user) {
+                console.error("User belum login");
+                return;
+            }
+
+            // Ambil nama desa berdasarkan userId
+            const desaQuery = query(
+                collection(db, "villages"),
+                where("userId", "==", user.uid)
+            );
+            const desaSnap = await getDocs(desaQuery);
+
+            let namaDesa = "";
+            if (!desaSnap.empty) {
+                const desaData = desaSnap.docs[0].data() as { namaDesa: string };
+                namaDesa = desaData.namaDesa || "";
+            } else {
+                console.warn("Desa tidak ditemukan");
+                return;
+            }
+
+            // Ambil semua inovasi
             const innovationsRef = collection(db, "innovations");
             const snapshot = await getDocs(innovationsRef);
 
@@ -54,10 +101,15 @@ const KategoriInovasiDesa: React.FC = () => {
 
             snapshot.forEach((doc) => {
                 const data = doc.data();
-                const kategori = data.kategori;
+                const inputDesaMenerapkan = data.inputDesaMenerapkan;
 
-                if (kategori && typeof kategori === "string") {
-                    const formatted = kategori.charAt(0).toUpperCase() + kategori.slice(1).toLowerCase();
+                const cocok = Array.isArray(inputDesaMenerapkan) &&
+                    inputDesaMenerapkan.some((nama: string) =>
+                        nama?.toLowerCase().trim() === namaDesa.toLowerCase().trim()
+                    );
+
+                if (cocok && data.kategori && typeof data.kategori === "string") {
+                    const formatted = data.kategori.charAt(0).toUpperCase() + data.kategori.slice(1).toLowerCase();
                     kategoriCount[formatted] = (kategoriCount[formatted] || 0) + 1;
                 }
             });
@@ -73,22 +125,26 @@ const KategoriInovasiDesa: React.FC = () => {
 
             setKondisiData(kondisiArray);
 
-            // Chart top 5 logic
+            // Top 5 chart data
             const sortedKategori = Object.keys(kategoriCount)
                 .map((name) => ({ name, value: kategoriCount[name] }))
                 .sort((a, b) => b.value - a.value)
                 .slice(0, 5);
 
+            // Custom rank & tampilan chart tetap, tapi pakai value asli juga
             const customOrder = [3, 1, 0, 2, 4];
             const customHeights = [20, 40, 50, 35, 15];
             const customRanks = ["4th", "2nd", "1st", "3rd", "5th"];
 
-            const rankedData = customOrder.map((index, rankIndex) => ({
-                name: sortedKategori[index]?.name || "",
-                value: customHeights[rankIndex],
-                valueAsli: sortedKategori[index]?.value || 0,
-                rank: customRanks[rankIndex],
-            }));
+            const rankedData = customOrder.map((index, rankIndex) => {
+                const item = sortedKategori[index];
+                return {
+                    name: item?.name || "",
+                    value: customHeights[rankIndex],
+                    valueAsli: item?.value || 0,
+                    rank: customRanks[rankIndex],
+                };
+            });
 
             setBarData(rankedData);
         } catch (error) {
@@ -162,7 +218,7 @@ const KategoriInovasiDesa: React.FC = () => {
                 <ResponsiveContainer width="100%" height={200}>
                     <BarChart data={barData} margin={{ top: 20, right: 20, left: 20, bottom: 0 }}>
                         <XAxis dataKey="name" axisLine={false} tickLine={false} hide />
-                        <Tooltip cursor={{ fill: "transparent" }} />
+                        <Tooltip content={<CustomTooltip />} />
                         <Bar dataKey="value" radius={[10, 10, 0, 0]} fill="#1E5631">
                             <LabelList
                                 dataKey="name"

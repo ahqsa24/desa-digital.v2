@@ -15,9 +15,32 @@ import redinesImg from "@public/images/rediness.svg";
 import { Filter } from "lucide-react";
 import { DownloadIcon } from "@chakra-ui/icons";
 import * as XLSX from "xlsx";
+import { TooltipProps } from "recharts";
+import { ValueType, NameType } from "recharts/types/component/DefaultTooltipContent";
+
 
 
 const ITEMS_PER_PAGE = 5; // Jumlah data per halaman
+
+const CustomTooltip = ({
+    active,
+    payload,
+    label,
+}: TooltipProps<ValueType, NameType>) => {
+    if (active && payload && payload.length > 0) {
+        const data = payload[0].payload;
+
+        return (
+            <div style={{ background: "white", padding: "10px", border: "1px solid #ccc" }}>
+                <p style={{ margin: 0, fontWeight: "bold" }}>{data.name}</p>
+                <p style={{ margin: 0 }}>Total : {data.valueAsli}</p>
+            </div>
+        );
+    }
+
+    return null;
+};
+
 
 const Top5InovatorVillage: React.FC = () => {
     const [chartData, setChartData] = useState<{ name: string; value: number; rank: string }[]>([]);
@@ -27,29 +50,81 @@ const Top5InovatorVillage: React.FC = () => {
         const fetchTopInovator = async () => {
             try {
                 const db = getFirestore();
-                const inovatorRef = collection(db, "innovators");
-                const snapshot = await getDocs(inovatorRef);
+                const auth = getAuth();
+                const user = auth.currentUser;
 
-                const inovators = snapshot.docs
+                if (!user) {
+                    console.error("User belum login");
+                    return;
+                }
+
+                // Ambil nama desa dari user login
+                const desaQuery = query(
+                    collection(db, "villages"),
+                    where("userId", "==", user.uid)
+                );
+                const desaSnap = await getDocs(desaQuery);
+
+                let namaDesa = "";
+                if (!desaSnap.empty) {
+                    const desaData = desaSnap.docs[0].data() as { namaDesa: string };
+                    namaDesa = desaData.namaDesa || "";
+                } else {
+                    console.warn("Desa tidak ditemukan untuk user ini");
+                    return;
+                }
+
+                // Ambil semua inovasi
+                const innovationsSnap = await getDocs(collection(db, "innovations"));
+                const desaInovasi = innovationsSnap.docs.filter((doc) => {
+                    const inputDesaMenerapkan = doc.data().inputDesaMenerapkan;
+                    return Array.isArray(inputDesaMenerapkan) &&
+                        inputDesaMenerapkan.some((nama: string) =>
+                            nama?.toLowerCase().trim() === namaDesa.toLowerCase().trim()
+                        );
+                });
+
+                // Hitung jumlah inovasi dari setiap inovator di desa ini
+                const inovatorCount: Record<string, number> = {};
+                desaInovasi.forEach((doc) => {
+                    const inovatorId = doc.data().innovatorId;
+                    if (inovatorId) {
+                        inovatorCount[inovatorId] = (inovatorCount[inovatorId] || 0) + 1;
+                    }
+                });
+
+                // Ambil semua inovator
+                const innovatorSnap = await getDocs(collection(db, "innovators"));
+                const inovators = innovatorSnap.docs
                     .map((doc) => ({
+                        id: doc.id,
                         name: doc.data().namaInovator as string,
-                        value: doc.data().jumlahInovasi as number || 0,
                     }))
-                    .sort((a, b) => b.value - a.value) // Urutkan dari terbesar ke terkecil
-                    .slice(0, 5); // Ambil top 5 inovator
+                    .filter((inovator) => inovatorCount[inovator.id]) // hanya yang ada kontribusinya ke desa
+                    .map((inovator) => ({
+                        name: inovator.name,
+                        value: inovatorCount[inovator.id],
+                    }))
+                    .sort((a, b) => b.value - a.value)
+                    .slice(0, 5);
 
-                // Urutan khusus untuk ranking (4, 2, 1, 3, 5)
+                // Ranking & tinggi batang tetap seperti sebelumnya
                 const customOrder = [3, 1, 0, 2, 4];
-                const customHeights = [20, 40, 50, 35, 15]; // Custom tinggi batang sesuai ranking (1st - 5th)
+                const customHeights = [20, 40, 50, 35, 15];
+                const customRanks = ["4th", "2nd", "1st", "3rd", "5th"];
 
-
-                const rankedInovators = customOrder.map((index, rankIndex) => ({
-                    name: inovators[index]?.name || "",
-                    value: customHeights[rankIndex], // dipakai buat chart
-                    rank: `${["4th", "2nd", "1st", "3rd", "5th"][rankIndex]}`,
-                }));
+                const rankedInovators = customOrder.map((index, rankIndex) => {
+                    const item = inovators[index];
+                    return {
+                        name: item?.name || "",
+                        value: customHeights[rankIndex],     // custom tinggi batang
+                        valueAsli: item?.value || 0,         // jumlah inovasi asli
+                        rank: customRanks[rankIndex],
+                    };
+                });
 
                 setChartData(rankedInovators);
+
             } catch (error) {
                 console.error("❌ Error fetching top innovators:", error);
             }
@@ -57,6 +132,7 @@ const Top5InovatorVillage: React.FC = () => {
 
         fetchTopInovator();
     }, []);
+
 
 
     type CustomLabelProps = {
@@ -95,24 +171,72 @@ const Top5InovatorVillage: React.FC = () => {
         const fetchInovatorData = async () => {
             try {
                 const db = getFirestore();
-                const innovatorsRef = collection(db, "innovators");
-                const snapshot = await getDocs(innovatorsRef);
+                const auth = getAuth();
+                const user = auth.currentUser;
 
-                // Fungsi untuk membatasi maksimal 3 kata
+                if (!user) {
+                    console.error("User belum login");
+                    return;
+                }
+
+                // Ambil namaDesa berdasarkan userId
+                const desaQuery = query(
+                    collection(db, "villages"),
+                    where("userId", "==", user.uid)
+                );
+                const desaSnap = await getDocs(desaQuery);
+
+                let namaDesa = "";
+                if (!desaSnap.empty) {
+                    const desaData = desaSnap.docs[0].data() as { namaDesa: string };
+                    namaDesa = desaData.namaDesa || "";
+                } else {
+                    console.warn("Desa tidak ditemukan untuk user ini");
+                    return;
+                }
+
+                // Ambil semua inovasi
+                const innovationsSnap = await getDocs(collection(db, "innovations"));
+                const desaInovasi = innovationsSnap.docs.filter((doc) => {
+                    const inputDesaMenerapkan = doc.data().inputDesaMenerapkan;
+                    return Array.isArray(inputDesaMenerapkan) &&
+                        inputDesaMenerapkan.some((nama: string) =>
+                            nama?.toLowerCase().trim() === namaDesa.toLowerCase().trim()
+                        );
+                });
+
+                // Hitung jumlah inovasi per inovator hanya di desa ini
+                const inovatorStats: Record<string, { jumlahInovasi: number }> = {};
+                desaInovasi.forEach((doc) => {
+                    const inovatorId = doc.data().innovatorId;
+                    if (inovatorId) {
+                        inovatorStats[inovatorId] = {
+                            jumlahInovasi: (inovatorStats[inovatorId]?.jumlahInovasi || 0) + 1,
+                        };
+                    }
+                });
+
+                // Ambil data inovator
+                const innovatorsSnap = await getDocs(collection(db, "innovators"));
+
+                // Fungsi bantu untuk batasi nama jadi 3 kata
                 const limitWords = (text: string) => text.split(" ").slice(0, 3).join(" ");
 
-                // Ambil data, urutkan DESC berdasarkan jumlahInovasi, lalu kasih nomor urut yang benar
-                const fetchedData = snapshot.docs
+                // Ambil data inovator yang relevan dan susun
+                const fetchedData = innovatorsSnap.docs
+                    .filter((doc) => inovatorStats[doc.id]) // hanya inovator yang kontribusi ke desa
                     .map((doc) => {
                         const data = doc.data();
+                        const stats = inovatorStats[doc.id];
+
                         return {
                             namaInovator: data.namaInovator ? limitWords(data.namaInovator) : "Tidak Ada Nama",
-                            jumlahInovasi: data.jumlahInovasi || 0,
+                            jumlahInovasi: stats.jumlahInovasi,
                             jumlahDesaDampingan: data.jumlahDesaDampingan || 0,
                         };
                     })
-                    .sort((a, b) => b.jumlahInovasi - a.jumlahInovasi) // Urutkan berdasarkan jumlah inovasi DESC
-                    .map((item, index) => ({ ...item, no: index + 1 })); // Tambahkan nomor urut mulai dari 1
+                    .sort((a, b) => b.jumlahInovasi - a.jumlahInovasi)
+                    .map((item, index) => ({ ...item, no: index + 1 }));
 
                 setInovatorData(fetchedData);
             } catch (error) {
@@ -123,6 +247,7 @@ const Top5InovatorVillage: React.FC = () => {
         fetchInovatorData();
     }, []);
 
+
     const handleDownload = () => {
         const excelData = inovatorData.map((item) => ({
             No: item.no,
@@ -130,14 +255,14 @@ const Top5InovatorVillage: React.FC = () => {
             "Jumlah Inovasi": item.jumlahInovasi,
             "Jumlah Desa Dampingan": item.jumlahDesaDampingan,
         }));
-    
+
         const worksheet = XLSX.utils.json_to_sheet(excelData);
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, "SemuaInovator");
-    
+
         XLSX.writeFile(workbook, "Semua_Inovator.xlsx");
     };
-    
+
 
     // Hitung total halaman
     const totalPages = Math.ceil(inovatorData.length / ITEMS_PER_PAGE);
@@ -188,7 +313,7 @@ const Top5InovatorVillage: React.FC = () => {
                 <ResponsiveContainer width="100%" height={200}>
                     <BarChart data={chartData} margin={{ top: 20, right: 20, left: 20, bottom: 0 }}>
                         <XAxis dataKey="name" axisLine={false} tickLine={false} hide />
-                        <Tooltip cursor={{ fill: "transparent" }} />
+                        <Tooltip content={<CustomTooltip />} />
                         <Bar dataKey="value" radius={[10, 10, 0, 0]} fill="#1E5631">
                             <LabelList
                                 dataKey="name"
@@ -205,7 +330,6 @@ const Top5InovatorVillage: React.FC = () => {
                 </ResponsiveContainer>
             </Box>
 
-
             <Box
                 bg="white"
                 borderRadius="xl"
@@ -216,6 +340,7 @@ const Top5InovatorVillage: React.FC = () => {
                 border="0px solid"
                 borderColor="gray.200"
                 mt={4}
+                mb={5}
             >
                 {/* Table Container */}
                 <TableContainer maxWidth="100%" width="auto" borderRadius="md">

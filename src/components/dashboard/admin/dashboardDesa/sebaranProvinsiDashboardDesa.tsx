@@ -133,7 +133,7 @@ const SebaranProvinsiDashboardDesa: React.FC = () => {
                     Sebaran Provinsi Desa Digital
                 </Text>
                 <Flex gap={2}>
-                <Button
+                    <Button
                         size="sm"
                         bg="white"
                         boxShadow="md"
@@ -182,8 +182,14 @@ const SebaranProvinsiDashboardDesa: React.FC = () => {
                 borderColor="gray.200"
                 mt={4}
                 overflow="hidden"
+                zIndex={1}
             >
-                <MapContainer center={[-2.5, 118]} zoom={3} style={{ height: "250px", width: "100%", borderRadius: "10px" }}>
+                <MapContainer
+                    center={[-2.5, 118]}
+                    zoom={3}
+                    style={{ height: "250px", width: "100%", borderRadius: "10px", zIndex: 1 }}
+                    className="map-container"
+                >
                     <TileLayer
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

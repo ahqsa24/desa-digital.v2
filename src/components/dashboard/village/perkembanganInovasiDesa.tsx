@@ -14,7 +14,8 @@ import {
   Checkbox,
   SimpleGrid,
 } from "@chakra-ui/react";
-import { getFirestore, collection, getDocs } from "firebase/firestore";
+import { getFirestore, collection, getDocs, query, where } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 import React, { useEffect, useState } from "react";
 import {
   BarChart,
@@ -38,14 +39,47 @@ const PerkembanganInovasiDesa: React.FC = () => {
   const fetchInovasiData = async () => {
     try {
       const db = getFirestore();
+      const auth = getAuth();
+      const user = auth.currentUser;
+
+      if (!user) {
+        console.error("User belum login");
+        return;
+      }
+
+      // 1. Ambil namaDesa berdasarkan userId
+      const desaQuery = query(
+        collection(db, "villages"),
+        where("userId", "==", user.uid)
+      );
+      const desaSnap = await getDocs(desaQuery);
+
+      let namaDesa = "";
+      if (!desaSnap.empty) {
+        const desaData = desaSnap.docs[0].data();
+        namaDesa = desaData?.namaDesa || "";
+      } else {
+        console.warn("Desa tidak ditemukan untuk user ini");
+        return;
+      }
+
+      // 2. Ambil semua inovasi
       const innovationsRef = collection(db, "innovations");
       const snapshot = await getDocs(innovationsRef);
 
       const yearCount: Record<string, number> = {};
 
+      // 3. Filter inovasi berdasarkan inputDesaMenerapkan
       snapshot.forEach((doc) => {
         const data = doc.data();
-        if (data.createdAt) {
+        const inputDesaMenerapkan = data.inputDesaMenerapkan;
+
+        const cocok = Array.isArray(inputDesaMenerapkan) &&
+          inputDesaMenerapkan.some((nama: string) =>
+            nama?.toLowerCase().trim() === namaDesa.toLowerCase().trim()
+          );
+
+        if (cocok && data.createdAt) {
           const year = new Date(data.createdAt.toDate()).getFullYear().toString();
           yearCount[year] = (yearCount[year] || 0) + 1;
         }
