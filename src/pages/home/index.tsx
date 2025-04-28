@@ -155,6 +155,7 @@ function Home() {
 
   return (
     <Container page>
+      <ToastContainer />
       <TopBar title="Desa Digital Indonesia" />
       <Hero description="KMS Desa Digital" text="Indonesia"
         isAdmin={userRole === "Admin"}
@@ -205,7 +206,6 @@ function Home() {
           </Button>
         </Tooltip>
       )}
-      <ToastContainer />
     </Container>
   );
 }
