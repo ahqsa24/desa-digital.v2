@@ -37,6 +37,7 @@ import { AddIcon } from "@chakra-ui/icons";
 import TopBar from "Components/topBar";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { firestore } from "../../firebase/clientApp";
+import Dashboard from "Components/dashboard/dashboard";
 
 function Home() {
   const navigate = useNavigate();
@@ -167,6 +168,7 @@ function Home() {
           <Rediness />
           <Ads />
         </Flex>
+        {userRole === "village" && <Dashboard />}
         <BestBanner />
         <Box mt="120px">
           <Innovator />
