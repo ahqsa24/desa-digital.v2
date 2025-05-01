@@ -1,3 +1,4 @@
+
 import { ChevronDownIcon, SearchIcon } from "@chakra-ui/icons";
 import {
   Box,
@@ -15,22 +16,6 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
-import CardNotification from "Components/card/notification/CardNotification";
-import Container from "Components/container";
-import TopBar from "Components/topBar";
-import { paths } from "Consts/path";
-import {
-  collection,
-  getDocs,
-  limit,
-  orderBy,
-  query,
-  startAfter,
-} from "firebase/firestore";
-import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { firestore } from "../../../firebase/clientApp";
-import AdsPage from "../ads/AdsPage";
 
 const SkeletonCard = () => {
   return (
@@ -47,12 +32,14 @@ const SkeletonCard = () => {
   );
 };
 
+
 const VerificationPage: React.FC = () => {
   const navigate = useNavigate();
   const { category } = useParams<{ category: string }>();
   const [verifData, setVerifData] = useState<any[]>([]);
   const [filteredData, setFilteredData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+
 
   // Pencarian dan filter
   const [searchTerm, setSearchTerm] = useState("");
@@ -91,6 +78,7 @@ const VerificationPage: React.FC = () => {
     "Verifikasi Desa": paths.VILLAGE_PROFILE_PAGE,
     "Verifikasi Inovator": paths.INNOVATOR_PROFILE_PAGE,
     "Verifikasi Tambah Inovasi": paths.DETAIL_INNOVATION_PAGE,
+    "Verifikasi Klaim Inovasi": paths.DETAIL_INNOVATION_PAGE,
   };
 
   const handleCardClick = (id: string) => {
@@ -270,7 +258,6 @@ const VerificationPage: React.FC = () => {
   return (
     <Container page>
       <TopBar title={category || "Verification"} onBack={() => navigate(-1)} />
-
       {category !== "Pembuatan Iklan" && (
         <Stack padding="0 16px" gap={2} marginBottom={4}>
           {/* Search and Filter Bar */}
@@ -285,7 +272,7 @@ const VerificationPage: React.FC = () => {
                     ? "Cari desa di sini"
                     : category === "Verifikasi Inovator"
                     ? "Cari inovator di sini"
-                    : "Cari inovasi di sini"
+                    : "Cari inovasi di sini"      
                 }
                 size="md"
                 borderRadius="full"
