@@ -11,54 +11,28 @@ import Ads from "Components/ads/Ads";
 import BestBanner from "Components/banner/BestBanner";
 import Container from "Components/container";
 import Dashboard from "Components/dashboard/dashboard";
+import Loading from "Components/loading";
 import Rediness from "Components/rediness/Rediness";
 import SearchBarLink from "Components/search/SearchBarLink";
 import TopBar from "Components/topBar";
 import { paths } from "Consts/path";
-import { doc, DocumentData, getDoc } from "firebase/firestore";
-import { useEffect, useState } from "react";
-import { useAuthState } from "react-firebase-hooks/auth";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { auth, firestore } from "../../firebase/clientApp";
+import { useUser } from "src/contexts/UserContext";
 import Hero from "./components/hero";
 import Innovator from "./components/innovator";
 import Menu from "./components/menu";
 
 function Home() {
   const navigate = useNavigate();
-  const [userRole, setUserRole] = useState(null); // State untuk menyimpan peran pengguna
-  const [userLogin] = useAuthState(auth);
-  const [inovator, setInovator] = useState<DocumentData | undefined>();
+  const { role, isInnovatorVerified, loading } = useUser()
 
-  useEffect(() => {
-    const fetchUserRole = async () => {
-      if (userLogin?.uid) {
-        const userRef = doc(firestore, "users", userLogin.uid);
-        const userSnap = await getDoc(userRef);
-        if (userSnap.exists()) {
-          setUserRole(userSnap.data()?.role);
-        }
-      }
-    };
-    fetchUserRole();
-  }, [userLogin]);
-
-  useEffect(() => {
-    const fetchInnovator = async () => {
-      if (userLogin?.uid) {
-        const innovatorRef = doc(firestore, "innovators", userLogin.uid);
-        const innovatorSnap = await getDoc(innovatorRef);
-        if (innovatorSnap.exists()) {
-          setInovator(innovatorSnap.data());
-        }
-      }
-    };
-    fetchInnovator();
-  }, [userLogin]);
+  if (loading) {
+    return <Loading />
+  }
 
   const handleAddInnovationClick = () => {
-    if (userRole === "innovator" && inovator?.status === "Terverifikasi") {
+    if (role === "innovator" && isInnovatorVerified) {
       navigate(paths.ADD_INNOVATION);
     } else {
       toast.warning(
@@ -82,9 +56,9 @@ function Home() {
       <Hero
         description="KMS Desa Digital"
         text="Indonesia"
-        isAdmin={userRole === "Admin"}
-        isInnovator={userRole === "innovator"}
-        isVillage={userRole === "village"}
+        isAdmin={role === "Admin"}
+        isInnovator={role === "innovator"}
+        isVillage={role === "village"}
       />
       <Stack direction="column" gap={2}>
         <SearchBarLink placeholderText="Cari Inovasi atau inovator di sini..." />
@@ -93,13 +67,13 @@ function Home() {
           <Rediness />
           <Ads />
         </Flex>
-        {userRole === "village" && <Dashboard />}
+        {role === "village" && <Dashboard />}
         <BestBanner />
         <Box mt="120px">
           <Innovator />
         </Box>
       </Stack>
-      {userRole === "innovator" && (
+      {role === "innovator" && (
         <Tooltip
           label="Tambah Inovasi"
           aria-label="Tambah Inovasi Tooltip"
