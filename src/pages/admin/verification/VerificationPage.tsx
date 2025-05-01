@@ -15,22 +15,6 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
-import CardNotification from "Components/card/notification/CardNotification";
-import Container from "Components/container";
-import TopBar from "Components/topBar";
-import { paths } from "Consts/path";
-import {
-  collection,
-  getDocs,
-  limit,
-  orderBy,
-  query,
-  startAfter,
-} from "firebase/firestore";
-import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { firestore } from "../../../firebase/clientApp";
-import AdsPage from "../ads/AdsPage";
 
 const SkeletonCard = () => {
   return (
@@ -286,7 +270,7 @@ const VerificationPage: React.FC = () => {
                     ? "Cari desa di sini"
                     : category === "Verifikasi Inovator"
                     ? "Cari inovator di sini"
-                    : "Cari inovasi di sini"
+                    : "Cari inovasi di sini"      
                 }
                 size="md"
                 borderRadius="full"
