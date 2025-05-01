@@ -14,7 +14,6 @@ import Register from "./pages/register";
 import Village from "./pages/village";
 import DetailVillage from "./pages/village/detail";
 // import ProfileInnovator from "./pages/innovator/form
-import { ToastContainer } from "react-toastify";
 import AdminGuard from "./pages/admin/AdminGuard";
 import AdminPage from "./pages/admin/AdminPage";
 import MakeAds from "./pages/admin/ads/make/MakeAds";
@@ -41,6 +40,7 @@ import AddVillage from "./pages/village/form";
 import KlaimInovasi from "./pages/village/klaimInovasi";
 import PengajuanKlaim from "./pages/village/pengajuanKlaim";
 import ProfileVillage from "./pages/village/profile";
+import { Bounce, ToastContainer } from "react-toastify";
 
 const queryClient = new QueryClient();
 
@@ -231,9 +231,14 @@ const App: React.FC = () => {
             ))}
           </Routes>
           <Navbar />
+          <ToastContainer
+            position="top-center"
+            autoClose={2000}
+            theme="light"
+            transition={Bounce}
+          />
         </main>
       </BrowserRouter>
-      <ToastContainer />
     </QueryClientProvider>
   );
 };
