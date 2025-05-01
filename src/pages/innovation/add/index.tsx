@@ -44,6 +44,8 @@ import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 import ImageUpload from "../../../components/form/ImageUpload";
 import { auth, firestore, storage } from "../../../firebase/clientApp";
+import ConfModal from "../../../components/confirmModal/confModal";
+import SecConfModal from "../../../components/confirmModal/secConfModal";
 
 type OptionType = {
   value: string;
@@ -146,6 +148,22 @@ const AddInnovation: React.FC = () => {
   const [isEditable, setIsEditable] = useState(true);
   const toast = useToast();
   const [innovationId, setInnovationId] = useState("");
+  const modalBody1 = "Apakah anda yakin ingin menambah inovasi?"; // Konten Modal
+  const modalBody2 =
+    "Inovasi sudah ditambahkan. Admin sedang memverifikasi pengajuan tambah inovasi"; // Konten Modal
+
+  const [isModal1Open, setIsModal1Open] = useState(false);
+  const [isModal2Open, setIsModal2Open] = useState(false);
+  const closeModal = () => {
+    setIsModal1Open(false);
+    setIsModal2Open(false);
+  };
+
+  const handleModal1Yes = () => {
+    setIsModal2Open(true);
+    setIsModal1Open(false); // Tutup modal pertama
+    // Di sini tidak membuka modal kedua
+  };
 
   const onSelectImage = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -611,6 +629,23 @@ const AddInnovation: React.FC = () => {
     const midpoint = Math.ceil(models.length / num);
     return [models.slice(0, midpoint), models.slice(midpoint)];
   };
+
+  const isFormValid = () => {
+    return (
+      status !== "" &&
+      textInputsValue.name.trim() !== "" &&
+      category.trim() !== "" &&
+      textInputsValue.year.trim() !== "" &&
+      textInputsValue.description.trim() !== "" &&
+      selectedModels.length > 0 && // array harus ada isinya
+      textInputsValue.villages.trim() !== "" &&
+      textInputsValue.priceMin.trim() !== "" &&
+      textInputsValue.priceMax.trim() !== "" &&
+      benefit.length > 0 && // cek manfaat inovasi
+      requirements.length > 0 // cek persiapan infrastruktur
+    );
+  };
+  
 
   // Bagi daftar model bisnis menjadi dua kolom
   const [firstColumn, secondColumn] = splitModels(predefinedModels, 2);
@@ -1261,9 +1296,41 @@ const AddInnovation: React.FC = () => {
             </Text>
           )}
           {status !== "Menunggu" && (
-            <Button type="submit" mt="20px" width="100%" isLoading={loading}>
-              {status === "Ditolak" ? "Ajukan Ulang" : "Ajukan Inovasi"}
-            </Button>
+            <div>
+              <Button
+                type="submit"
+                isLoading={loading}
+                mt="20px"
+                width="100%"
+                onClick={() => {
+                  if (isFormValid()) {
+                    setIsModal1Open(true);
+                  } else {
+                    toast({
+                      title: "Form belum lengkap!",
+                      description: "Harap isi semua field wajib.",
+                      status: "error",
+                      duration: 3000,
+                      isClosable: true,
+                    });
+                  }
+                }}
+              >
+                {status === "Ditolak" ? "Ajukan Ulang" : "Ajukan Inovasi"}
+              </Button>
+              <ConfModal
+                isOpen={isModal1Open}
+                onClose={closeModal}
+                modalTitle=""
+                modalBody1={modalBody1} // Mengirimkan teks konten modal
+                onYes={handleModal1Yes}
+              />
+              <SecConfModal
+                isOpen={isModal2Open}
+                onClose={closeModal}
+                modalBody2={modalBody2} // Mengirimkan teks konten modal
+              />
+          </div>
           )}
         </Box>
       </form>

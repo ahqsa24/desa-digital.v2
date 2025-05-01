@@ -91,6 +91,7 @@ const VerificationPage: React.FC = () => {
     "Verifikasi Desa": paths.VILLAGE_PROFILE_PAGE,
     "Verifikasi Inovator": paths.INNOVATOR_PROFILE_PAGE,
     "Verifikasi Tambah Inovasi": paths.DETAIL_INNOVATION_PAGE,
+    "Verifikasi Klaim Inovasi": paths.DETAIL_INNOVATION_PAGE,
   };
 
   const handleCardClick = (id: string) => {

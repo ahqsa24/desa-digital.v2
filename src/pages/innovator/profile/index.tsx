@@ -214,7 +214,7 @@ const ProfileInnovator: React.FC = () => {
             {owner && (
               <Button
               leftIcon={<Image src={Send} alt="send" />}
-              onClick={toPengajuanInovasi}
+              onClick={() => navigate(paths.PENGAJUAN_INOVASI_PAGE)}
               fontSize="12px"
               fontWeight="500"
               height="29px"
