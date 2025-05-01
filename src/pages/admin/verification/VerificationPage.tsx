@@ -339,7 +339,6 @@ const VerificationPage: React.FC = () => {
                 : data.deskripsi || "Klaim " + data.namaInovasi;
 
               return (
-                
                 <CardNotification
                   key={index}
                   title={
