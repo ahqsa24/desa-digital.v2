@@ -299,8 +299,6 @@ const VerificationPage: React.FC = () => {
               <MenuButton
                 as={Button}
                 rightIcon={<ChevronDownIcon color="#347357" />}
-                width="80px"
-                minWidth="80px"
                 borderRadius="8px"
                 backgroundColor="white"
                 border="1px solid"
