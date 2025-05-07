@@ -223,6 +223,40 @@ const KlaimInovasi: React.FC = () => {
          console.log("Images uploaded", imageUrls);
        }
 
+       if (selectedDoc.length > 0) {
+        const storageRef = ref(storage, `claimInnovations/${userId}/documents`);
+        const docUrls: string[] = [];
+      
+        for (let i = 0; i < selectedDoc.length; i++) {
+          const file = selectedDoc[i];
+          const docRef = ref(storageRef, `${Date.now()}_doc_${i}`);
+          const response = await fetch(file);
+          const blob = await response.blob();
+          await uploadBytes(docRef, blob);
+          const downloadURL = await getDownloadURL(docRef);
+          docUrls.push(downloadURL);
+        }
+      
+        await updateDoc(docRef, {
+          documents: docUrls,
+        });
+        console.log("Documents uploaded", docUrls);
+      }
+      
+      if (selectedVid !== "") {
+        const storageRef = ref(storage, `claimInnovations/${userId}/video`);
+        const videoRef = ref(storageRef, `${Date.now()}_video`);
+        const response = await fetch(selectedVid);
+        const blob = await response.blob();
+        await uploadBytes(videoRef, blob);
+        const downloadURL = await getDownloadURL(videoRef);
+      
+        await updateDoc(docRef, {
+          video: downloadURL,
+        });
+        console.log("Video uploaded", downloadURL);
+      }      
+
        await updateDoc(inovatorRef, {
         jumlahDesaDampingan: increment(1),
         desaDampingan:[{
